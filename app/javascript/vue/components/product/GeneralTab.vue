@@ -5,22 +5,20 @@
         <div class="col-md-6">
           <div class="card mb-3">
             <div class="card-body">
-              <div class="card-title">Product Details</div>
               
               <div class="mb-3">
-                <label for="product-description" class="form-label">Product Description</label>
+                <label for="product-description" class="form-label">Descripción del producto</label>
                 <input 
                   type="text" 
                   id="product-description" 
                   class="form-control" 
                   v-model="form.description" 
                   required
-                  placeholder="Enter product description"
                 />
               </div>
               
               <div class="mb-3">
-                <label for="product-quantity" class="form-label">Quantity</label>
+                <label for="product-quantity" class="form-label">Cantidad</label>
                 <input 
                   type="number" 
                   id="product-quantity" 
@@ -28,14 +26,13 @@
                   v-model.number="form.data.general_info.quantity" 
                   min="1" 
                   required
-                  placeholder="Enter quantity"
                 />
               </div>
               
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="product-width" class="form-label">Width (cm)</label>
+                    <label for="product-width" class="form-label">Ancho (cm)</label>
                     <input 
                       type="number" 
                       id="product-width" 
@@ -43,13 +40,12 @@
                       v-model.number="form.data.general_info.width" 
                       min="0" 
                       step="0.1"
-                      placeholder="Enter width"
                     />
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="product-length" class="form-label">Length (cm)</label>
+                    <label for="product-length" class="form-label">Largo (cm)</label>
                     <input 
                       type="number" 
                       id="product-length" 
@@ -57,20 +53,18 @@
                       v-model.number="form.data.general_info.length" 
                       min="0" 
                       step="0.1"
-                      placeholder="Enter length"
                     />
                   </div>
                 </div>
               </div>
               
               <div class="mb-3">
-                <label for="product-inner-measurements" class="form-label">Inner Measurements</label>
+                <label for="product-inner-measurements" class="form-label">Medidas internas</label>
                 <input 
                   type="text" 
                   id="product-inner-measurements" 
                   class="form-control" 
                   v-model="form.data.general_info.inner_measurements"
-                  placeholder="Enter inner measurements"
                 />
               </div>
             </div>
@@ -80,27 +74,24 @@
         <div class="col-md-6">
           <div class="card mb-3">
             <div class="card-body">
-              <div class="card-title">Customer Information</div>
               
               <div class="mb-3">
-                <label for="customer-name" class="form-label">Customer Name</label>
+                <label for="customer-name" class="form-label">Nombre del cliente</label>
                 <input 
                   type="text" 
                   id="customer-name" 
                   class="form-control" 
                   v-model="form.data.general_info.customer_name"
-                  placeholder="Enter customer name"
                 />
               </div>
               
               <div class="mb-3">
-                <label for="customer-organization" class="form-label">Organization</label>
+                <label for="customer-organization" class="form-label">Organización</label>
                 <input 
                   type="text" 
                   id="customer-organization" 
                   class="form-control" 
                   v-model="form.data.general_info.customer_organization"
-                  placeholder="Enter organization"
                 />
               </div>
               
@@ -111,18 +102,16 @@
                   id="customer-email" 
                   class="form-control" 
                   v-model="form.data.general_info.customer_email"
-                  placeholder="Enter email"
                 />
               </div>
               
               <div class="mb-3">
-                <label for="customer-phone" class="form-label">Phone</label>
+                <label for="customer-phone" class="form-label">Teléfono</label>
                 <input 
                   type="tel" 
                   id="customer-phone" 
                   class="form-control" 
                   v-model="form.data.general_info.customer_phone"
-                  placeholder="Enter phone number"
                 />
               </div>
             </div>
@@ -132,16 +121,14 @@
       
       <div class="card mb-3">
         <div class="card-body">
-          <div class="card-title">Additional Information</div>
           
           <div class="mb-3">
-            <label for="product-comments" class="form-label">Comments</label>
+            <label for="product-comments" class="form-label">Comentarios</label>
             <textarea 
               id="product-comments" 
               class="form-control" 
               v-model="form.data.general_info.comments" 
               rows="3"
-              placeholder="Enter any additional comments"
             ></textarea>
           </div>
         </div>
@@ -152,7 +139,7 @@
           Cancel
         </a>
         <button type="submit" class="btn btn-primary" :disabled="saving">
-          {{ isNew ? 'Create Product' : 'Save Changes' }}
+          {{ isNew ? 'Crear producto' : 'Guardar cambios' }}
         </button>
       </div>
     </form>
@@ -206,11 +193,30 @@ export default {
   },
   methods: {
     initFormData() {
+      console.log('Initializing form data with product:', this.product);
+      
+      // Default empty structure in case product data is incomplete
+      const defaultGeneralInfo = {
+        width: null,
+        length: null,
+        inner_measurements: '',
+        quantity: 1,
+        customer_name: '',
+        customer_organization: '',
+        customer_email: '',
+        customer_phone: '',
+        comments: ''
+      };
+      
       // Create deep copy to avoid modifying props directly
+      // Ensure data structure is complete even if product is partially initialized
       this.form = {
-        description: this.product.description || '',
+        description: this.product && this.product.description ? this.product.description : '',
         data: {
-          general_info: { ...this.product.data?.general_info || {} }
+          general_info: { 
+            ...defaultGeneralInfo,
+            ...(this.product && this.product.data && this.product.data.general_info ? this.product.data.general_info : {})
+          }
         }
       };
       
@@ -224,14 +230,18 @@ export default {
     saveProduct() {
       this.saving = true;
       
-      // Create a copy for the update
+      console.log('Saving product with form data:', this.form);
+      
+      // Create a copy for the update, ensuring we have a valid data structure
       const updatedProduct = {
         description: this.form.description,
-        data: { ...this.product.data }
+        data: {
+          ...(this.product && this.product.data ? this.product.data : {}),
+          general_info: { ...this.form.data.general_info }
+        }
       };
       
-      // Update only the general_info part
-      updatedProduct.data.general_info = { ...this.form.data.general_info };
+      console.log('Emitting product update with:', updatedProduct);
       
       // Emit the appropriate event based on whether this is a new product or an existing one
       if (this.isNew) {

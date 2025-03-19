@@ -7,16 +7,23 @@
       <p class="mt-2">Loading product data...</p>
     </div>
     
+    <div v-else-if="error" class="alert alert-danger my-5">
+      <h4 class="alert-heading">Error loading form</h4>
+      <p>{{ error }}</p>
+      <hr>
+      <p class="mb-0">Please try refreshing the page or contact support if the problem persists.</p>
+    </div>
+    
     <div v-else>
       <ul class="nav nav-tabs mb-4" id="product-tabs">
         <li class="nav-item">
           <a class="nav-link" :class="{ active: activeTab === 'general' }" 
              href="#" @click.prevent="setActiveTab('general')">
-            <i class="fa fa-info-circle me-1"></i> General Info
+            <i class="fa fa-info-circle me-1"></i> Información general
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" :class="{ active: activeTab === 'extras', disabled: !productId && activeTab !== 'extras' }" 
+          <a class="nav-link" :class="{ active: activeTab === 'extras' }" 
              href="#" @click.prevent="setActiveTab('extras')">
             <i class="fa fa-plus-circle me-1"></i> Extras
           </a>
@@ -43,7 +50,7 @@
       
       <div class="tab-content">
         <!-- General Tab -->
-        <div v-if="activeTab === 'general'" class="tab-pane active">
+        <div v-if="activeTab === 'general' && product" class="tab-pane active">
           <general-tab 
             :product="product" 
             :is-new="isNew"
@@ -53,28 +60,28 @@
         </div>
         
         <!-- Materials Tab -->
-        <div v-if="activeTab === 'materials'" class="tab-pane active">
+        <div v-if="activeTab === 'materials' && product" class="tab-pane active">
           <p class="text-muted">Materials tab coming soon</p>
         </div>
         
         <!-- Processes Tab -->
-        <div v-if="activeTab === 'processes'" class="tab-pane active">
+        <div v-if="activeTab === 'processes' && product" class="tab-pane active">
           <p class="text-muted">Processes tab coming soon</p>
         </div>
         
         <!-- Extras Tab -->
-        <div v-if="activeTab === 'extras'" class="tab-pane active">
+        <div v-if="activeTab === 'extras' && product" class="tab-pane active">
           <extras-tab 
-            :product-extras="product.data.extras"
+            :product-extras="product && product.data && product.data.extras ? product.data.extras : []"
             :available-extras="availableExtras"
             @update:product-extras="updateExtras"
           />
         </div>
         
         <!-- Pricing Tab -->
-        <div v-if="activeTab === 'pricing'" class="tab-pane active">
+        <div v-if="activeTab === 'pricing' && product" class="tab-pane active">
           <pricing-tab 
-            :pricing="product.data.pricing"
+            :pricing="product && product.data && product.data.pricing ? product.data.pricing : {}"
           />
         </div>
       </div>
@@ -116,19 +123,23 @@ export default {
   },
   computed: {
     apiToken() {
-      return document.querySelector('meta[name="csrf-token"]')?.content;
+      const metaTag = document.querySelector('meta[name="csrf-token"]');
+      return metaTag ? metaTag.content : null;
     }
   },
   methods: {
     setActiveTab(tab) {
       // Allow switching between general and extras tabs even for new products
-      if (tab !== 'general' && tab !== 'extras' && !this.productId) {
-        console.warn('Cannot switch tab: no product ID');
+      // Only restrict other tabs if product doesn't exist (has no ID)
+      if (['general', 'extras'].includes(tab)) {
+        // These tabs are always accessible
+        this.activeTab = tab;
+      } else if (!this.productId) {
         return;
+      } else {
+        // Other tabs require a product ID
+        this.activeTab = tab;
       }
-      
-      console.log(`Setting active tab to: ${tab}`);
-      this.activeTab = tab;
     },
     async fetchProduct() {
       if (!this.productId) {
@@ -163,7 +174,6 @@ export default {
           };
         }
         
-        console.log('Product loaded:', this.product);
       } catch (error) {
         console.error('Error loading product:', error);
         this.error = error.message;
@@ -172,40 +182,46 @@ export default {
       }
     },
     initializeNewProduct() {
-      // Initialize with empty structure for a new product
-      this.product = {
-        description: '',
-        data: {
-          general_info: {
-            width: null,
-            length: null,
-            inner_measurements: '',
-            quantity: 1,
-            customer_name: '',
-            customer_organization: '',
-            customer_email: '',
-            customer_phone: '',
-            comments: ''
-          },
-          materials: [],
-          processes: [],
-          extras: [],
-          pricing: {
-            materials_cost: 0,
-            processes_cost: 0,
-            extras_cost: 0,
-            subtotal: 0,
-            waste_percentage: 5,
-            waste_value: 0,
-            price_per_piece_before_margin: 0,
-            margin_percentage: 30,
-            margin_value: 0,
-            total_price: 0,
-            final_price_per_piece: 0
+      try {
+        // Initialize with empty structure for a new product
+        this.product = {
+          description: '',
+          data: {
+            general_info: {
+              width: null,
+              length: null,
+              inner_measurements: '',
+              quantity: 1,
+              customer_name: '',
+              customer_organization: '',
+              customer_email: '',
+              customer_phone: '',
+              comments: ''
+            },
+            materials: [],
+            processes: [],
+            extras: [],
+            pricing: {
+              materials_cost: 0,
+              processes_cost: 0,
+              extras_cost: 0,
+              subtotal: 0,
+              waste_percentage: 5,
+              waste_value: 0,
+              price_per_piece_before_margin: 0,
+              margin_percentage: 30,
+              margin_value: 0,
+              total_price: 0,
+              final_price_per_piece: 0
+            }
           }
-        }
-      };
-      this.loading = false;
+        };
+      } catch (error) {
+        console.error('Error initializing new product:', error);
+        this.error = 'Failed to initialize product form: ' + error.message;
+      } finally {
+        this.loading = false;
+      }
     },
     async createProduct(productData) {
       try {
@@ -229,7 +245,6 @@ export default {
         }
         
         const createdProduct = await response.json();
-        console.log('Product created successfully:', createdProduct);
         
         // Redirect to the edit page for the new product
         window.location.href = `/products/${createdProduct.id}/edit`;
@@ -264,7 +279,6 @@ export default {
         const updatedProduct = await response.json();
         this.product = updatedProduct;
         
-        console.log('Product updated successfully');
       } catch (error) {
         console.error('Error updating product:', error);
       } finally {
@@ -275,7 +289,6 @@ export default {
       if (!this.productId) {
         // For new products, just update the local data
         this.product.data.extras = extras;
-        console.log('Extras updated locally for new product:', extras);
         return;
       }
 
@@ -305,7 +318,6 @@ export default {
         // Fetch the updated product with new pricing
         this.fetchProduct();
         
-        console.log('Extras updated successfully');
       } catch (error) {
         console.error('Error updating extras:', error);
       } finally {
@@ -314,6 +326,7 @@ export default {
     },
     async fetchAvailableExtras() {
       try {
+        // Using the API path from routes
         const response = await fetch('/api/v1/extras', {
           headers: {
             'Accept': 'application/json',
@@ -321,19 +334,20 @@ export default {
           }
         });
         
+        
         if (!response.ok) {
-          throw new Error('Failed to load available extras');
+          throw new Error(`Failed to load available extras: ${response.status} ${response.statusText}`);
         }
         
-        this.availableExtras = await response.json();
-        console.log('Available extras loaded:', this.availableExtras);
+        const data = await response.json();
+        this.availableExtras = data;
       } catch (error) {
         console.error('Error loading available extras:', error);
+        this.availableExtras = []; // Ensure we have an empty array if the request fails
       }
     }
   },
   created() {
-    console.log('ProductForm created with ID:', this.productId);
     this.fetchProduct();
     this.fetchAvailableExtras();
   }
