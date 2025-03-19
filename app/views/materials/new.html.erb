@@ -1,0 +1,16 @@
+<div class="row">
+  <div class="col-12 mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <h1>Nuevo material</h1>
+      <%= link_to "Volver a materiales", materials_path, class: "btn btn-secondary" %>
+    </div>
+  </div>
+  
+  <div class="col-md-8 offset-md-2">
+    <div class="card">
+      <div class="card-body">
+        <%= render 'form', material: @material %>
+      </div>
+    </div>
+  </div>
+</div>

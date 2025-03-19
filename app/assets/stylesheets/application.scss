@@ -1,0 +1,57 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS (and SCSS, if configured) file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+
+// Custom Bootstrap variables must be set or imported *before* bootstrap
+@import "bootstrap";
+
+// Import our custom dark theme
+@import "dark_theme";
+
+// Additional global styles
+body {
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.5;
+}
+
+// Container adjustments for dark theme
+.container, .container-fluid {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+// Link styling for dark theme
+a {
+  color: var(--cotalo-green);
+  text-decoration: none;
+  
+  &:hover {
+    color: var(--cotalo-green-dark);
+    text-decoration: underline;
+  }
+}
+
+// Application-specific styles
+.main-content {
+  min-height: calc(100vh - 200px);
+  padding: 2rem 0;
+}
+
+.footer {
+  background-color: var(--nav-bg);
+  border-top: 1px solid var(--border-color);
+  padding: 1.5rem 0;
+  color: var(--text-secondary);
+}

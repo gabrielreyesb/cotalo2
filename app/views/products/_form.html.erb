@@ -1,0 +1,134 @@
+<%= form_with(model: product, class: "needs-validation") do |form| %>
+  <% if product.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(product.errors.count, "error") %> prohibited this product from being saved:</h2>
+      <ul>
+        <% product.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <ul class="nav nav-tabs mb-4" id="productTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" aria-selected="true">
+        <i class="fa fa-info-circle me-1"></i> Información general
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link disabled" id="materials-tab" data-bs-toggle="tab" data-bs-target="#materials" type="button" role="tab" aria-controls="materials" aria-selected="false">
+        <i class="fa fa-cubes me-1"></i> Materiales
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link disabled" id="processes-tab" data-bs-toggle="tab" data-bs-target="#processes" type="button" role="tab" aria-controls="processes" aria-selected="false">
+        <i class="fa fa-cogs me-1"></i> Procesos
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link disabled" id="extras-tab" data-bs-toggle="tab" data-bs-target="#extras" type="button" role="tab" aria-controls="extras" aria-selected="false">
+        <i class="fa fa-plus-circle me-1"></i> Extras
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link disabled" id="pricing-tab" data-bs-toggle="tab" data-bs-target="#pricing" type="button" role="tab" aria-controls="pricing" aria-selected="false">
+        <i class="fa fa-calculator me-1"></i> Precio
+      </button>
+    </li>
+  </ul>
+  
+  <div class="tab-content" id="productTabsContent">
+    <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="card shadow-sm border-light mb-3">
+            <div class="card-body">
+              <div class="mb-3">
+                <%= form.label :description, "Descripción", class: "form-label" %>
+                <%= form.text_field :description, class: "form-control", required: true %>
+              </div>
+              
+              <div class="mb-3">
+                <%= form.label :quantity, "Cantidad", class: "form-label" %>
+                <%= form.number_field :quantity, value: product.general_info["quantity"], min: 1, class: "form-control", 
+                    name: "product[data][general_info][quantity]" %>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <%= form.label :width, "Ancho (cm)", class: "form-label" %>
+                    <%= form.number_field :width, value: product.general_info["width"], min: 0, step: "0.1", class: "form-control", 
+                        name: "product[data][general_info][width]" %>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <%= form.label :length, "Largo (cm)", class: "form-label" %>
+                    <%= form.number_field :length, value: product.general_info["length"], min: 0, step: "0.1", class: "form-control", 
+                        name: "product[data][general_info][length]" %>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <%= form.label :inner_measurements, "Medidas internas", class: "form-label" %>
+                <%= form.text_field :inner_measurements, value: product.general_info["inner_measurements"], class: "form-control", 
+                    name: "product[data][general_info][inner_measurements]" %>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="card shadow-sm border-light mb-3">
+            <div class="card-body">
+              <div class="mb-3">
+                <%= form.label :customer_name, "Nombre del cliente", class: "form-label" %>
+                <%= form.text_field :customer_name, value: product.general_info["customer_name"], class: "form-control", 
+                    name: "product[data][general_info][customer_name]" %>
+              </div>
+              
+              <div class="mb-3">
+                <%= form.label :customer_organization, "Organización", class: "form-label" %>
+                <%= form.text_field :customer_organization, value: product.general_info["customer_organization"], class: "form-control", 
+                    name: "product[data][general_info][customer_organization]" %>
+              </div>
+              
+              <div class="mb-3">
+                <%= form.label :customer_email, "Email", class: "form-label" %>
+                <%= form.email_field :customer_email, value: product.general_info["customer_email"], class: "form-control", 
+                    name: "product[data][general_info][customer_email]" %>
+              </div>
+              
+              <div class="mb-3">
+                <%= form.label :customer_phone, "Teléfono", class: "form-label" %>
+                <%= form.telephone_field :customer_phone, value: product.general_info["customer_phone"], class: "form-control", 
+                    name: "product[data][general_info][customer_phone]" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card shadow-sm border-light mb-3">
+        <div class="card-body">
+          <div class="mb-3">
+            <%= form.label :comments, "Comentarios", class: "form-label" %>
+            <%= form.text_area :comments, value: product.general_info["comments"], rows: 3, class: "form-control", 
+                name: "product[data][general_info][comments]" %>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Other tabs will be implemented with Vue.js later -->
+    
+  </div>
+
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+    <%= link_to "Cancelar", products_path, class: "btn btn-secondary me-md-2" %>
+    <%= form.submit class: "btn btn-primary" %>
+  </div>
+<% end %> 

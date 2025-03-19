@@ -1,0 +1,362 @@
+// Override Bootstrap's internal variables for form elements
+:root {
+  --bs-form-switch-bg: var(--cotalo-green-dark) !important;
+  --bs-form-check-bg: var(--cotalo-green-dark) !important;
+  --bs-primary: var(--cotalo-green-dark) !important;
+  --bs-primary-rgb: 86, 123, 50 !important; /* RGB values for --cotalo-green-dark */
+}
+
+// Dark theme variables
+:root {
+  --cotalo-green: #8ABF50;           /* Brightened green for better contrast */
+  --cotalo-green-dark: #689939;      /* Adjusted darker version */
+  --dark-bg: #1a1a1a;                /* Main dark background */
+  --darker-bg: #141414;              /* Darker areas */
+  --nav-bg: #1e1f21;                 /* Navbar and elevated surfaces */
+  --card-bg: #1e1f21;                /* Card background */
+  --hover-bg: #2a2b2d;               /* Hover state background */
+  --border-color: #2a2b2d;           /* Subtle borders */
+  --text-primary: #ffffff;           /* Primary text - kept white for maximum contrast */
+  --text-secondary: #d1d1d1;         /* Secondary text - brightened for better contrast */
+}
+
+// Base styles
+body { 
+  background-color: var(--dark-bg);
+  color: var(--text-primary);
+}
+
+// Tab navigation styles
+.nav-tabs {
+  border-bottom: 1px solid var(--cotalo-green-dark);
+  
+  .nav-item {
+    margin-bottom: -1px;
+  }
+  
+  .nav-link {
+    border: 1px solid transparent;
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+    color: var(--text-primary);
+    background-color: var(--card-bg);
+    
+    &:hover, &:focus {
+      border-color: var(--border-color) var(--border-color) transparent;
+      background-color: var(--hover-bg);
+    }
+    
+    &.active {
+      color: var(--text-primary);
+      background-color: var(--cotalo-green-dark);
+      border-color: var(--cotalo-green-dark) var(--cotalo-green-dark) transparent;
+    }
+  }
+}
+
+.tab-content {
+  background-color: var(--card-bg);
+  border: 1px solid var(--cotalo-green-dark);
+  border-top: 0;
+  border-bottom-left-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  .tab-pane {
+    padding: 1rem;
+  }
+}
+
+// Navbar styles
+.navbar {
+  background-color: var(--nav-bg);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  
+  &-brand {
+    display: flex;
+    align-items: center;
+    height: 70px;
+  }
+  
+  &-logo {
+    max-height: 60px;
+    width: auto;
+    object-fit: contain;
+  }
+}
+
+// Button overrides
+.btn-primary {
+  background-color: var(--cotalo-green);
+  border-color: var(--cotalo-green);
+  
+  &:hover, &:focus, &:active {
+    background-color: var(--cotalo-green-dark);
+    border-color: var(--cotalo-green-dark);
+  }
+}
+
+// Card styles
+.card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  &-header {
+    background-color: var(--hover-bg);
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  &-footer {
+    background-color: var(--hover-bg);
+    border-top: 1px solid var(--border-color);
+  }
+}
+
+// Form controls
+.form-control, .form-select {
+  background-color: var(--darker-bg);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+  
+  &:focus {
+    background-color: var(--darker-bg);
+    border-color: var(--cotalo-green);
+    box-shadow: 0 0 0 0.25rem rgba(138, 191, 80, 0.25);
+    color: var(--text-primary);
+  }
+  
+  &::placeholder {
+    color: #a0a0a0;  /* Brightened placeholder text */
+  }
+}
+
+// Table styling
+.table {
+  color: var(--text-primary);
+  
+  thead th {
+    background-color: var(--hover-bg);
+    border-bottom: 2px solid var(--cotalo-green-dark);
+    color: var(--text-primary);
+  }
+  
+  tbody tr {
+    background-color: var(--card-bg);
+    
+    &:hover {
+      background-color: var(--hover-bg);
+    }
+  }
+  
+  td, th {
+    border-color: var(--border-color);
+  }
+}
+
+// Enhanced table styling for true dark mode
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-accent-bg: transparent;
+  --bs-table-striped-color: var(--text-primary);
+  --bs-table-striped-bg: rgba(255, 255, 255, 0.05);
+  --bs-table-active-color: var(--text-primary);
+  --bs-table-active-bg: rgba(255, 255, 255, 0.1);
+  --bs-table-hover-color: var(--text-primary);
+  --bs-table-hover-bg: var(--hover-bg);
+  border-color: var(--border-color);
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+  background-color: var(--darker-bg);
+  color: var(--text-primary);
+}
+
+.table-hover > tbody > tr:hover > * {
+  background-color: var(--hover-bg);
+  color: var(--text-primary);
+}
+
+// Alerts and notices
+.alert {
+  border: none;
+  
+  &-success {
+    background-color: rgba(117, 164, 67, 0.2);
+    color: var(--cotalo-green);
+  }
+  
+  &-danger {
+    background-color: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+  }
+}
+
+// Pagination
+.pagination {
+  .page-item {
+    .page-link {
+      background-color: var(--card-bg);
+      border-color: var(--border-color);
+      color: var(--text-primary);
+      
+      &:hover {
+        background-color: var(--hover-bg);
+      }
+    }
+    
+    &.active .page-link {
+      background-color: var(--cotalo-green);
+      border-color: var(--cotalo-green);
+    }
+  }
+}
+
+// Dropdown improvements
+.dropdown-menu {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+  
+  .dropdown-item {
+    color: var(--text-primary);
+    
+    &:hover, &:focus {
+      background-color: var(--hover-bg);
+      color: var(--text-primary);
+    }
+  }
+
+  .dropdown-divider {
+    border-color: var(--border-color);
+  }
+}
+
+// Link color adjustments
+a {
+  color: var(--cotalo-green);
+  
+  &:hover {
+    color: #a0d566; /* Brighter on hover for better visibility */
+  }
+}
+
+// Input group adjustments
+.input-group-text {
+  background-color: var(--hover-bg);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+// Form label improvements
+label, .form-label {
+  color: #ffffff;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+// Field labels and hints
+.field_with_errors label,
+.form-text,
+small.form-text {
+  color: #e0e0e0;
+}
+
+// Form text helpers
+.form-text {
+  color: #c5c5c5;
+}
+
+// Home/Dashboard improvements for dark theme
+.card-title, 
+.card-text,
+.lead,
+.display-4,
+.table th,
+.table td,
+.alert-info {
+  color: var(--text-primary);
+}
+
+p.card-text,
+p.lead {
+  color: var(--text-secondary);
+}
+
+.alert-info {
+  background-color: rgba(23, 162, 184, 0.15);
+  border-color: rgba(23, 162, 184, 0.2);
+}
+
+.btn-outline-primary {
+  color: var(--cotalo-green);
+  border-color: var(--cotalo-green);
+  
+  &:hover, &:focus, &:active {
+    background-color: var(--cotalo-green);
+    border-color: var(--cotalo-green);
+    color: #fff;
+  }
+}
+
+// Emphasize icons
+i.fa-3x {
+  filter: drop-shadow(0 0 2px rgba(138, 191, 80, 0.3));
+}
+
+// Enhanced card styling for dashboard and welcome
+.card {
+  h2, h3, h5 {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+  
+  .card-header {
+    h5 {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// Dashboard specific dark styling
+.recent-materials {
+  .card {
+    background-color: var(--card-bg);
+  }
+}
+
+// Ensure consistent background for all main elements
+main.container {
+  background-color: var(--dark-bg);
+}
+
+// Table row links
+tbody tr a {
+  color: var(--cotalo-green);
+  text-decoration: none;
+  
+  &:hover {
+    color: #a0d566;
+    text-decoration: underline;
+  }
+}
+
+// View all links
+.btn-outline-primary,
+a.view-all {
+  color: var(--cotalo-green);
+  border-color: var(--cotalo-green);
+  
+  &:hover {
+    background-color: var(--cotalo-green);
+    color: #fff;
+    border-color: var(--cotalo-green);
+  }
+}
+
+// Stats numbers
+h2.card-text {
+  color: var(--cotalo-green);
+  font-weight: 600;
+  margin-top: 0.5rem;
+} 

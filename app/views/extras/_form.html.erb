@@ -1,0 +1,53 @@
+<%= form_with(model: extra, class: "needs-validation") do |form| %>
+  <% if extra.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(extra.errors.count, "error") %> prohibited this extra from being saved:</h2>
+      <ul>
+        <% extra.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= form.label :name, class: "form-label" %>
+      <%= form.text_field :name, class: "form-control" %>
+    </div>
+    
+    <div class="col-md-6 mb-3">
+      <%= form.label :cost, class: "form-label" %>
+      <div class="input-group">
+        <span class="input-group-text">$</span>
+        <%= form.number_field :cost, step: '0.01', class: "form-control" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= form.label :unit_id, class: "form-label" %>
+      <%= form.collection_select :unit_id, current_user.units, :id, :name, { prompt: "Select a unit" }, { class: "form-select" } %>
+      <div class="form-text mt-1">
+        <%= link_to "Create a new unit", new_unit_path, target: "_blank" %>
+      </div>
+      <% if Rails.env.development? %>
+        <div class="text-muted mt-2 small">
+          Current unit_id: <%= extra.unit_id %> 
+          (<%= extra.unit&.name || "None" %>)
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :description, class: "form-label" %>
+    <%= form.text_area :description, rows: 3, class: "form-control" %>
+  </div>
+
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <%= link_to "Cancel", extras_path, class: "btn btn-secondary me-md-2" %>
+    <%= form.submit class: "btn btn-primary" %>
+  </div>
+<% end %> 

@@ -1,0 +1,65 @@
+<%= form_with(model: material, class: "material-form") do |form| %>
+  <% if material.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(material.errors.count, "error") %> prohibited this material from being saved:</h4>
+      <ul>
+        <% material.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= form.label :description, class: "form-label" %>
+      <%= form.text_field :description, class: "form-control", required: true %>
+    </div>
+    
+    <div class="col-md-6 mb-3">
+      <%= form.label :nombre, class: "form-label" %>
+      <%= form.text_field :nombre, class: "form-control", required: true %>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= form.label :price, class: "form-label" %>
+      <%= form.number_field :price, class: "form-control", step: "0.01", min: 0, required: true %>
+    </div>
+    
+    <div class="col-md-6 mb-3">
+      <%= form.label :unit_id, class: "form-label" %>
+      <%= form.collection_select :unit_id, current_user.units, :id, :name, { prompt: "Select a unit" }, { class: "form-select", required: true } %>
+      <div class="form-text mt-1">
+        <%= link_to "Create a new unit", new_unit_path, target: "_blank" %>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= form.label :ancho, "Width", class: "form-label" %>
+      <%= form.number_field :ancho, class: "form-control", step: "0.01", min: 0 %>
+    </div>
+    
+    <div class="col-md-6 mb-3">
+      <%= form.label :largo, "Length", class: "form-label" %>
+      <%= form.number_field :largo, class: "form-control", step: "0.01", min: 0 %>
+    </div>
+  </div>
+  
+  <div class="mb-3">
+    <%= form.label :especificaciones, class: "form-label" %>
+    <%= form.text_field :especificaciones, class: "form-control" %>
+  </div>
+  
+  <div class="mb-3">
+    <%= form.label :comments, class: "form-label" %>
+    <%= form.text_area :comments, class: "form-control", rows: 3 %>
+  </div>
+  
+  <div class="d-flex justify-content-end">
+    <%= form.submit class: "btn btn-primary" %>
+  </div>
+<% end %> 

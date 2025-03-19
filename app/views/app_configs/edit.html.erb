@@ -1,0 +1,102 @@
+<div class="row">
+  <div class="col-12 mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <h1>Configuraciones</h1>
+    </div>
+  </div>
+</div>
+
+<%= form_with(url: app_configs_path, method: :put, class: "needs-validation") do |form| %>
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-header">
+          <h5>Configuraciones generales</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <%= form.label :waste_percentage, "Porcentaje de merma (%)", class: "form-label" %>
+            <%= form.number_field :waste_percentage, value: @general_settings[:waste_percentage], step: '0.01', class: "form-control" %>
+          </div>
+          
+          <div class="mb-3">
+            <%= form.label :margin_percentage, "Porcentaje de margen (%)", class: "form-label" %>
+            <%= form.number_field :margin_percentage, value: @general_settings[:margin_percentage], step: '0.01', class: "form-control" %>
+          </div>
+          
+          <div class="mb-3">
+            <%= form.label :width_margin, "Margen de ancho", class: "form-label" %>
+            <%= form.number_field :width_margin, value: @general_settings[:width_margin], step: '0.01', class: "form-control" %>
+          </div>
+          
+          <div class="mb-3">
+            <%= form.label :length_margin, "Margen de largo", class: "form-label" %>
+            <%= form.number_field :length_margin, value: @general_settings[:length_margin], step: '0.01', class: "form-control" %>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-header">
+          <h5>Información de firma</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <%= form.label :signature_name, "Nombre", class: "form-label" %>
+            <%= form.text_field :signature_name, value: @signature_info[:name], class: "form-control" %>
+          </div>
+          
+          <div class="mb-3">
+            <%= form.label :signature_email, "Correo", class: "form-label" %>
+            <%= form.email_field :signature_email, value: @signature_info[:email], class: "form-control" %>
+          </div>
+          
+          <div class="mb-3">
+            <%= form.label :signature_phone, "Teléfono", class: "form-label" %>
+            <%= form.telephone_field :signature_phone, value: @signature_info[:phone], class: "form-control" %>
+          </div>
+          
+          <div class="mb-3">
+            <%= form.label :signature_whatsapp, "WhatsApp", class: "form-label" %>
+            <%= form.telephone_field :signature_whatsapp, value: @signature_info[:whatsapp], class: "form-control" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-12 mb-4">
+      <div class="card">
+        <div class="card-header">
+          <h5>Condiciones de venta</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+
+            <%= form.text_field :condition_1, value: @sales_conditions[:condition_1], class: "form-control" %>
+          </div>
+          
+          <div class="mb-3">
+            <%= form.text_field :condition_2, value: @sales_conditions[:condition_2], class: "form-control" %>
+          </div>
+          
+          <div class="mb-3">
+            <%= form.text_field :condition_3, value: @sales_conditions[:condition_3], class: "form-control" %>
+          </div>
+          
+          <div class="mb-3">
+            <%= form.text_field :condition_4, value: @sales_conditions[:condition_4], class: "form-control" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-4">
+    <%= link_to "Cancelar", dashboard_path, class: "btn btn-secondary me-md-2" %>
+    <%= form.submit "Guardar", class: "btn btn-primary" %>
+  </div>
+<% end %> 

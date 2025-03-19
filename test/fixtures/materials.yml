@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  description: MyString
+  price: 9.99
+  nombre: MyString
+  especificaciones: MyString
+  ancho: 9.99
+  largo: 9.99
+  comments: MyText
+  unit: one
+  user: one
+
+two:
+  description: MyString
+  price: 9.99
+  nombre: MyString
+  especificaciones: MyString
+  ancho: 9.99
+  largo: 9.99
+  comments: MyText
+  unit: two
+  user: two

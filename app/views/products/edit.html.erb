@@ -1,0 +1,15 @@
+<div class="page-header mb-4">
+  <h1>Edit Product</h1>
+  <%= link_to product_path(@product), class: "btn btn-outline-secondary mb-3" do %>
+    <i class="fa fa-arrow-left me-1"></i> Back
+  <% end %>
+</div>
+
+<!-- Vue app mount point -->
+<div id="product-form-app" data-product-id="<%= @product.id %>"></div>
+
+<!-- API token for authentication -->
+<%= tag.meta name: "csrf-token", content: form_authenticity_token %>
+
+<!-- Load Vue app -->
+<%= javascript_pack_tag 'product_form' %> 

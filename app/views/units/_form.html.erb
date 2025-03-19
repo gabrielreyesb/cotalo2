@@ -1,0 +1,28 @@
+<%= form_with(model: unit, class: "unit-form") do |form| %>
+  <% if unit.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(unit.errors.count, "error") %> prohibited this unit from being saved:</h4>
+      <ul>
+        <% unit.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :name, class: "form-label" %>
+    <%= form.text_field :name, class: "form-control", required: true %>
+    <small class="form-text text-muted">Example: Meter, Kilogram, etc.</small>
+  </div>
+  
+  <div class="mb-3">
+    <%= form.label :abbreviation, class: "form-label" %>
+    <%= form.text_field :abbreviation, class: "form-control", required: true %>
+    <small class="form-text text-muted">Example: m, kg, etc.</small>
+  </div>
+  
+  <div class="d-flex justify-content-end">
+    <%= form.submit class: "btn btn-primary" %>
+  </div>
+<% end %> 

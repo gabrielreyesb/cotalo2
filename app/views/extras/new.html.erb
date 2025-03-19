@@ -1,0 +1,23 @@
+<div class="row">
+  <div class="col-12 mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <h1>New Extra</h1>
+      <%= link_to extras_path, class: "btn btn-outline-secondary" do %>
+        <i class="fa fa-arrow-left me-1"></i> Back
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h5>Extra Details</h5>
+      </div>
+      <div class="card-body">
+        <%= render 'form', extra: @extra %>
+      </div>
+    </div>
+  </div>
+</div>
