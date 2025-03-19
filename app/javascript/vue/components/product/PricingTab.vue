@@ -1,55 +1,59 @@
 <template>
   <div class="pricing-tab">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Product Pricing</h5>
-        
-        <div class="row">
-          <div class="col-md-6">
-            <table class="table table-bordered">
-              <tbody>
-                <tr>
-                  <th class="table-light" style="width: 40%">Materials Cost:</th>
-                  <td>{{ formatCurrency(pricing.materials_cost) }}</td>
-                </tr>
-                <tr>
-                  <th class="table-light">Processes Cost:</th>
-                  <td>{{ formatCurrency(pricing.processes_cost) }}</td>
-                </tr>
-                <tr>
-                  <th class="table-light">Extras Cost:</th>
-                  <td>{{ formatCurrency(pricing.extras_cost) }}</td>
-                </tr>
-                <tr>
-                  <th class="table-light">Subtotal:</th>
-                  <td>{{ formatCurrency(pricing.subtotal) }}</td>
-                </tr>
-                <tr>
-                  <th class="table-light">Waste ({{ pricing.waste_percentage }}%):</th>
-                  <td>{{ formatCurrency(pricing.waste_value) }}</td>
-                </tr>
-                <tr>
-                  <th class="table-light">Margin ({{ pricing.margin_percentage }}%):</th>
-                  <td>{{ formatCurrency(pricing.margin_value) }}</td>
-                </tr>
-                <tr class="table-primary">
-                  <th>Total Price:</th>
-                  <td class="fw-bold">{{ formatCurrency(pricing.total_price) }}</td>
-                </tr>
-                <tr>
-                  <th class="table-light">Price Per Piece:</th>
-                  <td>{{ formatCurrency(pricing.final_price_per_piece) }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          
-          <div class="col-md-6">
-            <div class="card h-100">
-              <div class="card-body">
-                <h5 class="card-title">Cost Breakdown</h5>
-                <canvas id="costBreakdownChart" ref="chartCanvas"></canvas>
-              </div>
+    <div class="green-accent-panel mb-4">
+      <h5 class="card-title">Resumen de Precios</h5>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-8">
+        <table class="table table-dark table-bordered">
+          <tbody>
+            <tr>
+              <th style="width: 40%">Costo de Materiales:</th>
+              <td>{{ formatCurrency(pricing.materials_cost) }}</td>
+            </tr>
+            <tr>
+              <th>Costo de Procesos:</th>
+              <td>{{ formatCurrency(pricing.processes_cost) }}</td>
+            </tr>
+            <tr class="table-info">
+              <th>Costo de Extras:</th>
+              <td class="fw-bold">{{ formatCurrency(pricing.extras_cost) }}</td>
+            </tr>
+            <tr>
+              <th>Subtotal:</th>
+              <td>{{ formatCurrency(pricing.subtotal) }}</td>
+            </tr>
+            <tr>
+              <th>Desperdicio ({{ pricing.waste_percentage }}%):</th>
+              <td>{{ formatCurrency(pricing.waste_value) }}</td>
+            </tr>
+            <tr>
+              <th>Precio por Pieza (antes del margen):</th>
+              <td>{{ formatCurrency(pricing.price_per_piece_before_margin) }}</td>
+            </tr>
+            <tr>
+              <th>Margen ({{ pricing.margin_percentage }}%):</th>
+              <td>{{ formatCurrency(pricing.margin_value) }}</td>
+            </tr>
+            <tr class="table-success">
+              <th>Precio Total:</th>
+              <td class="fw-bold">{{ formatCurrency(pricing.total_price) }}</td>
+            </tr>
+            <tr class="table-success">
+              <th>Precio por Pieza:</th>
+              <td class="fw-bold">{{ formatCurrency(pricing.final_price_per_piece) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Desglose de Costos</h5>
+            <div class="chart-container" style="position: relative; height: 260px;">
+              <canvas ref="pricingChart"></canvas>
             </div>
           </div>
         </div>
@@ -71,7 +75,7 @@ export default {
   },
   data() {
     return {
-      chart: null
+      pricingChart: null
     };
   },
   methods: {
@@ -82,69 +86,110 @@ export default {
       }).format(value || 0);
     },
     initChart() {
-      if (this.chart) {
-        this.chart.destroy();
-      }
-      
-      const ctx = this.$refs.chartCanvas.getContext('2d');
-      
-      const data = {
-        labels: ['Materials', 'Processes', 'Extras', 'Waste', 'Margin'],
-        datasets: [{
-          data: [
-            this.pricing.materials_cost || 0,
-            this.pricing.processes_cost || 0,
-            this.pricing.extras_cost || 0,
-            this.pricing.waste_value || 0,
-            this.pricing.margin_value || 0
-          ],
-          backgroundColor: [
-            'rgba(54, 162, 235, 0.6)',
-            'rgba(255, 99, 132, 0.6)',
-            'rgba(255, 206, 86, 0.6)',
-            'rgba(75, 192, 192, 0.6)',
-            'rgba(153, 102, 255, 0.6)'
-          ],
-          borderColor: [
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 99, 132, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(153, 102, 255, 1)'
-          ],
-          borderWidth: 1
-        }]
-      };
-      
-      this.chart = new Chart(ctx, {
-        type: 'pie',
-        data: data,
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'right'
-            },
-            tooltip: {
-              callbacks: {
-                label: (context) => {
-                  const label = context.label || '';
-                  const value = context.raw;
-                  const percentage = Math.round((value / this.pricing.total_price) * 100);
-                  return `${label}: ${this.formatCurrency(value)} (${percentage}%)`;
+      try {
+        if (!this.pricing) return;
+        
+        // Destroy previous chart if it exists
+        if (this.pricingChart) {
+          this.pricingChart.destroy();
+        }
+
+        // Check if canvas element exists
+        if (!this.$refs.pricingChart) {
+          console.warn('Chart canvas element not found');
+          return;
+        }
+
+        const ctx = this.$refs.pricingChart.getContext('2d');
+        
+        // Ensure we have non-zero values for the chart
+        const materialsValue = this.pricing.materials_cost || 0;
+        const processesValue = this.pricing.processes_cost || 0;
+        const extrasValue = this.pricing.extras_cost || 0;
+        const wasteValue = this.pricing.waste_value || 0;
+        const marginValue = this.pricing.margin_value || 0;
+        
+        // Determine if we should use real data or placeholders
+        const hasData = extrasValue > 0 || wasteValue > 0 || marginValue > 0;
+        
+        // Only show non-zero costs for clarity
+        const chartData = [];
+        const labels = [];
+        const colors = [];
+        
+        if (materialsValue > 0 || !hasData) {
+          chartData.push(hasData ? materialsValue : 10);
+          labels.push('Materiales');
+          colors.push('#4bc0c0');
+        }
+        
+        if (processesValue > 0 || !hasData) {
+          chartData.push(hasData ? processesValue : 15);
+          labels.push('Procesos');
+          colors.push('#ff9f40');
+        }
+        
+        if (extrasValue > 0 || !hasData) {
+          chartData.push(hasData ? extrasValue : 35);
+          labels.push('Extras');
+          colors.push('#36a2eb');
+        }
+        
+        if (wasteValue > 0 || !hasData) {
+          chartData.push(hasData ? wasteValue : 15);
+          labels.push('Desperdicio');
+          colors.push('#ffcd56');
+        }
+        
+        if (marginValue > 0 || !hasData) {
+          chartData.push(hasData ? marginValue : 25);
+          labels.push('Margen');
+          colors.push('#42b983');
+        }
+        
+        this.pricingChart = new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: labels,
+            datasets: [{
+              data: chartData,
+              backgroundColor: colors
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'right',
+                labels: {
+                  color: '#e1e1e1'
+                }
+              },
+              tooltip: {
+                callbacks: {
+                  label: (tooltipItem) => {
+                    const value = tooltipItem.raw;
+                    const total = tooltipItem.dataset.data.reduce((a, b) => a + b, 0);
+                    const percentage = Math.round((value / total) * 100);
+                    return `${tooltipItem.label}: ${this.formatCurrency(value)} (${percentage}%)`;
+                  }
                 }
               }
             }
           }
-        }
-      });
+        });
+      } catch (error) {
+        console.error('Error initializing chart:', error);
+      }
     }
   },
   mounted() {
-    // We need to import Chart.js
+    // Initialize the chart after component is mounted
     this.$nextTick(() => {
-      if (this.pricing) {
+      try {
         this.initChart();
+      } catch (error) {
+        console.error('Error in pricing tab mounted hook:', error);
       }
     });
   },
@@ -164,5 +209,72 @@ export default {
 <style scoped>
 .pricing-tab {
   position: relative;
+}
+
+.green-accent-panel {
+  border-left: 3px solid #42b983;
+  padding-left: 1rem;
+}
+
+/* Card styling with green accent */
+.card {
+  background-color: #23272b;
+  border-color: #32383e;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.15);
+}
+
+.card-body {
+  padding: 1rem;
+}
+
+.card-title {
+  color: #e1e1e1;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* Table styling */
+.table {
+  color: #e9ecef;
+  background-color: #23272b;
+  margin-bottom: 0;
+}
+
+.table-dark {
+  background-color: #23272b;
+  color: #e9ecef;
+}
+
+.table-dark th {
+  background-color: #32383e;
+}
+
+.table-success {
+  background-color: rgba(66, 185, 131, 0.2) !important;
+}
+
+.table-success th, 
+.table-success td {
+  color: #42b983;
+}
+
+.table-info {
+  background-color: rgba(54, 162, 235, 0.2) !important;
+}
+
+.table-info th,
+.table-info td {
+  color: #36a2eb;
+}
+
+.table th,
+.table td {
+  border-color: #32383e;
+  padding: 0.75rem;
+}
+
+.fw-bold {
+  font-weight: bold;
 }
 </style> 

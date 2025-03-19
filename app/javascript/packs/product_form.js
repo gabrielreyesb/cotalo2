@@ -2,8 +2,16 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
+// Import Chart.js
+import 'chart.js/auto';
+
 // Import dark mode theme overrides
 import '../vue/vue_styles.css';
+
+// Set Vue feature flags - required for Vue 3 esm-bundler
+window.__VUE_OPTIONS_API__ = true;
+window.__VUE_PROD_DEVTOOLS__ = false;
+window.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false;
 
 // Import Vue and our components
 import { createApp } from 'vue';

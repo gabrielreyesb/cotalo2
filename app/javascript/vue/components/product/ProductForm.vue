@@ -23,12 +23,6 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" :class="{ active: activeTab === 'extras' }" 
-             href="#" @click.prevent="setActiveTab('extras')">
-            <i class="fa fa-plus-circle me-1"></i> Extras
-          </a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link" :class="{ active: activeTab === 'materials', disabled: !productId }" 
              href="#" @click.prevent="setActiveTab('materials')">
             <i class="fa fa-cubes me-1"></i> Materiales
@@ -41,7 +35,13 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" :class="{ active: activeTab === 'pricing', disabled: !productId }" 
+          <a class="nav-link" :class="{ active: activeTab === 'extras' }" 
+             href="#" @click.prevent="setActiveTab('extras')">
+            <i class="fa fa-plus-circle me-1"></i> Extras
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" :class="{ active: activeTab === 'pricing' }" 
              href="#" @click.prevent="setActiveTab('pricing')">
             <i class="fa fa-calculator me-1"></i> Precio
           </a>
@@ -74,14 +74,16 @@
           <extras-tab 
             :product-extras="product && product.data && product.data.extras ? product.data.extras : []"
             :available-extras="availableExtras"
+            :comments="product && product.data && product.data.extras_comments ? product.data.extras_comments : ''"
             @update:product-extras="updateExtras"
+            @update:comments="updateExtrasComments"
           />
         </div>
         
         <!-- Pricing Tab -->
         <div v-if="activeTab === 'pricing' && product" class="tab-pane active">
           <pricing-tab 
-            :pricing="product && product.data && product.data.pricing ? product.data.pricing : {}"
+            :pricing="product.data.pricing || defaultPricing"
           />
         </div>
       </div>
@@ -118,7 +120,20 @@ export default {
       activeTab: 'general',
       saving: false,
       error: null,
-      availableExtras: []
+      availableExtras: [],
+      defaultPricing: {
+        materials_cost: 0,
+        processes_cost: 0,
+        extras_cost: 0,
+        subtotal: 0,
+        waste_percentage: 5,
+        waste_value: 0,
+        price_per_piece_before_margin: 0,
+        margin_percentage: 30,
+        margin_value: 0,
+        total_price: 0,
+        final_price_per_piece: 0
+      }
     };
   },
   computed: {
@@ -129,17 +144,25 @@ export default {
   },
   methods: {
     setActiveTab(tab) {
-      // Allow switching between general and extras tabs even for new products
+      // Allow switching between general, extras and pricing tabs even for new products
       // Only restrict other tabs if product doesn't exist (has no ID)
-      if (['general', 'extras'].includes(tab)) {
+      if (['general', 'extras', 'pricing'].includes(tab)) {
         // These tabs are always accessible
         this.activeTab = tab;
+        
+        // If switching to pricing tab, ensure pricing is calculated
+        if (tab === 'pricing') {
+          this.recalculatePricing();
+        }
       } else if (!this.productId) {
+        console.warn(`Cannot switch to ${tab} tab: no product ID`);
         return;
       } else {
         // Other tabs require a product ID
         this.activeTab = tab;
       }
+      
+      console.log(`Set active tab to: ${tab}`);
     },
     async fetchProduct() {
       if (!this.productId) {
@@ -170,6 +193,7 @@ export default {
             materials: [],
             processes: [],
             extras: [],
+            extras_comments: '',
             pricing: {}
           };
         }
@@ -201,6 +225,7 @@ export default {
             materials: [],
             processes: [],
             extras: [],
+            extras_comments: '',
             pricing: {
               materials_cost: 0,
               processes_cost: 0,
@@ -286,42 +311,58 @@ export default {
       }
     },
     async updateExtras(extras) {
-      if (!this.productId) {
-        // For new products, just update the local data
-        this.product.data.extras = extras;
-        return;
+      if (!this.product || !this.product.data) return;
+      
+      // Update local extras data
+      this.product.data.extras = extras;
+      
+      // Calculate the total cost of extras
+      const extrasCost = extras.reduce((sum, extra) => sum + (extra.unit_price * extra.quantity), 0);
+      
+      // Update pricing data
+      if (!this.product.data.pricing) {
+        this.product.data.pricing = { ...this.defaultPricing };
       }
-
-      try {
-        this.saving = true;
-        
-        const response = await fetch(`/api/v1/products/${this.productId}/update_extras`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-CSRF-Token': this.apiToken,
-            'X-Requested-With': 'XMLHttpRequest'
-          },
-          body: JSON.stringify({
-            extras: extras
-          })
-        });
-        
-        if (!response.ok) {
-          throw new Error('Failed to update extras');
+      
+      // Update extras cost in pricing
+      this.product.data.pricing.extras_cost = extrasCost;
+      
+      // Recalculate pricing
+      this.recalculatePricing();
+      
+      // If we have a productId, update on the server
+      if (this.productId) {
+        try {
+          this.saving = true;
+          
+          const response = await fetch(`/api/v1/products/${this.productId}/update_extras`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-CSRF-Token': this.apiToken,
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+              extras: extras
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to update extras');
+          }
+          
+          // Update the local data with the updated extras
+          this.product.data.extras = await response.json();
+          
+          // Fetch the updated product with new pricing
+          this.fetchProduct();
+          
+        } catch (error) {
+          console.error('Error updating extras:', error);
+        } finally {
+          this.saving = false;
         }
-        
-        // Update the local data with the updated extras
-        this.product.data.extras = await response.json();
-        
-        // Fetch the updated product with new pricing
-        this.fetchProduct();
-        
-      } catch (error) {
-        console.error('Error updating extras:', error);
-      } finally {
-        this.saving = false;
       }
     },
     async fetchAvailableExtras() {
@@ -345,10 +386,107 @@ export default {
         console.error('Error loading available extras:', error);
         this.availableExtras = []; // Ensure we have an empty array if the request fails
       }
+    },
+    addDemoData() {
+      // Only add demo data for new products
+      if (this.productId) return;
+      
+      this.product.data.name = 'Nuevo Producto';
+      this.product.data.description = 'Descripción del nuevo producto';
+      this.product.data.sku = 'NP' + Math.floor(Math.random() * 10000);
+      
+      // Add demo pricing data - set only extras cost and let recalculatePricing handle the rest
+      const pricing = this.product.data.pricing;
+      pricing.extras_cost = 150;
+      pricing.waste_percentage = 5;
+      pricing.margin_percentage = 30;
+      
+      // Recalculate all pricing values
+      this.recalculatePricing();
+    },
+    async updateExtrasComments(comments) {
+      if (!this.product || !this.product.data) return;
+      
+      // Update locally
+      this.product.data.extras_comments = comments;
+      
+      // If we have a productId, also update on the server
+      if (this.productId) {
+        try {
+          const response = await fetch(`/api/v1/products/${this.productId}/update_extras_comments`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-CSRF-Token': this.apiToken,
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+              extras_comments: comments
+            })
+          });
+          
+          if (!response.ok) {
+            console.error('Failed to update extras comments');
+          }
+        } catch (error) {
+          console.error('Error updating extras comments:', error);
+        }
+      }
+    },
+    recalculatePricing() {
+      if (!this.product || !this.product.data || !this.product.data.pricing) return;
+      
+      const pricing = this.product.data.pricing;
+      
+      // Set materials and processes costs to 0 as requested
+      pricing.materials_cost = 0;
+      pricing.processes_cost = 0;
+      
+      // Calculate subtotal
+      pricing.subtotal = pricing.materials_cost + pricing.processes_cost + pricing.extras_cost;
+      
+      // Calculate waste
+      pricing.waste_value = pricing.subtotal * (pricing.waste_percentage / 100);
+      
+      // Calculate subtotal with waste
+      const subtotalWithWaste = pricing.subtotal + pricing.waste_value;
+      
+      // Calculate price per piece before margin
+      const quantity = this.product.data.quantity || 1;
+      pricing.price_per_piece_before_margin = subtotalWithWaste / quantity;
+      
+      // Calculate margin
+      pricing.margin_value = subtotalWithWaste * (pricing.margin_percentage / 100);
+      
+      // Calculate total price
+      pricing.total_price = subtotalWithWaste + pricing.margin_value;
+      
+      // Calculate final price per piece
+      pricing.final_price_per_piece = pricing.total_price / quantity;
     }
   },
   created() {
-    this.fetchProduct();
+    // If productId is provided, fetch the product, otherwise create a new product object
+    if (this.productId) {
+      this.fetchProduct();
+    } else {
+      this.product = {
+        data: {
+          name: '',
+          description: '',
+          sku: '',
+          quantity: 1,
+          extras: [],
+          extras_comments: '',
+          pricing: { ...this.defaultPricing }
+        }
+      };
+      // Add demo data
+      this.addDemoData();
+      // Set loading to false for new products
+      this.loading = false;
+    }
     this.fetchAvailableExtras();
   }
 };
