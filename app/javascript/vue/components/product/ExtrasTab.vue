@@ -125,6 +125,10 @@ export default {
     comments: {
       type: String,
       default: ''
+    },
+    productQuantity: {
+      type: Number,
+      default: 1
     }
   },
   data() {
@@ -188,6 +192,36 @@ export default {
     },
     updateGlobalComments() {
       this.$emit('update:comments', this.globalComments);
+    },
+    updateExtrasCalculations() {
+      console.log('ExtrasTab: Recalculating extras with product quantity', this.productQuantity);
+      
+      // If we need to update calculations based on quantity in the future,
+      // this is where we would do it
+      
+      // For now, just emit the current extras to ensure pricing gets updated
+      this.$emit('update:product-extras', [...this.productExtras]);
+    }
+  },
+  watch: {
+    // Watch for changes to product quantity
+    productQuantity() {
+      console.log('ExtrasTab: Product quantity changed to', this.productQuantity);
+      this.updateExtrasCalculations();
+    },
+    // Also watch for changes to extras array
+    productExtras: {
+      handler(newExtras) {
+        console.log('ExtrasTab: Extras array changed, checking for recalculation flag');
+        // Check if any extras have the recalculation flag
+        const needsRecalculation = newExtras.some(extra => extra._needsRecalculation);
+        
+        if (needsRecalculation) {
+          console.log('ExtrasTab: Found extras needing recalculation');
+          this.updateExtrasCalculations();
+        }
+      },
+      deep: true
     }
   },
   mounted() {

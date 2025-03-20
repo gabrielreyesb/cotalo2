@@ -230,7 +230,18 @@ export default {
     },
     emitFormChanges() {
       // Update the parent component with the current form data in real-time
-      console.log('Form changed, emitting update with:', this.form);
+      const oldQuantity = this.product?.data?.general_info?.quantity;
+      const oldWidth = this.product?.data?.general_info?.width;
+      const oldLength = this.product?.data?.general_info?.length;
+      
+      const newQuantity = this.form.data.general_info.quantity;
+      const newWidth = this.form.data.general_info.width;
+      const newLength = this.form.data.general_info.length;
+      
+      console.log('[GeneralTab] Form changed, detecting changes:');
+      console.log(`  Quantity: ${oldQuantity} → ${newQuantity} (changed: ${oldQuantity !== newQuantity})`);
+      console.log(`  Width: ${oldWidth} → ${newWidth} (changed: ${oldWidth !== newWidth})`);
+      console.log(`  Length: ${oldLength} → ${newLength} (changed: ${oldLength !== newLength})`);
       
       // Create a copy for the update, ensuring we have a valid data structure
       const updatedProduct = {
@@ -240,6 +251,8 @@ export default {
           general_info: { ...this.form.data.general_info }
         }
       };
+      
+      console.log('[GeneralTab] Emitting update:product with updated values');
       
       // Just update the product in the parent, don't trigger save
       this.$emit('update:product', updatedProduct);

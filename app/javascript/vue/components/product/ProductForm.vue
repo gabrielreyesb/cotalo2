@@ -95,6 +95,7 @@
             :product-extras="product && product.data && product.data.extras ? product.data.extras : []"
             :available-extras="availableExtras"
             :comments="product && product.data && product.data.extras_comments ? product.data.extras_comments : ''"
+            :product-quantity="product && product.data && product.data.general_info ? product.data.general_info.quantity : 1"
             @update:product-extras="updateExtras"
             @update:comments="updateExtrasComments"
           />
@@ -375,8 +376,8 @@ export default {
         const createdProduct = await response.json();
         console.log('Product created successfully:', createdProduct);
         
-        // Redirect to the edit page for the new product
-        window.location.href = `/products/${createdProduct.id}/edit`;
+        // Redirect to the products index page instead of edit
+        window.location.href = '/products';
       } catch (error) {
         console.error('Error creating product:', error);
         this.error = error.message;
@@ -387,6 +388,31 @@ export default {
     async updateProduct(data) {
       try {
         this.saving = true;
+        
+        console.log('[ProductForm] updateProduct called with data:', JSON.stringify(data.data.general_info));
+        
+        // Check if dimensions or quantity have changed
+        const oldQuantity = this.product.data.general_info?.quantity;
+        const oldWidth = this.product.data.general_info?.width;
+        const oldLength = this.product.data.general_info?.length;
+        
+        const newQuantity = data.data.general_info?.quantity;
+        const newWidth = data.data.general_info?.width;
+        const newLength = data.data.general_info?.length;
+        
+        const quantityChanged = oldQuantity !== newQuantity;
+        const widthChanged = oldWidth !== newWidth;
+        const lengthChanged = oldLength !== newLength;
+        
+        // Log changes for debugging
+        if (quantityChanged || widthChanged || lengthChanged) {
+          console.log('[ProductForm] Detected dimension changes:');
+          console.log(`  Quantity: ${oldQuantity} → ${newQuantity} (changed: ${quantityChanged})`);
+          console.log(`  Width: ${oldWidth} → ${newWidth} (changed: ${widthChanged})`);
+          console.log(`  Length: ${oldLength} → ${newLength} (changed: ${lengthChanged})`);
+        } else {
+          console.log('[ProductForm] No dimension changes detected');
+        }
         
         // Properly merge the data to prevent losing information between tabs
         if (data && data.data && data.data.general_info) {
@@ -407,7 +433,75 @@ export default {
             this.product.data.quantity = data.data.general_info.quantity;
           }
           
-          console.log('Updated product in parent after form change:', this.product);
+          console.log('[ProductForm] Product updated with new values');
+        }
+        
+        // If quantity, width, or length changed, trigger recalculations
+        if (quantityChanged || widthChanged || lengthChanged) {
+          console.log('[ProductForm] Starting recalculations for dimension changes');
+          
+          // Force a full recalculation of materials
+          if (this.product.data.materials && this.product.data.materials.length > 0) {
+            console.log('[ProductForm] → Recalculating materials due to dimension changes');
+            
+            // Call the parent's update method which will trigger recalculation in MaterialsTab
+            const updatedMaterials = this.product.data.materials.map(material => {
+              return {
+                ...material,
+                // Force material to be recalculated by setting these properties
+                _needsRecalculation: true
+              };
+            });
+            
+            console.log('[ProductForm] → Calling updateMaterials with tagged materials');
+            // This will trigger recalculation via updateMaterials
+            this.updateMaterials(updatedMaterials);
+          } else {
+            console.log('[ProductForm] → No materials to recalculate');
+          }
+          
+          // Force a full recalculation of processes
+          if (this.product.data.processes && this.product.data.processes.length > 0) {
+            console.log('[ProductForm] → Recalculating processes due to changes');
+            
+            // Call the parent's update method which will trigger recalculation in ProcessesTab
+            const updatedProcesses = this.product.data.processes.map(process => {
+              return {
+                ...process,
+                // We don't need to change anything here, just ensure the object is new
+                _needsRecalculation: true
+              };
+            });
+            
+            console.log('[ProductForm] → Calling updateProcesses with tagged processes');
+            // This will trigger recalculation
+            this.updateProcesses(updatedProcesses);
+          } else {
+            console.log('[ProductForm] → No processes to recalculate');
+          }
+          
+          // Calculate extras in case quantity affects them
+          if (this.product.data.extras && this.product.data.extras.length > 0) {
+            console.log('[ProductForm] → Recalculating extras due to quantity changes');
+            
+            const updatedExtras = this.product.data.extras.map(extra => {
+              return {
+                ...extra,
+                _needsRecalculation: true
+              };
+            });
+            
+            console.log('[ProductForm] → Calling updateExtras with tagged extras');
+            this.updateExtras(updatedExtras);
+          } else {
+            console.log('[ProductForm] → No extras to recalculate');
+          }
+          
+          // Always recalculate pricing
+          console.log('[ProductForm] → Calling ensurePricingUpdated');
+          this.ensurePricingUpdated();
+        } else {
+          console.log('[ProductForm] No recalculation needed (no dimension changes)');
         }
         
         // Only save to server if we have a product ID (not for new products)
@@ -434,7 +528,7 @@ export default {
         }
         
       } catch (error) {
-        console.error('Error updating product:', error);
+        console.error('[ProductForm] Error updating product:', error);
       } finally {
         this.saving = false;
       }
@@ -627,6 +721,73 @@ export default {
     async updateMaterials(materials) {
       if (!this.product || !this.product.data) return;
       
+      console.log('[ProductForm] updateMaterials called with', materials.length, 'materials');
+      
+      // Check if there's any material with the needsRecalculation flag
+      const needsRecalculation = materials.some(material => material._needsRecalculation);
+      
+      if (needsRecalculation) {
+        console.log('[ProductForm] Materials have recalculation flag, performing calculations');
+        
+        // Get the current dimensions and quantity from the product
+        const productWidth = this.product.data.general_info?.width || 0;
+        const productLength = this.product.data.general_info?.length || 0;
+        const productQuantity = this.product.data.general_info?.quantity || 1;
+        
+        // Manually calculate each material's values based on current dimensions and quantity
+        materials = materials.map(material => {
+          // Skip materials that don't need recalculation
+          if (!material._needsRecalculation) return material;
+          
+          console.log(`[ProductForm] Recalculating material: ${material.description}`);
+          
+          // Calculate pieces per material (copied from MaterialsTab.calculateMaterialValues)
+          const materialWidth = parseFloat(material.ancho) || 0;
+          const materialLength = parseFloat(material.largo) || 0;
+          
+          let piecesPerMaterial = 0;
+          if (materialWidth > 0 && materialLength > 0 && productWidth > 0 && productLength > 0) {
+            // Calculate how many pieces fit horizontally and vertically
+            const horizontalPieces = Math.floor(materialWidth / productWidth);
+            const verticalPieces = Math.floor(materialLength / productLength);
+            
+            // Try the other orientation as well
+            const horizontalPiecesAlt = Math.floor(materialWidth / productLength);
+            const verticalPiecesAlt = Math.floor(materialLength / productWidth);
+            
+            // Use the orientation that fits more pieces
+            piecesPerMaterial = Math.max(
+              horizontalPieces * verticalPieces, 
+              horizontalPiecesAlt * verticalPiecesAlt
+            );
+          }
+          
+          // Calculate total sheets needed
+          const totalSheets = piecesPerMaterial > 0 ? Math.ceil(productQuantity / piecesPerMaterial) : 0;
+          
+          // Calculate total square meters
+          const totalSquareMeters = totalSheets * (materialWidth * materialLength) / 10000; // convert cm² to m²
+          
+          // Calculate total price - based on square meters, not sheets
+          const totalPrice = totalSquareMeters * material.price;
+          
+          console.log(`[ProductForm] Recalculated values for ${material.description}:`);
+          console.log(`  Pieces per material: ${piecesPerMaterial}`);
+          console.log(`  Total sheets: ${totalSheets}`);
+          console.log(`  Total square meters: ${totalSquareMeters.toFixed(2)}`);
+          console.log(`  Total price: ${totalPrice}`);
+          
+          return {
+            ...material,
+            piecesPerMaterial,
+            totalSheets,
+            totalSquareMeters,
+            totalPrice,
+            _needsRecalculation: undefined // Remove the flag
+          };
+        });
+      }
+      
       // Update local materials data
       this.product.data.materials = materials;
       
@@ -750,7 +911,11 @@ export default {
         pricing.margin_percentage = this.userConfig.margin_percentage;
       }
       
-      // Calculate subtotal
+      // Calculate subtotal - ensure all values are numbers
+      pricing.materials_cost = parseFloat(pricing.materials_cost) || 0;
+      pricing.processes_cost = parseFloat(pricing.processes_cost) || 0;
+      pricing.extras_cost = parseFloat(pricing.extras_cost) || 0;
+      
       pricing.subtotal = pricing.materials_cost + pricing.processes_cost + pricing.extras_cost;
       
       // Calculate waste
@@ -778,11 +943,16 @@ export default {
       pricing.final_price_per_piece = pricing.total_price / quantity;
       
       console.log('Recalculated pricing with waste_percentage:', pricing.waste_percentage, 
-                 'margin_percentage:', pricing.margin_percentage);
+                 'margin_percentage:', pricing.margin_percentage,
+                 'materials_cost:', pricing.materials_cost,
+                 'processes_cost:', pricing.processes_cost,
+                 'extras_cost:', pricing.extras_cost);
     },
     // Update materials, processes, and extras costs in pricing
     ensurePricingUpdated() {
       if (!this.product || !this.product.data || !this.product.data.pricing) return;
+      
+      console.log('Ensuring all pricing components are up-to-date');
       
       // Get total costs from materials, processes, and extras
       const materialsCost = this.product.data.materials ? this.product.data.materials.reduce((sum, material) => {
@@ -801,14 +971,34 @@ export default {
       
       // Update pricing with the calculated values
       const pricing = this.product.data.pricing;
-      pricing.materials_cost = materialsCost;
-      pricing.processes_cost = processesCost;
-      pricing.extras_cost = extrasCost;
       
-      // Recalculate all pricing values
-      this.recalculatePricing();
+      // Check if any costs have changed
+      const materialsChanged = Math.abs(pricing.materials_cost - materialsCost) > 0.01;
+      const processesChanged = Math.abs(pricing.processes_cost - processesCost) > 0.01;
+      const extrasChanged = Math.abs(pricing.extras_cost - extrasCost) > 0.01;
       
-      console.log('Updated pricing before save:', JSON.stringify(pricing));
+      if (materialsChanged || processesChanged || extrasChanged) {
+        console.log('Cost components have changed, updating pricing');
+        console.log('Old costs:', {
+          materials: pricing.materials_cost,
+          processes: pricing.processes_cost,
+          extras: pricing.extras_cost
+        });
+        console.log('New costs:', {
+          materials: materialsCost,
+          processes: processesCost,
+          extras: extrasCost
+        });
+        
+        pricing.materials_cost = materialsCost;
+        pricing.processes_cost = processesCost;
+        pricing.extras_cost = extrasCost;
+        
+        // Recalculate all pricing values
+        this.recalculatePricing();
+      } else {
+        console.log('No changes in cost components detected');
+      }
     },
     async savePricingProduct() {
       // Create or update the product
@@ -845,8 +1035,8 @@ export default {
           const createdProduct = await response.json();
           console.log('Product created successfully:', createdProduct);
           
-          // Redirect to the edit page for the new product
-          window.location.href = `/products/${createdProduct.id}/edit`;
+          // Redirect to the products index page instead of edit
+          window.location.href = '/products';
         } catch (error) {
           console.error('Error creating product:', error);
           this.error = error.message;
@@ -887,6 +1077,54 @@ export default {
     },
     async updateProcesses(processes) {
       if (!this.product || !this.product.data) return;
+      
+      console.log('[ProductForm] updateProcesses called with', processes.length, 'processes');
+      
+      // Check if there's any process with the needsRecalculation flag
+      const needsRecalculation = processes.some(process => process._needsRecalculation);
+      
+      if (needsRecalculation) {
+        console.log('[ProductForm] Processes have recalculation flag, performing calculations');
+        
+        // Get the current quantity and calculate sheets/square meters
+        const productQuantity = this.product.data.general_info?.quantity || 1;
+        const totalSheets = this.calculateTotalSheets();
+        const totalSquareMeters = this.calculateTotalSquareMeters();
+        
+        console.log('[ProductForm] Process calculation values:');
+        console.log(`  Product quantity: ${productQuantity}`);
+        console.log(`  Total sheets: ${totalSheets}`);
+        console.log(`  Total square meters: ${totalSquareMeters}`);
+        
+        // Manually calculate each process's price based on current values
+        processes = processes.map(process => {
+          // Skip processes that don't need recalculation
+          if (!process._needsRecalculation) return process;
+          
+          console.log(`[ProductForm] Recalculating process: ${process.description}`);
+          
+          const basePrice = parseFloat(process.unitPrice) || 0;
+          let calculatedPrice = basePrice;
+          
+          // Recalculate price based on unit type
+          if (process.unit === 'pieza') {
+            calculatedPrice = basePrice * productQuantity;
+            console.log(`  Pieza calculation: ${basePrice} × ${productQuantity} = ${calculatedPrice}`);
+          } else if (process.unit === 'pliego') {
+            calculatedPrice = basePrice * totalSheets;
+            console.log(`  Pliego calculation: ${basePrice} × ${totalSheets} = ${calculatedPrice}`);
+          } else if (process.unit === 'mt2') {
+            calculatedPrice = basePrice * totalSquareMeters;
+            console.log(`  mt2 calculation: ${basePrice} × ${totalSquareMeters} = ${calculatedPrice}`);
+          }
+          
+          return {
+            ...process,
+            price: calculatedPrice,
+            _needsRecalculation: undefined // Remove the flag
+          };
+        });
+      }
       
       // Update local processes data
       this.product.data.processes = processes;

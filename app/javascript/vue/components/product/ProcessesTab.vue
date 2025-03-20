@@ -223,6 +223,87 @@ export default {
     },
     updateGlobalComments() {
       this.$emit('update:comments', this.globalComments);
+    },
+    // Method to recalculate all processes when quantity, sheets, or square meters change
+    updateProcessCalculations() {
+      console.log('[ProcessesTab] updateProcessCalculations called with:');
+      console.log(`  Product Quantity: ${this.productQuantity}`);
+      console.log(`  Total Sheets: ${this.totalSheets}`);
+      console.log(`  Total Square Meters: ${this.totalSquareMeters}`);
+      
+      if (this.productProcesses.length === 0) {
+        console.log('[ProcessesTab] No processes to recalculate');
+        return;
+      }
+      
+      console.log('[ProcessesTab] Recalculating for', this.productProcesses.length, 'processes');
+      
+      const updatedProcesses = this.productProcesses.map((process, index) => {
+        console.log(`[ProcessesTab] Calculating process ${index + 1}: ${process.description} (unit: ${process.unit})`);
+        
+        const basePrice = parseFloat(process.unitPrice) || 0;
+        let calculatedPrice = basePrice;
+        
+        // Recalculate price based on unit type
+        if (process.unit === 'pieza') {
+          calculatedPrice = basePrice * this.productQuantity;
+          console.log(`  Pieza calculation: ${basePrice} × ${this.productQuantity} = ${calculatedPrice}`);
+        } else if (process.unit === 'pliego') {
+          calculatedPrice = basePrice * this.totalSheets;
+          console.log(`  Pliego calculation: ${basePrice} × ${this.totalSheets} = ${calculatedPrice}`);
+        } else if (process.unit === 'mt2') {
+          calculatedPrice = basePrice * this.totalSquareMeters;
+          console.log(`  mt2 calculation: ${basePrice} × ${this.totalSquareMeters} = ${calculatedPrice}`);
+        } else {
+          console.log(`  Standard unit: using base price ${basePrice}`);
+        }
+        
+        return {
+          ...process,
+          price: calculatedPrice,
+          // Remove calculation flag
+          _needsRecalculation: undefined
+        };
+      });
+      
+      // Calculate and emit the new total cost
+      const newTotalCost = updatedProcesses.reduce((sum, process) => {
+        return sum + (parseFloat(process.price) || 0);
+      }, 0);
+      
+      console.log('[ProcessesTab] Emitting updated processes with total cost:', newTotalCost);
+      
+      this.$emit('update:product-processes', updatedProcesses);
+      this.$emit('update:processes-cost', newTotalCost);
+    }
+  },
+  watch: {
+    // Watch for changes in product quantity, sheets, or square meters
+    productQuantity() {
+      console.log('ProcessesTab: Product quantity changed to', this.productQuantity);
+      this.updateProcessCalculations();
+    },
+    totalSheets() {
+      console.log('ProcessesTab: Total sheets changed to', this.totalSheets);
+      this.updateProcessCalculations();
+    },
+    totalSquareMeters() {
+      console.log('ProcessesTab: Total square meters changed to', this.totalSquareMeters);
+      this.updateProcessCalculations();
+    },
+    // Also watch for changes to processes array
+    productProcesses: {
+      handler(newProcesses) {
+        console.log('ProcessesTab: Processes array changed, checking for recalculation flag');
+        // Check if any processes have the recalculation flag
+        const needsRecalculation = newProcesses.some(process => process._needsRecalculation);
+        
+        if (needsRecalculation) {
+          console.log('ProcessesTab: Found processes needing recalculation');
+          this.updateProcessCalculations();
+        }
+      },
+      deep: true
     }
   },
   mounted() {

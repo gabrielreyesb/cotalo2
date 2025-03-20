@@ -61,6 +61,9 @@
     </div>
     
     <div class="d-flex justify-content-end mt-4">
+      <button type="button" class="btn btn-warning me-2" @click="recalculatePricing">
+        <i class="fa fa-refresh me-1"></i> Recalcular
+      </button>
       <a href="/products" class="btn btn-secondary me-2">
         Cancel
       </a>
@@ -106,6 +109,10 @@ export default {
       // Just emit the save event directly
       this.$emit('save:product');
     },
+    recalculatePricing() {
+      console.log('Manually triggering pricing recalculation');
+      this.$emit('recalculate:pricing');
+    },
     initChart() {
       try {
         if (!this.pricing) return;
@@ -141,31 +148,31 @@ export default {
         if (materialsValue > 0 || !hasData) {
           chartData.push(hasData ? materialsValue : 10);
           labels.push('Materiales');
-          colors.push('#0275d8'); // Bootstrap primary color
+          colors.push('#3c6382'); // Darker blue
         }
         
         if (processesValue > 0 || !hasData) {
           chartData.push(hasData ? processesValue : 15);
           labels.push('Procesos');
-          colors.push('#f0ad4e'); // Bootstrap warning color
+          colors.push('#60a3bc'); // Medium blue
         }
         
         if (extrasValue > 0 || !hasData) {
           chartData.push(hasData ? extrasValue : 35);
           labels.push('Extras');
-          colors.push('#5bc0de'); // Bootstrap info color
+          colors.push('#82ccdd'); // Light blue
         }
         
         if (wasteValue > 0 || !hasData) {
           chartData.push(hasData ? wasteValue : 15);
           labels.push('Desperdicio');
-          colors.push('#ffcd56');
+          colors.push('#b8e994'); // Soft green
         }
         
         if (marginValue > 0 || !hasData) {
           chartData.push(hasData ? marginValue : 25);
           labels.push('Margen');
-          colors.push('#42b983');
+          colors.push('#78e08f'); // Medium green
         }
         
         this.pricingChart = new Chart(ctx, {

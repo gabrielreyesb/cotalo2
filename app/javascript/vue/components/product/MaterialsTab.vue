@@ -252,40 +252,83 @@ export default {
     },
     updateMaterialsCalculations() {
       // Recalculate values for all materials when product dimensions or quantity changes
+      console.log('[MaterialsTab] updateMaterialsCalculations called with:');
+      console.log(`  Product Width: ${this.productWidth}`);
+      console.log(`  Product Length: ${this.productLength}`);
+      console.log(`  Product Quantity: ${this.productQuantity}`);
+      
       if (this.productMaterials.length > 0) {
-        const updatedMaterials = this.productMaterials.map(material => {
-          const calculations = this.calculateMaterialValues({
+        console.log('[MaterialsTab] Recalculating for', this.productMaterials.length, 'materials');
+        
+        const updatedMaterials = this.productMaterials.map((material, index) => {
+          console.log(`[MaterialsTab] Calculating material ${index + 1}: ${material.description}`);
+          
+          // Deep clone to ensure we don't modify props directly
+          const materialCopy = {
             ...material,
             ancho: material.ancho,
             largo: material.largo,
             price: material.price
-          });
+          };
+          
+          const calculations = this.calculateMaterialValues(materialCopy);
+          
+          console.log(`[MaterialsTab] Calculated values for ${material.description}:`);
+          console.log(`  Pieces per material: ${calculations.piecesPerMaterial}`);
+          console.log(`  Total sheets: ${calculations.totalSheets}`);
+          console.log(`  Total square meters: ${calculations.totalSquareMeters.toFixed(2)}`);
+          console.log(`  Total price: ${calculations.totalPrice}`);
           
           return {
             ...material,
             piecesPerMaterial: calculations.piecesPerMaterial,
             totalSheets: calculations.totalSheets,
             totalSquareMeters: calculations.totalSquareMeters,
-            totalPrice: calculations.totalPrice
+            totalPrice: calculations.totalPrice,
+            // Remove calculation flag
+            _needsRecalculation: undefined
           };
         });
         
-        this.$emit('update:product-materials', updatedMaterials);
-        this.$emit('update:materials-cost', updatedMaterials.reduce((sum, material) => {
+        const totalCost = updatedMaterials.reduce((sum, material) => {
           return sum + (parseFloat(material.totalPrice) || 0);
-        }, 0));
+        }, 0);
+        
+        console.log('[MaterialsTab] Emitting updated materials with total cost:', totalCost);
+        
+        this.$emit('update:product-materials', updatedMaterials);
+        this.$emit('update:materials-cost', totalCost);
+      } else {
+        console.log('[MaterialsTab] No materials to recalculate');
       }
     }
   },
   watch: {
     productWidth() {
+      console.log('MaterialsTab: Product width changed to', this.productWidth);
       this.updateMaterialsCalculations();
     },
     productLength() {
+      console.log('MaterialsTab: Product length changed to', this.productLength);
       this.updateMaterialsCalculations();
     },
     productQuantity() {
+      console.log('MaterialsTab: Product quantity changed to', this.productQuantity);
       this.updateMaterialsCalculations();
+    },
+    // Also watch for changes to materials array
+    productMaterials: {
+      handler(newMaterials) {
+        console.log('MaterialsTab: Materials array changed, checking for recalculation flag');
+        // Check if any materials have the recalculation flag
+        const needsRecalculation = newMaterials.some(material => material._needsRecalculation);
+        
+        if (needsRecalculation) {
+          console.log('MaterialsTab: Found materials needing recalculation');
+          this.updateMaterialsCalculations();
+        }
+      },
+      deep: true
     }
   },
   mounted() {
