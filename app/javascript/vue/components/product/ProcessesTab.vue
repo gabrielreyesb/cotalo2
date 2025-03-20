@@ -43,8 +43,6 @@
         <thead>
           <tr>
             <th>Descripción</th>
-            <th>Ancho</th>
-            <th>Largo</th>
             <th>Unidad</th>
             <th>Precio</th>
             <th>Acciones</th>
@@ -53,8 +51,6 @@
         <tbody>
           <tr v-for="(process, index) in productProcesses" :key="index">
             <td>{{ process.description }}</td>
-            <td>{{ process.width }}</td>
-            <td>{{ process.length }}</td>
             <td>{{ process.unit }}</td>
             <td>{{ formatCurrency(process.price) }}</td>
             <td>
@@ -142,8 +138,6 @@ export default {
       const newProcess = {
         id: this.selectedProcess.id,
         description: this.selectedProcess.description,
-        width: this.selectedProcess.width || 0,
-        length: this.selectedProcess.length || 0,
         unit: this.selectedProcess.unit || 'unidad',
         price: this.selectedProcess.price || 0
       };

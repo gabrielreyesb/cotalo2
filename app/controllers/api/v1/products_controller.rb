@@ -56,6 +56,20 @@ class Api::V1::ProductsController < ApplicationController
     render json: @extras.map { |e| extra_json(e) }
   end
 
+  # GET /api/v1/manufacturing_processes
+  def available_manufacturing_processes
+    begin
+      # Directly query the manufacturing processes table
+      @processes = ManufacturingProcess.order(:description)
+      
+      render json: @processes.map { |p| process_json(p) }
+    rescue => e
+      # Log the error but return an empty array to the client
+      Rails.logger.error "Error fetching manufacturing processes: #{e.message}"
+      render json: []
+    end
+  end
+
   private
 
   def set_product
@@ -84,6 +98,20 @@ class Api::V1::ProductsController < ApplicationController
         id: extra.unit.id,
         name: extra.unit.name,
         abbreviation: extra.unit.abbreviation
+      } : nil
+    }
+  end
+
+  def process_json(process)
+    {
+      id: process.id,
+      description: process.name || process.description,
+      unit: process.unit ? process.unit.name : 'unidad',
+      price: process.cost || 0,
+      unit_object: process.unit ? {
+        id: process.unit.id,
+        name: process.unit.name,
+        abbreviation: process.unit.try(:abbreviation)
       } : nil
     }
   end

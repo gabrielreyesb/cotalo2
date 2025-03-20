@@ -599,52 +599,7 @@ export default {
     },
     async fetchAvailableProcesses() {
       try {
-        // TEMPORARY: Use mock data since the API endpoint doesn't exist yet
-        console.log('Using mock manufacturing processes data');
-        this.availableProcesses = [
-          {
-            id: 1,
-            description: 'Corte láser',
-            width: 0,
-            length: 0,
-            unit: 'minuto',
-            price: 150
-          },
-          {
-            id: 2,
-            description: 'Doblado',
-            width: 0,
-            length: 0,
-            unit: 'pieza',
-            price: 75
-          },
-          {
-            id: 3,
-            description: 'Fresado CNC',
-            width: 0, 
-            length: 0,
-            unit: 'hora',
-            price: 300
-          },
-          {
-            id: 4,
-            description: 'Plegado',
-            width: 0,
-            length: 0,
-            unit: 'pieza',
-            price: 50
-          },
-          {
-            id: 5,
-            description: 'Soldadura',
-            width: 0,
-            length: 0,
-            unit: 'punto',
-            price: 40
-          }
-        ];
-        
-        /* COMMENTED OUT: Will be implemented when backend endpoint is available
+        console.log('Fetching manufacturing processes...');
         const response = await fetch('/api/v1/manufacturing_processes', {
           headers: {
             'Accept': 'application/json',
@@ -653,15 +608,34 @@ export default {
         });
         
         if (!response.ok) {
-          throw new Error(`Failed to load available processes: ${response.status} ${response.statusText}`);
+          throw new Error(`Failed to load manufacturing processes: ${response.status} ${response.statusText}`);
         }
         
         const data = await response.json();
+        console.log('Successfully fetched manufacturing processes:', data);
         this.availableProcesses = data;
-        */
+        
       } catch (error) {
         console.error('Error loading available processes:', error);
-        this.availableProcesses = []; // Ensure we have an empty array if the request fails
+        // Only use mock data in case of actual errors
+        this.availableProcesses = [
+          {
+            id: -1, // Using negative IDs to indicate mock data
+            description: 'Corte láser (mock)',
+            width: 0,
+            length: 0,
+            unit: 'minuto',
+            price: 150
+          },
+          {
+            id: -2,
+            description: 'Doblado (mock)',
+            width: 0,
+            length: 0,
+            unit: 'pieza',
+            price: 75
+          }
+        ];
       }
     }
   },

@@ -38,6 +38,7 @@ Rails.application.routes.draw do
         end
       end
       get 'extras', to: 'products#available_extras'
+      get 'manufacturing_processes', to: 'products#available_manufacturing_processes'
     end
   end
   
