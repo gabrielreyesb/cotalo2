@@ -198,11 +198,30 @@ export default {
   position: relative;
 }
 
-/* Card styling with green accent */
+/* Green accent panel styling */
+.green-accent-panel > .card,
+.green-accent-panel > div > .card {
+  border-left: 4px solid #42b983;
+  padding-left: 0.5rem;
+  margin-left: 0.5rem;
+}
+
+.green-accent-panel > table.table {
+  border-left: 4px solid #42b983;
+  margin-left: 0.5rem;
+}
+
+/* No processes message styling */
+.green-accent-panel > .text-center {
+  border-left: 4px solid #42b983;
+  padding-left: 0.5rem;
+  margin-left: 0.5rem;
+}
+
+/* Card styling */
 .card {
   background-color: #23272b;
   border-color: #32383e;
-  border-left: 2px solid #42b983;
   margin-bottom: 1.5rem;
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.15);
 }
@@ -215,6 +234,8 @@ export default {
 .table {
   color: #e9ecef;
   background-color: #23272b;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 .table-dark {

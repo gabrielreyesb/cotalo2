@@ -64,7 +64,7 @@ class Api::V1::ProductsController < ApplicationController
 
   def available_materials
     @materials = current_user.materials
-    render json: @materials, status: :ok
+    render json: @materials.map { |m| material_json(m) }, status: :ok
   end
 
   # PUT /api/v1/products/:id/update_extras_comments
@@ -189,6 +189,22 @@ class Api::V1::ProductsController < ApplicationController
         id: process.unit.id,
         name: process.unit.name,
         abbreviation: process.unit.try(:abbreviation)
+      } : nil
+    }
+  end
+
+  def material_json(material)
+    {
+      id: material.id,
+      description: material.description || material.nombre,
+      ancho: material.ancho,
+      largo: material.largo,
+      price: material.price || 0,
+      unit: material.unit ? material.unit.name : 'unidad',
+      unit_object: material.unit ? {
+        id: material.unit.id,
+        name: material.unit.name,
+        abbreviation: material.unit.try(:abbreviation)
       } : nil
     }
   end
