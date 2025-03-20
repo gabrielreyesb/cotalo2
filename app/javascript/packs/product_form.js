@@ -17,11 +17,9 @@ window.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false;
 import { createApp } from 'vue';
 import ProductForm from '../vue/components/product/ProductForm.vue';
 
-console.log('Product form JS loaded');
 
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM loaded, initializing Vue app');
   
   try {
     const appElement = document.getElementById('product-form-app');
@@ -30,11 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
       // Get product ID from data attribute (can be null for new products)
       const productId = appElement.dataset.productId || null;
       const isNew = !productId || productId === '';
-      
-      console.log('App mount element found with data attributes:', { 
-        productId: productId, 
-        isNew: isNew
-      });
       
       // Create and mount the Vue app
       const app = createApp(ProductForm, {
@@ -57,9 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
       };
       
       app.mount(appElement);
-      console.log('Vue app mounted with productId:', productId, 'isNew:', isNew);
     } else {
-      console.error('Product form app element not found');
       document.body.innerHTML += `
         <div class="alert alert-danger my-5 container">
           <h4 class="alert-heading">Initialization Error</h4>

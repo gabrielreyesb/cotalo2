@@ -46,23 +46,6 @@
           </div>
         </div>
       </div>
-      
-      <!-- Global comments for all extras -->
-      <div class="card mt-3 mb-4">
-        <div class="card-body">
-          <div class="form-group">
-            <label for="global-comments" class="form-label">Comentarios sobre los extras</label>
-            <textarea 
-              id="global-comments" 
-              class="form-control" 
-              v-model="globalComments" 
-              rows="3"
-              placeholder="Agregar notas o comentarios generales sobre los extras de este producto"
-              @change="updateGlobalComments"
-            ></textarea>
-          </div>
-        </div>
-      </div>
 
       <div v-if="!productExtras.length" class="text-center my-5">
         <p class="text-muted">No hay extras agregados. Selecciona un extra y agrégalo al producto.</p>
@@ -105,6 +88,24 @@
           </tr>
         </tfoot>
       </table>
+
+      <!-- Global comments for all extras -->
+      <div class="card mt-3 mb-4">
+        <div class="card-body">
+          <div class="form-group">
+            <label for="global-comments" class="form-label">Comentarios sobre los extras</label>
+            <textarea 
+              id="global-comments" 
+              class="form-control" 
+              v-model="globalComments" 
+              rows="3"
+              placeholder="Agregar notas o comentarios generales sobre los extras de este producto"
+              @change="updateGlobalComments"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+      
     </div>
   </div>
 </template>

@@ -59,6 +59,15 @@
         </div>
       </div>
     </div>
+    
+    <div class="d-flex justify-content-end mt-4">
+      <a href="/products" class="btn btn-secondary me-2">
+        Cancel
+      </a>
+      <button type="button" class="btn btn-primary" @click="saveProduct" :disabled="saving">
+        {{ isNew ? 'Crear producto' : 'Guardar cambios' }}
+      </button>
+    </div>
   </div>
 </template>
 
@@ -71,11 +80,16 @@ export default {
     pricing: {
       type: Object,
       required: true
+    },
+    isNew: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
-      pricingChart: null
+      pricingChart: null,
+      saving: false
     };
   },
   methods: {
@@ -84,6 +98,10 @@ export default {
         style: 'currency',
         currency: 'USD'
       }).format(value || 0);
+    },
+    saveProduct() {
+      this.saving = true;
+      this.$emit('save:product');
     },
     initChart() {
       try {

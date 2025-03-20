@@ -29,7 +29,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" :class="{ active: activeTab === 'processes', disabled: !productId }" 
+          <a class="nav-link" :class="{ active: activeTab === 'processes' }" 
              href="#" @click.prevent="setActiveTab('processes')">
             <i class="fa fa-cogs me-1"></i> Procesos
           </a>
@@ -66,7 +66,13 @@
         
         <!-- Processes Tab -->
         <div v-if="activeTab === 'processes' && product" class="tab-pane active">
-          <p class="text-muted">Processes tab coming soon</p>
+          <processes-tab 
+            :product-processes="product && product.data && product.data.processes ? product.data.processes : []"
+            :available-processes="availableProcesses"
+            :comments="product && product.data && product.data.processes_comments ? product.data.processes_comments : ''"
+            @update:product-processes="updateProcesses"
+            @update:comments="updateProcessesComments"
+          />
         </div>
         
         <!-- Extras Tab -->
@@ -84,6 +90,8 @@
         <div v-if="activeTab === 'pricing' && product" class="tab-pane active">
           <pricing-tab 
             :pricing="product.data.pricing || defaultPricing"
+            :is-new="isNew"
+            @save:product="savePricingProduct"
           />
         </div>
       </div>
@@ -95,13 +103,15 @@
 import ExtrasTab from './ExtrasTab.vue';
 import GeneralTab from './GeneralTab.vue';
 import PricingTab from './PricingTab.vue';
+import ProcessesTab from './ProcessesTab.vue';
 
 export default {
   name: 'ProductForm',
   components: {
     ExtrasTab,
     GeneralTab,
-    PricingTab
+    PricingTab,
+    ProcessesTab
   },
   props: {
     productId: {
@@ -121,6 +131,7 @@ export default {
       saving: false,
       error: null,
       availableExtras: [],
+      availableProcesses: [],
       defaultPricing: {
         materials_cost: 0,
         processes_cost: 0,
@@ -144,9 +155,9 @@ export default {
   },
   methods: {
     setActiveTab(tab) {
-      // Allow switching between general, extras and pricing tabs even for new products
+      // Allow switching between general, extras, processes and pricing tabs even for new products
       // Only restrict other tabs if product doesn't exist (has no ID)
-      if (['general', 'extras', 'pricing'].includes(tab)) {
+      if (['general', 'extras', 'processes', 'pricing'].includes(tab)) {
         // These tabs are always accessible
         this.activeTab = tab;
         
@@ -194,6 +205,7 @@ export default {
             processes: [],
             extras: [],
             extras_comments: '',
+            processes_comments: '',
             pricing: {}
           };
         }
@@ -209,36 +221,16 @@ export default {
       try {
         // Initialize with empty structure for a new product
         this.product = {
-          description: '',
+          description: 'Descripción del producto',
           data: {
-            general_info: {
-              width: null,
-              length: null,
-              inner_measurements: '',
-              quantity: 1,
-              customer_name: '',
-              customer_organization: '',
-              customer_email: '',
-              customer_phone: '',
-              comments: ''
-            },
-            materials: [],
-            processes: [],
+            name: '',
+            description: '',
+            sku: '',
+            quantity: 1,
             extras: [],
             extras_comments: '',
-            pricing: {
-              materials_cost: 0,
-              processes_cost: 0,
-              extras_cost: 0,
-              subtotal: 0,
-              waste_percentage: 5,
-              waste_value: 0,
-              price_per_piece_before_margin: 0,
-              margin_percentage: 30,
-              margin_value: 0,
-              total_price: 0,
-              final_price_per_piece: 0
-            }
+            processes_comments: '',
+            pricing: { ...this.defaultPricing }
           }
         };
       } catch (error) {
@@ -391,15 +383,40 @@ export default {
       // Only add demo data for new products
       if (this.productId) return;
       
+      // Set basic product info
       this.product.data.name = 'Nuevo Producto';
-      this.product.data.description = 'Descripción del nuevo producto';
+      this.product.data.description = 'Descripción del producto';
       this.product.data.sku = 'NP' + Math.floor(Math.random() * 10000);
       
-      // Add demo pricing data - set only extras cost and let recalculatePricing handle the rest
+      // Set general info as requested
+      if (!this.product.data.general_info) {
+        this.product.data.general_info = {};
+      }
+      
+      // Set specific values as requested
+      this.product.data.general_info.quantity = 3000;
+      this.product.data.general_info.width = 32;
+      this.product.data.general_info.length = 22;
+      
+      // Set other general info fields with demo data
+      this.product.data.general_info.inner_measurements = '30cm x 20cm';
+      this.product.data.general_info.customer_name = 'Cliente Demo';
+      this.product.data.general_info.customer_organization = 'Organización Demo';
+      this.product.data.general_info.customer_email = 'cliente@demo.com';
+      this.product.data.general_info.customer_phone = '555-123-4567';
+      this.product.data.general_info.comments = 'Este es un producto de demostración para pruebas.';
+      
+      // Important: Also set the description in the main product object for the GeneralTab
+      this.product.description = 'Descripción del producto';
+      
+      // Add demo pricing data - set extras cost to 0 and let recalculatePricing handle the rest
       const pricing = this.product.data.pricing;
-      pricing.extras_cost = 150;
+      pricing.extras_cost = 0;
       pricing.waste_percentage = 5;
       pricing.margin_percentage = 30;
+      
+      // Update quantity in product data to match general info
+      this.product.data.quantity = this.product.data.general_info.quantity;
       
       // Recalculate all pricing values
       this.recalculatePricing();
@@ -452,8 +469,13 @@ export default {
       // Calculate subtotal with waste
       const subtotalWithWaste = pricing.subtotal + pricing.waste_value;
       
+      // Get quantity from general_info if available, otherwise use product quantity or default to 1
+      const quantity = 
+        (this.product.data.general_info && this.product.data.general_info.quantity) || 
+        this.product.data.quantity || 
+        1;
+      
       // Calculate price per piece before margin
-      const quantity = this.product.data.quantity || 1;
       pricing.price_per_piece_before_margin = subtotalWithWaste / quantity;
       
       // Calculate margin
@@ -464,6 +486,183 @@ export default {
       
       // Calculate final price per piece
       pricing.final_price_per_piece = pricing.total_price / quantity;
+    },
+    async savePricingProduct() {
+      if (this.isNew) {
+        // For new products, create the product using all data
+        const productData = {
+          description: this.product.data.name || 'Nuevo Producto',
+          data: this.product.data
+        };
+        
+        this.createProduct(productData);
+      } else {
+        // For existing products, update the pricing data
+        try {
+          this.saving = true;
+          
+          const response = await fetch(`/api/v1/products/${this.productId}/update_pricing`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-CSRF-Token': this.apiToken,
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+              pricing: this.product.data.pricing
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to update pricing');
+          }
+          
+          const updatedProduct = await response.json();
+          this.product = updatedProduct;
+          
+        } catch (error) {
+          console.error('Error updating pricing:', error);
+        } finally {
+          this.saving = false;
+        }
+      }
+    },
+    async updateProcesses(processes) {
+      if (!this.product || !this.product.data) return;
+      
+      // Update local processes data
+      this.product.data.processes = processes;
+      
+      // If we have a productId, update on the server
+      if (this.productId) {
+        try {
+          this.saving = true;
+          
+          const response = await fetch(`/api/v1/products/${this.productId}/update_processes`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-CSRF-Token': this.apiToken,
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+              processes: processes
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to update processes');
+          }
+          
+          // Update the local data with the updated processes
+          this.product.data.processes = await response.json();
+          
+        } catch (error) {
+          console.error('Error updating processes:', error);
+        } finally {
+          this.saving = false;
+        }
+      }
+    },
+    
+    async updateProcessesComments(comments) {
+      if (!this.product || !this.product.data) return;
+      
+      // Update locally
+      this.product.data.processes_comments = comments;
+      
+      // If we have a productId, also update on the server
+      if (this.productId) {
+        try {
+          const response = await fetch(`/api/v1/products/${this.productId}/update_processes_comments`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-CSRF-Token': this.apiToken,
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+              processes_comments: comments
+            })
+          });
+          
+          if (!response.ok) {
+            console.error('Failed to update processes comments');
+          }
+        } catch (error) {
+          console.error('Error updating processes comments:', error);
+        }
+      }
+    },
+    async fetchAvailableProcesses() {
+      try {
+        // TEMPORARY: Use mock data since the API endpoint doesn't exist yet
+        console.log('Using mock manufacturing processes data');
+        this.availableProcesses = [
+          {
+            id: 1,
+            description: 'Corte láser',
+            width: 0,
+            length: 0,
+            unit: 'minuto',
+            price: 150
+          },
+          {
+            id: 2,
+            description: 'Doblado',
+            width: 0,
+            length: 0,
+            unit: 'pieza',
+            price: 75
+          },
+          {
+            id: 3,
+            description: 'Fresado CNC',
+            width: 0, 
+            length: 0,
+            unit: 'hora',
+            price: 300
+          },
+          {
+            id: 4,
+            description: 'Plegado',
+            width: 0,
+            length: 0,
+            unit: 'pieza',
+            price: 50
+          },
+          {
+            id: 5,
+            description: 'Soldadura',
+            width: 0,
+            length: 0,
+            unit: 'punto',
+            price: 40
+          }
+        ];
+        
+        /* COMMENTED OUT: Will be implemented when backend endpoint is available
+        const response = await fetch('/api/v1/manufacturing_processes', {
+          headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Failed to load available processes: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        this.availableProcesses = data;
+        */
+      } catch (error) {
+        console.error('Error loading available processes:', error);
+        this.availableProcesses = []; // Ensure we have an empty array if the request fails
+      }
     }
   },
   created() {
@@ -472,6 +671,7 @@ export default {
       this.fetchProduct();
     } else {
       this.product = {
+        description: 'Descripción del producto',
         data: {
           name: '',
           description: '',
@@ -479,6 +679,7 @@ export default {
           quantity: 1,
           extras: [],
           extras_comments: '',
+          processes_comments: '',
           pricing: { ...this.defaultPricing }
         }
       };
@@ -488,6 +689,7 @@ export default {
       this.loading = false;
     }
     this.fetchAvailableExtras();
+    this.fetchAvailableProcesses();
   }
 };
 </script>

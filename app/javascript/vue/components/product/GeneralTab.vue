@@ -134,14 +134,6 @@
         </div>
       </div>
       
-      <div class="d-flex justify-content-end mt-4">
-        <a href="/products" class="btn btn-secondary me-2">
-          Cancel
-        </a>
-        <button type="submit" class="btn btn-primary" :disabled="saving">
-          {{ isNew ? 'Crear producto' : 'Guardar cambios' }}
-        </button>
-      </div>
     </form>
   </div>
 </template>
