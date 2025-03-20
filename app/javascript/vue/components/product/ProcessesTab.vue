@@ -165,16 +165,25 @@ export default {
       const basePrice = parseFloat(process.price) || 0;
       let calculatedPrice = basePrice;
       
+      console.log('Adding process:', process);
+      console.log('Base price:', basePrice);
+      console.log('Product quantity:', this.productQuantity);
+      console.log('Total sheets:', this.totalSheets);
+      console.log('Total square meters:', this.totalSquareMeters);
+      
       // Calculate price based on unit type
       if (process.unit === 'pieza') {
         // For pieces: quantity of products * process price
         calculatedPrice = basePrice * this.productQuantity;
+        console.log('Calculated price for pieza:', calculatedPrice);
       } else if (process.unit === 'pliego') {
         // For sheets: materials sheets * process price
         calculatedPrice = basePrice * this.totalSheets;
+        console.log('Calculated price for pliego:', calculatedPrice, 'using', this.totalSheets, 'sheets');
       } else if (process.unit === 'mt2') {
-        // For square meters: total square meters * process price
+        // For square meters: total square meters OF THE MATERIAL * process price
         calculatedPrice = basePrice * this.totalSquareMeters;
+        console.log('Calculated price for mt2:', calculatedPrice, 'using exactly', this.totalSquareMeters, 'square meters');
       }
       
       const newProcess = {
@@ -188,8 +197,13 @@ export default {
       const updatedProcesses = [...this.productProcesses, newProcess];
       this.$emit('update:product-processes', updatedProcesses);
       
-      // Emit the total cost of processes
-      this.$emit('update:processes-cost', this.totalCost + calculatedPrice);
+      // Calculate the new total cost including the new process
+      const newTotalCost = this.totalCost + calculatedPrice;
+      
+      // Emit the updated total cost of processes
+      this.$emit('update:processes-cost', newTotalCost);
+      
+      console.log('Added process, new total cost:', newTotalCost);
       
       // Reset form
       this.selectedProcessId = '';
@@ -222,7 +236,12 @@ export default {
     });
     
     // Emit initial processes cost when component mounts
-    this.$emit('update:processes-cost', this.totalCost);
+    const initialCost = this.productProcesses.reduce((sum, process) => {
+      return sum + (parseFloat(process.price) || 0);
+    }, 0);
+    
+    console.log('Emitting initial process cost:', initialCost);
+    this.$emit('update:processes-cost', initialCost);
   }
 }
 </script>

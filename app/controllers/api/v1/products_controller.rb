@@ -11,13 +11,10 @@ class Api::V1::ProductsController < ApplicationController
   def create
     @product = current_user.products.build(product_params)
     
-    # Initialize with default data structure
-    if @product.data.blank?
-      @product.data = Product.default_data
-    end
+    # Just save the product with all data from the form as-is
+    # No recalculation needed since frontend has all the values
     
     if @product.save
-      @product.calculate_totals.save
       render json: @product, status: :created
     else
       render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
@@ -207,5 +204,62 @@ class Api::V1::ProductsController < ApplicationController
         abbreviation: material.unit.try(:abbreviation)
       } : nil
     }
+  end
+
+  # Helper method to ensure pricing data is properly calculated
+  def ensure_pricing_calculated(product)
+    return if product.data.blank? || product.data["pricing"].blank?
+    
+    # Calculate costs from materials, processes, and extras
+    materials_cost = calculate_materials_cost(product.data["materials"] || [])
+    processes_cost = calculate_processes_cost(product.data["processes"] || [])
+    extras_cost = calculate_extras_cost(product.data["extras"] || [])
+    
+    # Update pricing data
+    pricing = product.data["pricing"]
+    pricing["materials_cost"] = materials_cost
+    pricing["processes_cost"] = processes_cost
+    pricing["extras_cost"] = extras_cost
+    
+    # Calculate subtotal
+    subtotal = materials_cost + processes_cost + extras_cost
+    pricing["subtotal"] = subtotal
+    
+    # Calculate waste value
+    waste_percentage = pricing["waste_percentage"].to_f
+    waste_value = subtotal * (waste_percentage / 100)
+    pricing["waste_value"] = waste_value
+    
+    # Calculate price per piece before margin
+    quantity = (product.data["general_info"] && product.data["general_info"]["quantity"]) || product.data["quantity"] || 1
+    quantity = [quantity.to_i, 1].max # Ensure quantity is at least 1
+    pricing["price_per_piece_before_margin"] = (subtotal + waste_value) / quantity
+    
+    # Calculate margin
+    margin_percentage = pricing["margin_percentage"].to_f
+    margin_value = (subtotal + waste_value) * (margin_percentage / 100)
+    pricing["margin_value"] = margin_value
+    
+    # Calculate total price
+    pricing["total_price"] = subtotal + waste_value + margin_value
+    
+    # Calculate final price per piece
+    pricing["final_price_per_piece"] = pricing["total_price"] / quantity
+  end
+  
+  def calculate_materials_cost(materials)
+    materials.sum { |m| (m["totalPrice"].to_f rescue 0) }
+  end
+  
+  def calculate_processes_cost(processes)
+    processes.sum { |p| (p["price"].to_f rescue 0) }
+  end
+  
+  def calculate_extras_cost(extras)
+    extras.sum do |e|
+      unit_price = (e["unit_price"].to_f rescue 0)
+      quantity = (e["quantity"].to_i rescue 0)
+      unit_price * quantity
+    end
   end
 end 

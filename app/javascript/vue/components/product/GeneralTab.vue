@@ -13,6 +13,7 @@
                   id="product-description" 
                   class="form-control" 
                   v-model="form.description" 
+                  @input="emitFormChanges"
                   required
                 />
               </div>
@@ -24,6 +25,7 @@
                   id="product-quantity" 
                   class="form-control" 
                   v-model.number="form.data.general_info.quantity" 
+                  @input="emitFormChanges"
                   min="1" 
                   required
                 />
@@ -38,6 +40,7 @@
                       id="product-width" 
                       class="form-control" 
                       v-model.number="form.data.general_info.width" 
+                      @input="emitFormChanges"
                       min="0" 
                       step="0.1"
                     />
@@ -51,6 +54,7 @@
                       id="product-length" 
                       class="form-control" 
                       v-model.number="form.data.general_info.length" 
+                      @input="emitFormChanges"
                       min="0" 
                       step="0.1"
                     />
@@ -65,6 +69,7 @@
                   id="product-inner-measurements" 
                   class="form-control" 
                   v-model="form.data.general_info.inner_measurements"
+                  @input="emitFormChanges"
                 />
               </div>
             </div>
@@ -82,6 +87,7 @@
                   id="customer-name" 
                   class="form-control" 
                   v-model="form.data.general_info.customer_name"
+                  @input="emitFormChanges"
                 />
               </div>
               
@@ -92,6 +98,7 @@
                   id="customer-organization" 
                   class="form-control" 
                   v-model="form.data.general_info.customer_organization"
+                  @input="emitFormChanges"
                 />
               </div>
               
@@ -102,6 +109,7 @@
                   id="customer-email" 
                   class="form-control" 
                   v-model="form.data.general_info.customer_email"
+                  @input="emitFormChanges"
                 />
               </div>
               
@@ -112,6 +120,7 @@
                   id="customer-phone" 
                   class="form-control" 
                   v-model="form.data.general_info.customer_phone"
+                  @input="emitFormChanges"
                 />
               </div>
             </div>
@@ -128,12 +137,12 @@
               id="product-comments" 
               class="form-control" 
               v-model="form.data.general_info.comments" 
+              @input="emitFormChanges"
               rows="3"
             ></textarea>
           </div>
         </div>
       </div>
-      
     </form>
   </div>
 </template>
@@ -218,6 +227,22 @@ export default {
       }
       
       console.log('Form initialized with data:', this.form);
+    },
+    emitFormChanges() {
+      // Update the parent component with the current form data in real-time
+      console.log('Form changed, emitting update with:', this.form);
+      
+      // Create a copy for the update, ensuring we have a valid data structure
+      const updatedProduct = {
+        description: this.form.description,
+        data: {
+          ...(this.product && this.product.data ? this.product.data : {}),
+          general_info: { ...this.form.data.general_info }
+        }
+      };
+      
+      // Just update the product in the parent, don't trigger save
+      this.$emit('update:product', updatedProduct);
     },
     saveProduct() {
       this.saving = true;

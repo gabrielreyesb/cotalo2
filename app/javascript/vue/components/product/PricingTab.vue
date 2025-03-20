@@ -100,7 +100,10 @@ export default {
       }).format(value || 0);
     },
     saveProduct() {
+      // Set saving state
       this.saving = true;
+      
+      // Just emit the save event directly
       this.$emit('save:product');
     },
     initChart() {

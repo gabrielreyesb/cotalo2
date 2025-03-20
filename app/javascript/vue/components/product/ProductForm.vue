@@ -104,8 +104,9 @@
         <div v-if="activeTab === 'pricing' && product" class="tab-pane active">
           <pricing-tab 
             :pricing="product.data.pricing || defaultPricing"
-            :is-new="isNew"
+            :is-new="!productId"
             @save:product="savePricingProduct"
+            @recalculate:pricing="ensurePricingUpdated"
           />
         </div>
       </div>
@@ -277,7 +278,6 @@ export default {
           description: 'Descripción del producto',
           data: {
             name: '',
-            description: '',
             sku: '',
             quantity: 1,
             extras: [],
@@ -304,9 +304,56 @@ export default {
         this.error = error.message;
       }
     },
+    addDemoData() {
+      // Only add demo data for new products
+      if (this.productId) return;
+      
+      // Set basic product info
+      this.product.data.name = 'Nuevo Producto';
+      this.product.data.description = 'Descripción del producto';
+      this.product.data.sku = 'NP' + Math.floor(Math.random() * 10000);
+      
+      // Set general info as requested
+      if (!this.product.data.general_info) {
+        this.product.data.general_info = {};
+      }
+      
+      // Set specific values as requested
+      this.product.data.general_info.quantity = 3000;
+      this.product.data.general_info.width = 32;
+      this.product.data.general_info.length = 22;
+      
+      // Set other general info fields with demo data
+      this.product.data.general_info.inner_measurements = '30cm x 20cm';
+      this.product.data.general_info.customer_name = 'Cliente Demo';
+      this.product.data.general_info.customer_organization = 'Organización Demo';
+      this.product.data.general_info.customer_email = 'cliente@demo.com';
+      this.product.data.general_info.customer_phone = '555-123-4567';
+      this.product.data.general_info.comments = 'Este es un producto de demostración para pruebas.';
+      
+      // Important: Also set the description in the main product object for the GeneralTab
+      this.product.description = 'Descripción del producto';
+      
+      // Add demo pricing data - set extras cost to 0 and let recalculatePricing handle the rest
+      const pricing = this.product.data.pricing;
+      pricing.extras_cost = 0;
+      pricing.waste_percentage = this.userConfig.waste_percentage;
+      pricing.margin_percentage = this.userConfig.margin_percentage;
+      
+      // Initialize empty materials array
+      this.product.data.materials = [];
+      
+      // Update quantity in product data to match general info
+      this.product.data.quantity = this.product.data.general_info.quantity;
+      
+      // Recalculate all pricing values
+      this.recalculatePricing();
+    },
     async createProduct(productData) {
       try {
         this.saving = true;
+        
+        console.log('Creating product with data:', JSON.stringify(productData));
         
         const response = await fetch('/api/v1/products', {
           method: 'POST',
@@ -322,10 +369,11 @@ export default {
         });
         
         if (!response.ok) {
-          throw new Error('Failed to create product');
+          throw new Error(`Failed to create product: ${response.status} ${response.statusText}`);
         }
         
         const createdProduct = await response.json();
+        console.log('Product created successfully:', createdProduct);
         
         // Redirect to the edit page for the new product
         window.location.href = `/products/${createdProduct.id}/edit`;
@@ -340,25 +388,50 @@ export default {
       try {
         this.saving = true;
         
-        const response = await fetch(`/api/v1/products/${this.productId}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-CSRF-Token': this.apiToken,
-            'X-Requested-With': 'XMLHttpRequest'
-          },
-          body: JSON.stringify({
-            product: data
-          })
-        });
-        
-        if (!response.ok) {
-          throw new Error('Failed to update product');
+        // Properly merge the data to prevent losing information between tabs
+        if (data && data.data && data.data.general_info) {
+          // Make sure we don't lose the current data by doing a proper merge
+          this.product = {
+            ...this.product,
+            description: data.description,
+            data: {
+              ...this.product.data,
+              general_info: {
+                ...data.data.general_info
+              }
+            }
+          };
+          
+          // Ensure quantity is also updated in the main data object for backwards compatibility
+          if (data.data.general_info.quantity) {
+            this.product.data.quantity = data.data.general_info.quantity;
+          }
+          
+          console.log('Updated product in parent after form change:', this.product);
         }
         
-        const updatedProduct = await response.json();
-        this.product = updatedProduct;
+        // Only save to server if we have a product ID (not for new products)
+        if (this.productId) {
+          const response = await fetch(`/api/v1/products/${this.productId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-CSRF-Token': this.apiToken,
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+              product: data
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to update product');
+          }
+          
+          const updatedProduct = await response.json();
+          this.product = updatedProduct;
+        }
         
       } catch (error) {
         console.error('Error updating product:', error);
@@ -372,8 +445,12 @@ export default {
       // Update local extras data
       this.product.data.extras = extras;
       
-      // Calculate the total cost of extras
-      const extrasCost = extras.reduce((sum, extra) => sum + (extra.unit_price * extra.quantity), 0);
+      // Calculate total extras cost
+      const extrasCost = extras.reduce((sum, extra) => {
+        const price = parseFloat(extra.unit_price) || 0;
+        const quantity = parseInt(extra.quantity) || 0;
+        return sum + (price * quantity);
+      }, 0);
       
       // Update pricing data
       if (!this.product.data.pricing) {
@@ -443,50 +520,191 @@ export default {
         this.availableExtras = []; // Ensure we have an empty array if the request fails
       }
     },
-    addDemoData() {
-      // Only add demo data for new products
-      if (this.productId) return;
+    async fetchAvailableProcesses() {
+      try {
+        console.log('Fetching manufacturing processes...');
+        const response = await fetch('/api/v1/manufacturing_processes', {
+          headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Failed to load available processes: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        this.availableProcesses = data;
+      } catch (error) {
+        console.error('Error loading available processes:', error);
+        this.availableProcesses = []; // Ensure we have an empty array if the request fails
+      }
+    },
+    async fetchAvailableMaterials() {
+      try {
+        const response = await fetch('/api/v1/materials', {
+          headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Failed to load available materials: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        this.availableMaterials = data;
+      } catch (error) {
+        console.error('Error loading available materials:', error);
+        this.availableMaterials = []; // Ensure we have an empty array if the request fails
+      }
+    },
+    updateMaterialsCost(cost) {
+      if (!this.product || !this.product.data || !this.product.data.pricing) return;
       
-      // Set basic product info
-      this.product.data.name = 'Nuevo Producto';
-      this.product.data.description = 'Descripción del producto';
-      this.product.data.sku = 'NP' + Math.floor(Math.random() * 10000);
+      // Update pricing data
+      this.product.data.pricing.materials_cost = cost;
       
-      // Set general info as requested
-      if (!this.product.data.general_info) {
-        this.product.data.general_info = {};
+      // Recalculate pricing
+      this.recalculatePricing();
+    },
+    updateProcessesCost(cost) {
+      if (!this.product || !this.product.data) return;
+      
+      console.log('Updating processes cost to:', cost);
+      
+      // Ensure pricing object exists
+      if (!this.product.data.pricing) {
+        this.product.data.pricing = { ...this.defaultPricing };
       }
       
-      // Set specific values as requested
-      this.product.data.general_info.quantity = 3000;
-      this.product.data.general_info.width = 32;
-      this.product.data.general_info.length = 22;
+      // Update pricing data with the passed cost value (not recalculating)
+      this.product.data.pricing.processes_cost = parseFloat(cost) || 0;
       
-      // Set other general info fields with demo data
-      this.product.data.general_info.inner_measurements = '30cm x 20cm';
-      this.product.data.general_info.customer_name = 'Cliente Demo';
-      this.product.data.general_info.customer_organization = 'Organización Demo';
-      this.product.data.general_info.customer_email = 'cliente@demo.com';
-      this.product.data.general_info.customer_phone = '555-123-4567';
-      this.product.data.general_info.comments = 'Este es un producto de demostración para pruebas.';
-      
-      // Important: Also set the description in the main product object for the GeneralTab
-      this.product.description = 'Descripción del producto';
-      
-      // Add demo pricing data - set extras cost to 0 and let recalculatePricing handle the rest
-      const pricing = this.product.data.pricing;
-      pricing.extras_cost = 0;
-      pricing.waste_percentage = this.userConfig.waste_percentage;
-      pricing.margin_percentage = this.userConfig.margin_percentage;
-      
-      // Initialize empty materials array
-      this.product.data.materials = [];
-      
-      // Update quantity in product data to match general info
-      this.product.data.quantity = this.product.data.general_info.quantity;
-      
-      // Recalculate all pricing values
+      // Recalculate total pricing
       this.recalculatePricing();
+      
+      console.log('Updated pricing with processes cost:', this.product.data.pricing);
+    },
+    calculateTotalSheets() {
+      // Calculate the total number of sheets needed based on materials
+      if (!this.product || !this.product.data || !this.product.data.materials) return 0;
+      
+      return this.product.data.materials.reduce((sum, material) => {
+        return sum + (parseInt(material.sheets) || 0);
+      }, 0);
+    },
+    calculateTotalSquareMeters() {
+      // Get the total square meters directly from the materials
+      if (!this.product || !this.product.data || !this.product.data.materials) {
+        console.log('No materials data available for square meter calculation');
+        return 0;
+      }
+      
+      const totalSqMeters = this.product.data.materials.reduce((sum, material) => {
+        // Use the pre-calculated totalSquareMeters property if available
+        if (material.totalSquareMeters) {
+          console.log(`Using pre-calculated square meters for ${material.description}: ${material.totalSquareMeters} sq meters`);
+          return sum + material.totalSquareMeters;
+        } else {
+          // Fallback to calculating if not available
+          const width = parseFloat(material.ancho) || 0;
+          const length = parseFloat(material.largo) || 0;
+          const sheets = parseInt(material.sheets) || 0;
+          
+          // Square meters = (width in cm * length in cm) / 10000 * number of sheets
+          const sqm = (width * length / 10000) * sheets;
+          console.log(`Calculating square meters for ${material.description}: ${width}cm x ${length}cm x ${sheets} sheets = ${sqm} sq meters`);
+          return sum + sqm;
+        }
+      }, 0);
+      
+      console.log('Total calculated square meters:', totalSqMeters);
+      return totalSqMeters;
+    },
+    async updateMaterials(materials) {
+      if (!this.product || !this.product.data) return;
+      
+      // Update local materials data
+      this.product.data.materials = materials;
+      
+      // Calculate the total cost of materials
+      const materialsCost = materials.reduce((sum, material) => sum + (parseFloat(material.totalPrice) || 0), 0);
+      
+      // Update pricing data
+      if (!this.product.data.pricing) {
+        this.product.data.pricing = { ...this.defaultPricing };
+      }
+      
+      // Update materials cost in pricing
+      this.product.data.pricing.materials_cost = materialsCost;
+      
+      // Recalculate pricing
+      this.recalculatePricing();
+      
+      // If we have a productId, update on the server
+      if (this.productId) {
+        try {
+          this.saving = true;
+          
+          const response = await fetch(`/api/v1/products/${this.productId}/update_materials`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-CSRF-Token': this.apiToken,
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+              materials: materials
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to update materials');
+          }
+          
+          // Update the local data with the updated materials
+          this.product.data.materials = await response.json();
+          
+        } catch (error) {
+          console.error('Error updating materials:', error);
+        } finally {
+          this.saving = false;
+        }
+      }
+    },
+    async updateMaterialsComments(comments) {
+      if (!this.product || !this.product.data) return;
+      
+      // Update locally
+      this.product.data.materials_comments = comments;
+      
+      // If we have a productId, also update on the server
+      if (this.productId) {
+        try {
+          const response = await fetch(`/api/v1/products/${this.productId}/update_materials_comments`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-CSRF-Token': this.apiToken,
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+              materials_comments: comments
+            })
+          });
+          
+          if (!response.ok) {
+            console.error('Failed to update materials comments');
+          }
+        } catch (error) {
+          console.error('Error updating materials comments:', error);
+        }
+      }
     },
     async updateExtrasComments(comments) {
       if (!this.product || !this.product.data) return;
@@ -562,15 +780,79 @@ export default {
       console.log('Recalculated pricing with waste_percentage:', pricing.waste_percentage, 
                  'margin_percentage:', pricing.margin_percentage);
     },
+    // Update materials, processes, and extras costs in pricing
+    ensurePricingUpdated() {
+      if (!this.product || !this.product.data || !this.product.data.pricing) return;
+      
+      // Get total costs from materials, processes, and extras
+      const materialsCost = this.product.data.materials ? this.product.data.materials.reduce((sum, material) => {
+        return sum + (parseFloat(material.totalPrice) || 0);
+      }, 0) : 0;
+      
+      const processesCost = this.product.data.processes ? this.product.data.processes.reduce((sum, process) => {
+        return sum + (parseFloat(process.price) || 0);
+      }, 0) : 0;
+      
+      const extrasCost = this.product.data.extras ? this.product.data.extras.reduce((sum, extra) => {
+        const price = parseFloat(extra.unit_price) || 0;
+        const quantity = parseInt(extra.quantity) || 0;
+        return sum + (price * quantity);
+      }, 0) : 0;
+      
+      // Update pricing with the calculated values
+      const pricing = this.product.data.pricing;
+      pricing.materials_cost = materialsCost;
+      pricing.processes_cost = processesCost;
+      pricing.extras_cost = extrasCost;
+      
+      // Recalculate all pricing values
+      this.recalculatePricing();
+      
+      console.log('Updated pricing before save:', JSON.stringify(pricing));
+    },
     async savePricingProduct() {
-      if (this.isNew) {
-        // For new products, create the product using all data
+      // Create or update the product
+      if (!this.productId) {
+        // For new products, create with all data
         const productData = {
-          description: this.product.data.name || 'Nuevo Producto',
+          description: this.product.description,
           data: this.product.data
         };
         
-        this.createProduct(productData);
+        console.log('Creating new product with data:', JSON.stringify(productData));
+        
+        // Save product data directly without recalculation
+        this.saving = true;
+        
+        try {
+          const response = await fetch('/api/v1/products', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-CSRF-Token': this.apiToken,
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+              product: productData
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error(`Failed to create product: ${response.status} ${response.statusText}`);
+          }
+          
+          const createdProduct = await response.json();
+          console.log('Product created successfully:', createdProduct);
+          
+          // Redirect to the edit page for the new product
+          window.location.href = `/products/${createdProduct.id}/edit`;
+        } catch (error) {
+          console.error('Error creating product:', error);
+          this.error = error.message;
+        } finally {
+          this.saving = false;
+        }
       } else {
         // For existing products, update the pricing data
         try {
@@ -590,7 +872,7 @@ export default {
           });
           
           if (!response.ok) {
-            throw new Error('Failed to update pricing');
+            throw new Error(`Failed to update pricing: ${response.status} ${response.statusText}`);
           }
           
           const updatedProduct = await response.json();
@@ -685,239 +967,34 @@ export default {
           console.error('Error updating processes comments:', error);
         }
       }
-    },
-    async fetchAvailableProcesses() {
-      try {
-        console.log('Fetching manufacturing processes...');
-        const response = await fetch('/api/v1/manufacturing_processes', {
-          headers: {
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Failed to load manufacturing processes: ${response.status} ${response.statusText}`);
-        }
-        
-        const data = await response.json();
-        console.log('Successfully fetched manufacturing processes:', data);
-        this.availableProcesses = data;
-        
-      } catch (error) {
-        console.error('Error loading available processes:', error);
-        // Only use mock data in case of actual errors
-        this.availableProcesses = [
-          {
-            id: -1, // Using negative IDs to indicate mock data
-            description: 'Corte láser (mock)',
-            width: 0,
-            length: 0,
-            unit: 'minuto',
-            price: 150
-          },
-          {
-            id: -2,
-            description: 'Doblado (mock)',
-            width: 0,
-            length: 0,
-            unit: 'pieza',
-            price: 75
-          }
-        ];
-      }
-    },
-    updateProcessesCost(cost) {
-      if (!this.product || !this.product.data || !this.product.data.pricing) return;
-      
-      // Update processes cost in pricing
-      this.product.data.pricing.processes_cost = cost;
-      
-      // Recalculate pricing
-      this.recalculatePricing();
-    },
-    async updateMaterials(materials) {
-      if (!this.product || !this.product.data) return;
-      
-      // Update local materials data
-      this.product.data.materials = materials;
-      
-      // Calculate the total cost of materials
-      const materialsCost = materials.reduce((sum, material) => sum + (parseFloat(material.totalPrice) || 0), 0);
-      
-      // Update pricing data
-      if (!this.product.data.pricing) {
-        this.product.data.pricing = { ...this.defaultPricing };
-      }
-      
-      // Update materials cost in pricing
-      this.product.data.pricing.materials_cost = materialsCost;
-      
-      // Recalculate pricing
-      this.recalculatePricing();
-      
-      // If we have a productId, update on the server
-      if (this.productId) {
-        try {
-          this.saving = true;
-          
-          const response = await fetch(`/api/v1/products/${this.productId}/update_materials`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'X-CSRF-Token': this.apiToken,
-              'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-              materials: materials
-            })
-          });
-          
-          if (!response.ok) {
-            throw new Error('Failed to update materials');
-          }
-          
-          // Update the local data with the updated materials
-          this.product.data.materials = await response.json();
-          
-          // Fetch the updated product with new pricing
-          this.fetchProduct();
-          
-        } catch (error) {
-          console.error('Error updating materials:', error);
-        } finally {
-          this.saving = false;
-        }
-      }
-    },
-    
-    async updateMaterialsComments(comments) {
-      if (!this.product || !this.product.data) return;
-      
-      // Update locally
-      this.product.data.materials_comments = comments;
-      
-      // If we have a productId, also update on the server
-      if (this.productId) {
-        try {
-          const response = await fetch(`/api/v1/products/${this.productId}/update_materials_comments`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'X-CSRF-Token': this.apiToken,
-              'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-              materials_comments: comments
-            })
-          });
-          
-          if (!response.ok) {
-            console.error('Failed to update materials comments');
-          }
-        } catch (error) {
-          console.error('Error updating materials comments:', error);
-        }
-      }
-    },
-    
-    updateMaterialsCost(cost) {
-      if (!this.product || !this.product.data || !this.product.data.pricing) return;
-      
-      // Update materials cost in pricing
-      this.product.data.pricing.materials_cost = cost;
-      
-      // Recalculate pricing
-      this.recalculatePricing();
-    },
-    async fetchAvailableMaterials() {
-      try {
-        console.log('Fetching materials...');
-        const response = await fetch('/api/v1/materials', {
-          headers: {
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Failed to load materials: ${response.status} ${response.statusText}`);
-        }
-        
-        const data = await response.json();
-        console.log('Successfully fetched materials:', data);
-        this.availableMaterials = data;
-        
-      } catch (error) {
-        console.error('Error loading available materials:', error);
-        // Only use mock data in case of actual errors
-        this.availableMaterials = [
-          {
-            id: -1, // Using negative IDs to indicate mock data
-            description: 'Cartulina Bristol (mock)',
-            ancho: 70,
-            largo: 100,
-            price: 15.5
-          },
-          {
-            id: -2,
-            description: 'Papel Couché (mock)',
-            ancho: 90,
-            largo: 130,
-            price: 25.75
-          }
-        ];
-      }
-    },
-    // Helper methods for process price calculations
-    calculateTotalSheets() {
-      if (!this.product || !this.product.data || !this.product.data.materials) {
-        return 0;
-      }
-      
-      // Sum up total sheets from all materials
-      return this.product.data.materials.reduce((sum, material) => {
-        return sum + (parseFloat(material.totalSheets) || 0);
-      }, 0);
-    },
-    
-    calculateTotalSquareMeters() {
-      if (!this.product || !this.product.data || !this.product.data.materials) {
-        return 0;
-      }
-      
-      // Sum up total square meters from all materials
-      return this.product.data.materials.reduce((sum, material) => {
-        return sum + (parseFloat(material.totalSquareMeters) || 0);
-      }, 0);
-    },
+    }
   },
-  created() {
-    // First fetch user configuration and wait for it to complete
-    this.fetchUserConfig().then(() => {
-      console.log('Using configuration:', {
-        waste_percentage: this.userConfig.waste_percentage,
-        margin_percentage: this.userConfig.margin_percentage
-      });
-      
-      // Then fetch product data (or initialize new product)
-      this.fetchProduct();
-      
-      // Fetch available items for dropdowns
-      this.fetchAvailableExtras();
-      this.fetchAvailableProcesses();
-      this.fetchAvailableMaterials();
-    });
+  // Add the created hook to initialize the component
+  async created() {
+    console.log('ProductForm created with productId:', this.productId);
     
-    this.activeTab = this.tab || 'general';
+    try {
+      // Load user configuration first
+      await this.fetchUserConfig();
+      
+      // Fetch product data if editing an existing product
+      await this.fetchProduct();
+      
+      // Fetch available extras, processes, and materials in parallel
+      await Promise.all([
+        this.fetchAvailableExtras(),
+        this.fetchAvailableProcesses(),
+        this.fetchAvailableMaterials()
+      ]);
+      
+      console.log('All data loaded successfully');
+    } catch (error) {
+      console.error('Error initializing product form:', error);
+      this.error = 'Failed to initialize the form. Please try refreshing the page.';
+    } finally {
+      // Ensure loading is set to false when all initialization is complete
+      this.loading = false;
+    }
   }
 };
 </script>
-
-<style scoped>
-.product-form {
-  position: relative;
-}
-</style> 
