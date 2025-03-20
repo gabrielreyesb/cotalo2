@@ -1,6 +1,6 @@
 class Api::V1::ProductsController < ApplicationController
-  before_action :set_product, only: [:show, :update, :extras, :update_extras]
-  skip_before_action :verify_authenticity_token, only: [:create, :update, :update_extras]
+  before_action :set_product, only: [:show, :update, :extras, :update_extras, :update_extras_comments, :update_processes, :update_processes_comments, :update_materials, :update_materials_comments, :update_pricing]
+  skip_before_action :verify_authenticity_token, only: [:create, :update, :update_extras, :update_extras_comments, :update_processes, :update_processes_comments, :update_materials, :update_materials_comments, :update_pricing]
 
   # GET /api/v1/products/:id
   def show
@@ -58,15 +58,80 @@ class Api::V1::ProductsController < ApplicationController
 
   # GET /api/v1/manufacturing_processes
   def available_manufacturing_processes
-    begin
-      # Directly query the manufacturing processes table
-      @processes = ManufacturingProcess.order(:description)
-      
-      render json: @processes.map { |p| process_json(p) }
-    rescue => e
-      # Log the error but return an empty array to the client
-      Rails.logger.error "Error fetching manufacturing processes: #{e.message}"
-      render json: []
+    @manufacturing_processes = current_user.manufacturing_processes
+    render json: @manufacturing_processes.map { |p| process_json(p) }, status: :ok
+  end
+
+  def available_materials
+    @materials = current_user.materials
+    render json: @materials, status: :ok
+  end
+
+  # PUT /api/v1/products/:id/update_extras_comments
+  def update_extras_comments
+    @product.data["extras_comments"] = params[:extras_comments]
+    
+    if @product.save
+      render json: { success: true }
+    else
+      render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+  
+  # PUT /api/v1/products/:id/update_processes
+  def update_processes
+    @product.data["processes"] = processes_params
+    @product.calculate_totals
+    
+    if @product.save
+      render json: @product.data["processes"]
+    else
+      render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+  
+  # PUT /api/v1/products/:id/update_processes_comments
+  def update_processes_comments
+    @product.data["processes_comments"] = params[:processes_comments]
+    
+    if @product.save
+      render json: { success: true }
+    else
+      render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+  
+  # PUT /api/v1/products/:id/update_materials
+  def update_materials
+    @product.data["materials"] = materials_params
+    @product.calculate_totals
+    
+    if @product.save
+      render json: @product.data["materials"]
+    else
+      render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+  
+  # PUT /api/v1/products/:id/update_materials_comments
+  def update_materials_comments
+    @product.data["materials_comments"] = params[:materials_comments]
+    
+    if @product.save
+      render json: { success: true }
+    else
+      render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+  
+  # PUT /api/v1/products/:id/update_pricing
+  def update_pricing
+    @product.data["pricing"] = pricing_params
+    
+    if @product.save
+      render json: @product
+    else
+      render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
@@ -85,6 +150,18 @@ class Api::V1::ProductsController < ApplicationController
 
   def extras_params
     params.require(:extras)
+  end
+
+  def processes_params
+    params.require(:processes)
+  end
+
+  def materials_params
+    params.require(:materials)
+  end
+
+  def pricing_params
+    params.require(:pricing)
   end
 
   def extra_json(extra)

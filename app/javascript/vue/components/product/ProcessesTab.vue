@@ -66,6 +66,13 @@
             </td>
           </tr>
         </tbody>
+        <tfoot>
+          <tr>
+            <th colspan="2" class="text-end">Total:</th>
+            <th>{{ formatCurrency(totalCost) }}</th>
+            <th></th>
+          </tr>
+        </tfoot>
       </table>
 
       <!-- Global comments for all processes -->
@@ -123,6 +130,11 @@ export default {
         console.log('Selected process:', process);
       }
       return process;
+    },
+    totalCost() {
+      return this.productProcesses.reduce((sum, process) => {
+        return sum + (parseFloat(process.price) || 0);
+      }, 0);
     }
   },
   methods: {
@@ -145,14 +157,23 @@ export default {
       const updatedProcesses = [...this.productProcesses, newProcess];
       this.$emit('update:product-processes', updatedProcesses);
       
+      // Emit the total cost of processes
+      this.$emit('update:processes-cost', this.totalCost + (parseFloat(newProcess.price) || 0));
+      
       // Reset form
       this.selectedProcessId = '';
     },
     removeProcess(index) {
       if (confirm('¿Estás seguro de que quieres eliminar este proceso?')) {
+        const processToRemove = this.productProcesses[index];
         const updatedProcesses = [...this.productProcesses];
         updatedProcesses.splice(index, 1);
+        
         this.$emit('update:product-processes', updatedProcesses);
+        
+        // Calculate and emit the new total cost
+        const newTotalCost = this.totalCost - (parseFloat(processToRemove.price) || 0);
+        this.$emit('update:processes-cost', newTotalCost);
       }
     },
     updateGlobalComments() {
@@ -165,6 +186,9 @@ export default {
       availableProcesses: this.availableProcesses,
       comments: this.comments
     });
+    
+    // Emit initial processes cost when component mounts
+    this.$emit('update:processes-cost', this.totalCost);
   }
 }
 </script>
@@ -223,6 +247,12 @@ export default {
   background-color: #2c3136;
   border: 1px solid #495057;
   border-radius: 4px;
+}
+
+/* Add styling for select options */
+.form-select option {
+  color: #212529;
+  background-color: #fff;
 }
 
 .form-select:focus,

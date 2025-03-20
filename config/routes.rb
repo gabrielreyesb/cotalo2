@@ -35,10 +35,17 @@ Rails.application.routes.draw do
         member do
           get :extras
           put :update_extras
+          put :update_extras_comments
+          put :update_processes
+          put :update_processes_comments
+          put :update_materials
+          put :update_materials_comments
+          put :update_pricing
         end
       end
       get 'extras', to: 'products#available_extras'
       get 'manufacturing_processes', to: 'products#available_manufacturing_processes'
+      get 'materials', to: 'products#available_materials'
     end
   end
   

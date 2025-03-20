@@ -259,6 +259,12 @@ export default {
   border-radius: 4px;
 }
 
+/* Add styling for select options */
+.form-select option {
+  color: #212529;
+  background-color: #fff;
+}
+
 .form-select:focus,
 .form-control:focus {
   border-color: #42b983;

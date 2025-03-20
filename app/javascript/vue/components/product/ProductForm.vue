@@ -23,7 +23,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" :class="{ active: activeTab === 'materials', disabled: !productId }" 
+          <a class="nav-link" :class="{ active: activeTab === 'materials' }" 
              href="#" @click.prevent="setActiveTab('materials')">
             <i class="fa fa-cubes me-1"></i> Materiales
           </a>
@@ -61,7 +61,17 @@
         
         <!-- Materials Tab -->
         <div v-if="activeTab === 'materials' && product" class="tab-pane active">
-          <p class="text-muted">Materials tab coming soon</p>
+          <materials-tab 
+            :product-materials="product && product.data && product.data.materials ? product.data.materials : []"
+            :available-materials="availableMaterials"
+            :comments="product && product.data && product.data.materials_comments ? product.data.materials_comments : ''"
+            :product-width="product && product.data && product.data.general_info ? product.data.general_info.width : 0"
+            :product-length="product && product.data && product.data.general_info ? product.data.general_info.length : 0"
+            :product-quantity="product && product.data && product.data.general_info ? product.data.general_info.quantity : 1"
+            @update:product-materials="updateMaterials"
+            @update:comments="updateMaterialsComments"
+            @update:materials-cost="updateMaterialsCost"
+          />
         </div>
         
         <!-- Processes Tab -->
@@ -72,6 +82,7 @@
             :comments="product && product.data && product.data.processes_comments ? product.data.processes_comments : ''"
             @update:product-processes="updateProcesses"
             @update:comments="updateProcessesComments"
+            @update:processes-cost="updateProcessesCost"
           />
         </div>
         
@@ -104,6 +115,7 @@ import ExtrasTab from './ExtrasTab.vue';
 import GeneralTab from './GeneralTab.vue';
 import PricingTab from './PricingTab.vue';
 import ProcessesTab from './ProcessesTab.vue';
+import MaterialsTab from './MaterialsTab.vue';
 
 export default {
   name: 'ProductForm',
@@ -111,7 +123,8 @@ export default {
     ExtrasTab,
     GeneralTab,
     PricingTab,
-    ProcessesTab
+    ProcessesTab,
+    MaterialsTab
   },
   props: {
     productId: {
@@ -132,6 +145,7 @@ export default {
       error: null,
       availableExtras: [],
       availableProcesses: [],
+      availableMaterials: [],
       defaultPricing: {
         materials_cost: 0,
         processes_cost: 0,
@@ -157,7 +171,7 @@ export default {
     setActiveTab(tab) {
       // Allow switching between general, extras, processes and pricing tabs even for new products
       // Only restrict other tabs if product doesn't exist (has no ID)
-      if (['general', 'extras', 'processes', 'pricing'].includes(tab)) {
+      if (['general', 'extras', 'processes', 'materials', 'pricing'].includes(tab)) {
         // These tabs are always accessible
         this.activeTab = tab;
         
@@ -229,7 +243,10 @@ export default {
             quantity: 1,
             extras: [],
             extras_comments: '',
+            processes: [],
             processes_comments: '',
+            materials: [],
+            materials_comments: '',
             pricing: { ...this.defaultPricing }
           }
         };
@@ -456,9 +473,8 @@ export default {
       
       const pricing = this.product.data.pricing;
       
-      // Set materials and processes costs to 0 as requested
+      // Set materials cost to 0 as requested
       pricing.materials_cost = 0;
-      pricing.processes_cost = 0;
       
       // Calculate subtotal
       pricing.subtotal = pricing.materials_cost + pricing.processes_cost + pricing.extras_cost;
@@ -533,6 +549,20 @@ export default {
       
       // Update local processes data
       this.product.data.processes = processes;
+      
+      // Calculate the total cost of processes
+      const processesCost = processes.reduce((sum, process) => sum + (parseFloat(process.price) || 0), 0);
+      
+      // Update pricing data
+      if (!this.product.data.pricing) {
+        this.product.data.pricing = { ...this.defaultPricing };
+      }
+      
+      // Update processes cost in pricing
+      this.product.data.pricing.processes_cost = processesCost;
+      
+      // Recalculate pricing
+      this.recalculatePricing();
       
       // If we have a productId, update on the server
       if (this.productId) {
@@ -637,6 +667,150 @@ export default {
           }
         ];
       }
+    },
+    updateProcessesCost(cost) {
+      if (!this.product || !this.product.data || !this.product.data.pricing) return;
+      
+      // Update processes cost in pricing
+      this.product.data.pricing.processes_cost = cost;
+      
+      // Recalculate pricing
+      this.recalculatePricing();
+    },
+    async updateMaterials(materials) {
+      if (!this.product || !this.product.data) return;
+      
+      // Update local materials data
+      this.product.data.materials = materials;
+      
+      // Calculate the total cost of materials
+      const materialsCost = materials.reduce((sum, material) => sum + (parseFloat(material.totalPrice) || 0), 0);
+      
+      // Update pricing data
+      if (!this.product.data.pricing) {
+        this.product.data.pricing = { ...this.defaultPricing };
+      }
+      
+      // Update materials cost in pricing
+      this.product.data.pricing.materials_cost = materialsCost;
+      
+      // Recalculate pricing
+      this.recalculatePricing();
+      
+      // If we have a productId, update on the server
+      if (this.productId) {
+        try {
+          this.saving = true;
+          
+          const response = await fetch(`/api/v1/products/${this.productId}/update_materials`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-CSRF-Token': this.apiToken,
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+              materials: materials
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to update materials');
+          }
+          
+          // Update the local data with the updated materials
+          this.product.data.materials = await response.json();
+          
+          // Fetch the updated product with new pricing
+          this.fetchProduct();
+          
+        } catch (error) {
+          console.error('Error updating materials:', error);
+        } finally {
+          this.saving = false;
+        }
+      }
+    },
+    
+    async updateMaterialsComments(comments) {
+      if (!this.product || !this.product.data) return;
+      
+      // Update locally
+      this.product.data.materials_comments = comments;
+      
+      // If we have a productId, also update on the server
+      if (this.productId) {
+        try {
+          const response = await fetch(`/api/v1/products/${this.productId}/update_materials_comments`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-CSRF-Token': this.apiToken,
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+              materials_comments: comments
+            })
+          });
+          
+          if (!response.ok) {
+            console.error('Failed to update materials comments');
+          }
+        } catch (error) {
+          console.error('Error updating materials comments:', error);
+        }
+      }
+    },
+    
+    updateMaterialsCost(cost) {
+      if (!this.product || !this.product.data || !this.product.data.pricing) return;
+      
+      // Update materials cost in pricing
+      this.product.data.pricing.materials_cost = cost;
+      
+      // Recalculate pricing
+      this.recalculatePricing();
+    },
+    async fetchAvailableMaterials() {
+      try {
+        console.log('Fetching materials...');
+        const response = await fetch('/api/v1/materials', {
+          headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Failed to load materials: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        console.log('Successfully fetched materials:', data);
+        this.availableMaterials = data;
+        
+      } catch (error) {
+        console.error('Error loading available materials:', error);
+        // Only use mock data in case of actual errors
+        this.availableMaterials = [
+          {
+            id: -1, // Using negative IDs to indicate mock data
+            description: 'Cartulina Bristol (mock)',
+            ancho: 70,
+            largo: 100,
+            price: 15.5
+          },
+          {
+            id: -2,
+            description: 'Papel Couché (mock)',
+            ancho: 90,
+            largo: 130,
+            price: 25.75
+          }
+        ];
+      }
     }
   },
   created() {
@@ -653,7 +827,10 @@ export default {
           quantity: 1,
           extras: [],
           extras_comments: '',
+          processes: [],
           processes_comments: '',
+          materials: [],
+          materials_comments: '',
           pricing: { ...this.defaultPricing }
         }
       };
@@ -664,6 +841,7 @@ export default {
     }
     this.fetchAvailableExtras();
     this.fetchAvailableProcesses();
+    this.fetchAvailableMaterials();
   }
 };
 </script>
