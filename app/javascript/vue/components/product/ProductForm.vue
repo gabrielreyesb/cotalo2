@@ -149,6 +149,10 @@ export default {
       availableExtras: [],
       availableProcesses: [],
       availableMaterials: [],
+      userConfig: {
+        waste_percentage: 5,
+        margin_percentage: 30
+      },
       defaultPricing: {
         materials_cost: 0,
         processes_cost: 0,
@@ -234,6 +238,38 @@ export default {
         this.loading = false;
       }
     },
+    async fetchUserConfig() {
+      try {
+        // Use the app_configs endpoint instead of product-specific endpoints
+        const response = await fetch('/api/v1/user_config', {
+          headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Failed to load user config: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        // Update user configuration values
+        if (data) {
+          this.userConfig.waste_percentage = data.waste_percentage || 5;
+          this.userConfig.margin_percentage = data.margin_percentage || 30;
+          
+          // Update default pricing with user config values
+          this.defaultPricing.waste_percentage = this.userConfig.waste_percentage;
+          this.defaultPricing.margin_percentage = this.userConfig.margin_percentage;
+          
+          console.log('User config loaded:', this.userConfig);
+        }
+      } catch (error) {
+        console.error('Error loading user config:', error);
+        // Continue with default values
+      }
+    },
     initializeNewProduct() {
       try {
         // Initialize with empty structure for a new product
@@ -250,14 +286,22 @@ export default {
             processes_comments: '',
             materials: [],
             materials_comments: '',
-            pricing: { ...this.defaultPricing }
+            pricing: {
+              ...this.defaultPricing,
+              waste_percentage: this.userConfig.waste_percentage,
+              margin_percentage: this.userConfig.margin_percentage
+            }
           }
         };
+        
+        // Add demo data
+        this.addDemoData();
+        
+        // Set loading to false for new products
+        this.loading = false;
       } catch (error) {
         console.error('Error initializing new product:', error);
-        this.error = 'Failed to initialize product form: ' + error.message;
-      } finally {
-        this.loading = false;
+        this.error = error.message;
       }
     },
     async createProduct(productData) {
@@ -432,8 +476,8 @@ export default {
       // Add demo pricing data - set extras cost to 0 and let recalculatePricing handle the rest
       const pricing = this.product.data.pricing;
       pricing.extras_cost = 0;
-      pricing.waste_percentage = 5;
-      pricing.margin_percentage = 30;
+      pricing.waste_percentage = this.userConfig.waste_percentage;
+      pricing.margin_percentage = this.userConfig.margin_percentage;
       
       // Initialize empty materials array
       this.product.data.materials = [];
@@ -479,6 +523,15 @@ export default {
       
       const pricing = this.product.data.pricing;
       
+      // Ensure waste_percentage and margin_percentage are set from user config if not already set
+      if (!pricing.waste_percentage && pricing.waste_percentage !== 0) {
+        pricing.waste_percentage = this.userConfig.waste_percentage;
+      }
+      
+      if (!pricing.margin_percentage && pricing.margin_percentage !== 0) {
+        pricing.margin_percentage = this.userConfig.margin_percentage;
+      }
+      
       // Calculate subtotal
       pricing.subtotal = pricing.materials_cost + pricing.processes_cost + pricing.extras_cost;
       
@@ -505,6 +558,9 @@ export default {
       
       // Calculate final price per piece
       pricing.final_price_per_piece = pricing.total_price / quantity;
+      
+      console.log('Recalculated pricing with waste_percentage:', pricing.waste_percentage, 
+                 'margin_percentage:', pricing.margin_percentage);
     },
     async savePricingProduct() {
       if (this.isNew) {
@@ -839,34 +895,23 @@ export default {
     },
   },
   created() {
-    // If productId is provided, fetch the product, otherwise create a new product object
-    if (this.productId) {
+    // First fetch user configuration and wait for it to complete
+    this.fetchUserConfig().then(() => {
+      console.log('Using configuration:', {
+        waste_percentage: this.userConfig.waste_percentage,
+        margin_percentage: this.userConfig.margin_percentage
+      });
+      
+      // Then fetch product data (or initialize new product)
       this.fetchProduct();
-    } else {
-      this.product = {
-        description: 'Descripción del producto',
-        data: {
-          name: '',
-          description: '',
-          sku: '',
-          quantity: 1,
-          extras: [],
-          extras_comments: '',
-          processes: [],
-          processes_comments: '',
-          materials: [],
-          materials_comments: '',
-          pricing: { ...this.defaultPricing }
-        }
-      };
-      // Add demo data
-      this.addDemoData();
-      // Set loading to false for new products
-      this.loading = false;
-    }
-    this.fetchAvailableExtras();
-    this.fetchAvailableProcesses();
-    this.fetchAvailableMaterials();
+      
+      // Fetch available items for dropdowns
+      this.fetchAvailableExtras();
+      this.fetchAvailableProcesses();
+      this.fetchAvailableMaterials();
+    });
+    
+    this.activeTab = this.tab || 'general';
   }
 };
 </script>

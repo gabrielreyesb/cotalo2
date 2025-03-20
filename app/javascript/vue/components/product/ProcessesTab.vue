@@ -53,8 +53,8 @@
           <tr v-for="(process, index) in productProcesses" :key="index">
             <td>{{ process.description }}</td>
             <td>{{ process.unit }}</td>
-            <td>{{ formatCurrency(process.unitPrice) }}</td>
-            <td>{{ formatCurrency(process.price) }}</td>
+            <td class="text-end">{{ formatCurrency(process.unitPrice) }}</td>
+            <td class="text-end">{{ formatCurrency(process.price) }}</td>
             <td>
               <div class="btn-group">
                 <button 
@@ -71,7 +71,7 @@
         <tfoot>
           <tr>
             <th colspan="3" class="text-end">Total:</th>
-            <th>{{ formatCurrency(totalCost) }}</th>
+            <th class="text-end">{{ formatCurrency(totalCost) }}</th>
             <th></th>
           </tr>
         </tfoot>

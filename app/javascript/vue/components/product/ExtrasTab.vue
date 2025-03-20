@@ -64,9 +64,9 @@
         <tbody>
           <tr v-for="(extra, index) in productExtras" :key="index">
             <td>{{ extra.name }}</td>
-            <td>{{ formatCurrency(extra.unit_price) }}</td>
-            <td>{{ extra.quantity }}</td>
-            <td>{{ formatCurrency(extra.unit_price * extra.quantity) }}</td>
+            <td class="text-end">{{ formatCurrency(extra.unit_price) }}</td>
+            <td class="text-center">{{ extra.quantity }}</td>
+            <td class="text-end">{{ formatCurrency(extra.unit_price * extra.quantity) }}</td>
             <td>
               <div class="btn-group">
                 <button 
@@ -83,7 +83,7 @@
         <tfoot>
           <tr>
             <th colspan="3" class="text-end">Total:</th>
-            <th>{{ formatCurrency(totalCost) }}</th>
+            <th class="text-end">{{ formatCurrency(totalCost) }}</th>
             <th></th>
           </tr>
         </tfoot>

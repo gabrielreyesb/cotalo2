@@ -8,41 +8,41 @@
       <div class="col-md-8">
         <table class="table table-dark table-bordered">
           <tbody>
-            <tr class="table-primary">
+            <tr>
               <th style="width: 40%">Costo de Materiales:</th>
-              <td class="fw-bold">{{ formatCurrency(pricing.materials_cost) }}</td>
-            </tr>
-            <tr class="table-warning">
-              <th>Costo de Procesos:</th>
-              <td class="fw-bold">{{ formatCurrency(pricing.processes_cost) }}</td>
-            </tr>
-            <tr class="table-info">
-              <th>Costo de Extras:</th>
-              <td class="fw-bold">{{ formatCurrency(pricing.extras_cost) }}</td>
+              <td class="fw-bold text-end">{{ formatCurrency(pricing.materials_cost) }}</td>
             </tr>
             <tr>
+              <th>Costo de Procesos:</th>
+              <td class="fw-bold text-end">{{ formatCurrency(pricing.processes_cost) }}</td>
+            </tr>
+            <tr>
+              <th>Costo de Extras:</th>
+              <td class="fw-bold text-end">{{ formatCurrency(pricing.extras_cost) }}</td>
+            </tr>
+            <tr class="subtotal-row">
               <th>Subtotal:</th>
-              <td>{{ formatCurrency(pricing.subtotal) }}</td>
+              <td class="text-end">{{ formatCurrency(pricing.subtotal) }}</td>
             </tr>
             <tr>
               <th>Desperdicio ({{ pricing.waste_percentage }}%):</th>
-              <td>{{ formatCurrency(pricing.waste_value) }}</td>
+              <td class="text-end">{{ formatCurrency(pricing.waste_value) }}</td>
             </tr>
             <tr>
               <th>Precio por Pieza (antes del margen):</th>
-              <td>{{ formatCurrency(pricing.price_per_piece_before_margin) }}</td>
+              <td class="text-end">{{ formatCurrency(pricing.price_per_piece_before_margin) }}</td>
             </tr>
             <tr>
               <th>Margen ({{ pricing.margin_percentage }}%):</th>
-              <td>{{ formatCurrency(pricing.margin_value) }}</td>
+              <td class="text-end">{{ formatCurrency(pricing.margin_value) }}</td>
             </tr>
-            <tr class="table-success">
+            <tr class="total-row">
               <th>Precio Total:</th>
-              <td class="fw-bold">{{ formatCurrency(pricing.total_price) }}</td>
+              <td class="fw-bold text-end">{{ formatCurrency(pricing.total_price) }}</td>
             </tr>
-            <tr class="table-success">
+            <tr class="total-row">
               <th>Precio por Pieza:</th>
-              <td class="fw-bold">{{ formatCurrency(pricing.final_price_per_piece) }}</td>
+              <td class="fw-bold text-end">{{ formatCurrency(pricing.final_price_per_piece) }}</td>
             </tr>
           </tbody>
         </table>
@@ -268,22 +268,13 @@ export default {
   background-color: #32383e;
 }
 
-.table-success {
-  background-color: rgba(66, 185, 131, 0.2) !important;
+.subtotal-row {
+  border-top: 2px solid #495057;
 }
 
-.table-success th, 
-.table-success td {
-  color: #42b983;
-}
-
-.table-info {
-  background-color: rgba(54, 162, 235, 0.2) !important;
-}
-
-.table-info th,
-.table-info td {
-  color: #36a2eb;
+.total-row {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-top: 2px solid #495057;
 }
 
 .table th,

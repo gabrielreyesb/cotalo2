@@ -2,10 +2,18 @@ class AppConfigsController < ApplicationController
   before_action :authenticate_user!
   
   def edit
+    # Get raw percentage values
+    waste_pct_raw = current_user.get_config(AppConfig::WASTE_PERCENTAGE)
+    margin_pct_raw = current_user.get_config(AppConfig::MARGIN_PERCENTAGE)
+    
+    # Convert decimal percentages (0.05) to whole numbers (5) for the form
+    waste_pct = waste_pct_raw.nil? ? 5 : (waste_pct_raw * 100).round
+    margin_pct = margin_pct_raw.nil? ? 30 : (margin_pct_raw * 100).round
+    
     # Group configurations by category
     @general_settings = {
-      waste_percentage: current_user.get_config(AppConfig::WASTE_PERCENTAGE) || 5,
-      margin_percentage: current_user.get_config(AppConfig::MARGIN_PERCENTAGE) || 30,
+      waste_percentage: waste_pct,
+      margin_percentage: margin_pct,
       width_margin: current_user.get_config(AppConfig::WIDTH_MARGIN) || 0,
       length_margin: current_user.get_config(AppConfig::LENGTH_MARGIN) || 0
     }

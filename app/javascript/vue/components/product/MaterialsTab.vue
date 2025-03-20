@@ -58,11 +58,11 @@
             <td>{{ material.description }}</td>
             <td>{{ material.ancho }} cm</td>
             <td>{{ material.largo }} cm</td>
-            <td>{{ formatCurrency(material.price) }}</td>
-            <td>{{ material.piecesPerMaterial }}</td>
-            <td>{{ material.totalSheets }}</td>
-            <td>{{ material.totalSquareMeters.toFixed(2) }} m²</td>
-            <td>{{ formatCurrency(material.totalPrice) }}</td>
+            <td class="text-end">{{ formatCurrency(material.price) }}</td>
+            <td class="text-center">{{ material.piecesPerMaterial }}</td>
+            <td class="text-center">{{ material.totalSheets }}</td>
+            <td class="text-center">{{ material.totalSquareMeters.toFixed(2) }} m²</td>
+            <td class="text-end">{{ formatCurrency(material.totalPrice) }}</td>
             <td>
               <div class="btn-group">
                 <button 
@@ -79,7 +79,7 @@
         <tfoot>
           <tr>
             <th colspan="7" class="text-end">Total:</th>
-            <th>{{ formatCurrency(totalCost) }}</th>
+            <th class="text-end">{{ formatCurrency(totalCost) }}</th>
             <th></th>
           </tr>
         </tfoot>

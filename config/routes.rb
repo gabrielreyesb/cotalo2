@@ -46,6 +46,7 @@ Rails.application.routes.draw do
       get 'extras', to: 'products#available_extras'
       get 'manufacturing_processes', to: 'products#available_manufacturing_processes'
       get 'materials', to: 'products#available_materials'
+      get 'user_config', to: 'app_configs#user_config'
     end
   end
   
