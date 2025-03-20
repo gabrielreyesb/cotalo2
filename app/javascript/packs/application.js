@@ -16,3 +16,18 @@
 // const imagePath = (name) => images(name, true)
 
 console.log('Hello World from Webpacker')
+
+// Remove debug elements in production
+document.addEventListener('DOMContentLoaded', function() {
+  // Remove elements with text "EMPTY"
+  document.querySelectorAll('*').forEach(function(node) {
+    if (node.textContent === 'EMPTY') {
+      node.parentNode.style.display = 'none';
+    }
+  });
+  
+  // Remove elements with red borders
+  document.querySelectorAll('[style*="border: 3px solid red"], [style*="border:3px solid red"]').forEach(function(node) {
+    node.style.display = 'none';
+  });
+});

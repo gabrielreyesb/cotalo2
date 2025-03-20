@@ -1,23 +1,20 @@
 <template>
   <div class="pricing-tab">
-    <div class="green-accent-panel mb-4">
-      <h5 class="card-title">Resumen de Precios</h5>
-    </div>
     
     <div class="row">
       <div class="col-md-8">
         <table class="table table-dark table-bordered">
           <tbody>
             <tr>
-              <th style="width: 40%">Costo de Materiales:</th>
+              <th style="width: 40%">Costo de materiales:</th>
               <td class="fw-bold text-end">{{ formatCurrency(pricing.materials_cost) }}</td>
             </tr>
             <tr>
-              <th>Costo de Procesos:</th>
+              <th>Costo de procesos:</th>
               <td class="fw-bold text-end">{{ formatCurrency(pricing.processes_cost) }}</td>
             </tr>
             <tr>
-              <th>Costo de Extras:</th>
+              <th>Costo de extras:</th>
               <td class="fw-bold text-end">{{ formatCurrency(pricing.extras_cost) }}</td>
             </tr>
             <tr class="subtotal-row">
@@ -29,7 +26,7 @@
               <td class="text-end">{{ formatCurrency(pricing.waste_value) }}</td>
             </tr>
             <tr>
-              <th>Precio por Pieza (antes del margen):</th>
+              <th>Precio por pieza (antes del margen):</th>
               <td class="text-end">{{ formatCurrency(pricing.price_per_piece_before_margin) }}</td>
             </tr>
             <tr>
@@ -37,11 +34,11 @@
               <td class="text-end">{{ formatCurrency(pricing.margin_value) }}</td>
             </tr>
             <tr class="total-row">
-              <th>Precio Total:</th>
+              <th>Precio total:</th>
               <td class="fw-bold text-end">{{ formatCurrency(pricing.total_price) }}</td>
             </tr>
             <tr class="total-row">
-              <th>Precio por Pieza:</th>
+              <th>Precio por pieza:</th>
               <td class="fw-bold text-end">{{ formatCurrency(pricing.final_price_per_piece) }}</td>
             </tr>
           </tbody>
@@ -49,11 +46,16 @@
       </div>
       
       <div class="col-md-4">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Desglose de Costos</h5>
-            <div class="chart-container" style="position: relative; height: 260px;">
-              <canvas ref="pricingChart"></canvas>
+        <div class="card chart-card">
+          <div class="card-body p-3">
+            <h5 class="card-title mb-2">Desglose de costos</h5>
+            <div class="chart-wrapper">
+              <div class="chart-container">
+                <canvas ref="pricingChart" v-if="!isEmpty"></canvas>
+                <div v-if="isEmpty" class="empty-chart">
+                  <div class="empty-chart-text">Sin datos</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -61,9 +63,6 @@
     </div>
     
     <div class="d-flex justify-content-end mt-4">
-      <button type="button" class="btn btn-warning me-2" @click="recalculatePricing">
-        <i class="fa fa-refresh me-1"></i> Recalcular
-      </button>
       <a href="/products" class="btn btn-secondary me-2">
         Cancel
       </a>
@@ -92,7 +91,8 @@ export default {
   data() {
     return {
       pricingChart: null,
-      saving: false
+      saving: false,
+      isEmpty: false
     };
   },
   methods: {
@@ -117,6 +117,28 @@ export default {
       try {
         if (!this.pricing) return;
         
+        // Ensure we have non-zero values for the chart
+        const materialsValue = this.pricing.materials_cost || 0;
+        const processesValue = this.pricing.processes_cost || 0;
+        const extrasValue = this.pricing.extras_cost || 0;
+        const wasteValue = this.pricing.waste_value || 0;
+        const marginValue = this.pricing.margin_value || 0;
+        
+        // Determine if we have any real data
+        const hasData = materialsValue > 0 || processesValue > 0 || extrasValue > 0 || wasteValue > 0 || marginValue > 0;
+        
+        // Update the isEmpty flag
+        this.isEmpty = !hasData;
+        
+        // Don't create chart if there's no data
+        if (!hasData) {
+          if (this.pricingChart) {
+            this.pricingChart.destroy();
+            this.pricingChart = null;
+          }
+          return;
+        }
+        
         // Destroy previous chart if it exists
         if (this.pricingChart) {
           this.pricingChart.destroy();
@@ -130,47 +152,37 @@ export default {
 
         const ctx = this.$refs.pricingChart.getContext('2d');
         
-        // Ensure we have non-zero values for the chart
-        const materialsValue = this.pricing.materials_cost || 0;
-        const processesValue = this.pricing.processes_cost || 0;
-        const extrasValue = this.pricing.extras_cost || 0;
-        const wasteValue = this.pricing.waste_value || 0;
-        const marginValue = this.pricing.margin_value || 0;
+        let chartData = [];
+        let labels = [];
+        let colors = [];
         
-        // Determine if we should use real data or placeholders
-        const hasData = materialsValue > 0 || processesValue > 0 || extrasValue > 0 || wasteValue > 0 || marginValue > 0;
-        
-        // Only show non-zero costs for clarity
-        const chartData = [];
-        const labels = [];
-        const colors = [];
-        
-        if (materialsValue > 0 || !hasData) {
-          chartData.push(hasData ? materialsValue : 10);
+        // Only add sections with values greater than zero
+        if (materialsValue > 0) {
+          chartData.push(materialsValue);
           labels.push('Materiales');
           colors.push('#3c6382'); // Darker blue
         }
         
-        if (processesValue > 0 || !hasData) {
-          chartData.push(hasData ? processesValue : 15);
+        if (processesValue > 0) {
+          chartData.push(processesValue);
           labels.push('Procesos');
           colors.push('#60a3bc'); // Medium blue
         }
         
-        if (extrasValue > 0 || !hasData) {
-          chartData.push(hasData ? extrasValue : 35);
+        if (extrasValue > 0) {
+          chartData.push(extrasValue);
           labels.push('Extras');
           colors.push('#82ccdd'); // Light blue
         }
         
-        if (wasteValue > 0 || !hasData) {
-          chartData.push(hasData ? wasteValue : 15);
+        if (wasteValue > 0) {
+          chartData.push(wasteValue);
           labels.push('Desperdicio');
           colors.push('#b8e994'); // Soft green
         }
         
-        if (marginValue > 0 || !hasData) {
-          chartData.push(hasData ? marginValue : 25);
+        if (marginValue > 0) {
+          chartData.push(marginValue);
           labels.push('Margen');
           colors.push('#78e08f'); // Medium green
         }
@@ -181,16 +193,33 @@ export default {
             labels: labels,
             datasets: [{
               data: chartData,
-              backgroundColor: colors
+              backgroundColor: colors,
+              borderWidth: 2,
+              borderColor: '#1a1a1a'
             }]
           },
           options: {
             responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+              padding: {
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0
+              }
+            },
             plugins: {
               legend: {
-                position: 'right',
+                position: 'bottom',
+                align: 'start',
                 labels: {
-                  color: '#e1e1e1'
+                  color: '#e1e1e1',
+                  boxWidth: 15,
+                  padding: 15,
+                  font: {
+                    size: 12
+                  }
                 }
               },
               tooltip: {
@@ -199,7 +228,9 @@ export default {
                     const value = tooltipItem.raw;
                     const total = tooltipItem.dataset.data.reduce((a, b) => a + b, 0);
                     const percentage = Math.round((value / total) * 100);
-                    return `${tooltipItem.label}: ${this.formatCurrency(value)} (${percentage}%)`;
+                    return hasData 
+                      ? `${tooltipItem.label}: ${this.formatCurrency(value)} (${percentage}%)`
+                      : `${tooltipItem.label}: ${percentage}% (ejemplo)`;
                   }
                 }
               }
@@ -242,6 +273,54 @@ export default {
 .green-accent-panel {
   border-left: 3px solid #42b983;
   padding-left: 1rem;
+}
+
+.chart-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.chart-container {
+  position: relative;
+  height: 260px;
+  width: 260px;
+  margin: 0 auto;
+}
+
+.chart-card {
+  height: auto;
+}
+
+.empty-chart {
+  width: 100%;
+  height: 260px;
+  background-color: #2a2a2a;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-chart-text {
+  color: #777;
+  font-size: 1.1rem;
+}
+
+.placeholder-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: #e1e1e1;
+  z-index: 10;
+  pointer-events: none;
 }
 
 /* Card styling with green accent */

@@ -29,30 +29,30 @@
                   <% end %>
                 </li>
                 <li class="nav-item">
-                  <%= link_to materials_path, class: "nav-link #{current_page?(materials_path) ? 'active' : ''}" do %>
-                    <i class="fa fa-cubes me-1"></i> Materiales
-                  <% end %>
-                </li>
-                <li class="nav-item">
-                  <%= link_to units_path, class: "nav-link #{current_page?(units_path) ? 'active' : ''}" do %>
-                    <i class="fa fa-ruler me-1"></i> Unidades
-                  <% end %>
-                </li>
-                <li class="nav-item">
-                  <%= link_to manufacturing_processes_path, class: "nav-link #{current_page?(manufacturing_processes_path) ? 'active' : ''}" do %>
-                    <i class="fa fa-cogs me-1"></i> Procesos
-                  <% end %>
-                </li>
-                <li class="nav-item">
-                  <%= link_to extras_path, class: "nav-link #{current_page?(extras_path) ? 'active' : ''}" do %>
-                    <i class="fa fa-plus-circle me-1"></i> Extras
-                  <% end %>
-                </li>
-                <li class="nav-item">
                   <%= link_to products_path, class: "nav-link #{current_page?(products_path) ? 'active' : ''}" do %>
                     <i class="fa fa-box me-1"></i> Productos
                   <% end %>
                 </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle <%= 'active' if current_page?(materials_path) || current_page?(units_path) || current_page?(manufacturing_processes_path) || current_page?(extras_path) %>" href="#" id="catalogsDropdown" role="button" data-bs-toggle="dropdown">
+                    <i class="fa fa-list me-1"></i> Catálogos
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="catalogsDropdown">
+                    <%= link_to materials_path, class: "dropdown-item #{current_page?(materials_path) ? 'active' : ''}" do %>
+                      <i class="fa fa-cubes me-1"></i> Materiales
+                    <% end %>
+                    <%= link_to manufacturing_processes_path, class: "dropdown-item #{current_page?(manufacturing_processes_path) ? 'active' : ''}" do %>
+                      <i class="fa fa-cogs me-1"></i> Procesos
+                    <% end %>
+                    <%= link_to extras_path, class: "dropdown-item #{current_page?(extras_path) ? 'active' : ''}" do %>
+                      <i class="fa fa-plus-circle me-1"></i> Extras
+                    <% end %>
+                    <%= link_to units_path, class: "dropdown-item #{current_page?(units_path) ? 'active' : ''}" do %>
+                      <i class="fa fa-ruler me-1"></i> Unidades
+                    <% end %>
+                  </div>
+                </li>
+                
                 <li class="nav-item">
                   <%= link_to edit_app_configs_path, class: "nav-link #{current_page?(edit_app_configs_path) ? 'active' : ''}" do %>
                     <i class="fa fa-cog me-1"></i> Configuraciones

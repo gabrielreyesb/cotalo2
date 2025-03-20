@@ -1,34 +1,33 @@
 <div class="row">
-  <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2 text-center my-5">
-    <h1 class="display-4 mb-4">Bienvenido a Cotalo</h1>
-    <p class="lead mb-5">
+  <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2 text-center my-4">
+    <h2 class="mb-3">Bienvenido a Cotalo</h2>
+    <p class="lead mb-4">
       Gestiona tus materiales, crea productos y genera presupuestos con facilidad.
       Cotalo te ayuda a organizar tu catálogo y a simplificar tu proceso de precios.
     </p>
     
     <% if user_signed_in? %>
-      <div class="d-grid gap-3 d-md-flex justify-content-md-center">
-        <%= link_to "Ver materiales", materials_path, class: "btn btn-primary btn-lg" %>
-        <%= link_to "Ver unidades", units_path, class: "btn btn-outline-primary btn-lg" %>
+      <div class="d-grid gap-3 d-md-flex justify-content-md-center mb-3">
+        <%= link_to "Ver productos", products_path, class: "btn btn-primary" %>
+        <span class="btn btn-outline-secondary disabled">Cotizaciones (Próximamente)</span>
       </div>
     <% else %>
-      <div class="d-grid gap-3 d-md-flex justify-content-md-center">
-        <%= link_to "Iniciar sesión", new_user_session_path, class: "btn btn-primary btn-lg" %>
-        <%= link_to "Registrarse", new_user_registration_path, class: "btn btn-outline-primary btn-lg" %>
+      <div class="d-grid gap-3 d-md-flex justify-content-md-center mb-3">
+        <%= link_to "Iniciar sesión", new_user_session_path, class: "btn btn-primary" %>
+        <%= link_to "Registrarse", new_user_registration_path, class: "btn btn-outline-primary" %>
       </div>
     <% end %>
   </div>
 </div>
 
-<div class="row mt-5">
+<div class="row mt-4">
   <div class="col-md-4 mb-4">
     <div class="card h-100">
-      <div class="card-body text-center">
-        <i class="fa fa-cubes fa-3x mb-3" style="color: var(--cotalo-green);"></i>
-        <h3 class="card-title">Gestionar materiales</h3>
+      <div class="card-body text-center p-3">
+        <i class="fa fa-cubes fa-2x mb-3" style="color: var(--cotalo-green);"></i>
+        <h5 class="card-title mb-2">Gestionar materiales</h5>
         <p class="card-text">
-          Mantén un seguimiento de todos tus materiales con información detallada 
-          incluyendo precios, dimensiones y especificaciones.
+          Mantén un seguimiento de todos tus materiales con información detallada.
         </p>
       </div>
     </div>
@@ -36,12 +35,11 @@
   
   <div class="col-md-4 mb-4">
     <div class="card h-100">
-      <div class="card-body text-center">
-        <i class="fa fa-tags fa-3x mb-3" style="color: var(--cotalo-green);"></i>
-        <h3 class="card-title">Crear productos</h3>
+      <div class="card-body text-center p-3">
+        <i class="fa fa-tags fa-2x mb-3" style="color: var(--cotalo-green);"></i>
+        <h5 class="card-title mb-2">Crear productos</h5>
         <p class="card-text">
-          Define productos usando tu catálogo de materiales. Calcula costos incluyendo 
-          desechos y márgenes de ganancia automáticamente.
+          Define productos usando tu catálogo y calcula costos automáticamente.
         </p>
       </div>
     </div>
@@ -49,12 +47,11 @@
   
   <div class="col-md-4 mb-4">
     <div class="card h-100">
-      <div class="card-body text-center">
-        <i class="fa fa-file-invoice-dollar fa-3x mb-3" style="color: var(--cotalo-green);"></i>
-        <h3 class="card-title">Generar presupuestos</h3>
+      <div class="card-body text-center p-3">
+        <i class="fa fa-file-invoice-dollar fa-2x mb-3" style="color: var(--cotalo-green);"></i>
+        <h5 class="card-title mb-2">Generar presupuestos</h5>
         <p class="card-text">
-          Crea presupuestos profesionales para tus clientes basados en tus productos 
-          y cálculos de precios.
+          Crea presupuestos profesionales para tus clientes.
         </p>
       </div>
     </div>

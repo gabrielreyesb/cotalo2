@@ -28,8 +28,8 @@ body {
 
 // Container adjustments for dark theme
 .container, .container-fluid {
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 // Link styling for dark theme
@@ -45,13 +45,22 @@ a {
 
 // Application-specific styles
 .main-content {
-  min-height: calc(100vh - 200px);
-  padding: 2rem 0;
+  min-height: auto;
+  padding: 1.5rem 0;
 }
 
 .footer {
   background-color: var(--nav-bg);
   border-top: 1px solid var(--border-color);
-  padding: 1.5rem 0;
+  padding: 1rem 0;
   color: var(--text-secondary);
+  margin-top: 1rem;
+}
+
+// Hide debugging containers
+[style*="border: 3px solid red"],
+div:empty,
+.empty-container,
+div:has(> .debug) {
+  display: none !important;
 }
