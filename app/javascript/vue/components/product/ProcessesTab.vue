@@ -44,7 +44,8 @@
           <tr>
             <th>Descripción</th>
             <th>Unidad</th>
-            <th>Precio</th>
+            <th>Precio por Unidad</th>
+            <th>Precio Total</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -52,6 +53,7 @@
           <tr v-for="(process, index) in productProcesses" :key="index">
             <td>{{ process.description }}</td>
             <td>{{ process.unit }}</td>
+            <td>{{ formatCurrency(process.unitPrice) }}</td>
             <td>{{ formatCurrency(process.price) }}</td>
             <td>
               <div class="btn-group">
@@ -68,7 +70,7 @@
         </tbody>
         <tfoot>
           <tr>
-            <th colspan="2" class="text-end">Total:</th>
+            <th colspan="3" class="text-end">Total:</th>
             <th>{{ formatCurrency(totalCost) }}</th>
             <th></th>
           </tr>
@@ -111,6 +113,18 @@ export default {
     comments: {
       type: String,
       default: ''
+    },
+    productQuantity: {
+      type: Number,
+      default: 1
+    },
+    totalSheets: {
+      type: Number,
+      default: 0
+    },
+    totalSquareMeters: {
+      type: Number,
+      default: 0
     }
   },
   data() {
@@ -147,18 +161,35 @@ export default {
     addProcess() {
       if (!this.canAdd || !this.selectedProcess) return;
       
+      const process = this.selectedProcess;
+      const basePrice = parseFloat(process.price) || 0;
+      let calculatedPrice = basePrice;
+      
+      // Calculate price based on unit type
+      if (process.unit === 'pieza') {
+        // For pieces: quantity of products * process price
+        calculatedPrice = basePrice * this.productQuantity;
+      } else if (process.unit === 'pliego') {
+        // For sheets: materials sheets * process price
+        calculatedPrice = basePrice * this.totalSheets;
+      } else if (process.unit === 'mt2') {
+        // For square meters: total square meters * process price
+        calculatedPrice = basePrice * this.totalSquareMeters;
+      }
+      
       const newProcess = {
-        id: this.selectedProcess.id,
-        description: this.selectedProcess.description,
-        unit: this.selectedProcess.unit || 'unidad',
-        price: this.selectedProcess.price || 0
+        id: process.id,
+        description: process.description,
+        unit: process.unit || 'unidad',
+        unitPrice: basePrice, // Store the original unit price
+        price: calculatedPrice // Store the calculated total price
       };
       
       const updatedProcesses = [...this.productProcesses, newProcess];
       this.$emit('update:product-processes', updatedProcesses);
       
       // Emit the total cost of processes
-      this.$emit('update:processes-cost', this.totalCost + (parseFloat(newProcess.price) || 0));
+      this.$emit('update:processes-cost', this.totalCost + calculatedPrice);
       
       // Reset form
       this.selectedProcessId = '';
@@ -184,7 +215,10 @@ export default {
     console.log('ProcessesTab mounted with props:', {
       productProcesses: this.productProcesses,
       availableProcesses: this.availableProcesses,
-      comments: this.comments
+      comments: this.comments,
+      productQuantity: this.productQuantity,
+      totalSheets: this.totalSheets,
+      totalSquareMeters: this.totalSquareMeters
     });
     
     // Emit initial processes cost when component mounts

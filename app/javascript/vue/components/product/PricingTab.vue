@@ -8,13 +8,13 @@
       <div class="col-md-8">
         <table class="table table-dark table-bordered">
           <tbody>
-            <tr>
+            <tr class="table-primary">
               <th style="width: 40%">Costo de Materiales:</th>
-              <td>{{ formatCurrency(pricing.materials_cost) }}</td>
+              <td class="fw-bold">{{ formatCurrency(pricing.materials_cost) }}</td>
             </tr>
-            <tr>
+            <tr class="table-warning">
               <th>Costo de Procesos:</th>
-              <td>{{ formatCurrency(pricing.processes_cost) }}</td>
+              <td class="fw-bold">{{ formatCurrency(pricing.processes_cost) }}</td>
             </tr>
             <tr class="table-info">
               <th>Costo de Extras:</th>
@@ -128,7 +128,7 @@ export default {
         const marginValue = this.pricing.margin_value || 0;
         
         // Determine if we should use real data or placeholders
-        const hasData = extrasValue > 0 || wasteValue > 0 || marginValue > 0;
+        const hasData = materialsValue > 0 || processesValue > 0 || extrasValue > 0 || wasteValue > 0 || marginValue > 0;
         
         // Only show non-zero costs for clarity
         const chartData = [];
@@ -138,19 +138,19 @@ export default {
         if (materialsValue > 0 || !hasData) {
           chartData.push(hasData ? materialsValue : 10);
           labels.push('Materiales');
-          colors.push('#4bc0c0');
+          colors.push('#0275d8'); // Bootstrap primary color
         }
         
         if (processesValue > 0 || !hasData) {
           chartData.push(hasData ? processesValue : 15);
           labels.push('Procesos');
-          colors.push('#ff9f40');
+          colors.push('#f0ad4e'); // Bootstrap warning color
         }
         
         if (extrasValue > 0 || !hasData) {
           chartData.push(hasData ? extrasValue : 35);
           labels.push('Extras');
-          colors.push('#36a2eb');
+          colors.push('#5bc0de'); // Bootstrap info color
         }
         
         if (wasteValue > 0 || !hasData) {

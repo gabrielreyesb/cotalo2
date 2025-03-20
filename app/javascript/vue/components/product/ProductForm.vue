@@ -80,6 +80,9 @@
             :product-processes="product && product.data && product.data.processes ? product.data.processes : []"
             :available-processes="availableProcesses"
             :comments="product && product.data && product.data.processes_comments ? product.data.processes_comments : ''"
+            :product-quantity="product && product.data && product.data.general_info ? product.data.general_info.quantity : 1"
+            :total-sheets="calculateTotalSheets()"
+            :total-square-meters="calculateTotalSquareMeters()"
             @update:product-processes="updateProcesses"
             @update:comments="updateProcessesComments"
             @update:processes-cost="updateProcessesCost"
@@ -432,6 +435,9 @@ export default {
       pricing.waste_percentage = 5;
       pricing.margin_percentage = 30;
       
+      // Initialize empty materials array
+      this.product.data.materials = [];
+      
       // Update quantity in product data to match general info
       this.product.data.quantity = this.product.data.general_info.quantity;
       
@@ -472,9 +478,6 @@ export default {
       if (!this.product || !this.product.data || !this.product.data.pricing) return;
       
       const pricing = this.product.data.pricing;
-      
-      // Set materials cost to 0 as requested
-      pricing.materials_cost = 0;
       
       // Calculate subtotal
       pricing.subtotal = pricing.materials_cost + pricing.processes_cost + pricing.extras_cost;
@@ -811,7 +814,29 @@ export default {
           }
         ];
       }
-    }
+    },
+    // Helper methods for process price calculations
+    calculateTotalSheets() {
+      if (!this.product || !this.product.data || !this.product.data.materials) {
+        return 0;
+      }
+      
+      // Sum up total sheets from all materials
+      return this.product.data.materials.reduce((sum, material) => {
+        return sum + (parseFloat(material.totalSheets) || 0);
+      }, 0);
+    },
+    
+    calculateTotalSquareMeters() {
+      if (!this.product || !this.product.data || !this.product.data.materials) {
+        return 0;
+      }
+      
+      // Sum up total square meters from all materials
+      return this.product.data.materials.reduce((sum, material) => {
+        return sum + (parseFloat(material.totalSquareMeters) || 0);
+      }, 0);
+    },
   },
   created() {
     // If productId is provided, fetch the product, otherwise create a new product object

@@ -54,7 +54,7 @@
       <table v-else class="table table-dark table-striped">
         <thead>
           <tr>
-            <th>Nombre</th>
+            <th>Descripción</th>
             <th>Precio unitario</th>
             <th>Cantidad</th>
             <th>Subtotal</th>
