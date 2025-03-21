@@ -68,9 +68,11 @@
             :product-width="product && product.data && product.data.general_info ? product.data.general_info.width : 0"
             :product-length="product && product.data && product.data.general_info ? product.data.general_info.length : 0"
             :product-quantity="product && product.data && product.data.general_info ? product.data.general_info.quantity : 1"
+            :selected-material-id="product && product.data && product.data.selected_material_id ? product.data.selected_material_id : null"
             @update:product-materials="updateMaterials"
             @update:comments="updateMaterialsComments"
             @update:materials-cost="updateMaterialsCost"
+            @material-selected-for-products="handleMaterialSelectedForProducts"
           />
         </div>
         
@@ -83,6 +85,8 @@
             :product-quantity="product && product.data && product.data.general_info ? product.data.general_info.quantity : 1"
             :total-sheets="calculateTotalSheets()"
             :total-square-meters="calculateTotalSquareMeters()"
+            :selected-material-id="product && product.data ? product.data.selected_material_id : null"
+            :selected-material-data="getSelectedMaterial()"
             @update:product-processes="updateProcesses"
             @update:comments="updateProcessesComments"
             @update:processes-cost="updateProcessesCost"
@@ -671,6 +675,15 @@ export default {
       
       return totalSqMeters;
     },
+    getSelectedMaterial() {
+      if (!this.product || !this.product.data || !this.product.data.selected_material_id || !this.product.data.materials) {
+        return null;
+      }
+      
+      // Find the selected material in the materials array
+      const selectedMaterialId = this.product.data.selected_material_id;
+      return this.product.data.materials.find(material => material.id === selectedMaterialId);
+    },
     async updateMaterials(materials) {
       if (!this.product || !this.product.data) return;
       
@@ -1106,6 +1119,35 @@ export default {
           }
         } catch (error) {
           console.error('Error updating processes comments:', error);
+        }
+      }
+    },
+    
+    handleMaterialSelectedForProducts(materialId) {
+      if (!this.product || !this.product.data) return;
+      
+      // Save the selected material ID in the product data
+      this.product.data.selected_material_id = materialId;
+      
+      // If we have a productId, update on the server
+      if (this.productId) {
+        try {
+          fetch(`/api/v1/products/${this.productId}/update_selected_material`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-CSRF-Token': this.apiToken,
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+              selected_material_id: materialId
+            })
+          }).catch(error => {
+            console.error('Error updating selected material:', error);
+          });
+        } catch (error) {
+          console.error('Error updating selected material:', error);
         }
       }
     }

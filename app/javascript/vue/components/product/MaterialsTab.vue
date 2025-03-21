@@ -8,7 +8,7 @@
               <label for="material-select" class="form-label">Seleccionar material</label>
               <select 
                 id="material-select" 
-                v-model="selectedMaterialId" 
+                v-model="materialIdForAdd" 
                 class="form-select"
                 :disabled="!availableMaterials.length"
               >
@@ -65,6 +65,14 @@
             <td class="text-end">{{ formatCurrency(material.totalPrice) }}</td>
             <td>
               <div class="btn-group">
+                <input
+                  type="radio"
+                  :id="'material-radio-' + index"
+                  :value="material.id"
+                  v-model="selectedMaterialForProducts"
+                  class="form-check-input me-2"
+                  @change="selectMaterialForProducts(material.id)"
+                />
                 <button 
                   class="btn btn-sm btn-outline-danger" 
                   @click="removeMaterial(index)"
@@ -133,21 +141,26 @@ export default {
     productQuantity: {
       type: Number,
       default: 1
+    },
+    selectedMaterialId: {
+      type: [Number, String],
+      default: null
     }
   },
   data() {
     return {
-      selectedMaterialId: '',
-      globalComments: this.comments || ''
+      materialIdForAdd: '',
+      globalComments: this.comments || '',
+      selectedMaterialForProducts: this.selectedMaterialId
     }
   },
   computed: {
     canAdd() {
-      return this.selectedMaterialId;
+      return this.materialIdForAdd;
     },
     selectedMaterial() {
-      if (!this.selectedMaterialId) return null;
-      const material = this.availableMaterials.find(material => material.id === this.selectedMaterialId);
+      if (!this.materialIdForAdd) return null;
+      const material = this.availableMaterials.find(material => material.id === this.materialIdForAdd);
       return material;
     },
     totalCost() {
@@ -228,8 +241,14 @@ export default {
       // Emit the total cost of materials
       this.$emit('update:materials-cost', this.totalCost + (parseFloat(newMaterial.totalPrice) || 0));
       
+      // Auto select the newly added material if no material is currently selected
+      if (!this.selectedMaterialForProducts) {
+        this.selectedMaterialForProducts = newMaterial.id;
+        this.selectMaterialForProducts(newMaterial.id);
+      }
+      
       // Reset form
-      this.selectedMaterialId = '';
+      this.materialIdForAdd = '';
     },
     removeMaterial(index) {
       if (confirm('¿Estás seguro de que quieres eliminar este material?')) {
@@ -246,6 +265,9 @@ export default {
     },
     updateGlobalComments() {
       this.$emit('update:comments', this.globalComments);
+    },
+    selectMaterialForProducts(materialId) {
+      this.$emit('material-selected-for-products', materialId);
     },
     updateMaterialsCalculations() {
       // Recalculate values for all materials when product dimensions or quantity changes
@@ -303,6 +325,12 @@ export default {
         if (needsRecalculation) {
           this.updateMaterialsCalculations();
         }
+
+        // Auto-select first material if none is selected and materials exist
+        if (!this.selectedMaterialForProducts && newMaterials.length > 0) {
+          this.selectedMaterialForProducts = newMaterials[0].id;
+          this.selectMaterialForProducts(newMaterials[0].id);
+        }
       },
       deep: true
     }
@@ -310,6 +338,12 @@ export default {
   mounted() {    
     // Emit initial materials cost when component mounts
     this.$emit('update:materials-cost', this.totalCost);
+    
+    // Auto-select first material if none is selected and materials exist
+    if (!this.selectedMaterialForProducts && this.productMaterials.length > 0) {
+      this.selectedMaterialForProducts = this.productMaterials[0].id;
+      this.selectMaterialForProducts(this.productMaterials[0].id);
+    }
   }
 }
 </script>
@@ -443,6 +477,20 @@ export default {
 .btn-outline-danger:hover {
   background-color: #dc3545;
   color: #fff;
+}
+
+/* Radio button styling */
+.form-check-input {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.25rem;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.form-check-input:checked {
+  background-color: #42b983;
+  border-color: #42b983;
 }
 
 /* Text colors */

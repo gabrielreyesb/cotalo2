@@ -44,6 +44,7 @@
           <tr>
             <th>Descripción</th>
             <th>Unidad</th>
+            <th>Aplicado a material</th>
             <th>Precio por Unidad</th>
             <th>Precio Total</th>
             <th>Acciones</th>
@@ -53,6 +54,7 @@
           <tr v-for="(process, index) in productProcesses" :key="index">
             <td>{{ process.description }}</td>
             <td>{{ process.unit }}</td>
+            <td>{{ process.materialDescription || 'No especificado' }}</td>
             <td class="text-end">{{ formatCurrency(process.unitPrice) }}</td>
             <td class="text-end">{{ formatCurrency(process.price) }}</td>
             <td>
@@ -70,7 +72,7 @@
         </tbody>
         <tfoot>
           <tr>
-            <th colspan="3" class="text-end">Total:</th>
+            <th colspan="4" class="text-end">Total:</th>
             <th class="text-end">{{ formatCurrency(totalCost) }}</th>
             <th></th>
           </tr>
@@ -125,6 +127,14 @@ export default {
     totalSquareMeters: {
       type: Number,
       default: 0
+    },
+    selectedMaterialId: {
+      type: [Number, String],
+      default: null
+    },
+    selectedMaterialData: {
+      type: Object,
+      default: () => null
     }
   },
   data() {
@@ -168,22 +178,51 @@ export default {
       console.log('Adding process:', process);
       console.log('Base price:', basePrice);
       console.log('Product quantity:', this.productQuantity);
-      console.log('Total sheets:', this.totalSheets);
-      console.log('Total square meters:', this.totalSquareMeters);
       
-      // Calculate price based on unit type
-      if (process.unit === 'pieza') {
-        // For pieces: quantity of products * process price
-        calculatedPrice = basePrice * this.productQuantity;
-        console.log('Calculated price for pieza:', calculatedPrice);
-      } else if (process.unit === 'pliego') {
-        // For sheets: materials sheets * process price
-        calculatedPrice = basePrice * this.totalSheets;
-        console.log('Calculated price for pliego:', calculatedPrice, 'using', this.totalSheets, 'sheets');
-      } else if (process.unit === 'mt2') {
-        // For square meters: total square meters OF THE MATERIAL * process price
-        calculatedPrice = basePrice * this.totalSquareMeters;
-        console.log('Calculated price for mt2:', calculatedPrice, 'using exactly', this.totalSquareMeters, 'square meters');
+      // Check if we have selected material data
+      if (this.selectedMaterialData) {
+        console.log('Selected material:', this.selectedMaterialData);
+        
+        // Use the selected material's data for calculations
+        const materialSheets = this.selectedMaterialData.totalSheets || 0;
+        const materialSquareMeters = this.selectedMaterialData.totalSquareMeters || 0;
+        
+        console.log('Using selected material sheets:', materialSheets);
+        console.log('Using selected material square meters:', materialSquareMeters);
+        
+        // Calculate price based on unit type
+        if (process.unit === 'pieza') {
+          // For pieces: quantity of products * process price
+          calculatedPrice = basePrice * this.productQuantity;
+          console.log('Calculated price for pieza:', calculatedPrice);
+        } else if (process.unit === 'pliego') {
+          // For sheets: use selected material's sheets * process price
+          calculatedPrice = basePrice * materialSheets;
+          console.log('Calculated price for pliego:', calculatedPrice, 'using', materialSheets, 'sheets from selected material');
+        } else if (process.unit === 'mt2') {
+          // For square meters: use selected material's square meters * process price
+          calculatedPrice = basePrice * materialSquareMeters;
+          console.log('Calculated price for mt2:', calculatedPrice, 'using exactly', materialSquareMeters, 'square meters from selected material');
+        }
+      } else {
+        console.log('No selected material data, using totals from all materials');
+        console.log('Total sheets:', this.totalSheets);
+        console.log('Total square meters:', this.totalSquareMeters);
+        
+        // Calculate price based on unit type
+        if (process.unit === 'pieza') {
+          // For pieces: quantity of products * process price
+          calculatedPrice = basePrice * this.productQuantity;
+          console.log('Calculated price for pieza:', calculatedPrice);
+        } else if (process.unit === 'pliego') {
+          // For sheets: materials sheets * process price
+          calculatedPrice = basePrice * this.totalSheets;
+          console.log('Calculated price for pliego:', calculatedPrice, 'using', this.totalSheets, 'sheets');
+        } else if (process.unit === 'mt2') {
+          // For square meters: total square meters OF THE MATERIAL * process price
+          calculatedPrice = basePrice * this.totalSquareMeters;
+          console.log('Calculated price for mt2:', calculatedPrice, 'using exactly', this.totalSquareMeters, 'square meters');
+        }
       }
       
       const newProcess = {
@@ -191,7 +230,9 @@ export default {
         description: process.description,
         unit: process.unit || 'unidad',
         unitPrice: basePrice, // Store the original unit price
-        price: calculatedPrice // Store the calculated total price
+        price: calculatedPrice, // Store the calculated total price
+        selectedMaterialId: this.selectedMaterialId, // Store the material ID used for calculation
+        materialDescription: this.selectedMaterialData ? this.selectedMaterialData.description : null
       };
       
       const updatedProcesses = [...this.productProcesses, newProcess];
@@ -238,24 +279,67 @@ export default {
       
       console.log('[ProcessesTab] Recalculating for', this.productProcesses.length, 'processes');
       
+      // Check if we have selected material data
+      if (this.selectedMaterialData) {
+        console.log('[ProcessesTab] Using selected material data for recalculation:', this.selectedMaterialData);
+      }
+      
       const updatedProcesses = this.productProcesses.map((process, index) => {
         console.log(`[ProcessesTab] Calculating process ${index + 1}: ${process.description} (unit: ${process.unit})`);
+        
+        // Skip processes that don't have the _needsRecalculation flag
+        // This ensures we don't recalculate processes when selected material changes
+        if (!process._needsRecalculation) {
+          console.log(`[ProcessesTab] Process doesn't have recalculation flag, keeping original price: ${process.price}`);
+          return process;
+        }
         
         const basePrice = parseFloat(process.unitPrice) || 0;
         let calculatedPrice = basePrice;
         
-        // Recalculate price based on unit type
-        if (process.unit === 'pieza') {
-          calculatedPrice = basePrice * this.productQuantity;
-          console.log(`  Pieza calculation: ${basePrice} × ${this.productQuantity} = ${calculatedPrice}`);
-        } else if (process.unit === 'pliego') {
-          calculatedPrice = basePrice * this.totalSheets;
-          console.log(`  Pliego calculation: ${basePrice} × ${this.totalSheets} = ${calculatedPrice}`);
-        } else if (process.unit === 'mt2') {
-          calculatedPrice = basePrice * this.totalSquareMeters;
-          console.log(`  mt2 calculation: ${basePrice} × ${this.totalSquareMeters} = ${calculatedPrice}`);
+        // Check if this process was tied to a specific material
+        const useSelectedMaterial = process.selectedMaterialId === this.selectedMaterialId && this.selectedMaterialData;
+        
+        if (useSelectedMaterial) {
+          console.log(`[ProcessesTab] Process was tied to selected material ID: ${process.selectedMaterialId}`);
+          
+          // Use the selected material's data for calculations
+          const materialSheets = this.selectedMaterialData.totalSheets || 0;
+          const materialSquareMeters = this.selectedMaterialData.totalSquareMeters || 0;
+          
+          // Recalculate price based on unit type
+          if (process.unit === 'pieza') {
+            calculatedPrice = basePrice * this.productQuantity;
+            console.log(`  Pieza calculation: ${basePrice} × ${this.productQuantity} = ${calculatedPrice}`);
+          } else if (process.unit === 'pliego') {
+            calculatedPrice = basePrice * materialSheets;
+            console.log(`  Pliego calculation: ${basePrice} × ${materialSheets} = ${calculatedPrice} (from selected material)`);
+          } else if (process.unit === 'mt2') {
+            calculatedPrice = basePrice * materialSquareMeters;
+            console.log(`  mt2 calculation: ${basePrice} × ${materialSquareMeters} = ${calculatedPrice} (from selected material)`);
+          } else {
+            console.log(`  Standard unit: using base price ${basePrice}`);
+          }
+          
+          // Update material description if it's not already set and we have selected material data
+          if (!process.materialDescription && this.selectedMaterialData) {
+            process.materialDescription = this.selectedMaterialData.description;
+          }
         } else {
-          console.log(`  Standard unit: using base price ${basePrice}`);
+          // Use total values from all materials
+          // Recalculate price based on unit type
+          if (process.unit === 'pieza') {
+            calculatedPrice = basePrice * this.productQuantity;
+            console.log(`  Pieza calculation: ${basePrice} × ${this.productQuantity} = ${calculatedPrice}`);
+          } else if (process.unit === 'pliego') {
+            calculatedPrice = basePrice * this.totalSheets;
+            console.log(`  Pliego calculation: ${basePrice} × ${this.totalSheets} = ${calculatedPrice}`);
+          } else if (process.unit === 'mt2') {
+            calculatedPrice = basePrice * this.totalSquareMeters;
+            console.log(`  mt2 calculation: ${basePrice} × ${this.totalSquareMeters} = ${calculatedPrice}`);
+          } else {
+            console.log(`  Standard unit: using base price ${basePrice}`);
+          }
         }
         
         return {
@@ -313,7 +397,9 @@ export default {
       comments: this.comments,
       productQuantity: this.productQuantity,
       totalSheets: this.totalSheets,
-      totalSquareMeters: this.totalSquareMeters
+      totalSquareMeters: this.totalSquareMeters,
+      selectedMaterialId: this.selectedMaterialId,
+      selectedMaterialData: this.selectedMaterialData
     });
     
     // Emit initial processes cost when component mounts

@@ -1,6 +1,6 @@
 class Api::V1::ProductsController < ApplicationController
-  before_action :set_product, only: [:show, :update, :extras, :update_extras, :update_extras_comments, :update_processes, :update_processes_comments, :update_materials, :update_materials_comments, :update_pricing]
-  skip_before_action :verify_authenticity_token, only: [:create, :update, :update_extras, :update_extras_comments, :update_processes, :update_processes_comments, :update_materials, :update_materials_comments, :update_pricing]
+  before_action :set_product, only: [:show, :update, :extras, :update_extras, :update_extras_comments, :update_processes, :update_processes_comments, :update_materials, :update_materials_comments, :update_pricing, :update_selected_material]
+  skip_before_action :verify_authenticity_token, only: [:create, :update, :update_extras, :update_extras_comments, :update_processes, :update_processes_comments, :update_materials, :update_materials_comments, :update_pricing, :update_selected_material]
 
   # GET /api/v1/products/:id
   def show
@@ -127,6 +127,17 @@ class Api::V1::ProductsController < ApplicationController
     
     if @product.save
       render json: @product
+    else
+      render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  # PUT /api/v1/products/:id/update_selected_material
+  def update_selected_material
+    @product.data["selected_material_id"] = params[:selected_material_id]
+    
+    if @product.save
+      render json: { success: true }
     else
       render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
     end

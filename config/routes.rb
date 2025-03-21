@@ -41,6 +41,7 @@ Rails.application.routes.draw do
           put :update_materials
           put :update_materials_comments
           put :update_pricing
+          put :update_selected_material
         end
       end
       get 'extras', to: 'products#available_extras'
