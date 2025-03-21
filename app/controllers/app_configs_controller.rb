@@ -1,5 +1,6 @@
 class AppConfigsController < ApplicationController
   before_action :authenticate_user!
+  skip_before_action :verify_authenticity_token, only: [:update_api_key]
   
   def edit
     # Get raw percentage values
@@ -31,6 +32,9 @@ class AppConfigsController < ApplicationController
       phone: current_user.get_config(AppConfig::SIGNATURE_PHONE) || '',
       whatsapp: current_user.get_config(AppConfig::SIGNATURE_WHATSAPP) || ''
     }
+    
+    # Check if Pipedrive API is configured (don't show the actual key)
+    @pipedrive_api_configured = AppConfig.get_pipedrive_api_key.present?
   end
   
   def update
@@ -53,5 +57,57 @@ class AppConfigsController < ApplicationController
     current_user.set_config(AppConfig::SIGNATURE_WHATSAPP, params[:signature_whatsapp])
     
     redirect_to edit_app_configs_path, notice: 'Configuration updated successfully'
+  end
+  
+  # Method to update API key
+  def update_api_key
+    if params[:pipedrive_api_key].present?
+      # Simply save the key directly to the user's record
+      key_value = params[:pipedrive_api_key].strip
+      
+      # Clear any existing records
+      AppConfig.where(key: AppConfig::PIPEDRIVE_API_KEY).delete_all
+      
+      # Create a fresh record with the exact key from the form
+      AppConfig.create!(
+        key: AppConfig::PIPEDRIVE_API_KEY,
+        value: key_value,
+        user_id: current_user.id
+      )
+      
+      # Show the saved key in a flash message
+      flash[:notice] = "API key updated successfully"
+    else
+      flash[:alert] = "API key cannot be blank"
+    end
+    
+    redirect_to edit_app_configs_path
+  end
+  
+  private
+  
+  def update_env_file(key, value)
+    # Get the path to the .env file
+    env_file = Rails.root.join('.env')
+    
+    if File.exist?(env_file)
+      # Read the current contents
+      content = File.read(env_file)
+      
+      # Check if the key already exists
+      if content.match(/^#{key}=/)
+        # Replace the existing key
+        updated_content = content.gsub(/^#{key}=.*$/, "#{key}=#{value}")
+      else
+        # Add the key at the end
+        updated_content = content.strip + "\n#{key}=#{value}\n"
+      end
+      
+      # Write the updated content back to the file
+      File.write(env_file, updated_content)
+    else
+      # Create a new .env file
+      File.write(env_file, "#{key}=#{value}\n")
+    end
   end
 end 

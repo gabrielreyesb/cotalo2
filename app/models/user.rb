@@ -14,9 +14,11 @@ class User < ApplicationRecord
   after_create :setup_initial_data
 
   def admin?
-    # Implement your admin check logic here
-    # For example: role == 'admin' or admin == true
-    false
+    # Change this to match your authentication system's way of determining admins
+    # This is a placeholder implementation
+    # For example, you might have an 'admin' boolean column, or a role-based system
+    admin_emails = ['gabrielreyesb@gmail.com'] # Add your admin emails here
+    admin_emails.include?(email)
   end
 
   # Helper methods to access configuration values

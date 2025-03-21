@@ -47,11 +47,15 @@ Rails.application.routes.draw do
       get 'manufacturing_processes', to: 'products#available_manufacturing_processes'
       get 'materials', to: 'products#available_materials'
       get 'user_config', to: 'app_configs#user_config'
+      post 'search_customer', to: 'customers#search'
+      get 'verify_pipedrive', to: 'customers#verify_pipedrive_account'
     end
   end
   
   # Application configs
-  resource :app_configs, only: [:edit, :update]
+  resource :app_configs, only: [:edit, :update] do
+    put :update_api_key, on: :collection
+  end
   
   # Defines the root path route ("/")
   root "home#index"

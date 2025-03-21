@@ -82,18 +82,42 @@
               
               <div class="mb-3">
                 <label for="customer-name" class="form-label">Nombre del cliente</label>
-                <input 
-                  type="text" 
-                  id="customer-name" 
-                  class="form-control" 
-                  v-model="form.data.general_info.customer_name"
-                  @input="emitFormChanges"
-                />
+                <div class="input-group">
+                  <input 
+                    type="text" 
+                    id="customer-name" 
+                    class="form-control" 
+                    v-model="form.data.general_info.customer_name"
+                    @input="emitFormChanges"
+                  />
+                  <button 
+                    type="button" 
+                    class="btn btn-primary input-group-text"
+                    @click="searchCustomer"
+                    :disabled="loading"
+                  >
+                    <span v-if="loading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                    Buscar en Pipedrive
+                  </button>
+                </div>
               </div>
               
               <div class="mb-3">
                 <label for="customer-organization" class="form-label">Organización</label>
+                <select 
+                  v-if="showOrganizationSelect"
+                  id="customer-organization" 
+                  class="form-select bg-dark text-light border-secondary" 
+                  v-model="selectedOrganization"
+                  @change="onOrganizationSelected"
+                >
+                  <option value="">Seleccione una organización...</option>
+                  <option v-for="org in uniqueOrganizations" :key="org" :value="org">
+                    {{ org }}
+                  </option>
+                </select>
                 <input 
+                  v-else
                   type="text" 
                   id="customer-organization" 
                   class="form-control" 
@@ -178,7 +202,12 @@ export default {
           }
         }
       },
-      saving: false
+      saving: false,
+      loading: false,
+      searchResults: [],
+      showOrganizationSelect: false,
+      uniqueOrganizations: [],
+      selectedOrganization: ''
     };
   },
   watch: {
@@ -194,8 +223,6 @@ export default {
   },
   methods: {
     initFormData() {
-      console.log('Initializing form data with product:', this.product);
-      
       // Default empty structure in case product data is incomplete
       const defaultGeneralInfo = {
         width: null,
@@ -225,8 +252,6 @@ export default {
       if (!this.form.data.general_info.quantity || this.form.data.general_info.quantity < 1) {
         this.form.data.general_info.quantity = 1;
       }
-      
-      console.log('Form initialized with data:', this.form);
     },
     emitFormChanges() {
       // Update the parent component with the current form data in real-time
@@ -238,11 +263,6 @@ export default {
       const newWidth = this.form.data.general_info.width;
       const newLength = this.form.data.general_info.length;
       
-      console.log('[GeneralTab] Form changed, detecting changes:');
-      console.log(`  Quantity: ${oldQuantity} → ${newQuantity} (changed: ${oldQuantity !== newQuantity})`);
-      console.log(`  Width: ${oldWidth} → ${newWidth} (changed: ${oldWidth !== newWidth})`);
-      console.log(`  Length: ${oldLength} → ${newLength} (changed: ${oldLength !== newLength})`);
-      
       // Create a copy for the update, ensuring we have a valid data structure
       const updatedProduct = {
         description: this.form.description,
@@ -251,8 +271,6 @@ export default {
           general_info: { ...this.form.data.general_info }
         }
       };
-      
-      console.log('[GeneralTab] Emitting update:product with updated values');
       
       // Just update the product in the parent, don't trigger save
       this.$emit('update:product', updatedProduct);
@@ -260,8 +278,6 @@ export default {
     saveProduct() {
       this.saving = true;
       
-      console.log('Saving product with form data:', this.form);
-      
       // Create a copy for the update, ensuring we have a valid data structure
       const updatedProduct = {
         description: this.form.description,
@@ -270,8 +286,6 @@ export default {
           general_info: { ...this.form.data.general_info }
         }
       };
-      
-      console.log('Emitting product update with:', updatedProduct);
       
       // Emit the appropriate event based on whether this is a new product or an existing one
       if (this.isNew) {
@@ -281,6 +295,128 @@ export default {
       }
       
       this.saving = false;
+    },
+    searchCustomer() {
+      if (!this.form.data.general_info.customer_name) {
+        alert("Por favor, introduce un nombre de cliente para buscar");
+        return;
+      }
+      
+      this.loading = true;
+      
+      // Use native fetch instead of axios
+      const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+      
+      fetch('/api/v1/search_customer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-Token': csrfToken
+        },
+        body: JSON.stringify({
+          customer_name: this.form.data.general_info.customer_name
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
+        // Handle search results
+        this.handleSearchResults(data.results || []);
+      })
+      .catch(error => {
+        alert(`Error al buscar cliente: ${error.message}. Por favor, intente de nuevo.`);
+      })
+      .finally(() => {
+        this.loading = false;
+      });
+    },
+    
+    handleSearchResults(results) {
+      if (!results || results.length === 0) {
+        alert('No se encontraron clientes con ese nombre.');
+        return;
+      }
+      
+      this.searchResults = results;
+      
+      // Reset select-related fields
+      this.selectedOrganization = '';
+      
+      // Extract unique organizations
+      this.uniqueOrganizations = [...new Set(
+        results.filter(r => r.organization).map(r => r.organization)
+      )];
+      
+      if (this.uniqueOrganizations.length > 0) {
+        // Show the organization select instead of text input
+        this.showOrganizationSelect = true;
+        
+        // If only one organization, auto-select it
+        if (this.uniqueOrganizations.length === 1) {
+          this.selectedOrganization = this.uniqueOrganizations[0];
+          this.onOrganizationSelected();
+        }
+      } else {
+        alert('No se encontraron organizaciones para este cliente.');
+      }
+    },
+    
+    onOrganizationSelected() {
+      if (!this.selectedOrganization) return;
+      
+      // Find the first customer with this organization
+      const customer = this.searchResults.find(c => c.organization === this.selectedOrganization);
+      
+      if (customer) {
+        this.fillCustomerData(customer);
+      }
+    },
+    
+    fillCustomerData(customer) {
+      if (!customer) return;
+      
+      // Update customer info
+      this.form.data.general_info.customer_name = customer.name || this.form.data.general_info.customer_name;
+      this.form.data.general_info.customer_organization = customer.organization || this.form.data.general_info.customer_organization;
+      this.form.data.general_info.customer_email = customer.email || this.form.data.general_info.customer_email;
+      this.form.data.general_info.customer_phone = customer.phone || this.form.data.general_info.customer_phone;
+      
+      // Update the form
+      this.emitFormChanges();
+    },
+    
+    showPipedriveAccountInfo(message, type = 'info') {
+      // Create a notification element
+      const notificationId = 'pipedrive-account-info-' + Date.now();
+      const notification = document.createElement('div');
+      notification.id = notificationId;
+      notification.className = `alert alert-${type} alert-dismissible fade show mt-2`;
+      notification.role = 'alert';
+      notification.innerHTML = `
+        <strong>Pipedrive Account:</strong> ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+      
+      // Find the customer section to add this message
+      const customerSection = document.querySelector('#customer-name').closest('.card-body');
+      customerSection.appendChild(notification);
+      
+      // Auto-remove after 10 seconds
+      setTimeout(() => {
+        const alertElement = document.getElementById(notificationId);
+        if (alertElement) {
+          alertElement.remove();
+        }
+      }, 10000);
     }
   }
 };

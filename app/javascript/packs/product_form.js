@@ -8,6 +8,9 @@ import 'chart.js/auto';
 // Import dark mode theme overrides
 import '../vue/vue_styles.css';
 
+// Debug message to confirm the script is loaded
+console.log('product_form.js loaded successfully');
+
 // Set Vue feature flags - required for Vue 3 esm-bundler
 window.__VUE_OPTIONS_API__ = true;
 window.__VUE_PROD_DEVTOOLS__ = false;
@@ -17,6 +20,18 @@ window.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false;
 import { createApp } from 'vue';
 import ProductForm from '../vue/components/product/ProductForm.vue';
 
+// Global error handler for unexpected errors
+window.addEventListener('error', function(event) {
+  console.error('Global error caught:', event.error);
+  document.body.innerHTML += `
+    <div class="alert alert-danger my-5 container">
+      <h4 class="alert-heading">JavaScript Error</h4>
+      <p>${event.error?.message || 'Unknown error'}</p>
+      <hr>
+      <p class="mb-0">Please check the browser console for more details.</p>
+    </div>
+  `;
+});
 
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', () => {

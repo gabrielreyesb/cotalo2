@@ -99,4 +99,35 @@
     <%= link_to "Cancelar", dashboard_path, class: "btn btn-secondary me-md-2" %>
     <%= form.submit "Guardar", class: "btn btn-primary" %>
   </div>
-<% end %> 
+<% end %>
+
+<!-- API Configuration section moved OUTSIDE the main form -->
+<div class="row">
+  <div class="col-12 mb-4">
+    <div class="card">
+      <div class="card-header">
+        <h5>API Configuration</h5>
+        <span class="badge <%= AppConfig.get_pipedrive_api_key.present? ? 'bg-success' : 'bg-danger' %>">
+          <%= AppConfig.get_pipedrive_api_key.present? ? 'Configured' : 'Not Configured' %>
+        </span>
+      </div>
+      <div class="card-body">
+        <p class="text-muted mb-3">
+          Configure external API connections. API keys are stored in the database and available immediately.
+        </p>
+        
+        <%= form_with(url: update_api_key_app_configs_path, method: :put, class: "mb-0", id: "api_key_form", local: true) do |api_form| %>
+          <div class="mb-3">
+            <%= api_form.label :pipedrive_api_key, "Pipedrive API Key", class: "form-label" %>
+            <div class="input-group">
+              <%= api_form.password_field :pipedrive_api_key, placeholder: "Enter new API key", class: "form-control", autocomplete: "off", id: "pipedrive_api_key_input" %>
+              <%= api_form.hidden_field :authenticity_token, value: form_authenticity_token, id: "authenticity_token_main" %>
+              <button type="submit" class="btn btn-primary">Update API Key</button>
+            </div>
+            <small class="form-text text-muted">The API key will be stored in the database and will be used immediately.</small>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div> 

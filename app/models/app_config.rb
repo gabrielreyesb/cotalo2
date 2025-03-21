@@ -11,6 +11,9 @@ class AppConfig < ApplicationRecord
   WIDTH_MARGIN = 'width_margin'
   LENGTH_MARGIN = 'length_margin'
   
+  # API Keys (stored in ENV but configured through app)
+  PIPEDRIVE_API_KEY = 'pipedrive_api_key'
+  
   # Sales conditions
   SALES_CONDITION_1 = 'sales_condition_1'
   SALES_CONDITION_2 = 'sales_condition_2'
@@ -62,6 +65,13 @@ class AppConfig < ApplicationRecord
       configs.each_with_object({}) do |config, hash|
         hash[config.key] = config.typed_value
       end
+    end
+    
+    # Get the Pipedrive API key
+    def get_pipedrive_api_key
+      # Simply find the first record with that key and return its value
+      config = AppConfig.find_by(key: PIPEDRIVE_API_KEY)
+      return config&.value
     end
   end
 end 
