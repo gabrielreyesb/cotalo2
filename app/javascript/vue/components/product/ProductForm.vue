@@ -73,6 +73,7 @@
             @update:comments="updateMaterialsComments"
             @update:materials-cost="updateMaterialsCost"
             @material-selected-for-products="handleMaterialSelectedForProducts"
+            @material-calculation-changed="handleMaterialCalculationChanged"
           />
         </div>
         
@@ -1149,6 +1150,24 @@ export default {
         } catch (error) {
           console.error('Error updating selected material:', error);
         }
+      }
+    },
+    
+    handleMaterialCalculationChanged(materialId) {
+      if (!this.product || !this.product.data) return;
+      
+      // Check if this is the selected material for processes
+      if (materialId === this.product.data.selected_material_id && this.product.data.processes && this.product.data.processes.length > 0) {
+        // Force recalculation of all processes by marking them with the recalculation flag
+        const processesNeedingRecalculation = this.product.data.processes.map(process => {
+          return {
+            ...process,
+            _needsRecalculation: true
+          };
+        });
+        
+        // This will trigger the recalculation in updateProcesses
+        this.updateProcesses(processesNeedingRecalculation);
       }
     }
   },

@@ -59,7 +59,17 @@
             <td>{{ material.ancho }} cm</td>
             <td>{{ material.largo }} cm</td>
             <td class="text-end">{{ formatCurrency(material.price) }}</td>
-            <td class="text-center">{{ material.piecesPerMaterial }}</td>
+            <td class="text-center">
+              <input 
+                type="number" 
+                class="form-control form-control-sm" 
+                v-model.number="material.piecesPerMaterial" 
+                min="1"
+                @change="updateMaterialCalculations(index)"
+                title="Puedes editar este valor manualmente para ajustar la cantidad de piezas por material"
+                data-toggle="tooltip"
+              />
+            </td>
             <td class="text-center">{{ material.totalSheets }}</td>
             <td class="text-center">{{ material.totalSquareMeters.toFixed(2) }} m²</td>
             <td class="text-end">{{ formatCurrency(material.totalPrice) }}</td>
@@ -341,6 +351,46 @@ export default {
         this.$emit('update:materials-cost', totalCost);
       }
     },
+    updateMaterialCalculations(index) {
+      if (index < 0 || index >= this.productMaterials.length) return;
+      
+      const material = this.productMaterials[index];
+      const materialWidth = parseFloat(material.ancho) || 0;
+      const materialLength = parseFloat(material.largo) || 0;
+      const piecesPerMaterial = parseInt(material.piecesPerMaterial) || 0;
+      const quantity = this.productQuantity;
+      
+      // Recalculate dependent values based on manual piecesPerMaterial input
+      const totalSheets = piecesPerMaterial > 0 ? Math.ceil(quantity / piecesPerMaterial) : 0;
+      const totalSquareMeters = totalSheets * (materialWidth * materialLength) / 10000;
+      const totalPrice = totalSquareMeters * material.price;
+      
+      // Create a copy of the materials array
+      const updatedMaterials = [...this.productMaterials];
+      
+      // Update the specific material with new calculations
+      updatedMaterials[index] = {
+        ...material,
+        totalSheets,
+        totalSquareMeters,
+        totalPrice
+      };
+      
+      // Calculate new total cost
+      const totalCost = updatedMaterials.reduce((sum, material) => {
+        return sum + (parseFloat(material.totalPrice) || 0);
+      }, 0);
+      
+      // Emit updated materials and cost
+      this.$emit('update:product-materials', updatedMaterials);
+      this.$emit('update:materials-cost', totalCost);
+      
+      // Check if this is the selected material for processes
+      if (material.id === this.selectedMaterialForProducts) {
+        // If it is, emit an event to trigger process recalculation
+        this.$emit('material-calculation-changed', material.id);
+      }
+    },
     showMaterialVisualization(material) {
       this.visualizationMaterial = material;
       this.showVisualization = true;
@@ -369,8 +419,12 @@ export default {
       const productWidth = this.productWidth;
       const productLength = this.productLength;
       
-      // Calculate how many products fit in each direction
+      // Get the stored piecesPerMaterial value
+      const piecesPerMaterial = parseInt(this.visualizationMaterial.piecesPerMaterial) || 0;
+      
+      // Calculate optimal arrangement for visualization
       let horizontalPieces, verticalPieces, useAlternateOrientation;
+      let isManuallyAdjusted = false;
       
       // First orientation (width × length)
       const normalHorizontal = Math.floor(materialWidth / productWidth);
@@ -381,6 +435,14 @@ export default {
       const alternateHorizontal = Math.floor(materialWidth / productLength);
       const alternateVertical = Math.floor(materialLength / productWidth);
       const alternateTotal = alternateHorizontal * alternateVertical;
+      
+      // Calculate optimal arrangement
+      const calculatedOptimalTotal = Math.max(normalTotal, alternateTotal);
+      
+      // Check if the pieces per material has been manually adjusted
+      if (piecesPerMaterial !== calculatedOptimalTotal && piecesPerMaterial > 0) {
+        isManuallyAdjusted = true;
+      }
       
       // Use orientation that fits more pieces
       if (alternateTotal > normalTotal) {
@@ -424,10 +486,20 @@ export default {
       // Add information about the fit
       ctx.fillStyle = '#ffffff';
       ctx.font = '16px Arial';
-      ctx.fillText(
-        `Disposición óptima: ${horizontalPieces} × ${verticalPieces} = ${horizontalPieces * verticalPieces} piezas por material`,
-        padding, 30
-      );
+      
+      if (isManuallyAdjusted) {
+        ctx.fillStyle = '#ff9800'; // Warning color
+        ctx.fillText(
+          `Piezas por material ajustado manualmente: ${piecesPerMaterial} (Calculado: ${calculatedOptimalTotal})`,
+          padding, 30
+        );
+        ctx.fillStyle = '#ffffff'; // Reset color
+      } else {
+        ctx.fillText(
+          `Disposición óptima: ${horizontalPieces} × ${verticalPieces} = ${horizontalPieces * verticalPieces} piezas por material`,
+          padding, 30
+        );
+      }
       
       if (useAlternateOrientation) {
         ctx.fillText(`Orientación: Rotada (${productLength} × ${productWidth})`, padding, 60);
@@ -452,7 +524,7 @@ export default {
         padding, 120
       );
       
-      const sheetsNeeded = Math.ceil(this.productQuantity / (horizontalPieces * verticalPieces));
+      const sheetsNeeded = Math.ceil(this.productQuantity / piecesPerMaterial);
       ctx.fillText(
         `Materiales necesarios: ${sheetsNeeded} ${sheetsNeeded === 1 ? 'hoja' : 'hojas'}`,
         padding, 150
