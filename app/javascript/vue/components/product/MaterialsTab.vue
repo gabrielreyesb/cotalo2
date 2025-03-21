@@ -74,6 +74,13 @@
                   @change="selectMaterialForProducts(material.id)"
                 />
                 <button 
+                  class="btn btn-sm btn-outline-primary me-1" 
+                  @click="showMaterialVisualization(material)"
+                  title="Visualizar disposición"
+                >
+                  <i class="fa fa-eye"></i>
+                </button>
+                <button 
                   class="btn btn-sm btn-outline-danger" 
                   @click="removeMaterial(index)"
                   title="Eliminar material"
@@ -110,6 +117,27 @@
         </div>
       </div>
       
+    </div>
+
+    <!-- Visualization Modal -->
+    <div class="modal" :class="{'show': showVisualization}" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              Disposición de Producto en Material: 
+              <span class="material-title">{{ visualizationMaterial ? visualizationMaterial.description : '' }}</span>
+            </h5>
+            <button type="button" class="btn-close" @click="closeVisualization"></button>
+          </div>
+          <div class="modal-body">
+            <canvas id="visualization-canvas" width="700" height="600"></canvas>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" @click="closeVisualization">Cerrar</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -151,7 +179,10 @@ export default {
     return {
       materialIdForAdd: '',
       globalComments: this.comments || '',
-      selectedMaterialForProducts: this.selectedMaterialId
+      selectedMaterialForProducts: this.selectedMaterialId,
+      showVisualization: false,
+      visualizationMaterial: null,
+      canvasScale: 1
     }
   },
   computed: {
@@ -175,6 +206,11 @@ export default {
         style: 'currency',
         currency: 'USD'
       }).format(value || 0);
+    },
+    handleKeyDown(event) {
+      if (event.key === 'Escape' && this.showVisualization) {
+        this.closeVisualization();
+      }
     },
     calculateMaterialValues(material) {
       const productWidth = this.productWidth;
@@ -304,6 +340,175 @@ export default {
         this.$emit('update:product-materials', updatedMaterials);
         this.$emit('update:materials-cost', totalCost);
       }
+    },
+    showMaterialVisualization(material) {
+      this.visualizationMaterial = material;
+      this.showVisualization = true;
+      this.$nextTick(() => {
+        this.drawVisualization();
+      });
+    },
+    closeVisualization() {
+      this.showVisualization = false;
+      this.visualizationMaterial = null;
+    },
+    drawVisualization() {
+      if (!this.visualizationMaterial || !this.productWidth || !this.productLength) return;
+      
+      const canvas = document.getElementById('visualization-canvas');
+      if (!canvas) return;
+      
+      const ctx = canvas.getContext('2d');
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Get dimensions
+      const materialWidth = parseFloat(this.visualizationMaterial.ancho) || 0;
+      const materialLength = parseFloat(this.visualizationMaterial.largo) || 0;
+      const productWidth = this.productWidth;
+      const productLength = this.productLength;
+      
+      // Calculate how many products fit in each direction
+      let horizontalPieces, verticalPieces, useAlternateOrientation;
+      
+      // First orientation (width × length)
+      const normalHorizontal = Math.floor(materialWidth / productWidth);
+      const normalVertical = Math.floor(materialLength / productLength);
+      const normalTotal = normalHorizontal * normalVertical;
+      
+      // Second orientation (length × width) - rotated 90 degrees
+      const alternateHorizontal = Math.floor(materialWidth / productLength);
+      const alternateVertical = Math.floor(materialLength / productWidth);
+      const alternateTotal = alternateHorizontal * alternateVertical;
+      
+      // Use orientation that fits more pieces
+      if (alternateTotal > normalTotal) {
+        horizontalPieces = alternateHorizontal;
+        verticalPieces = alternateVertical;
+        useAlternateOrientation = true;
+      } else {
+        horizontalPieces = normalHorizontal;
+        verticalPieces = normalVertical;
+        useAlternateOrientation = false;
+      }
+
+      // Calculate piece dimensions based on orientation
+      const pieceWidth = useAlternateOrientation ? productLength : productWidth;
+      const pieceLength = useAlternateOrientation ? productWidth : productLength;
+      
+      // Calculate scaling factor to fit in canvas - leave space for info at top
+      const infoHeight = 180; // Height reserved for information at the top
+      const padding = 50; // Padding around the edges
+      const maxCanvasWidth = canvas.width - 2 * padding;
+      const maxCanvasHeight = canvas.height - 2 * padding - infoHeight;
+      
+      const widthScale = maxCanvasWidth / materialWidth;
+      const heightScale = maxCanvasHeight / materialLength;
+      
+      // Use the smaller scale to ensure everything fits
+      this.canvasScale = Math.min(widthScale, heightScale);
+      
+      // Calculate visual dimensions
+      const scaledMaterialWidth = materialWidth * this.canvasScale;
+      const scaledMaterialLength = materialLength * this.canvasScale;
+      
+      // Calculate starting position (centered horizontally, below info section)
+      const startX = (canvas.width - scaledMaterialWidth) / 2;
+      const startY = infoHeight + (canvas.height - infoHeight - scaledMaterialLength) / 2;
+      
+      // Draw information section with black background for better visibility
+      ctx.fillStyle = '#1a1e21'; // Darker background for info area
+      ctx.fillRect(0, 0, canvas.width, infoHeight);
+      
+      // Add information about the fit
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '16px Arial';
+      ctx.fillText(
+        `Disposición óptima: ${horizontalPieces} × ${verticalPieces} = ${horizontalPieces * verticalPieces} piezas por material`,
+        padding, 30
+      );
+      
+      if (useAlternateOrientation) {
+        ctx.fillText(`Orientación: Rotada (${productLength} × ${productWidth})`, padding, 60);
+      } else {
+        ctx.fillText(`Orientación: Normal (${productWidth} × ${productLength})`, padding, 60);
+      }
+      
+      // Calculate wasted space percentage
+      const materialArea = materialWidth * materialLength;
+      const usedArea = horizontalPieces * verticalPieces * pieceWidth * pieceLength;
+      const wastedArea = materialArea - usedArea;
+      const wastedPercentage = (wastedArea / materialArea) * 100;
+      
+      ctx.fillText(
+        `Área utilizada: ${usedArea.toFixed(2)} cm² (${(100 - wastedPercentage).toFixed(2)}%)`,
+        padding, 90
+      );
+      
+      // Product quantity information
+      ctx.fillText(
+        `Cantidad total requerida: ${this.productQuantity} piezas`,
+        padding, 120
+      );
+      
+      const sheetsNeeded = Math.ceil(this.productQuantity / (horizontalPieces * verticalPieces));
+      ctx.fillText(
+        `Materiales necesarios: ${sheetsNeeded} ${sheetsNeeded === 1 ? 'hoja' : 'hojas'}`,
+        padding, 150
+      );
+      
+      // Draw material outline
+      ctx.strokeStyle = '#42b983'; // Green color to match theme
+      ctx.lineWidth = 3;
+      ctx.strokeRect(startX, startY, scaledMaterialWidth, scaledMaterialLength);
+      
+      // Add material dimensions as text
+      ctx.font = '14px Arial';
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'center';
+      ctx.fillText(`${materialWidth} cm`, startX + scaledMaterialWidth / 2, startY - 10);
+      
+      ctx.textAlign = 'right';
+      ctx.fillText(`${materialLength} cm`, startX - 10, startY + scaledMaterialLength / 2);
+      ctx.textAlign = 'left'; // Reset alignment
+      
+      // Draw the product pieces
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 1;
+      
+      for (let i = 0; i < horizontalPieces; i++) {
+        for (let j = 0; j < verticalPieces; j++) {
+          const pieceX = startX + i * pieceWidth * this.canvasScale;
+          const pieceY = startY + j * pieceLength * this.canvasScale;
+          const scaledPieceWidth = pieceWidth * this.canvasScale;
+          const scaledPieceLength = pieceLength * this.canvasScale;
+          
+          // Draw product rectangle
+          ctx.strokeRect(pieceX, pieceY, scaledPieceWidth, scaledPieceLength);
+          
+          // Add piece number if there's enough space
+          if (scaledPieceWidth > 30 && scaledPieceLength > 20) {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.textAlign = 'center';
+            ctx.fillText(
+              `${i * verticalPieces + j + 1}`, 
+              pieceX + scaledPieceWidth / 2, 
+              pieceY + scaledPieceLength / 2 + 5
+            );
+            ctx.textAlign = 'left'; // Reset alignment
+          }
+        }
+      }
+      
+      // Highlight first piece (top-left)
+      const examplePieceX = startX;
+      const examplePieceY = startY;
+      const scaledExampleWidth = pieceWidth * this.canvasScale;
+      const scaledExampleLength = pieceLength * this.canvasScale;
+      
+      ctx.fillStyle = 'rgba(66, 185, 131, 0.7)'; // Green with transparency
+      ctx.fillRect(examplePieceX, examplePieceY, scaledExampleWidth, scaledExampleLength);
     }
   },
   watch: {
@@ -344,6 +549,13 @@ export default {
       this.selectedMaterialForProducts = this.productMaterials[0].id;
       this.selectMaterialForProducts(this.productMaterials[0].id);
     }
+
+    // Add keyboard event for Escape to close modal
+    document.addEventListener('keydown', this.handleKeyDown);
+  },
+  beforeDestroy() {
+    // Clean up event listener
+    document.removeEventListener('keydown', this.handleKeyDown);
   }
 }
 </script>
@@ -500,5 +712,110 @@ export default {
 
 .text-end {
   text-align: right !important;
+}
+
+/* Visualization modal styles */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1050;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  outline: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal.show {
+  display: block;
+}
+
+.modal-dialog {
+  position: relative;
+  width: auto;
+  margin: 0.5rem;
+  pointer-events: none;
+  max-width: 800px;
+  margin: 1.75rem auto;
+}
+
+.modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  pointer-events: auto;
+  background-color: #343a40;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 0.3rem;
+  outline: 0;
+}
+
+.modal-header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1rem;
+  border-bottom: 1px solid #495057;
+}
+
+.modal-title {
+  margin-bottom: 0;
+  line-height: 1.5;
+  color: #e9ecef;
+}
+
+.material-title {
+  color: #42b983;
+  font-weight: bold;
+}
+
+.modal-body {
+  position: relative;
+  flex: 1 1 auto;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #212529;
+}
+
+.modal-footer {
+  display: flex;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0.75rem;
+  border-top: 1px solid #495057;
+}
+
+.btn-close {
+  box-sizing: content-box;
+  width: 1em;
+  height: 1em;
+  padding: 0.25em 0.25em;
+  color: #fff;
+  background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+  border: 0;
+  border-radius: 0.25rem;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.btn-close:hover {
+  opacity: 1;
+}
+
+#visualization-canvas {
+  background-color: #212529;
+  border: 1px solid #495057;
+  border-radius: 4px;
+  width: 700px;
+  height: 600px;
 }
 </style>
