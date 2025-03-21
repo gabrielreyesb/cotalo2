@@ -149,6 +149,79 @@
         </div>
       </div>
     </div>
+
+    <div class="mt-3">
+      <button 
+        class="btn btn-sm btn-outline-secondary mb-2" 
+        @click="showCustomMaterialForm = !showCustomMaterialForm"
+      >
+        <i class="fa" :class="showCustomMaterialForm ? 'fa-minus' : 'fa-plus'"></i>
+        {{ showCustomMaterialForm ? 'Ocultar formulario' : 'Agregar material personalizado' }}
+      </button>
+      
+      <div v-if="showCustomMaterialForm" class="card mt-2 mb-3">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <label for="custom-material-description" class="form-label">Descripción</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="custom-material-description" 
+                v-model="customMaterial.description"
+                placeholder="Descripción del material"
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label for="custom-material-width" class="form-label">Ancho (cm)</label>
+              <input 
+                type="number" 
+                class="form-control" 
+                id="custom-material-width" 
+                v-model.number="customMaterial.ancho" 
+                min="0"
+                step="0.1"
+              />
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="custom-material-length" class="form-label">Largo (cm)</label>
+              <input 
+                type="number" 
+                class="form-control" 
+                id="custom-material-length" 
+                v-model.number="customMaterial.largo" 
+                min="0"
+                step="0.1"
+              />
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="custom-material-price" class="form-label">Precio por m²</label>
+              <input 
+                type="number" 
+                class="form-control" 
+                id="custom-material-price" 
+                v-model.number="customMaterial.price" 
+                min="0"
+                step="0.01"
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 d-grid">
+              <button 
+                class="btn btn-success" 
+                @click="addCustomMaterial"
+                :disabled="!canAddCustomMaterial"
+              >
+                <i class="fa fa-plus me-1"></i> Agregar Material Personalizado
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -192,12 +265,25 @@ export default {
       selectedMaterialForProducts: this.selectedMaterialId,
       showVisualization: false,
       visualizationMaterial: null,
-      canvasScale: 1
+      canvasScale: 1,
+      showCustomMaterialForm: false,
+      customMaterial: {
+        description: '',
+        ancho: null,
+        largo: null,
+        price: null
+      }
     }
   },
   computed: {
     canAdd() {
       return this.materialIdForAdd;
+    },
+    canAddCustomMaterial() {
+      return this.customMaterial.description &&
+             this.customMaterial.ancho > 0 &&
+             this.customMaterial.largo > 0 &&
+             this.customMaterial.price > 0;
     },
     selectedMaterial() {
       if (!this.materialIdForAdd) return null;
@@ -581,6 +667,62 @@ export default {
       
       ctx.fillStyle = 'rgba(66, 185, 131, 0.7)'; // Green with transparency
       ctx.fillRect(examplePieceX, examplePieceY, scaledExampleWidth, scaledExampleLength);
+    },
+    addCustomMaterial() {
+      if (!this.canAddCustomMaterial) return;
+      
+      // Generate a unique ID for the custom material (negative to avoid conflicts with existing IDs)
+      const customId = -Math.floor(Math.random() * 1000000) - 1;
+      
+      // Create the custom material object
+      const material = {
+        id: customId,
+        description: this.customMaterial.description,
+        ancho: this.customMaterial.ancho,
+        largo: this.customMaterial.largo,
+        price: this.customMaterial.price
+      };
+      
+      // Calculate values for the material using the same method as regular materials
+      const calculations = this.calculateMaterialValues(material);
+      
+      // Create the new material with calculations
+      const newMaterial = {
+        id: material.id,
+        description: material.description,
+        ancho: material.ancho || 0,
+        largo: material.largo || 0,
+        price: material.price || 0,
+        piecesPerMaterial: calculations.piecesPerMaterial,
+        totalSheets: calculations.totalSheets,
+        totalSquareMeters: calculations.totalSquareMeters,
+        totalPrice: calculations.totalPrice,
+        isCustom: true
+      };
+      
+      // Add to product materials
+      const updatedMaterials = [...this.productMaterials, newMaterial];
+      this.$emit('update:product-materials', updatedMaterials);
+      
+      // Emit the total cost of materials
+      this.$emit('update:materials-cost', this.totalCost + (parseFloat(newMaterial.totalPrice) || 0));
+      
+      // Auto select the newly added material if no material is currently selected
+      if (!this.selectedMaterialForProducts) {
+        this.selectedMaterialForProducts = newMaterial.id;
+        this.selectMaterialForProducts(newMaterial.id);
+      }
+      
+      // Reset the form
+      this.customMaterial = {
+        description: '',
+        ancho: null,
+        largo: null,
+        price: null
+      };
+      
+      // Hide the form after adding
+      this.showCustomMaterialForm = false;
     }
   },
   watch: {

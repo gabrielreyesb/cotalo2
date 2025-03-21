@@ -55,7 +55,18 @@
             <td>{{ process.description }}</td>
             <td>{{ process.unit }}</td>
             <td>{{ process.materialDescription || 'No especificado' }}</td>
-            <td class="text-end">{{ formatCurrency(process.unitPrice) }}</td>
+            <td class="text-end">
+              <input 
+                type="number" 
+                class="form-control form-control-sm" 
+                v-model.number="process.unitPrice" 
+                min="0"
+                step="0.01"
+                @change="updateProcessUnitPrice(index)"
+                title="Puedes editar este valor manualmente para ajustar el precio por unidad"
+                data-toggle="tooltip"
+              />
+            </td>
             <td class="text-end">{{ formatCurrency(process.price) }}</td>
             <td>
               <div class="btn-group">
@@ -264,6 +275,59 @@ export default {
     },
     updateGlobalComments() {
       this.$emit('update:comments', this.globalComments);
+    },
+    updateProcessUnitPrice(index) {
+      if (index < 0 || index >= this.productProcesses.length) return;
+      
+      const process = this.productProcesses[index];
+      const basePrice = parseFloat(process.unitPrice) || 0;
+      let calculatedPrice = basePrice;
+      
+      // Check if this process was tied to a specific material
+      const useSelectedMaterial = process.selectedMaterialId === this.selectedMaterialId && this.selectedMaterialData;
+      
+      if (useSelectedMaterial) {
+        // Use the selected material's data for calculations
+        const materialSheets = this.selectedMaterialData.totalSheets || 0;
+        const materialSquareMeters = this.selectedMaterialData.totalSquareMeters || 0;
+        
+        // Recalculate price based on unit type
+        if (process.unit === 'pieza') {
+          calculatedPrice = basePrice * this.productQuantity;
+        } else if (process.unit === 'pliego') {
+          calculatedPrice = basePrice * materialSheets;
+        } else if (process.unit === 'mt2') {
+          calculatedPrice = basePrice * materialSquareMeters;
+        }
+      } else {
+        // Use total values from all materials
+        // Recalculate price based on unit type
+        if (process.unit === 'pieza') {
+          calculatedPrice = basePrice * this.productQuantity;
+        } else if (process.unit === 'pliego') {
+          calculatedPrice = basePrice * this.totalSheets;
+        } else if (process.unit === 'mt2') {
+          calculatedPrice = basePrice * this.totalSquareMeters;
+        }
+      }
+      
+      // Create a copy of the processes array
+      const updatedProcesses = [...this.productProcesses];
+      
+      // Update the specific process with the new calculated price
+      updatedProcesses[index] = {
+        ...process,
+        price: calculatedPrice
+      };
+      
+      // Calculate new total cost
+      const newTotalCost = updatedProcesses.reduce((sum, process) => {
+        return sum + (parseFloat(process.price) || 0);
+      }, 0);
+      
+      // Emit updated processes and cost
+      this.$emit('update:product-processes', updatedProcesses);
+      this.$emit('update:processes-cost', newTotalCost);
     },
     // Method to recalculate all processes when quantity, sheets, or square meters change
     updateProcessCalculations() {
