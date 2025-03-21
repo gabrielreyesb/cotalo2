@@ -1,8 +1,7 @@
 <template>
   <div class="pricing-tab">
-    
     <div class="row">
-      <div class="col-md-8">
+      <div class="col-md-12">
         <table class="table table-dark table-bordered">
           <tbody>
             <tr>
@@ -22,7 +21,24 @@
               <td class="text-end">{{ formatCurrency(pricing.subtotal) }}</td>
             </tr>
             <tr>
-              <th>Desperdicio ({{ pricing.waste_percentage }}%):</th>
+              <th class="align-middle">
+                <div class="d-flex justify-content-between align-items-center">
+                  <span>Desperdicio:</span>
+                  <div class="input-group input-group-sm waste-margin-input">
+                    <input 
+                      type="number" 
+                      class="form-control form-control-sm" 
+                      v-model.number="localWastePercentage" 
+                      min="0"
+                      step="0.1"
+                      @change="handleWastePercentageChange"
+                      title="Puedes editar este valor manualmente para ajustar el porcentaje de desperdicio"
+                      data-toggle="tooltip"
+                    />
+                    <span class="input-group-text">%</span>
+                  </div>
+                </div>
+              </th>
               <td class="text-end">{{ formatCurrency(pricing.waste_value) }}</td>
             </tr>
             <tr>
@@ -30,7 +46,24 @@
               <td class="text-end">{{ formatCurrency(pricing.price_per_piece_before_margin) }}</td>
             </tr>
             <tr>
-              <th>Margen ({{ pricing.margin_percentage }}%):</th>
+              <th class="align-middle">
+                <div class="d-flex justify-content-between align-items-center">
+                  <span>Margen:</span>
+                  <div class="input-group input-group-sm waste-margin-input">
+                    <input 
+                      type="number" 
+                      class="form-control form-control-sm" 
+                      v-model.number="localMarginPercentage" 
+                      min="0"
+                      step="0.1"
+                      @change="handleMarginPercentageChange"
+                      title="Puedes editar este valor manualmente para ajustar el porcentaje de margen"
+                      data-toggle="tooltip"
+                    />
+                    <span class="input-group-text">%</span>
+                  </div>
+                </div>
+              </th>
               <td class="text-end">{{ formatCurrency(pricing.margin_value) }}</td>
             </tr>
             <tr class="total-row">
@@ -43,22 +76,6 @@
             </tr>
           </tbody>
         </table>
-      </div>
-      
-      <div class="col-md-4">
-        <div class="card chart-card">
-          <div class="card-body p-3">
-            <h5 class="card-title mb-2">Desglose de costos</h5>
-            <div class="chart-wrapper">
-              <div class="chart-container">
-                <canvas ref="pricingChart" v-if="!isEmpty"></canvas>
-                <div v-if="isEmpty" class="empty-chart">
-                  <div class="empty-chart-text">Sin datos</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
     
@@ -74,8 +91,6 @@
 </template>
 
 <script>
-import Chart from 'chart.js/auto';
-
 export default {
   name: 'PricingTab',
   props: {
@@ -90,9 +105,9 @@ export default {
   },
   data() {
     return {
-      pricingChart: null,
       saving: false,
-      isEmpty: false
+      localWastePercentage: this.pricing ? (this.pricing.waste_percentage || 0) : 0,
+      localMarginPercentage: this.pricing ? (this.pricing.margin_percentage || 0) : 0
     };
   },
   methods: {
@@ -113,153 +128,58 @@ export default {
       console.log('Manually triggering pricing recalculation');
       this.$emit('recalculate:pricing');
     },
-    initChart() {
-      try {
-        if (!this.pricing) return;
-        
-        // Ensure we have non-zero values for the chart
-        const materialsValue = this.pricing.materials_cost || 0;
-        const processesValue = this.pricing.processes_cost || 0;
-        const extrasValue = this.pricing.extras_cost || 0;
-        const wasteValue = this.pricing.waste_value || 0;
-        const marginValue = this.pricing.margin_value || 0;
-        
-        // Determine if we have any real data
-        const hasData = materialsValue > 0 || processesValue > 0 || extrasValue > 0 || wasteValue > 0 || marginValue > 0;
-        
-        // Update the isEmpty flag
-        this.isEmpty = !hasData;
-        
-        // Don't create chart if there's no data
-        if (!hasData) {
-          if (this.pricingChart) {
-            this.pricingChart.destroy();
-            this.pricingChart = null;
-          }
-          return;
-        }
-        
-        // Destroy previous chart if it exists
-        if (this.pricingChart) {
-          this.pricingChart.destroy();
-        }
-
-        // Check if canvas element exists
-        if (!this.$refs.pricingChart) {
-          console.warn('Chart canvas element not found');
-          return;
-        }
-
-        const ctx = this.$refs.pricingChart.getContext('2d');
-        
-        let chartData = [];
-        let labels = [];
-        let colors = [];
-        
-        // Only add sections with values greater than zero
-        if (materialsValue > 0) {
-          chartData.push(materialsValue);
-          labels.push('Materiales');
-          colors.push('#3c6382'); // Darker blue
-        }
-        
-        if (processesValue > 0) {
-          chartData.push(processesValue);
-          labels.push('Procesos');
-          colors.push('#60a3bc'); // Medium blue
-        }
-        
-        if (extrasValue > 0) {
-          chartData.push(extrasValue);
-          labels.push('Extras');
-          colors.push('#82ccdd'); // Light blue
-        }
-        
-        if (wasteValue > 0) {
-          chartData.push(wasteValue);
-          labels.push('Desperdicio');
-          colors.push('#b8e994'); // Soft green
-        }
-        
-        if (marginValue > 0) {
-          chartData.push(marginValue);
-          labels.push('Margen');
-          colors.push('#78e08f'); // Medium green
-        }
-        
-        this.pricingChart = new Chart(ctx, {
-          type: 'pie',
-          data: {
-            labels: labels,
-            datasets: [{
-              data: chartData,
-              backgroundColor: colors,
-              borderWidth: 2,
-              borderColor: '#1a1a1a'
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            layout: {
-              padding: {
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: 0
-              }
-            },
-            plugins: {
-              legend: {
-                position: 'bottom',
-                align: 'start',
-                labels: {
-                  color: '#e1e1e1',
-                  boxWidth: 15,
-                  padding: 15,
-                  font: {
-                    size: 12
-                  }
-                }
-              },
-              tooltip: {
-                callbacks: {
-                  label: (tooltipItem) => {
-                    const value = tooltipItem.raw;
-                    const total = tooltipItem.dataset.data.reduce((a, b) => a + b, 0);
-                    const percentage = Math.round((value / total) * 100);
-                    return hasData 
-                      ? `${tooltipItem.label}: ${this.formatCurrency(value)} (${percentage}%)`
-                      : `${tooltipItem.label}: ${percentage}% (ejemplo)`;
-                  }
-                }
-              }
-            }
-          }
-        });
-      } catch (error) {
-        console.error('Error initializing chart:', error);
+    handleWastePercentageChange() {
+      // Ensure value is valid
+      if (this.localWastePercentage < 0) {
+        this.localWastePercentage = 0;
       }
+      
+      // Create a new pricing object with the updated waste percentage
+      const updatedPricing = {
+        ...this.pricing,
+        waste_percentage: this.localWastePercentage
+      };
+      
+      // Emit an update event instead of directly modifying the prop
+      this.$emit('update:pricing', updatedPricing);
+      
+      // Schedule recalculation for next tick to ensure proper data flow
+      this.$nextTick(() => {
+        this.recalculatePricing();
+      });
+    },
+    handleMarginPercentageChange() {
+      // Ensure value is valid
+      if (this.localMarginPercentage < 0) {
+        this.localMarginPercentage = 0;
+      }
+      
+      // Create a new pricing object with the updated margin percentage
+      const updatedPricing = {
+        ...this.pricing,
+        margin_percentage: this.localMarginPercentage
+      };
+      
+      // Emit an update event instead of directly modifying the prop
+      this.$emit('update:pricing', updatedPricing);
+      
+      // Schedule recalculation for next tick to ensure proper data flow
+      this.$nextTick(() => {
+        this.recalculatePricing();
+      });
     }
-  },
-  mounted() {
-    // Initialize the chart after component is mounted
-    this.$nextTick(() => {
-      try {
-        this.initChart();
-      } catch (error) {
-        console.error('Error in pricing tab mounted hook:', error);
-      }
-    });
   },
   watch: {
     pricing: {
-      handler() {
-        this.$nextTick(() => {
-          this.initChart();
-        });
+      handler(newPricing) {
+        // Keep local variables in sync with props when external changes occur
+        if (newPricing) {
+          this.localWastePercentage = newPricing.waste_percentage || 0;
+          this.localMarginPercentage = newPricing.margin_percentage || 0;
+        }
       },
-      deep: true
+      deep: true,
+      immediate: true
     }
   }
 };
@@ -273,72 +193,6 @@ export default {
 .green-accent-panel {
   border-left: 3px solid #42b983;
   padding-left: 1rem;
-}
-
-.chart-wrapper {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-.chart-container {
-  position: relative;
-  height: 260px;
-  width: 260px;
-  margin: 0 auto;
-}
-
-.chart-card {
-  height: auto;
-}
-
-.empty-chart {
-  width: 100%;
-  height: 260px;
-  background-color: #2a2a2a;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.empty-chart-text {
-  color: #777;
-  font-size: 1.1rem;
-}
-
-.placeholder-indicator {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.7);
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  color: #e1e1e1;
-  z-index: 10;
-  pointer-events: none;
-}
-
-/* Card styling with green accent */
-.card {
-  background-color: #23272b;
-  border-color: #32383e;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.15);
-}
-
-.card-body {
-  padding: 1rem;
-}
-
-.card-title {
-  color: #e1e1e1;
-  font-weight: 600;
-  margin-bottom: 1rem;
 }
 
 /* Table styling */
@@ -370,9 +224,39 @@ export default {
 .table td {
   border-color: #32383e;
   padding: 0.75rem;
+  vertical-align: middle;
+}
+
+.input-group-sm {
+  margin-top: 5px;
+}
+
+.input-group-text {
+  background-color: #32383e;
+  color: #e9ecef;
+  border-color: #495057;
+}
+
+.form-control-sm {
+  background-color: #2c3136;
+  color: #e9ecef;
+  border-color: #495057;
+}
+
+.form-control-sm:focus {
+  background-color: #2c3136;
+  color: #e9ecef;
+  border-color: #42b983;
+  box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25);
 }
 
 .fw-bold {
   font-weight: bold;
+}
+
+.waste-margin-input {
+  width: 120px;
+  margin-top: 0;
+  margin-left: 10px;
 }
 </style> 

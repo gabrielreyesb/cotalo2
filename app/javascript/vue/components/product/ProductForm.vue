@@ -113,6 +113,7 @@
             :is-new="!productId"
             @save:product="savePricingProduct"
             @recalculate:pricing="ensurePricingUpdated"
+            @update:pricing="handlePricingUpdate"
           />
         </div>
       </div>
@@ -183,7 +184,8 @@ export default {
   },
   methods: {
     setActiveTab(tab) {
-      this.activeTab = tab;
+      console.log(`Switching to ${tab} tab`);
+      
       // Allow switching between general, extras, processes and pricing tabs even for new products
       // Only restrict other tabs if product doesn't exist (has no ID)
       if (['general', 'extras', 'processes', 'materials', 'pricing'].includes(tab)) {
@@ -192,7 +194,20 @@ export default {
         
         // If switching to pricing tab, ensure pricing is calculated
         if (tab === 'pricing') {
+          console.log('Switching to pricing tab, preparing data');
+          
+          // First ensure all pricing values are up to date
+          this.ensurePricingUpdated();
+          
+          // Then recalculate to make sure everything is consistent
           this.recalculatePricing();
+          
+          // Give components time to update before final calculations
+          this.$nextTick(() => {
+            // Force a final update to ensure everything is rendered correctly
+            console.log('Forcing update after switching to pricing tab');
+            this.$forceUpdate();
+          });
         }
       } else if (!this.productId) {
         console.warn(`Cannot switch to ${tab} tab: no product ID`);
@@ -854,17 +869,25 @@ export default {
       }
     },
     recalculatePricing() {
-      if (!this.product || !this.product.data || !this.product.data.pricing) return;
+      if (!this.product || !this.product.data || !this.product.data.pricing) {
+        console.warn('Cannot recalculate pricing: missing product data or pricing object');
+        return;
+      }
+      
+      console.log('Recalculating pricing...');
       
       const pricing = this.product.data.pricing;
+      console.log('Before calculation, pricing:', JSON.stringify(pricing));
       
       // Ensure waste_percentage and margin_percentage are set from user config if not already set
       if (!pricing.waste_percentage && pricing.waste_percentage !== 0) {
         pricing.waste_percentage = this.userConfig.waste_percentage;
+        console.log('Set default waste_percentage:', pricing.waste_percentage);
       }
       
       if (!pricing.margin_percentage && pricing.margin_percentage !== 0) {
         pricing.margin_percentage = this.userConfig.margin_percentage;
+        console.log('Set default margin_percentage:', pricing.margin_percentage);
       }
       
       // Calculate subtotal - ensure all values are numbers
@@ -873,30 +896,42 @@ export default {
       pricing.extras_cost = parseFloat(pricing.extras_cost) || 0;
       
       pricing.subtotal = pricing.materials_cost + pricing.processes_cost + pricing.extras_cost;
+      console.log('Calculated subtotal:', pricing.subtotal);
       
       // Calculate waste
       pricing.waste_value = pricing.subtotal * (pricing.waste_percentage / 100);
+      console.log('Calculated waste value:', pricing.waste_value, 
+                  '(', pricing.waste_percentage, '% of', pricing.subtotal, ')');
       
       // Calculate subtotal with waste
       const subtotalWithWaste = pricing.subtotal + pricing.waste_value;
+      console.log('Subtotal with waste:', subtotalWithWaste);
       
       // Get quantity from general_info if available, otherwise use product quantity or default to 1
       const quantity = 
         (this.product.data.general_info && this.product.data.general_info.quantity) || 
         this.product.data.quantity || 
         1;
+      console.log('Product quantity:', quantity);
       
       // Calculate price per piece before margin
       pricing.price_per_piece_before_margin = subtotalWithWaste / quantity;
+      console.log('Price per piece before margin:', pricing.price_per_piece_before_margin);
       
       // Calculate margin
       pricing.margin_value = subtotalWithWaste * (pricing.margin_percentage / 100);
+      console.log('Calculated margin value:', pricing.margin_value, 
+                  '(', pricing.margin_percentage, '% of', subtotalWithWaste, ')');
       
       // Calculate total price
       pricing.total_price = subtotalWithWaste + pricing.margin_value;
+      console.log('Total price:', pricing.total_price);
       
       // Calculate final price per piece
       pricing.final_price_per_piece = pricing.total_price / quantity;
+      console.log('Final price per piece:', pricing.final_price_per_piece);
+      
+      console.log('After calculation, pricing:', JSON.stringify(pricing));
     },
     // Update materials, processes, and extras costs in pricing
     ensurePricingUpdated() {
@@ -1169,6 +1204,27 @@ export default {
         // This will trigger the recalculation in updateProcesses
         this.updateProcesses(processesNeedingRecalculation);
       }
+    },
+    
+    handlePricingUpdate(updatedPricing) {
+      if (!this.product || !this.product.data) return;
+      
+      console.log('ProductForm received pricing update:', updatedPricing);
+      
+      // Update the pricing data with the new values
+      this.product.data.pricing = {
+        ...this.product.data.pricing,
+        ...updatedPricing
+      };
+      
+      // Recalculate pricing to update all derived values
+      console.log('Recalculating pricing after update');
+      this.recalculatePricing();
+      
+      // Force update to ensure changes propagate
+      this.$nextTick(() => {
+        this.$forceUpdate();
+      });
     }
   },
   // Add the created hook to initialize the component
