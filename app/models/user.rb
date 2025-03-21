@@ -10,6 +10,7 @@ class User < ApplicationRecord
   has_many :extras, dependent: :destroy
   has_many :app_configs, dependent: :destroy
   has_many :products, dependent: :destroy
+  has_many :quotes, dependent: :destroy
 
   after_create :setup_initial_data
 

@@ -1,0 +1,156 @@
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Cotización <%= @quote.quote_number %></h1>
+    <div>
+      <%= link_to edit_quote_path(@quote), class: "btn btn-primary me-2" do %>
+        <i class="fas fa-edit"></i> Editar
+      <% end %>
+      <%= link_to quotes_path, class: "btn btn-secondary" do %>
+        <i class="fas fa-arrow-left"></i> Volver
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Información de la Cotización</h5>
+        </div>
+        <div class="card-body">
+          <table class="table table-borderless">
+            <tr>
+              <th style="width: 30%">Número de Cotización:</th>
+              <td><%= @quote.quote_number %></td>
+            </tr>
+            <tr>
+              <th>Proyecto:</th>
+              <td><%= @quote.project_name %></td>
+            </tr>
+            <tr>
+              <th>Fecha:</th>
+              <td><%= @quote.created_at.strftime("%d/%m/%Y") %></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Información del Cliente</h5>
+        </div>
+        <div class="card-body">
+          <table class="table table-borderless">
+            <tr>
+              <th style="width: 30%">Cliente:</th>
+              <td><%= @quote.customer_name %></td>
+            </tr>
+            <tr>
+              <th>Organización:</th>
+              <td><%= @quote.organization %></td>
+            </tr>
+            <tr>
+              <th>Email:</th>
+              <td><%= @quote.email.present? ? @quote.email : "No especificado" %></td>
+            </tr>
+            <tr>
+              <th>Teléfono:</th>
+              <td><%= @quote.telephone.present? ? @quote.telephone : "No especificado" %></td>
+            </tr>
+            <% if @quote.comments.present? %>
+              <tr>
+                <th>Comentarios:</th>
+                <td><%= @quote.comments %></td>
+              </tr>
+            <% end %>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Productos</h5>
+    </div>
+    <div class="card-body">
+      <% if @products.any? %>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Producto</th>
+                <th class="text-center">Cantidad</th>
+                <th class="text-end">Precio Unitario</th>
+                <th class="text-end">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @products.each_with_index do |quote_product, index| %>
+                <tr>
+                  <td><%= index + 1 %></td>
+                  <td><%= quote_product.product.description %></td>
+                  <td class="text-center"><%= quote_product.quantity %></td>
+                  <td class="text-end"><%= number_to_currency(quote_product.product.pricing["total_price"]) %></td>
+                  <td class="text-end"><%= number_to_currency(quote_product.product.pricing["total_price"].to_f * quote_product.quantity) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+            <tfoot>
+              <tr>
+                <th colspan="4" class="text-end">Subtotal:</th>
+                <td class="text-end"><%= number_to_currency(@quote.data["totals"]["subtotal"]) %></td>
+              </tr>
+              <tr>
+                <th colspan="4" class="text-end">IVA (<%= @quote.data["totals"]["tax_percentage"] %>%):</th>
+                <td class="text-end"><%= number_to_currency(@quote.data["totals"]["tax_amount"]) %></td>
+              </tr>
+              <tr>
+                <th colspan="4" class="text-end">Total:</th>
+                <td class="text-end fw-bold"><%= number_to_currency(@quote.data["totals"]["total"]) %></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      <% else %>
+        <div class="alert alert-info">
+          Esta cotización no tiene productos agregados.
+          <%= link_to "Editar cotización", edit_quote_path(@quote), class: "alert-link" %> para agregar productos.
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end mb-4">
+    <button class="btn btn-success me-2" onclick="window.print()">
+      <i class="fas fa-print"></i> Imprimir
+    </button>
+    <%= link_to quotes_path, class: "btn btn-secondary" do %>
+      <i class="fas fa-arrow-left"></i> Volver
+    <% end %>
+  </div>
+</div>
+
+<style>
+  @media print {
+    .btn, nav, footer {
+      display: none !important;
+    }
+    
+    body {
+      background: #fff !important;
+    }
+    
+    .container-fluid {
+      padding: 0 !important;
+    }
+    
+    .card {
+      border: 1px solid #ddd !important;
+      box-shadow: none !important;
+    }
+  }
+</style> 

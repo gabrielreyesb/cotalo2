@@ -1,0 +1,133 @@
+<%= form_with(model: quote, local: true) do |form| %>
+  <% if quote.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(quote.errors.count, "error") %> prohibited this quote from being saved:</h4>
+      <ul>
+        <% quote.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Información de la Cotización</h5>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label :project_name, "Nombre del Proyecto", class: "form-label" %>
+            <%= form.text_field :project_name, class: "form-control", required: true %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Información del Cliente</h5>
+    </div>
+    <div class="card-body" data-controller="customer-search">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label :customer_name, "Nombre del Cliente", class: "form-label" %>
+            <div class="input-group">
+              <%= form.text_field :customer_name, class: "form-control", required: true, data: { customer_search_target: "query" } %>
+              <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#customerSearchModal">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label :organization, "Organización", class: "form-label" %>
+            <%= form.text_field :organization, class: "form-control", required: true %>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label :email, "Correo Electrónico", class: "form-label" %>
+            <%= form.email_field :email, class: "form-control" %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label :telephone, "Teléfono", class: "form-label" %>
+            <%= form.text_field :telephone, class: "form-control" %>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="mb-3">
+            <%= form.label :comments, "Comentarios", class: "form-label" %>
+            <%= form.text_area :comments, rows: 3, class: "form-control" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer search modal -->
+      <div class="modal fade" id="customerSearchModal" tabindex="-1" aria-labelledby="customerSearchModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="customerSearchModalLabel">Buscar Cliente</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="customerSearchQuery" class="form-label">Nombre del Cliente</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="customerSearchQuery" data-customer-search-target="query" placeholder="Ingrese al menos 3 caracteres...">
+                  <button class="btn btn-primary" data-action="click->customer-search#search">Buscar</button>
+                </div>
+                <small class="form-text text-muted">Ingrese al menos 3 caracteres para buscar.</small>
+              </div>
+              
+              <div class="d-flex justify-content-center my-3 d-none" data-customer-search-target="spinner">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Cargando...</span>
+                </div>
+              </div>
+              
+              <div class="alert alert-danger d-none" data-customer-search-target="error"></div>
+              
+              <div class="alert alert-info d-none" data-customer-search-target="noResults">
+                No se encontraron clientes con ese nombre.
+              </div>
+              
+              <div class="table-responsive d-none">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Organización</th>
+                      <th>Email</th>
+                      <th>Teléfono</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody data-customer-search-target="results">
+                    <!-- Results will be inserted here -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end mt-4">
+    <%= link_to "Cancelar", quotes_path, class: "btn btn-secondary me-2" %>
+    <%= form.submit "Guardar Cotización", class: "btn btn-primary" %>
+  </div>
+<% end %> 

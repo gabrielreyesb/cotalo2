@@ -1,11 +1,19 @@
 class Product < ApplicationRecord
   belongs_to :user
+  has_many :quote_products, dependent: :destroy
+  has_many :quotes, through: :quote_products
   
   validates :description, presence: true
   validates :user, presence: true
   
   # Scope to find products belonging to a specific user
   scope :for_user, ->(user) { where(user: user) }
+  
+  # Return a formatted description with price for display in lists
+  def formatted_description
+    price = pricing["total_price"] || 0
+    "#{description} - $#{format('%.2f', price)}"
+  end
   
   # Define structure of our data hash with default values
   def self.default_data

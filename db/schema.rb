@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_03_19_000003) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_21_201408) do
   create_table "app_configs", force: :cascade do |t|
     t.string "key", null: false
     t.text "value"
@@ -72,6 +72,31 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_19_000003) do
     t.index ["user_id"], name: "index_products_on_user_id"
   end
 
+  create_table "quote_products", force: :cascade do |t|
+    t.integer "quote_id", null: false
+    t.integer "product_id", null: false
+    t.integer "quantity"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_quote_products_on_product_id"
+    t.index ["quote_id"], name: "index_quote_products_on_quote_id"
+  end
+
+  create_table "quotes", force: :cascade do |t|
+    t.string "quote_number"
+    t.string "project_name"
+    t.string "customer_name"
+    t.string "organization"
+    t.string "email"
+    t.string "telephone"
+    t.text "comments"
+    t.integer "user_id", null: false
+    t.json "data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_quotes_on_user_id"
+  end
+
   create_table "units", force: :cascade do |t|
     t.string "name"
     t.string "abbreviation"
@@ -101,5 +126,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_19_000003) do
   add_foreign_key "materials", "units"
   add_foreign_key "materials", "users"
   add_foreign_key "products", "users"
+  add_foreign_key "quote_products", "products"
+  add_foreign_key "quote_products", "quotes"
+  add_foreign_key "quotes", "users"
   add_foreign_key "units", "users"
 end

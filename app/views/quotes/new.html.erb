@@ -1,0 +1,21 @@
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Nueva Cotización</h1>
+    <%= link_to quotes_path, class: 'btn btn-outline-secondary' do %>
+      <i class="bi bi-arrow-left"></i> Volver
+    <% end %>
+  </div>
+
+  <!-- Vue app mount point -->
+  <div id="quote-form-app" 
+    data-available-products="<%= @products.to_json(methods: [:formatted_description], except: [:created_at, :updated_at]) %>"
+    data-quote="{}"
+    data-edit-mode="false">
+  </div>
+</div>
+
+<!-- CSRF token -->
+<%= tag.meta name: "csrf-token", content: form_authenticity_token %>
+
+<!-- Load Vue app -->
+<%= javascript_pack_tag 'quote_form' %> 

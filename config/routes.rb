@@ -28,6 +28,19 @@ Rails.application.routes.draw do
     end
   end
   
+  # Quote routes with product management actions
+  resources :quotes do
+    member do
+      post :add_product
+      delete :remove_product
+      patch :update_product_quantity
+    end
+    
+    collection do
+      post :search_customer
+    end
+  end
+  
   # API routes
   namespace :api do
     namespace :v1 do

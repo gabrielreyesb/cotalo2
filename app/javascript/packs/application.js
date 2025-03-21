@@ -15,6 +15,19 @@
 // const images = require.context('../images', true)
 // const imagePath = (name) => images(name, true)
 
+import 'bootstrap'
+import '@popperjs/core'
+
+// Only try to import Stimulus controllers if actually being used in the page
+try {
+  // Import Stimulus controllers conditionally
+  import("../controllers").catch(e => {
+    console.log("Stimulus not loaded, continuing without it");
+  });
+} catch (e) {
+  console.log("Stimulus not available, continuing without it");
+}
+
 console.log('Hello World from Webpacker')
 
 // Remove debug elements in production
