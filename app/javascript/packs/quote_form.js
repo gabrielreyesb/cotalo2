@@ -16,6 +16,26 @@ window.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false;
 import { createApp } from 'vue';
 import QuoteForm from '../vue/components/QuoteForm.vue';
 
+// Create a global event bus for external communication with Vue
+window.quoteFormEventBus = {
+  events: {},
+  
+  // Register event handlers
+  on(event, callback) {
+    if (!this.events[event]) {
+      this.events[event] = [];
+    }
+    this.events[event].push(callback);
+  },
+  
+  // Trigger an event
+  emit(event, data) {
+    if (this.events[event]) {
+      this.events[event].forEach(callback => callback(data));
+    }
+  }
+};
+
 // Add global error handler
 window.addEventListener('error', function(event) {
   console.error('Global error caught:', event.error);
@@ -155,27 +175,26 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     };
 
+    // Store availableProducts for debug function
+    window.quoteFormProducts = availableProducts;
+
     // Mount the app
     console.log('Mounting Vue app...');
     app.mount('#quote-form-app');
     console.log('Vue app mounted successfully');
     
-    // For debugging: add a direct click handler to ensure Vue is responding
+    // For debugging: add a direct method to add products using the event bus
     window.debugAddProduct = function(productId) {
       try {
         console.log(`Debug: Adding product ${productId}...`);
-        const product = availableProducts.find(p => p.id === productId);
+        const product = window.quoteFormProducts.find(p => p.id === productId);
         if (product) {
           console.log('Debug: Product found:', product);
-          // Try to find the Vue instance
-          const quoteFormInstance = app._instance.proxy;
-          if (quoteFormInstance && typeof quoteFormInstance.addProduct === 'function') {
-            console.log('Debug: Vue instance found, calling addProduct()');
-            quoteFormInstance.addProduct(product);
-            return true;
-          } else {
-            console.error('Debug: Vue instance or addProduct method not found');
-          }
+          
+          // Use the event bus to communicate with Vue
+          window.quoteFormEventBus.emit('add-product', product);
+          console.log('Debug: add-product event emitted');
+          return true;
         } else {
           console.error(`Debug: Product ${productId} not found in availableProducts`);
         }

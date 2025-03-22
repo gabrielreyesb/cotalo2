@@ -619,6 +619,21 @@ export default {
         this.form.telephone = selectedCustomer.phone || '';
       }
     }
+  },
+  
+  mounted() {
+    console.log('QuoteForm component mounted');
+    
+    // Listen for the external event to add products
+    if (window.quoteFormEventBus) {
+      console.log('Setting up event listener for add-product events');
+      window.quoteFormEventBus.on('add-product', (product) => {
+        console.log('Received add-product event with product:', product);
+        this.addProduct(product);
+      });
+    } else {
+      console.error('Event bus not found in global scope');
+    }
   }
 }
 </script>
