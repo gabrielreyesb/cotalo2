@@ -425,11 +425,14 @@ export default {
     },
     
     addProduct(product) {
+      console.log('Adding product to quote:', product);
+      
       // Check if product is already in the list
       const existingProduct = this.selectedProducts.find(p => p.id === product.id);
       
       if (existingProduct) {
         // Product already exists, don't add it again
+        console.log('Product already exists in the quote, not adding again');
         return;
       }
         
@@ -437,6 +440,9 @@ export default {
       let price = 0;
       if (product.data && product.data.pricing && product.data.pricing.total_price) {
         price = parseFloat(product.data.pricing.total_price);
+        console.log('Extracted price from product:', price);
+      } else {
+        console.warn('Could not extract price from product:', product);
       }
       
       // Add new product to the list
@@ -446,6 +452,8 @@ export default {
         price: price,
         quantity: 1  // Keep quantity for backend calculations
       });
+      
+      console.log('Product added successfully. Updated selectedProducts:', this.selectedProducts);
       
       // Calculate totals (still needed for backend)
       this.calculateTotals();
