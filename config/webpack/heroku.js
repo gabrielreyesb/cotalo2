@@ -6,27 +6,39 @@ const config = environment.toWebpackConfig()
 // Optimize for memory usage in Heroku
 config.optimization = {
   minimize: true,
-  runtimeChunk: 'single',
+  runtimeChunk: false, // Disable runtime chunk to save memory
+  minimizer: [
+    // Use terser plugin with reduced memory settings
+    new (require('terser-webpack-plugin'))({
+      terserOptions: {
+        compress: {
+          drop_console: true, // Remove console.* statements
+        },
+      },
+      parallel: false, // Disable parallel processing to save memory
+    }),
+  ],
   splitChunks: {
     chunks: 'all',
-    maxInitialRequests: Infinity,
-    minSize: 0,
+    maxInitialRequests: 1, // Limit parallel requests
     cacheGroups: {
       vendor: {
         test: /[\\/]node_modules[\\/]/,
-        name(module) {
-          // get the name. E.g. node_modules/packageName/not/this/part.js
-          // or node_modules/packageName
-          const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
-          // create a nice name
-          return `npm.${packageName.replace('@', '')}`;
-        },
+        name: 'vendors',
+        chunks: 'all',
+        enforce: true,
       },
     },
   },
 }
 
-// Reduce parallel processing to save memory
-config.parallelism = 1
+// Reduce memory usage during compilation
+config.cache = false // Disable caching
+config.parallelism = 1 // Use minimal parallelism
+config.performance = { hints: false } // Disable performance hints
+config.stats = 'minimal' // Minimal stats output
+
+// Disable source maps in production to save memory
+config.devtool = false
 
 module.exports = config 
