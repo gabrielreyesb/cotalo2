@@ -4,9 +4,6 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 // Import dark mode theme overrides
 import '../vue/vue_styles.css';
 
-// Debug message to confirm the script is loaded
-console.log('quote_form.js loaded successfully');
-
 // Set Vue feature flags - required for Vue 3 esm-bundler
 window.__VUE_OPTIONS_API__ = true;
 window.__VUE_PROD_DEVTOOLS__ = false;
@@ -36,16 +33,6 @@ window.quoteFormEventBus = {
   }
 };
 
-// Add global error handler
-window.addEventListener('error', function(event) {
-  console.error('Global error caught:', event.error);
-});
-
-// Add unhandled promise rejection handler
-window.addEventListener('unhandledrejection', function(event) {
-  console.error('Unhandled promise rejection:', event.reason);
-});
-
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', () => {
   try {
@@ -55,8 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    console.log('Quote form app mount point found:', el);
-
     // Get data attributes from the element
     let availableProducts = [];
     let quote = {};
@@ -64,10 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     try {
       availableProducts = JSON.parse(el.dataset.availableProducts || '[]');
-      console.log('Available products parsed successfully. Count:', availableProducts.length);
-      if (availableProducts.length > 0) {
-        console.log('First product:', availableProducts[0]);
-      }
     } catch (e) {
       console.error('Error parsing availableProducts:', e);
       availableProducts = [];
@@ -75,14 +56,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     try {
       quote = JSON.parse(el.dataset.quote || '{}');
-      console.log('Quote parsed successfully:', Object.keys(quote));
     } catch (e) {
       console.error('Error parsing quote:', e);
       quote = {};
     }
     
     editMode = el.dataset.editMode === 'true';
-    console.log('Edit mode:', editMode);
 
     // Create and mount the Vue app with the component directly
     const app = createApp(QuoteForm, {
@@ -91,8 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
       editMode,
       onSave: (formData) => {
         try {
-          console.log('Saving form data:', formData);
-          
           // Create a data object with the form data and selected products
           const quoteData = {
             ...formData.form,
@@ -110,8 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           };
 
-          console.log('Quote data prepared for submission:', quoteData);
-
           // Create a hidden form to submit the data to Rails
           const form = document.createElement('form');
           form.method = 'post';
@@ -120,11 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
           // Add CSRF token
           const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-          if (!csrfToken) {
-            console.error('CSRF token not found!');
-          } else {
-            console.log('CSRF token found');
-          }
           
           const csrfInput = document.createElement('input');
           csrfInput.type = 'hidden';
@@ -150,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
           // Append the form to the body and submit it
           document.body.appendChild(form);
-          console.log('Form created and ready to submit');
           form.submit();
         } catch (e) {
           console.error('Error in onSave handler:', e);
@@ -175,66 +144,22 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     };
 
-    // Store availableProducts for debug function
+    // Store products for debug access if needed
     window.quoteFormProducts = availableProducts;
 
     // Mount the app
-    console.log('Mounting Vue app...');
     app.mount('#quote-form-app');
-    console.log('Vue app mounted successfully');
     
-    // For debugging: add a direct method to add products using the event bus
+    // Simple external product add helper
     window.debugAddProduct = function(productId) {
       try {
-        console.log(`Debug: Adding product ${productId}...`);
         const product = window.quoteFormProducts.find(p => p.id === productId);
-        if (product) {
-          console.log('Debug: Product found:', product);
-          
-          // Try multiple approaches to add the product
-          
-          // Approach 1: Use the event bus
-          if (window.quoteFormEventBus) {
-            console.log('Debug: Using event bus to add product');
-            window.quoteFormEventBus.emit('add-product', product);
-            console.log('Debug: add-product event emitted');
-          }
-          
-          // Approach 2: Try to use the global component reference
-          if (window.quoteFormComponent) {
-            console.log('Debug: Using global component reference to add product');
-            setTimeout(() => {
-              try {
-                window.quoteFormComponent.addProduct(product);
-                console.log('Debug: Added product via global component reference');
-              } catch (e) {
-                console.error('Debug: Error adding product via global component reference:', e);
-              }
-            }, 100); // slight delay to ensure other methods have a chance
-          }
-          
+        if (product && window.quoteFormEventBus) {
+          window.quoteFormEventBus.emit('add-product', product);
           return true;
-        } else {
-          console.error(`Debug: Product ${productId} not found in availableProducts`);
         }
       } catch (e) {
-        console.error('Debug: Error in debugAddProduct:', e);
-      }
-      return false;
-    };
-    
-    // For direct testing in console
-    window.openProductsModal = function() {
-      try {
-        if (window.quoteFormComponent) {
-          console.log('Debug: Attempting to open products modal via global component reference');
-          window.quoteFormComponent.openProductsModal();
-          return true;
-        } else {
-          console.error('Debug: Global component reference not found');
-        }
-      } catch (e) {
-        console.error('Debug: Error in openProductsModal:', e);
+        console.error('Error adding product:', e);
       }
       return false;
     };

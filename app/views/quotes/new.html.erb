@@ -12,50 +12,6 @@
     data-quote="{}"
     data-edit-mode="false">
   </div>
-  
-  <!-- Debug tools -->
-  <div class="debug-tools mt-4" style="border: 1px solid #333; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-    <h5>Debug Tools</h5>
-    <p>If you're having trouble adding products, try using this debug panel:</p>
-    
-    <div class="row mb-3">
-      <div class="col-md-8">
-        <select id="debug-product-select" class="form-select bg-dark text-light">
-          <option value="">-- Select a product --</option>
-          <% @products.each do |product| %>
-            <option value="<%= product.id %>"><%= product.description %></option>
-          <% end %>
-        </select>
-      </div>
-      <div class="col-md-4">
-        <button type="button" id="debug-add-button" class="btn btn-primary">Add Product (Debug)</button>
-      </div>
-    </div>
-    
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const debugButton = document.getElementById('debug-add-button');
-        const productSelect = document.getElementById('debug-product-select');
-        
-        debugButton.addEventListener('click', function() {
-          const productId = parseInt(productSelect.value, 10);
-          if (!productId) {
-            alert('Please select a product first');
-            return;
-          }
-          
-          console.log('Debug button clicked for product ID:', productId);
-          if (typeof window.debugAddProduct === 'function') {
-            const result = window.debugAddProduct(productId);
-            console.log('Debug add product result:', result);
-          } else {
-            console.error('Debug function not available');
-            alert('Debug function not available. Vue app may not be properly initialized.');
-          }
-        });
-      });
-    </script>
-  </div>
 </div>
 
 <!-- CSRF token -->

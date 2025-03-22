@@ -87,31 +87,65 @@
             <button type="submit" class="btn btn-primary">Crear Cotización</button>
           </div>
         </form>
-        
-        <!-- Debug section - can be removed once working -->
-        <div class="card mt-4" style="border: 1px dashed #42b983;">
-          <div class="card-body">
-            <h5 class="card-title">Estado del Modal: {{ showProductsModal ? 'Abierto' : 'Cerrado' }}</h5>
-            <p>Si el modal de productos no se muestra, usa este botón alternativo:</p>
-            <button type="button" class="btn btn-warning" @click="forceOpenModal">
-              Abrir Modal (Alternativo)
-            </button>
-          </div>
-        </div>
       </div>
 
       <div class="col-lg-5">
-        <!-- Selected Products Card -->
+        <!-- Inline Product Selector - Now at the top -->
         <div class="card mb-4">
-          <div class="card-header d-flex justify-content-between align-items-center">
+          <div class="card-header">
+            <h5 class="mb-0">Agregar Producto</h5>
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <label for="product-search" class="form-label">Buscar Producto</label>
+              <input 
+                type="text" 
+                id="product-search" 
+                class="form-control" 
+                v-model="productSearch" 
+                placeholder="Buscar por descripción..."
+              />
+            </div>
+            
+            <div class="mb-3">
+              <label for="product-select" class="form-label">Seleccionar Producto</label>
+              <select 
+                id="product-select" 
+                class="form-select" 
+                v-model="selectedProductId"
+              >
+                <option value="">-- Seleccionar producto --</option>
+                <option 
+                  v-for="product in filteredProducts" 
+                  :key="product.id" 
+                  :value="product.id"
+                >
+                  {{ product.description }} - {{ formatCurrency(product.data && product.data.pricing && product.data.pricing.total_price || 0) }}
+                </option>
+              </select>
+            </div>
+            
+            <div class="d-grid">
+              <button 
+                type="button" 
+                class="btn btn-primary" 
+                @click="addSelectedProduct()" 
+                :disabled="!selectedProductId"
+              >
+                <i class="fas fa-plus"></i> Agregar a la Cotización
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Selected Products Card - Now in the middle -->
+        <div class="card mb-4">
+          <div class="card-header">
             <h5 class="mb-0">Productos Seleccionados</h5>
-            <button type="button" class="btn btn-sm btn-primary" @click="openProductsModal">
-              <i class="fas fa-plus"></i> Agregar Producto
-            </button>
           </div>
           <div class="card-body">
             <div v-if="selectedProducts.length === 0" class="alert alert-info">
-              No hay productos seleccionados. Usa el botón "Agregar Producto" para agregar productos a la cotización.
+              No hay productos seleccionados. Selecciona un producto arriba para agregarlo a la cotización.
             </div>
             <div v-else>
               <div class="table-responsive">
@@ -140,7 +174,7 @@
           </div>
         </div>
         
-        <!-- Totals Card -->
+        <!-- Totals Card - Still at the bottom -->
         <div class="card mb-4" v-if="selectedProducts.length > 0">
           <div class="card-header">
             <h5 class="mb-0">Resumen de Precios</h5>
@@ -232,53 +266,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Products Modal -->
-    <div class="product-modal-container" v-if="showProductsModal">
-      <div class="modal" tabindex="-1" ref="productsModal">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content bg-dark text-light">
-            <div class="modal-header border-secondary">
-              <h5 class="modal-title">Seleccionar Productos</h5>
-              <button type="button" class="btn-close btn-close-white" @click="closeProductsModal"></button>
-            </div>
-            <div class="modal-body">
-              <div class="mb-3">
-                <input type="text" class="form-control bg-dark text-light border-secondary" v-model="productSearch" placeholder="Buscar producto...">
-              </div>
-              <div class="table-responsive">
-                <table class="table table-hover table-dark">
-                  <thead>
-                    <tr>
-                      <th>Descripción</th>
-                      <th>Precio</th>
-                      <th width="80"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="product in filteredProducts" :key="product.id">
-                      <td>{{ product.description }}</td>
-                      <td>{{ formatCurrency(product.data && product.data.pricing && product.data.pricing.total_price || 0) }}</td>
-                      <td>
-                        <button type="button" class="btn btn-sm btn-primary" @click="productSelectClicked(product)">
-                          Agregar
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div v-if="filteredProducts.length === 0" class="alert alert-info bg-dark text-light border-secondary">
-                No hay productos disponibles para agregar.
-              </div>
-            </div>
-            <div class="modal-footer border-secondary">
-              <button type="button" class="btn btn-secondary" @click="closeProductsModal">Cerrar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -327,7 +314,6 @@ export default {
         total: 0
       },
       showCustomerSearchModal: false,
-      showProductsModal: false,
       customerSearch: {
         query: '',
         loading: false,
@@ -336,7 +322,8 @@ export default {
         noResults: false
       },
       productSearch: '',
-      selectedCustomerId: ''
+      selectedCustomerId: '',
+      selectedProductId: ''
     }
   },
   
@@ -438,14 +425,11 @@ export default {
     },
     
     addProduct(product) {
-      console.log('Adding product to quote:', product);
-      
       // Check if product is already in the list
       const existingProduct = this.selectedProducts.find(p => p.id === product.id);
       
       if (existingProduct) {
         // Product already exists, don't add it again
-        console.log('Product already exists in the quote, not adding again');
         return;
       }
         
@@ -453,9 +437,6 @@ export default {
       let price = 0;
       if (product.data && product.data.pricing && product.data.pricing.total_price) {
         price = parseFloat(product.data.pricing.total_price);
-        console.log('Extracted price from product:', price);
-      } else {
-        console.warn('Could not extract price from product:', product);
       }
       
       // Add new product to the list
@@ -466,14 +447,8 @@ export default {
         quantity: 1  // Keep quantity for backend calculations
       });
       
-      console.log('Product added successfully. Updated selectedProducts:', this.selectedProducts);
-      
-      // Calculate totals (still needed for backend)
+      // Calculate totals
       this.calculateTotals();
-      
-      // Close the modal and reset search
-      this.showProductsModal = false;
-      this.productSearch = '';
     },
     
     removeProduct(index) {
@@ -633,134 +608,62 @@ export default {
       }
     },
     
-    productSelectClicked(product) {
-      console.log('Product select button clicked:', product);
-      
-      // Call addProduct method and handle any errors
-      try {
-        this.addProduct(product);
-        console.log('Product added successfully through UI button');
-      } catch (e) {
-        console.error('Error adding product through UI button:', e);
+    addSelectedProduct() {
+      if (!this.selectedProductId) {
+        return;
       }
-    },
-    
-    // Show the products modal
-    openProductsModal() {
-      console.log('Attempting to open products modal');
-      this.showProductsModal = true;
-      console.log('Products modal visibility set to:', this.showProductsModal);
-    },
-    
-    closeProductsModal() {
-      this.showProductsModal = false;
-    },
-    
-    forceOpenModal() {
-      console.log('Attempting to force open products modal');
-      this.showProductsModal = true;
-      console.log('Products modal visibility set to:', this.showProductsModal);
+      
+      // Find the selected product from the availableProducts array
+      const selectedProduct = this.availableProducts.find(product => product.id === this.selectedProductId);
+      
+      if (selectedProduct) {
+        this.addProduct(selectedProduct);
+        // Reset the selection after adding
+        this.selectedProductId = '';
+      }
     }
   },
   
   mounted() {
-    console.log('QuoteForm component mounted');
-    
     // Listen for the external event to add products
     if (window.quoteFormEventBus) {
-      console.log('Setting up event listener for add-product events');
       window.quoteFormEventBus.on('add-product', (product) => {
-        console.log('Received add-product event with product:', product);
         this.addProduct(product);
       });
-    } else {
-      console.error('Event bus not found in global scope');
     }
-    
-    // Create a global reference to this component for debug access
-    try {
-      window.quoteFormComponent = this;
-      console.log('Added global reference to QuoteForm component');
-    } catch (e) {
-      console.error('Error creating global component reference:', e);
-    }
-    
-    // Log available products for debugging
-    console.log(`Component has ${this.availableProducts.length} products available`);
-    
-    // Ensure next tick for DOM updates
-    this.$nextTick(() => {
-      console.log('Vue nextTick completed, DOM should be ready');
-    });
   }
 }
 </script>
 
 <style scoped>
-.product-modal-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 9999;
+/* Product selector styles */
+.form-select {
+  background-color: #2c3136;
+  color: #e1e1e1;
+  border: 1px solid #495057;
 }
 
-.modal {
-  display: block !important;
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  overflow: auto !important;
-  background-color: rgba(0, 0, 0, 0.5) !important;
-  z-index: 1050 !important;
+.form-select:focus {
+  border-color: #42b983;
+  box-shadow: 0 0 0 0.25rem rgba(66, 185, 131, 0.25);
 }
 
-.modal-dialog {
-  margin: 30px auto !important;
-  max-width: 800px !important;
+.btn-primary {
+  background-color: #42b983;
+  border-color: #42b983;
 }
 
-.modal-content {
-  position: relative !important;
-  display: flex !important;
-  flex-direction: column !important;
-  background-color: #23272b !important;
-  background-clip: padding-box !important;
-  border: 1px solid rgba(0, 0, 0, 0.2) !important;
-  border-radius: 0.3rem !important;
-  outline: 0 !important;
+.btn-primary:hover {
+  background-color: #3aa876;
+  border-color: #39a06e;
 }
 
-.modal-header {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  padding: 1rem !important;
-  border-bottom: 1px solid #32383e !important;
+.btn-primary:disabled {
+  background-color: #2a7550;
+  border-color: #2a7550;
 }
 
-.modal-body {
-  position: relative !important;
-  flex: 1 1 auto !important;
-  padding: 1rem !important;
-}
-
-.modal-footer {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: flex-end !important;
-  padding: 1rem !important;
-  border-top: 1px solid #32383e !important;
-}
-
-/* Additional styles for better visibility */
-.btn-close-white {
-  filter: invert(1) grayscale(100%) brightness(200%);
-}
-
+/* Table hover styles */
 .table-hover tbody tr:hover {
   background-color: rgba(66, 185, 131, 0.1) !important;
 }
