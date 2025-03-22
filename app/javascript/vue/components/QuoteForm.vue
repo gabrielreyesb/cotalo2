@@ -87,6 +87,17 @@
             <button type="submit" class="btn btn-primary">Crear Cotización</button>
           </div>
         </form>
+        
+        <!-- Debug section - can be removed once working -->
+        <div class="card mt-4" style="border: 1px dashed #42b983;">
+          <div class="card-body">
+            <h5 class="card-title">Estado del Modal: {{ showProductsModal ? 'Abierto' : 'Cerrado' }}</h5>
+            <p>Si el modal de productos no se muestra, usa este botón alternativo:</p>
+            <button type="button" class="btn btn-warning" @click="forceOpenModal">
+              Abrir Modal (Alternativo)
+            </button>
+          </div>
+        </div>
       </div>
 
       <div class="col-lg-5">
@@ -223,45 +234,47 @@
     </div>
 
     <!-- Products Modal -->
-    <div class="modal" tabindex="-1" v-if="showProductsModal" ref="productsModal">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content bg-dark text-light">
-          <div class="modal-header border-secondary">
-            <h5 class="modal-title">Seleccionar Productos</h5>
-            <button type="button" class="btn-close btn-close-white" @click="showProductsModal = false"></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <input type="text" class="form-control bg-dark text-light border-secondary" v-model="productSearch" placeholder="Buscar producto...">
+    <div class="product-modal-container" v-if="showProductsModal">
+      <div class="modal" tabindex="-1" ref="productsModal">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content bg-dark text-light">
+            <div class="modal-header border-secondary">
+              <h5 class="modal-title">Seleccionar Productos</h5>
+              <button type="button" class="btn-close btn-close-white" @click="closeProductsModal"></button>
             </div>
-            <div class="table-responsive">
-              <table class="table table-hover table-dark">
-                <thead>
-                  <tr>
-                    <th>Descripción</th>
-                    <th>Precio</th>
-                    <th width="80"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="product in filteredProducts" :key="product.id">
-                    <td>{{ product.description }}</td>
-                    <td>{{ formatCurrency(product.data && product.data.pricing && product.data.pricing.total_price || 0) }}</td>
-                    <td>
-                      <button type="button" class="btn btn-sm btn-primary" @click="productSelectClicked(product)">
-                        Agregar
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            <div class="modal-body">
+              <div class="mb-3">
+                <input type="text" class="form-control bg-dark text-light border-secondary" v-model="productSearch" placeholder="Buscar producto...">
+              </div>
+              <div class="table-responsive">
+                <table class="table table-hover table-dark">
+                  <thead>
+                    <tr>
+                      <th>Descripción</th>
+                      <th>Precio</th>
+                      <th width="80"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="product in filteredProducts" :key="product.id">
+                      <td>{{ product.description }}</td>
+                      <td>{{ formatCurrency(product.data && product.data.pricing && product.data.pricing.total_price || 0) }}</td>
+                      <td>
+                        <button type="button" class="btn btn-sm btn-primary" @click="productSelectClicked(product)">
+                          Agregar
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div v-if="filteredProducts.length === 0" class="alert alert-info bg-dark text-light border-secondary">
+                No hay productos disponibles para agregar.
+              </div>
             </div>
-            <div v-if="filteredProducts.length === 0" class="alert alert-info bg-dark text-light border-secondary">
-              No hay productos disponibles para agregar.
+            <div class="modal-footer border-secondary">
+              <button type="button" class="btn btn-secondary" @click="closeProductsModal">Cerrar</button>
             </div>
-          </div>
-          <div class="modal-footer border-secondary">
-            <button type="button" class="btn btn-secondary" @click="showProductsModal = false">Cerrar</button>
           </div>
         </div>
       </div>
@@ -637,6 +650,16 @@ export default {
       console.log('Attempting to open products modal');
       this.showProductsModal = true;
       console.log('Products modal visibility set to:', this.showProductsModal);
+    },
+    
+    closeProductsModal() {
+      this.showProductsModal = false;
+    },
+    
+    forceOpenModal() {
+      console.log('Attempting to force open products modal');
+      this.showProductsModal = true;
+      console.log('Products modal visibility set to:', this.showProductsModal);
     }
   },
   
@@ -674,8 +697,71 @@ export default {
 </script>
 
 <style scoped>
+.product-modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+}
+
 .modal {
-  display: block;
-  background-color: rgba(0, 0, 0, 0.5);
+  display: block !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: auto !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  z-index: 1050 !important;
+}
+
+.modal-dialog {
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.modal-content {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background-color: #23272b !important;
+  background-clip: padding-box !important;
+  border: 1px solid rgba(0, 0, 0, 0.2) !important;
+  border-radius: 0.3rem !important;
+  outline: 0 !important;
+}
+
+.modal-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 1rem !important;
+  border-bottom: 1px solid #32383e !important;
+}
+
+.modal-body {
+  position: relative !important;
+  flex: 1 1 auto !important;
+  padding: 1rem !important;
+}
+
+.modal-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  padding: 1rem !important;
+  border-top: 1px solid #32383e !important;
+}
+
+/* Additional styles for better visibility */
+.btn-close-white {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(66, 185, 131, 0.1) !important;
 }
 </style> 
