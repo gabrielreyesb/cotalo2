@@ -191,15 +191,50 @@ document.addEventListener('DOMContentLoaded', () => {
         if (product) {
           console.log('Debug: Product found:', product);
           
-          // Use the event bus to communicate with Vue
-          window.quoteFormEventBus.emit('add-product', product);
-          console.log('Debug: add-product event emitted');
+          // Try multiple approaches to add the product
+          
+          // Approach 1: Use the event bus
+          if (window.quoteFormEventBus) {
+            console.log('Debug: Using event bus to add product');
+            window.quoteFormEventBus.emit('add-product', product);
+            console.log('Debug: add-product event emitted');
+          }
+          
+          // Approach 2: Try to use the global component reference
+          if (window.quoteFormComponent) {
+            console.log('Debug: Using global component reference to add product');
+            setTimeout(() => {
+              try {
+                window.quoteFormComponent.addProduct(product);
+                console.log('Debug: Added product via global component reference');
+              } catch (e) {
+                console.error('Debug: Error adding product via global component reference:', e);
+              }
+            }, 100); // slight delay to ensure other methods have a chance
+          }
+          
           return true;
         } else {
           console.error(`Debug: Product ${productId} not found in availableProducts`);
         }
       } catch (e) {
         console.error('Debug: Error in debugAddProduct:', e);
+      }
+      return false;
+    };
+    
+    // For direct testing in console
+    window.openProductsModal = function() {
+      try {
+        if (window.quoteFormComponent) {
+          console.log('Debug: Attempting to open products modal via global component reference');
+          window.quoteFormComponent.openProductsModal();
+          return true;
+        } else {
+          console.error('Debug: Global component reference not found');
+        }
+      } catch (e) {
+        console.error('Debug: Error in openProductsModal:', e);
       }
       return false;
     };

@@ -94,7 +94,7 @@
         <div class="card mb-4">
           <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Productos Seleccionados</h5>
-            <button type="button" class="btn btn-sm btn-primary" @click="showProductsModal = true">
+            <button type="button" class="btn btn-sm btn-primary" @click="openProductsModal">
               <i class="fas fa-plus"></i> Agregar Producto
             </button>
           </div>
@@ -223,7 +223,7 @@
     </div>
 
     <!-- Products Modal -->
-    <div class="modal" tabindex="-1" v-if="showProductsModal">
+    <div class="modal" tabindex="-1" v-if="showProductsModal" ref="productsModal">
       <div class="modal-dialog modal-lg">
         <div class="modal-content bg-dark text-light">
           <div class="modal-header border-secondary">
@@ -248,7 +248,7 @@
                     <td>{{ product.description }}</td>
                     <td>{{ formatCurrency(product.data && product.data.pricing && product.data.pricing.total_price || 0) }}</td>
                     <td>
-                      <button type="button" class="btn btn-sm btn-primary" @click="addProduct(product)">
+                      <button type="button" class="btn btn-sm btn-primary" @click="productSelectClicked(product)">
                         Agregar
                       </button>
                     </td>
@@ -618,6 +618,25 @@ export default {
         this.form.email = selectedCustomer.email || '';
         this.form.telephone = selectedCustomer.phone || '';
       }
+    },
+    
+    productSelectClicked(product) {
+      console.log('Product select button clicked:', product);
+      
+      // Call addProduct method and handle any errors
+      try {
+        this.addProduct(product);
+        console.log('Product added successfully through UI button');
+      } catch (e) {
+        console.error('Error adding product through UI button:', e);
+      }
+    },
+    
+    // Show the products modal
+    openProductsModal() {
+      console.log('Attempting to open products modal');
+      this.showProductsModal = true;
+      console.log('Products modal visibility set to:', this.showProductsModal);
     }
   },
   
@@ -634,6 +653,22 @@ export default {
     } else {
       console.error('Event bus not found in global scope');
     }
+    
+    // Create a global reference to this component for debug access
+    try {
+      window.quoteFormComponent = this;
+      console.log('Added global reference to QuoteForm component');
+    } catch (e) {
+      console.error('Error creating global component reference:', e);
+    }
+    
+    // Log available products for debugging
+    console.log(`Component has ${this.availableProducts.length} products available`);
+    
+    // Ensure next tick for DOM updates
+    this.$nextTick(() => {
+      console.log('Vue nextTick completed, DOM should be ready');
+    });
   }
 }
 </script>
