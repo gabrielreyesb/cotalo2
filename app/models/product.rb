@@ -23,10 +23,6 @@ class Product < ApplicationRecord
         length: nil,
         inner_measurements: nil,
         quantity: 1,
-        customer_name: "",
-        customer_organization: "",
-        customer_email: "",
-        customer_phone: "",
         comments: ""
       },
       materials: [],  # Will contain objects with the structure shown in self.material_template

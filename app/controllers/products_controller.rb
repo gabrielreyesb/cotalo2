@@ -135,7 +135,6 @@ class ProductsController < ApplicationController
       data: {
         general_info: [
           :width, :length, :inner_measurements, :quantity,
-          :customer_name, :customer_organization, :customer_email, :customer_phone,
           :comments
         ],
         materials: [],
