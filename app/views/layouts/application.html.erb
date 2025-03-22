@@ -10,6 +10,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag "application" %>
   </head>
 
   <body>
@@ -39,7 +40,7 @@
                   <% end %>
                 </li>
                 <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle <%= 'active' if current_page?(materials_path) || current_page?(units_path) || current_page?(manufacturing_processes_path) || current_page?(extras_path) %>" href="#" id="catalogsDropdown" role="button" data-bs-toggle="dropdown">
+                  <a class="nav-link dropdown-toggle <%= 'active' if current_page?(materials_path) || current_page?(units_path) || current_page?(manufacturing_processes_path) || current_page?(extras_path) %>" href="#" id="catalogsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fa fa-list me-1"></i> Catálogos
                   </a>
                   <div class="dropdown-menu" aria-labelledby="catalogsDropdown">
@@ -68,7 +69,7 @@
             <ul class="navbar-nav">
               <% if user_signed_in? %>
                 <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fa fa-user-circle me-1"></i> <%= current_user.email %>
                   </a>
                   <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -125,7 +126,5 @@
         <p>&copy; <%= Date.today.year %> Cotalo - Todos los derechos reservados</p>
       </div>
     </footer>
-
-    <%= javascript_include_tag "application" %>
   </body>
 </html>

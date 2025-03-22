@@ -30,9 +30,15 @@ try {
 
 console.log('Hello World from Webpacker')
 
-// Remove debug elements in production
+// Initialize Bootstrap 5 dropdowns
 document.addEventListener('DOMContentLoaded', function() {
-  // Remove elements with text "EMPTY"
+  // Initialize Bootstrap dropdowns
+  const dropdownElementList = document.querySelectorAll('.dropdown-toggle');
+  const dropdownList = [...dropdownElementList].map(dropdownToggleEl => {
+    return new bootstrap.Dropdown(dropdownToggleEl);
+  });
+  
+  // Remove debug elements in production
   document.querySelectorAll('*').forEach(function(node) {
     if (node.textContent === 'EMPTY') {
       node.parentNode.style.display = 'none';
