@@ -15,7 +15,7 @@
 // const images = require.context('../images', true)
 // const imagePath = (name) => images(name, true)
 
-import 'bootstrap'
+import * as bootstrap from 'bootstrap'
 import '@popperjs/core'
 
 // Only try to import Stimulus controllers if actually being used in the page
@@ -30,13 +30,9 @@ try {
 
 console.log('Hello World from Webpacker')
 
-// Initialize Bootstrap 5 dropdowns
+// Initialize Bootstrap 5 dropdowns and clean up debug elements
 document.addEventListener('DOMContentLoaded', function() {
-  // Initialize Bootstrap dropdowns
-  const dropdownElementList = document.querySelectorAll('.dropdown-toggle');
-  const dropdownList = [...dropdownElementList].map(dropdownToggleEl => {
-    return new bootstrap.Dropdown(dropdownToggleEl);
-  });
+  console.log('DOMContentLoaded in application.js');
   
   // Remove debug elements in production
   document.querySelectorAll('*').forEach(function(node) {

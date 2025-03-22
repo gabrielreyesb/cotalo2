@@ -34,6 +34,7 @@ Rails.application.routes.draw do
       post :add_product
       delete :remove_product
       patch :update_product_quantity
+      get :pdf
     end
     
     collection do

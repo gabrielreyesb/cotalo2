@@ -128,6 +128,9 @@
     <button class="btn btn-success me-2" onclick="window.print()">
       <i class="fas fa-print"></i> Imprimir
     </button>
+    <%= link_to pdf_quote_path(@quote, format: :pdf), class: "btn btn-danger me-2", target: "_blank" do %>
+      <i class="fas fa-file-pdf"></i> Descargar PDF
+    <% end %>
     <%= link_to quotes_path, class: "btn btn-secondary" do %>
       <i class="fas fa-arrow-left"></i> Volver
     <% end %>

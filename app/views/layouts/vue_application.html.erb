@@ -9,6 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <%= javascript_include_tag "application" %>
     <%# Note: We are not including application.js pack here %>
   </head>
 
@@ -17,7 +19,7 @@
       <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
           <%= link_to "Cotalo", root_path, class: "navbar-brand" %>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarNav">
@@ -39,7 +41,7 @@
                   <% end %>
                 </li>
                 <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle <%= 'active' if current_page?(materials_path) || current_page?(units_path) || current_page?(manufacturing_processes_path) || current_page?(extras_path) %>" href="#" id="catalogsDropdown" role="button" data-bs-toggle="dropdown">
+                  <a class="nav-link dropdown-toggle <%= 'active' if current_page?(materials_path) || current_page?(units_path) || current_page?(manufacturing_processes_path) || current_page?(extras_path) %>" href="#" id="catalogsDropdown" role="button" data-toggle="dropdown">
                     <i class="fa fa-list me-1"></i> Catálogos
                   </a>
                   <div class="dropdown-menu" aria-labelledby="catalogsDropdown">
@@ -68,7 +70,7 @@
             <ul class="navbar-nav">
               <% if user_signed_in? %>
                 <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
                     <i class="fa fa-user-circle me-1"></i> <%= current_user.email %>
                   </a>
                   <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -125,5 +127,25 @@
         <p>&copy; <%= Date.today.year %> Cotalo - Todos los derechos reservados</p>
       </div>
     </footer>
+    
+    <script>
+      // Simpler dropdown toggle implementation
+      $(document).ready(function() {
+        // Toggle dropdowns
+        $('.dropdown-toggle').click(function(e) {
+          e.preventDefault();
+          $(this).parent().toggleClass('show');
+          $(this).next('.dropdown-menu').toggleClass('show');
+        });
+        
+        // Close dropdowns when clicking outside
+        $(document).click(function(e) {
+          if (!$(e.target).closest('.dropdown').length) {
+            $('.dropdown-menu.show').removeClass('show');
+            $('.dropdown.show').removeClass('show');
+          }
+        });
+      });
+    </script>
   </body>
 </html> 

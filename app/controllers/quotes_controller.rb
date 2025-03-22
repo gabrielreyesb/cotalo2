@@ -1,6 +1,6 @@
 class QuotesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_quote, only: [:show, :edit, :update, :destroy, :add_product, :remove_product, :update_product_quantity]
+  before_action :set_quote, only: [:show, :edit, :update, :destroy, :add_product, :remove_product, :update_product_quantity, :pdf]
   
   # Use the Vue-specific layout for new and edit pages
   layout 'vue_application', only: [:new, :edit]
@@ -226,7 +226,24 @@ class QuotesController < ApplicationController
       Rails.logger.error("Pipedrive API error: #{e.message}")
       render json: { error: "An error occurred while searching for customers: #{e.message}" }
     end
-  end 
+  end
+  
+  # PDF Generation
+  def pdf
+    pdf_generator = QuotePdfGenerator.new(@quote)
+    pdf_content = pdf_generator.generate
+    
+    filename = "cotizacion_#{@quote.id}_#{Time.current.strftime('%Y%m%d')}.pdf"
+    
+    respond_to do |format|
+      format.pdf do
+        send_data pdf_content, 
+                  filename: filename, 
+                  type: 'application/pdf', 
+                  disposition: 'inline'
+      end
+    end
+  end
   
   private
   

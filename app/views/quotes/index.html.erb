@@ -39,6 +39,9 @@
                       <%= link_to edit_quote_path(quote), class: "btn btn-sm btn-primary", title: "Editar" do %>
                         <i class="fas fa-edit"></i>
                       <% end %>
+                      <%= link_to pdf_quote_path(quote, format: :pdf), class: "btn btn-sm btn-secondary", title: "Descargar PDF", target: "_blank" do %>
+                        <i class="fas fa-file-pdf"></i>
+                      <% end %>
                       <%= link_to quote_path(quote), method: :delete, data: { confirm: "¿Estás seguro de eliminar esta cotización?" }, class: "btn btn-sm btn-danger", title: "Eliminar" do %>
                         <i class="fas fa-trash"></i>
                       <% end %>

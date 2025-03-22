@@ -126,5 +126,63 @@
         <p>&copy; <%= Date.today.year %> Cotalo - Todos los derechos reservados</p>
       </div>
     </footer>
+
+    <!-- Simple dropdown fix -->
+    <style>
+      /* Force display for dropdown menus when they have the show class */
+      .dropdown-menu.show {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        position: absolute !important;
+        z-index: 1050 !important;
+        transform: none !important;
+        top: 100% !important;
+        left: 0 !important;
+      }
+    </style>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Very direct approach for the catalogs dropdown
+        const catalogsDropdown = document.getElementById('catalogsDropdown');
+        const userDropdown = document.getElementById('navbarDropdown');
+        
+        // Direct click handler for Catalogs dropdown
+        if (catalogsDropdown) {
+          catalogsDropdown.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Catálogos clicked');
+            
+            // Find the dropdown menu and toggle it directly
+            const dropdownMenu = this.nextElementSibling;
+            dropdownMenu.classList.toggle('show');
+          });
+        }
+        
+        // Direct click handler for User dropdown
+        if (userDropdown) {
+          userDropdown.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('User dropdown clicked');
+            
+            // Find the dropdown menu and toggle it directly
+            const dropdownMenu = this.nextElementSibling;
+            dropdownMenu.classList.toggle('show');
+          });
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+          if (!e.target.closest('.dropdown')) {
+            document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
+              menu.classList.remove('show');
+            });
+          }
+        });
+      });
+    </script>
   </body>
 </html>
