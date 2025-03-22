@@ -29,7 +29,12 @@
   },
   "scripts": {
     "webpack": "webpack --config ./config/webpack/production.js",
-    "build": "webpack --config ./config/webpack/production.js"
+    "build": "webpack --config ./config/webpack/heroku.js --mode production --progress --display-error-details",
+    "heroku-postbuild": "yarn build"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": "16.x",
+    "yarn": "1.x"
+  }
 }
