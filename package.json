@@ -26,5 +26,10 @@
     "babel-plugin-dynamic-import-node": "^2.3.3",
     "babel-plugin-macros": "^3.1.0",
     "webpack-dev-server": "^3"
-  }
+  },
+  "scripts": {
+    "webpack": "webpack --config ./config/webpack/production.js",
+    "build": "webpack --config ./config/webpack/production.js"
+  },
+  "license": "MIT"
 }
