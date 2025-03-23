@@ -4,7 +4,7 @@
       <div class="card">
         <div class="card-body">
           <div class="row align-items-end">
-            <div class="col-md-6">
+            <div class="col-md-6 mb-3 mb-md-0 me-md-2">
               <label for="extra-select" class="form-label">Seleccionar extra</label>
               <select 
                 id="extra-select" 
@@ -22,7 +22,7 @@
                 </option>
               </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 mb-3 mb-md-0 me-md-2">
               <label for="extra-quantity" class="form-label">Cantidad</label>
               <input 
                 id="extra-quantity" 
@@ -51,43 +51,91 @@
         <p class="text-muted">No hay extras agregados. Selecciona un extra y agrégalo al producto.</p>
       </div>
 
-      <table v-else class="table table-dark table-striped">
-        <thead>
-          <tr>
-            <th>Descripción</th>
-            <th>Precio unitario</th>
-            <th>Cantidad</th>
-            <th>Subtotal</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(extra, index) in productExtras" :key="index">
-            <td>{{ extra.name }}</td>
-            <td class="text-end">{{ formatCurrency(extra.unit_price) }}</td>
-            <td class="text-center">{{ extra.quantity }}</td>
-            <td class="text-end">{{ formatCurrency(extra.unit_price * extra.quantity) }}</td>
-            <td>
-              <div class="btn-group">
-                <button 
-                  class="btn btn-sm btn-outline-danger" 
-                  @click="removeExtra(index)"
-                  title="Eliminar extra"
-                >
-                  <i class="fa fa-trash"></i>
-                </button>
+      <!-- Table view for medium and large screens -->
+      <div v-if="productExtras.length" class="d-none d-md-block">
+        <table class="table table-dark table-striped">
+          <thead>
+            <tr>
+              <th>Descripción</th>
+              <th>Precio unitario</th>
+              <th>Cantidad</th>
+              <th>Subtotal</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(extra, index) in productExtras" :key="index">
+              <td>{{ extra.name }}</td>
+              <td class="text-end">{{ formatCurrency(extra.unit_price) }}</td>
+              <td class="text-center">{{ extra.quantity }}</td>
+              <td class="text-end">{{ formatCurrency(extra.unit_price * extra.quantity) }}</td>
+              <td>
+                <div class="btn-group">
+                  <button 
+                    class="btn btn-sm btn-outline-danger" 
+                    @click="removeExtra(index)"
+                    title="Eliminar extra"
+                  >
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th colspan="3" class="text-end">Total:</th>
+              <th class="text-end">{{ formatCurrency(totalCost) }}</th>
+              <th></th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Card view for small screens -->
+      <div v-if="productExtras.length" class="d-md-none">
+        <div v-for="(extra, index) in productExtras" :key="index" class="card mb-3 shadow-sm">
+          <div class="card-body p-2">
+            <!-- First row: Extra description only -->
+            <h6 class="card-title mb-2 text-truncate">{{ extra.name }}</h6>
+            
+            <!-- Second row: Material price and quantity -->
+            <div class="row g-2 mb-2">
+              <div class="col">
+                <div class="badge bg-info d-block text-center p-2 w-100">
+                  {{ formatCurrency(extra.unit_price) }}
+                </div>
               </div>
-            </td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <th colspan="3" class="text-end">Total:</th>
-            <th class="text-end">{{ formatCurrency(totalCost) }}</th>
-            <th></th>
-          </tr>
-        </tfoot>
-      </table>
+              <div class="col">
+                <div class="badge bg-secondary d-block text-center p-2 w-100">
+                  {{ extra.quantity }}
+                </div>
+              </div>
+            </div>
+            
+            <!-- Third row: Subtotal price and delete button -->
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="badge bg-success fs-5">{{ formatCurrency(extra.unit_price * extra.quantity) }}</span>
+              <button 
+                class="btn btn-sm btn-outline-danger px-2 py-1" 
+                @click="removeExtra(index)"
+              >
+                <i class="fa fa-trash fa-sm"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Total cost for small screens -->
+        <div class="card bg-dark text-white">
+          <div class="card-body py-2">
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="fw-bold">Total extras:</span>
+              <span class="fs-5">{{ formatCurrency(totalCost) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- Global comments for all extras -->
       <div class="card mt-3 mb-4">
@@ -242,16 +290,24 @@ export default {
   position: relative;
 }
 
-/* Green accent panel styling */
-.green-accent-panel > .card,
-.green-accent-panel > div > .card {
+/* Green accent panel styling - Base */
+.green-accent-panel > .card:not(.shadow-sm) {
   border-left: 4px solid #42b983;
   padding-left: 0.5rem;
   margin-left: 0.5rem;
 }
 
+/* Table styling with green accent */
 .green-accent-panel > table.table {
   border-left: 4px solid #42b983;
+  margin-left: 0.5rem;
+}
+
+/* Add green line only to direct container divs */
+.green-accent-panel > div.d-none,
+.green-accent-panel > div.d-md-none {
+  border-left: 4px solid #42b983;
+  padding-left: 0.5rem;
   margin-left: 0.5rem;
 }
 
@@ -260,6 +316,13 @@ export default {
   border-left: 4px solid #42b983;
   padding-left: 0.5rem;
   margin-left: 0.5rem;
+}
+
+/* Card styling for content within responsive containers - no border */
+.green-accent-panel > div > .card.shadow-sm {
+  border-left: none;
+  padding-left: 0;
+  margin-left: 0;
 }
 
 /* Card styling */

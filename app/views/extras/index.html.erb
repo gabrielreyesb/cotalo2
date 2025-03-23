@@ -1,67 +1,115 @@
-<div class="row">
-  <div class="col-12 mb-4">
-    <div class="d-flex justify-content-between align-items-center">
-      <h1>Extras</h1>
-      <%= link_to new_extra_path, class: "btn btn-primary" do %>
-        <i class="fa fa-plus me-1"></i> New Extra
-      <% end %>
-    </div>
-    <% if Rails.env.development? %>
-      <div class="small text-muted mt-2">
-        Page rendered at: <%= Time.current.strftime("%Y-%m-%d %H:%M:%S") %>
-      </div>
-    <% end %>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-12">
-    <div class="card">
-      <div class="card-body">
-        <% if @extras.any? %>
-          <div class="table-responsive">
-            <table class="table table-striped table-hover">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Description</th>
-                  <th>Cost</th>
-                  <th>Unit</th>
-                  <th class="text-end">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% @extras.each do |extra| %>
-                  <tr>
-                    <td><%= link_to extra.name, extra_path(extra) %></td>
-                    <td><%= truncate(extra.description, length: 50) %></td>
-                    <td><%= number_to_currency(extra.cost) %></td>
-                    <td>
-                      <% if extra.unit %>
-                        <%= extra.unit.name %> (<%= extra.unit.abbreviation %>)
-                      <% else %>
-                        <span class="text-muted">No unit</span>
-                      <% end %>
-                    </td>
-                    <td class="text-end">
-                      <%= link_to edit_extra_path(extra), class: "btn btn-sm btn-outline-primary me-1" do %>
-                        <i class="fa fa-edit"></i>
-                      <% end %>
-                      <%= button_to extra_path(extra), method: :delete, class: "btn btn-sm btn-outline-danger", form: { style: 'display: inline-block;', data: { turbo_confirm: 'Are you sure?' } } do %>
-                        <i class="fa fa-trash"></i>
-                      <% end %>
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
-        <% else %>
-          <div class="alert alert-info">
-            No extras found. <%= link_to "Create your first extra", new_extra_path %>.
-          </div>
+<div class="container-fluid py-4 px-3">
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <h1>Extras</h1>
+        <%= link_to new_extra_path, class: "btn btn-primary" do %>
+          <i class="fa fa-plus me-1"></i> Nuevo Extra
         <% end %>
       </div>
+      <% if Rails.env.development? %>
+        <div class="small text-muted mt-2">
+          Page rendered at: <%= Time.current.strftime("%Y-%m-%d %H:%M:%S") %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <% if @extras.any? %>
+        <!-- Table view for medium and large screens -->
+        <div class="card d-none d-md-block shadow-sm mb-4">
+          <div class="card-body p-4">
+            <div class="table-responsive">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Costo</th>
+                    <th>Unidad</th>
+                    <th class="text-end">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @extras.each do |extra| %>
+                    <tr>
+                      <td><%= link_to extra.name, extra_path(extra) %></td>
+                      <td><%= truncate(extra.description, length: 50) %></td>
+                      <td><%= number_to_currency(extra.cost) %></td>
+                      <td>
+                        <% if extra.unit %>
+                          <%= extra.unit.name %> (<%= extra.unit.abbreviation %>)
+                        <% else %>
+                          <span class="text-muted">Sin unidad</span>
+                        <% end %>
+                      </td>
+                      <td class="text-end">
+                        <%= link_to edit_extra_path(extra), class: "btn btn-sm btn-outline-primary me-1" do %>
+                          <i class="fa fa-edit"></i>
+                        <% end %>
+                        <%= button_to extra_path(extra), method: :delete, class: "btn btn-sm btn-outline-danger", form: { style: 'display: inline-block;', data: { turbo_confirm: '¿Estás seguro?' } } do %>
+                          <i class="fa fa-trash"></i>
+                        <% end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Card view for small screens and mobile -->
+        <div class="d-md-none px-1">
+          <% @extras.each do |extra| %>
+            <div class="card mb-3 shadow-sm">
+              <div class="card-body p-2">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <h6 class="card-title mb-0 fw-bold text-truncate" style="width: 30%"><%= extra.name %></h6>
+                  <div class="d-flex justify-content-evenly align-items-center" style="width: 40%">
+                    <span class="badge bg-secondary">
+                      <% if extra.unit %>
+                        <%= extra.unit.abbreviation %>
+                      <% else %>
+                        -
+                      <% end %>
+                    </span>
+                    <span class="badge bg-primary">
+                      <%= number_to_currency(extra.cost) %>
+                    </span>
+                  </div>
+                  <div class="d-flex">
+                    <%= link_to extra_path(extra), class: "btn btn-sm btn-outline-secondary px-2 py-1 me-1" do %>
+                      <i class="fa fa-eye fa-sm"></i>
+                    <% end %>
+                    <%= link_to edit_extra_path(extra), class: "btn btn-sm btn-outline-primary px-2 py-1 me-1" do %>
+                      <i class="fa fa-edit fa-sm"></i>
+                    <% end %>
+                    <%= button_to extra_path(extra), method: :delete, 
+                        class: "btn btn-sm btn-outline-danger px-2 py-1", 
+                        form: { class: "d-inline", data: { turbo_confirm: "¿Estás seguro?" } } do %>
+                      <i class="fa fa-trash fa-sm"></i>
+                    <% end %>
+                  </div>
+                </div>
+                <div class="small text-muted">
+                  <%= truncate(extra.description, length: 60) %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <div class="alert alert-info">
+              No hay extras. <%= link_to "Crea tu primer extra", new_extra_path %>.
+            </div>
+          </div>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>

@@ -1,48 +1,81 @@
-<div class="row">
-  <div class="col-12 mb-4">
-    <div class="d-flex justify-content-between align-items-center">
-      <h1>Units</h1>
-      <%= link_to "New Unit", new_unit_path, class: "btn btn-primary" %>
+<div class="container-fluid py-4 px-3">
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <h1>Unidades</h1>
+        <%= link_to "Nueva Unidad", new_unit_path, class: "btn btn-primary" %>
+      </div>
     </div>
   </div>
   
-  <div class="col-12">
-    <div class="card">
-      <div class="card-body">
-        <% if @units.any? %>
-          <div class="table-responsive">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Abbreviation</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% @units.each do |unit| %>
+  <div class="row">
+    <div class="col-12">
+      <% if @units.any? %>
+        <!-- Table view for medium and large screens -->
+        <div class="card d-none d-md-block shadow-sm mb-4">
+          <div class="card-body p-4">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
                   <tr>
-                    <td><%= unit.name %></td>
-                    <td><%= unit.abbreviation %></td>
-                    <td>
-                      <div class="btn-group btn-group-sm">
-                        <%= link_to "Edit", edit_unit_path(unit), class: "btn btn-outline-primary" %>
-                        <%= button_to "Delete", unit_path(unit), method: :delete, 
-                            class: "btn btn-outline-danger", 
-                            form: { data: { turbo_confirm: "Are you sure you want to delete this unit?" } } %>
-                      </div>
-                    </td>
+                    <th>Nombre</th>
+                    <th>Abreviación</th>
+                    <th>Acciones</th>
                   </tr>
-                <% end %>
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  <% @units.each do |unit| %>
+                    <tr>
+                      <td><%= unit.name %></td>
+                      <td><%= unit.abbreviation %></td>
+                      <td>
+                        <div class="btn-group btn-group-sm">
+                          <%= link_to "Editar", edit_unit_path(unit), class: "btn btn-outline-primary" %>
+                          <%= button_to "Borrar", unit_path(unit), method: :delete, 
+                              class: "btn btn-outline-danger", 
+                              form: { data: { turbo_confirm: "¿Estás seguro de que quieres eliminar esta unidad?" } } %>
+                        </div>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
           </div>
-        <% else %>
-          <div class="alert alert-info">
-            No units found. <%= link_to "Create your first unit", new_unit_path %>.
+        </div>
+        
+        <!-- Card view for small screens and mobile -->
+        <div class="d-md-none px-1">
+          <% @units.each do |unit| %>
+            <div class="card mb-3 shadow-sm">
+              <div class="card-body p-2">
+                <div class="d-flex justify-content-between align-items-center">
+                  <h6 class="card-title mb-0 fw-bold" style="width: 50%"><%= unit.name %></h6>
+                  <span class="badge bg-primary"><%= unit.abbreviation %></span>
+                  <div class="d-flex">
+                    <%= link_to edit_unit_path(unit), class: "btn btn-sm btn-outline-primary px-2 py-1 me-1" do %>
+                      <i class="fa fa-edit fa-sm"></i>
+                    <% end %>
+                    <%= button_to unit_path(unit), method: :delete, 
+                        class: "btn btn-sm btn-outline-danger px-2 py-1", 
+                        form: { class: "d-inline", data: { turbo_confirm: "¿Estás seguro?" } } do %>
+                      <i class="fa fa-trash fa-sm"></i>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <div class="alert alert-info">
+              No hay unidades. <%= link_to "Crea tu primera unidad", new_unit_path %>.
+            </div>
           </div>
-        <% end %>
-      </div>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>

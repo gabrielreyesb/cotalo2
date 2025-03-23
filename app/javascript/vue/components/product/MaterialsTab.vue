@@ -4,7 +4,7 @@
       <div class="card">
         <div class="card-body">
           <div class="row align-items-end">
-            <div class="col-md-6">
+            <div class="col-md-6 mb-3 mb-md-0 me-md-2">
               <label for="material-select" class="form-label">Seleccionar material</label>
               <select 
                 id="material-select" 
@@ -39,76 +39,160 @@
         <p class="text-muted">No hay materiales agregados. Selecciona un material y agrégalo al producto.</p>
       </div>
 
-      <table v-else class="table table-dark table-striped">
-        <thead>
-          <tr>
-            <th>Descripción</th>
-            <th>Ancho</th>
-            <th>Largo</th>
-            <th>Precio</th>
-            <th>Piezas por material</th>
-            <th>Total hojas</th>
-            <th>Total m²</th>
-            <th>Precio total</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(material, index) in productMaterials" :key="index">
-            <td>{{ material.description }}</td>
-            <td>{{ material.ancho }} cm</td>
-            <td>{{ material.largo }} cm</td>
-            <td class="text-end">{{ formatCurrency(material.price) }}</td>
-            <td class="text-center">
-              <input 
-                type="number" 
-                class="form-control form-control-sm" 
-                v-model.number="material.piecesPerMaterial" 
-                min="1"
-                @change="updateMaterialCalculations(index)"
-                title="Puedes editar este valor manualmente para ajustar la cantidad de piezas por material"
-                data-toggle="tooltip"
-              />
-            </td>
-            <td class="text-center">{{ material.totalSheets }}</td>
-            <td class="text-center">{{ material.totalSquareMeters.toFixed(2) }} m²</td>
-            <td class="text-end">{{ formatCurrency(material.totalPrice) }}</td>
-            <td>
-              <div class="btn-group">
+      <!-- Table view for medium and large screens -->
+      <div v-if="productMaterials.length" class="d-none d-md-block">
+        <table class="table table-dark table-striped">
+          <thead>
+            <tr>
+              <th>Descripción</th>
+              <th>Ancho</th>
+              <th>Largo</th>
+              <th>Precio</th>
+              <th>Piezas por material</th>
+              <th>Total hojas</th>
+              <th>Total m²</th>
+              <th>Precio total</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(material, index) in productMaterials" :key="index">
+              <td>{{ material.description }}</td>
+              <td>{{ material.ancho }} cm</td>
+              <td>{{ material.largo }} cm</td>
+              <td class="text-end">{{ formatCurrency(material.price) }}</td>
+              <td class="text-center">
+                <input 
+                  type="number" 
+                  class="form-control form-control-sm" 
+                  v-model.number="material.piecesPerMaterial" 
+                  min="1"
+                  @change="updateMaterialCalculations(index)"
+                  title="Puedes editar este valor manualmente para ajustar la cantidad de piezas por material"
+                  data-toggle="tooltip"
+                />
+              </td>
+              <td class="text-center">{{ material.totalSheets }}</td>
+              <td class="text-center">{{ material.totalSquareMeters.toFixed(2) }} m²</td>
+              <td class="text-end">{{ formatCurrency(material.totalPrice) }}</td>
+              <td>
+                <div class="btn-group">
+                  <input
+                    type="radio"
+                    :id="'material-radio-' + index"
+                    :value="material.id"
+                    v-model="selectedMaterialForProducts"
+                    class="form-check-input me-2"
+                    @change="selectMaterialForProducts(material.id)"
+                  />
+                  <button 
+                    class="btn btn-sm btn-outline-primary me-1" 
+                    @click="showMaterialVisualization(material)"
+                    title="Visualizar disposición"
+                  >
+                    <i class="fa fa-eye"></i>
+                  </button>
+                  <button 
+                    class="btn btn-sm btn-outline-danger" 
+                    @click="removeMaterial(index)"
+                    title="Eliminar material"
+                  >
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th colspan="7" class="text-end">Total:</th>
+              <th class="text-end">{{ formatCurrency(totalCost) }}</th>
+              <th></th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Card view for small screens -->
+      <div v-if="productMaterials.length" class="d-md-none">
+        <div v-for="(material, index) in productMaterials" :key="index" class="card mb-3 shadow-sm">
+          <div class="card-body p-2">
+            <!-- First row: Material description only -->
+            <h6 class="card-title mb-2 text-truncate">{{ material.description }}</h6>
+            
+            <!-- Second row: Dimensions, price, sheets, m² and quantity in that order -->
+            <div class="row g-2 mb-2">
+              <div class="col">
+                <div class="badge bg-secondary d-block text-center p-2 w-100">
+                  {{ material.ancho }} × {{ material.largo }} cm
+                </div>
+              </div>
+              <div class="col">
+                <div class="badge bg-info d-block text-center p-2 w-100">
+                  {{ formatCurrency(material.price) }}
+                </div>
+              </div>
+              <div class="col">
+                <div class="badge bg-secondary d-block text-center p-2 w-100">
+                  {{ material.totalSheets }} pgs
+                </div>
+              </div>
+              <div class="col">
+                <div class="badge bg-dark d-block text-center p-2 w-100">
+                  {{ material.totalSquareMeters.toFixed(1) }} m²
+                </div>
+              </div>
+              <div class="col">
+                <input 
+                  type="number" 
+                  class="form-control form-control-sm text-center p-2 w-100"
+                  v-model.number="material.piecesPerMaterial" 
+                  min="1"
+                  @change="updateMaterialCalculations(index)"
+                  style="height: 33px;"
+                />
+              </div>
+            </div>
+            
+            <!-- Third row: Subtotal and action buttons -->
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="badge bg-success fs-5">{{ formatCurrency(material.totalPrice) }}</span>
+              <div class="d-flex">
                 <input
                   type="radio"
-                  :id="'material-radio-' + index"
+                  :id="'material-radio-mobile-' + index"
                   :value="material.id"
                   v-model="selectedMaterialForProducts"
                   class="form-check-input me-2"
                   @change="selectMaterialForProducts(material.id)"
                 />
                 <button 
-                  class="btn btn-sm btn-outline-primary me-1" 
+                  class="btn btn-sm btn-outline-primary me-1 px-2 py-1" 
                   @click="showMaterialVisualization(material)"
-                  title="Visualizar disposición"
                 >
-                  <i class="fa fa-eye"></i>
+                  <i class="fa fa-eye fa-sm"></i>
                 </button>
                 <button 
-                  class="btn btn-sm btn-outline-danger" 
+                  class="btn btn-sm btn-outline-danger px-2 py-1" 
                   @click="removeMaterial(index)"
-                  title="Eliminar material"
                 >
-                  <i class="fa fa-trash"></i>
+                  <i class="fa fa-trash fa-sm"></i>
                 </button>
               </div>
-            </td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <th colspan="7" class="text-end">Total:</th>
-            <th class="text-end">{{ formatCurrency(totalCost) }}</th>
-            <th></th>
-          </tr>
-        </tfoot>
-      </table>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Total cost for small screens -->
+        <div class="card bg-dark text-white">
+          <div class="card-body py-2">
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="fw-bold">Total materiales:</span>
+              <span class="fs-5">{{ formatCurrency(totalCost) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- Global comments for all materials -->
       <div class="card mt-3 mb-4">
@@ -131,7 +215,7 @@
 
     <!-- Visualization Modal -->
     <div class="modal" :class="{'show': showVisualization}" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down modal-lg">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">
@@ -141,7 +225,9 @@
             <button type="button" class="btn-close" @click="closeVisualization"></button>
           </div>
           <div class="modal-body">
-            <canvas id="visualization-canvas" width="700" height="600"></canvas>
+            <div class="canvas-container">
+              <canvas id="visualization-canvas"></canvas>
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" @click="closeVisualization">Cerrar</button>
@@ -256,6 +342,14 @@ export default {
     selectedMaterialId: {
       type: [Number, String],
       default: null
+    },
+    widthMargin: {
+      type: Number,
+      default: 0
+    },
+    lengthMargin: {
+      type: Number,
+      default: 0
     }
   },
   data() {
@@ -315,16 +409,20 @@ export default {
       const materialLength = parseFloat(material.largo) || 0;
       const quantity = this.productQuantity;
       
+      // Add width and length margins to the product dimensions
+      const effectiveProductWidth = productWidth + this.widthMargin;
+      const effectiveProductLength = productLength + this.lengthMargin;
+      
       // Calculate how many pieces can fit in one material sheet
       let piecesPerMaterial = 0;
-      if (materialWidth > 0 && materialLength > 0 && productWidth > 0 && productLength > 0) {
+      if (materialWidth > 0 && materialLength > 0 && effectiveProductWidth > 0 && effectiveProductLength > 0) {
         // Calculate how many pieces fit horizontally and vertically
-        const horizontalPieces = Math.floor(materialWidth / productWidth);
-        const verticalPieces = Math.floor(materialLength / productLength);
+        const horizontalPieces = Math.floor(materialWidth / effectiveProductWidth);
+        const verticalPieces = Math.floor(materialLength / effectiveProductLength);
         
         // Try the other orientation as well
-        const horizontalPiecesAlt = Math.floor(materialWidth / productLength);
-        const verticalPiecesAlt = Math.floor(materialLength / productWidth);
+        const horizontalPiecesAlt = Math.floor(materialWidth / effectiveProductLength);
+        const verticalPiecesAlt = Math.floor(materialLength / effectiveProductWidth);
         
         // Use the orientation that fits more pieces
         piecesPerMaterial = Math.max(
@@ -495,6 +593,16 @@ export default {
       const canvas = document.getElementById('visualization-canvas');
       if (!canvas) return;
       
+      // Set canvas size based on container
+      const container = canvas.parentElement;
+      const containerWidth = container.clientWidth;
+      // Set canvas dimensions - use a reasonable max width/height
+      const canvasWidth = Math.min(containerWidth, 700);
+      const canvasHeight = Math.min(window.innerHeight * 0.6, 600);
+      
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+      
       const ctx = canvas.getContext('2d');
       
       // Clear canvas
@@ -506,6 +614,10 @@ export default {
       const productWidth = this.productWidth;
       const productLength = this.productLength;
       
+      // Add width and length margins for visualization 
+      const effectiveProductWidth = productWidth + this.widthMargin;
+      const effectiveProductLength = productLength + this.lengthMargin;
+      
       // Get the stored piecesPerMaterial value
       const piecesPerMaterial = parseInt(this.visualizationMaterial.piecesPerMaterial) || 0;
       
@@ -514,13 +626,13 @@ export default {
       let isManuallyAdjusted = false;
       
       // First orientation (width × length)
-      const normalHorizontal = Math.floor(materialWidth / productWidth);
-      const normalVertical = Math.floor(materialLength / productLength);
+      const normalHorizontal = Math.floor(materialWidth / effectiveProductWidth);
+      const normalVertical = Math.floor(materialLength / effectiveProductLength);
       const normalTotal = normalHorizontal * normalVertical;
       
       // Second orientation (length × width) - rotated 90 degrees
-      const alternateHorizontal = Math.floor(materialWidth / productLength);
-      const alternateVertical = Math.floor(materialLength / productWidth);
+      const alternateHorizontal = Math.floor(materialWidth / effectiveProductLength);
+      const alternateVertical = Math.floor(materialLength / effectiveProductWidth);
       const alternateTotal = alternateHorizontal * alternateVertical;
       
       // Calculate optimal arrangement
@@ -543,8 +655,12 @@ export default {
       }
 
       // Calculate piece dimensions based on orientation
-      const pieceWidth = useAlternateOrientation ? productLength : productWidth;
-      const pieceLength = useAlternateOrientation ? productWidth : productLength;
+      const pieceWidth = useAlternateOrientation ? effectiveProductLength : effectiveProductWidth;
+      const pieceLength = useAlternateOrientation ? effectiveProductWidth : effectiveProductLength;
+      
+      // Calculate the actual product dimensions based on orientation
+      const actualPieceWidth = useAlternateOrientation ? productLength : productWidth;
+      const actualPieceLength = useAlternateOrientation ? productWidth : productLength;
       
       // Calculate scaling factor to fit in canvas - leave space for info at top
       const infoHeight = 180; // Height reserved for information at the top
@@ -589,10 +705,12 @@ export default {
       }
       
       if (useAlternateOrientation) {
-        ctx.fillText(`Orientación: Rotada (${productLength} × ${productWidth})`, padding, 60);
+        ctx.fillText(`Orientación: Rotada (${productLength} × ${productWidth}) + Márgenes (${this.lengthMargin} × ${this.widthMargin})`, padding, 60);
       } else {
-        ctx.fillText(`Orientación: Normal (${productWidth} × ${productLength})`, padding, 60);
+        ctx.fillText(`Orientación: Normal (${productWidth} × ${productLength}) + Márgenes (${this.widthMargin} × ${this.lengthMargin})`, padding, 60);
       }
+      
+      ctx.fillText(`Dimensiones efectivas: ${effectiveProductWidth} × ${effectiveProductLength} cm`, padding, 90);
       
       // Calculate wasted space percentage
       const materialArea = materialWidth * materialLength;
@@ -602,19 +720,19 @@ export default {
       
       ctx.fillText(
         `Área utilizada: ${usedArea.toFixed(2)} cm² (${(100 - wastedPercentage).toFixed(2)}%)`,
-        padding, 90
+        padding, 120
       );
       
       // Product quantity information
       ctx.fillText(
         `Cantidad total requerida: ${this.productQuantity} piezas`,
-        padding, 120
+        padding, 150
       );
       
       const sheetsNeeded = Math.ceil(this.productQuantity / piecesPerMaterial);
       ctx.fillText(
         `Materiales necesarios: ${sheetsNeeded} ${sheetsNeeded === 1 ? 'hoja' : 'hojas'}`,
-        padding, 150
+        padding, 180
       );
       
       // Draw material outline
@@ -643,8 +761,22 @@ export default {
           const scaledPieceWidth = pieceWidth * this.canvasScale;
           const scaledPieceLength = pieceLength * this.canvasScale;
           
-          // Draw product rectangle
+          // Draw product rectangle with margins
           ctx.strokeRect(pieceX, pieceY, scaledPieceWidth, scaledPieceLength);
+          
+          // Calculate the actual product area (without margins)
+          const actualPieceX = pieceX + (useAlternateOrientation ? this.lengthMargin * this.canvasScale / 2 : this.widthMargin * this.canvasScale / 2);
+          const actualPieceY = pieceY + (useAlternateOrientation ? this.widthMargin * this.canvasScale / 2 : this.lengthMargin * this.canvasScale / 2);
+          const scaledActualWidth = actualPieceWidth * this.canvasScale;
+          const scaledActualLength = actualPieceLength * this.canvasScale;
+          
+          // Draw the actual product area in a different color
+          ctx.fillStyle = 'rgba(66, 185, 131, 0.2)'; // Light green fill
+          ctx.fillRect(actualPieceX, actualPieceY, scaledActualWidth, scaledActualLength);
+          
+          ctx.strokeStyle = '#42b983'; // Green outline for actual product
+          ctx.strokeRect(actualPieceX, actualPieceY, scaledActualWidth, scaledActualLength);
+          ctx.strokeStyle = '#fff'; // Reset to white for the next piece
           
           // Add piece number if there's enough space
           if (scaledPieceWidth > 30 && scaledPieceLength > 20) {
@@ -660,14 +792,49 @@ export default {
         }
       }
       
-      // Highlight first piece (top-left)
+      // Highlight first piece (top-left) to show margins clearly
       const examplePieceX = startX;
       const examplePieceY = startY;
       const scaledExampleWidth = pieceWidth * this.canvasScale;
       const scaledExampleLength = pieceLength * this.canvasScale;
       
-      ctx.fillStyle = 'rgba(66, 185, 131, 0.7)'; // Green with transparency
+      // Fill the entire piece area (including margins) with semi-transparent color
+      ctx.fillStyle = 'rgba(255, 165, 0, 0.3)'; // Orange with transparency for the full piece
       ctx.fillRect(examplePieceX, examplePieceY, scaledExampleWidth, scaledExampleLength);
+      
+      // Calculate the actual product area within the first piece
+      const actualExampleX = examplePieceX + (useAlternateOrientation ? this.lengthMargin * this.canvasScale / 2 : this.widthMargin * this.canvasScale / 2);
+      const actualExampleY = examplePieceY + (useAlternateOrientation ? this.widthMargin * this.canvasScale / 2 : this.lengthMargin * this.canvasScale / 2);
+      const scaledActualExampleWidth = actualPieceWidth * this.canvasScale;
+      const scaledActualExampleLength = actualPieceLength * this.canvasScale;
+      
+      // Fill the actual product area with a different color
+      ctx.fillStyle = 'rgba(66, 185, 131, 0.6)'; // Green with transparency for the product
+      ctx.fillRect(actualExampleX, actualExampleY, scaledActualExampleWidth, scaledActualExampleLength);
+      
+      // Add legend for colors
+      const legendY = startY + scaledMaterialLength + 30;
+      
+      // First legend item - Pieza con márgenes
+      ctx.fillStyle = 'rgba(255, 165, 0, 0.3)';
+      ctx.fillRect(padding, legendY, 20, 20);
+      ctx.strokeStyle = '#fff';
+      ctx.strokeRect(padding, legendY, 20, 20);
+      
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'left';
+      ctx.fillText('Pieza con márgenes', padding + 25, legendY + 15);
+      
+      // Second legend item - Producto sin márgenes
+      const secondLegendX = padding + 180; // Position the second legend item with some spacing
+      
+      ctx.fillStyle = 'rgba(66, 185, 131, 0.6)';
+      ctx.fillRect(secondLegendX, legendY, 20, 20);
+      ctx.strokeStyle = '#42b983';
+      ctx.strokeRect(secondLegendX, legendY, 20, 20);
+      
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText('Producto sin márgenes', secondLegendX + 25, legendY + 15);
     },
     addCustomMaterial() {
       if (!this.canAddCustomMaterial) return;
@@ -725,6 +892,11 @@ export default {
       
       // Hide the form after adding
       this.showCustomMaterialForm = false;
+    },
+    handleResize() {
+      if (this.showVisualization) {
+        this.drawVisualization();
+      }
     }
   },
   watch: {
@@ -768,10 +940,14 @@ export default {
 
     // Add keyboard event for Escape to close modal
     document.addEventListener('keydown', this.handleKeyDown);
+    
+    // Add resize event listener
+    window.addEventListener('resize', this.handleResize);
   },
   beforeDestroy() {
-    // Clean up event listener
+    // Clean up event listeners
     document.removeEventListener('keydown', this.handleKeyDown);
+    window.removeEventListener('resize', this.handleResize);
   }
 }
 </script>
@@ -781,16 +957,24 @@ export default {
   position: relative;
 }
 
-/* Green accent panel styling */
-.green-accent-panel > .card,
-.green-accent-panel > div > .card {
+/* Green accent panel styling - Base */
+.green-accent-panel > .card:not(.shadow-sm) {
   border-left: 4px solid #42b983;
   padding-left: 0.5rem;
   margin-left: 0.5rem;
 }
 
+/* Table styling with green accent */
 .green-accent-panel > table.table {
   border-left: 4px solid #42b983;
+  margin-left: 0.5rem;
+}
+
+/* Add green line only to direct container divs */
+.green-accent-panel > div.d-none,
+.green-accent-panel > div.d-md-none {
+  border-left: 4px solid #42b983;
+  padding-left: 0.5rem;
   margin-left: 0.5rem;
 }
 
@@ -799,6 +983,13 @@ export default {
   border-left: 4px solid #42b983;
   padding-left: 0.5rem;
   margin-left: 0.5rem;
+}
+
+/* Card styling for content within responsive containers - no border */
+.green-accent-panel > div > .card.shadow-sm {
+  border-left: none;
+  padding-left: 0;
+  margin-left: 0;
 }
 
 /* Card styling */
@@ -1033,5 +1224,32 @@ export default {
   border-radius: 4px;
   width: 700px;
   height: 600px;
+}
+
+/* Canvas container for responsive visualization */
+.canvas-container {
+  width: 100%;
+  position: relative;
+  overflow: auto;
+}
+
+/* Make the canvas responsive */
+#visualization-canvas {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* For small screens */
+@media (max-width: 768px) {
+  .modal-body {
+    padding: 0.5rem;
+  }
+  
+  .canvas-container {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
 }
 </style>

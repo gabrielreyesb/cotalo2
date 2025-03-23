@@ -69,6 +69,8 @@
             :product-length="product && product.data && product.data.general_info ? product.data.general_info.length : 0"
             :product-quantity="product && product.data && product.data.general_info ? product.data.general_info.quantity : 1"
             :selected-material-id="product && product.data && product.data.selected_material_id ? product.data.selected_material_id : null"
+            :width-margin="userConfig.width_margin"
+            :length-margin="userConfig.length_margin"
             @update:product-materials="updateMaterials"
             @update:comments="updateMaterialsComments"
             @update:materials-cost="updateMaterialsCost"
@@ -159,7 +161,9 @@ export default {
       availableMaterials: [],
       userConfig: {
         waste_percentage: 5,
-        margin_percentage: 30
+        margin_percentage: 30,
+        width_margin: 0,
+        length_margin: 0
       },
       defaultPricing: {
         materials_cost: 0,
@@ -279,6 +283,8 @@ export default {
         if (data) {
           this.userConfig.waste_percentage = data.waste_percentage || 5;
           this.userConfig.margin_percentage = data.margin_percentage || 30;
+          this.userConfig.width_margin = data.width_margin || 0;
+          this.userConfig.length_margin = data.length_margin || 0;
           
           // Update default pricing with user config values
           this.defaultPricing.waste_percentage = this.userConfig.waste_percentage;
@@ -713,6 +719,10 @@ export default {
         const productLength = this.product.data.general_info?.length || 0;
         const productQuantity = this.product.data.general_info?.quantity || 1;
         
+        // Add width and length margins to the product dimensions
+        const effectiveProductWidth = productWidth + this.userConfig.width_margin;
+        const effectiveProductLength = productLength + this.userConfig.length_margin;
+        
         // Manually calculate each material's values based on current dimensions and quantity
         materials = materials.map(material => {
           // Skip materials that don't need recalculation
@@ -723,14 +733,14 @@ export default {
           const materialLength = parseFloat(material.largo) || 0;
           
           let piecesPerMaterial = 0;
-          if (materialWidth > 0 && materialLength > 0 && productWidth > 0 && productLength > 0) {
+          if (materialWidth > 0 && materialLength > 0 && effectiveProductWidth > 0 && effectiveProductLength > 0) {
             // Calculate how many pieces fit horizontally and vertically
-            const horizontalPieces = Math.floor(materialWidth / productWidth);
-            const verticalPieces = Math.floor(materialLength / productLength);
+            const horizontalPieces = Math.floor(materialWidth / effectiveProductWidth);
+            const verticalPieces = Math.floor(materialLength / effectiveProductLength);
             
             // Try the other orientation as well
-            const horizontalPiecesAlt = Math.floor(materialWidth / productLength);
-            const verticalPiecesAlt = Math.floor(materialLength / productWidth);
+            const horizontalPiecesAlt = Math.floor(materialWidth / effectiveProductLength);
+            const verticalPiecesAlt = Math.floor(materialLength / effectiveProductWidth);
             
             // Use the orientation that fits more pieces
             piecesPerMaterial = Math.max(

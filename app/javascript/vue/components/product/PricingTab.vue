@@ -2,83 +2,166 @@
   <div class="pricing-tab">
     <div class="row">
       <div class="col-md-12">
-        <table class="table table-dark table-bordered">
-          <tbody>
-            <tr>
-              <th style="width: 40%">Costo de materiales:</th>
-              <td class="fw-bold text-end">{{ formatCurrency(pricing.materials_cost) }}</td>
-            </tr>
-            <tr>
-              <th>Costo de procesos:</th>
-              <td class="fw-bold text-end">{{ formatCurrency(pricing.processes_cost) }}</td>
-            </tr>
-            <tr>
-              <th>Costo de extras:</th>
-              <td class="fw-bold text-end">{{ formatCurrency(pricing.extras_cost) }}</td>
-            </tr>
-            <tr class="subtotal-row">
-              <th>Subtotal:</th>
-              <td class="text-end">{{ formatCurrency(pricing.subtotal) }}</td>
-            </tr>
-            <tr>
-              <th class="align-middle">
-                <div class="d-flex justify-content-between align-items-center">
-                  <span>Desperdicio:</span>
-                  <div class="input-group input-group-sm waste-margin-input">
-                    <input 
-                      type="number" 
-                      class="form-control form-control-sm" 
-                      v-model.number="localWastePercentage" 
-                      min="0"
-                      step="0.1"
-                      @change="handleWastePercentageChange"
-                      title="Puedes editar este valor manualmente para ajustar el porcentaje de desperdicio"
-                      data-toggle="tooltip"
-                    />
-                    <span class="input-group-text">%</span>
-                  </div>
-                </div>
-              </th>
-              <td class="text-end">{{ formatCurrency(pricing.waste_value) }}</td>
-            </tr>
-            <tr>
-              <th>Precio por pieza (antes del margen):</th>
-              <td class="text-end">{{ formatCurrency(pricing.price_per_piece_before_margin) }}</td>
-            </tr>
-            <tr>
-              <th class="align-middle">
-                <div class="d-flex justify-content-between align-items-center">
-                  <span>Margen:</span>
-                  <div class="input-group input-group-sm waste-margin-input">
-                    <input 
-                      type="number" 
-                      class="form-control form-control-sm" 
-                      v-model.number="localMarginPercentage" 
-                      min="0"
-                      step="0.1"
-                      @change="handleMarginPercentageChange"
-                      title="Puedes editar este valor manualmente para ajustar el porcentaje de margen"
-                      data-toggle="tooltip"
-                    />
-                    <span class="input-group-text">%</span>
-                  </div>
-                </div>
-              </th>
-              <td class="text-end">{{ formatCurrency(pricing.margin_value) }}</td>
-            </tr>
-            <tr class="total-row">
-              <th>Precio total:</th>
-              <td class="fw-bold text-end">{{ formatCurrency(pricing.total_price) }}</td>
-            </tr>
-            <tr class="total-row">
-              <th>Precio por pieza:</th>
-              <td class="fw-bold text-end">{{ formatCurrency(pricing.final_price_per_piece) }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <!-- Table section with green accent -->
+        <div class="green-accent-panel">
+          <!-- Table view for medium and large screens -->
+          <div class="d-none d-md-block">
+            <table class="table table-dark table-bordered">
+              <tbody>
+                <tr>
+                  <th style="width: 40%">Costo de materiales:</th>
+                  <td class="fw-bold text-end">{{ formatCurrency(pricing.materials_cost) }}</td>
+                </tr>
+                <tr>
+                  <th>Costo de procesos:</th>
+                  <td class="fw-bold text-end">{{ formatCurrency(pricing.processes_cost) }}</td>
+                </tr>
+                <tr>
+                  <th>Costo de extras:</th>
+                  <td class="fw-bold text-end">{{ formatCurrency(pricing.extras_cost) }}</td>
+                </tr>
+                <tr class="subtotal-row">
+                  <th>Subtotal:</th>
+                  <td class="text-end">{{ formatCurrency(pricing.subtotal) }}</td>
+                </tr>
+                <tr>
+                  <th class="align-middle">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span>Desperdicio:</span>
+                      <div class="input-group input-group-sm waste-margin-input">
+                        <input 
+                          type="number" 
+                          class="form-control form-control-sm" 
+                          v-model.number="localWastePercentage" 
+                          min="0"
+                          step="0.1"
+                          @change="handleWastePercentageChange"
+                          title="Puedes editar este valor manualmente para ajustar el porcentaje de desperdicio"
+                          data-toggle="tooltip"
+                        />
+                        <span class="input-group-text">%</span>
+                      </div>
+                    </div>
+                  </th>
+                  <td class="text-end">{{ formatCurrency(pricing.waste_value) }}</td>
+                </tr>
+                <tr>
+                  <th>Precio por pieza (antes del margen):</th>
+                  <td class="text-end">{{ formatCurrency(pricing.price_per_piece_before_margin) }}</td>
+                </tr>
+                <tr>
+                  <th class="align-middle">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span>Margen:</span>
+                      <div class="input-group input-group-sm waste-margin-input">
+                        <input 
+                          type="number" 
+                          class="form-control form-control-sm" 
+                          v-model.number="localMarginPercentage" 
+                          min="0"
+                          step="0.1"
+                          @change="handleMarginPercentageChange"
+                          title="Puedes editar este valor manualmente para ajustar el porcentaje de margen"
+                          data-toggle="tooltip"
+                        />
+                        <span class="input-group-text">%</span>
+                      </div>
+                    </div>
+                  </th>
+                  <td class="text-end">{{ formatCurrency(pricing.margin_value) }}</td>
+                </tr>
+                <tr class="total-row">
+                  <th>Precio total:</th>
+                  <td class="fw-bold text-end">{{ formatCurrency(pricing.total_price) }}</td>
+                </tr>
+                <tr class="total-row">
+                  <th>Precio por pieza:</th>
+                  <td class="fw-bold text-end">{{ formatCurrency(pricing.final_price_per_piece) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- Card view for small screens -->
+          <div class="d-md-none">
+            <div class="table-responsive">
+              <table class="table table-dark table-bordered mb-0">
+                <tbody>
+                  <tr>
+                    <th style="width: 50%">Costo de materiales:</th>
+                    <td class="fw-bold text-end">{{ formatCurrency(pricing.materials_cost) }}</td>
+                  </tr>
+                  <tr>
+                    <th>Costo de procesos:</th>
+                    <td class="fw-bold text-end">{{ formatCurrency(pricing.processes_cost) }}</td>
+                  </tr>
+                  <tr>
+                    <th>Costo de extras:</th>
+                    <td class="fw-bold text-end">{{ formatCurrency(pricing.extras_cost) }}</td>
+                  </tr>
+                  <tr class="subtotal-row">
+                    <th>Subtotal:</th>
+                    <td class="text-end">{{ formatCurrency(pricing.subtotal) }}</td>
+                  </tr>
+                  <tr>
+                    <th class="align-middle">Desperdicio:</th>
+                    <td>
+                      <div class="d-flex justify-content-end align-items-center">
+                        <div class="input-group input-group-sm me-2" style="width: 100px;">
+                          <input 
+                            type="number" 
+                            class="form-control form-control-sm" 
+                            v-model.number="localWastePercentage" 
+                            min="0"
+                            step="0.1"
+                            @change="handleWastePercentageChange"
+                          />
+                          <span class="input-group-text">%</span>
+                        </div>
+                        <span>{{ formatCurrency(pricing.waste_value) }}</span>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Precio por pieza (antes del margen):</th>
+                    <td class="text-end">{{ formatCurrency(pricing.price_per_piece_before_margin) }}</td>
+                  </tr>
+                  <tr>
+                    <th class="align-middle">Margen:</th>
+                    <td>
+                      <div class="d-flex justify-content-end align-items-center">
+                        <div class="input-group input-group-sm me-2" style="width: 100px;">
+                          <input 
+                            type="number" 
+                            class="form-control form-control-sm" 
+                            v-model.number="localMarginPercentage" 
+                            min="0"
+                            step="0.1"
+                            @change="handleMarginPercentageChange"
+                          />
+                          <span class="input-group-text">%</span>
+                        </div>
+                        <span>{{ formatCurrency(pricing.margin_value) }}</span>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="total-row">
+                    <th>Precio total:</th>
+                    <td class="fw-bold text-end">{{ formatCurrency(pricing.total_price) }}</td>
+                  </tr>
+                  <tr class="total-row">
+                    <th>Precio por pieza:</th>
+                    <td class="fw-bold text-end">{{ formatCurrency(pricing.final_price_per_piece) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     
+    <!-- Buttons section - outside the green accent panel -->
     <div class="d-flex justify-content-end mt-4">
       <a href="/products" class="btn btn-secondary me-2">
         Cancel
@@ -190,9 +273,11 @@ export default {
   position: relative;
 }
 
+/* Green accent panel styling */
 .green-accent-panel {
-  border-left: 3px solid #42b983;
+  border-left: 4px solid #42b983;
   padding-left: 1rem;
+  margin-left: 0.5rem;
 }
 
 /* Table styling */
