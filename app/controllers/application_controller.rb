@@ -3,6 +3,11 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!, unless: :skip_authentication?
   before_action :set_cors_headers
 
+  # Redirect to dashboard after sign in
+  def after_sign_in_path_for(resource)
+    dashboard_path
+  end
+
   private
 
   def configure_permitted_parameters
