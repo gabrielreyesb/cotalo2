@@ -24,8 +24,9 @@
 body { 
   background-color: var(--dark-bg);
   color: var(--text-primary);
-  max-height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 // Tab navigation styles
@@ -65,15 +66,15 @@ body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  max-height: 100%;
-  overflow-y: auto;
+  height: auto;
+  overflow: visible;
   
   .tab-pane {
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    max-height: 100%;
-    overflow-y: auto;
+    height: auto;
+    overflow: visible;
   }
 }
 
@@ -336,11 +337,12 @@ i.fa-3x {
   }
 }
 
-// Ensure consistent background for all main elements
+// Main content area adjustments
 main.container {
   background-color: var(--dark-bg);
-  max-height: 70vh;
-  overflow-y: auto;
+  min-height: 0;
+  height: auto;
+  overflow: visible;
   display: flex;
   flex-direction: column;
 }
@@ -374,4 +376,35 @@ h2.card-text {
   color: var(--cotalo-green);
   font-weight: 600;
   margin-top: 0.5rem;
+}
+
+// Production-specific styles
+@media screen and (min-width: 768px) {
+  body {
+    min-height: 100vh;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    display: flex;
+    flex-direction: column;
+  }
+
+  html {
+    height: 100%;
+    overflow: hidden !important;
+  }
+
+  .main-content {
+    flex: 1 0 auto;
+    min-height: 0;
+    height: auto !important;
+    overflow: visible !important;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .container {
+    height: auto !important;
+    overflow: visible !important;
+    min-height: 0;
+  }
 } 
