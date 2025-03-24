@@ -1,10 +1,15 @@
-<div class="row">
-  <div class="col-12 mb-4">
-    <div class="d-flex justify-content-center align-items-center">
-      <h1 class="text-light me-4">Nuevo producto</h1>
-      <%= link_to products_path, class: "btn btn-outline-secondary position-absolute start-0 ms-3" do %>
-        <i class="fa fa-arrow-left me-1"></i> Volver
-      <% end %>
+<!-- Container to match form width -->
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-12">
+      <div class="position-relative mb-4">
+        <div class="text-center">
+          <h1 class="text-light">Nuevo producto</h1>
+        </div>
+        <%= link_to products_path, class: "btn btn-outline-secondary position-absolute top-50 end-0 translate-middle-y" do %>
+          <i class="fa fa-arrow-left me-1"></i> Volver
+        <% end %>
+      </div>
     </div>
   </div>
 </div>

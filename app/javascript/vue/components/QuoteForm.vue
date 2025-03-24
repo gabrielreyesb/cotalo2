@@ -5,13 +5,13 @@
         <form @submit.prevent="saveQuote">
           <div class="card mb-4">
             <div class="card-header">
-              <h5 class="mb-0">Información de la Cotización</h5>
+              <h5 class="mb-0">Información de la cotización</h5>
             </div>
             <div class="card-body">
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="project_name" class="form-label">Nombre del Proyecto</label>
+                    <label for="project_name" class="form-label">Nombre del proyecto</label>
                     <input type="text" class="form-control" id="project_name" v-model="form.project_name" required>
                   </div>
                 </div>
@@ -21,13 +21,13 @@
 
           <div class="card mb-4">
             <div class="card-header">
-              <h5 class="mb-0">Información del Cliente</h5>
+              <h5 class="mb-0">Información del cliente</h5>
             </div>
             <div class="card-body">
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="customer_name" class="form-label">Nombre del Cliente</label>
+                    <label for="customer_name" class="form-label">Nombre del cliente</label>
                     <div class="input-group">
                       <input type="text" class="form-control" id="customer_name" v-model="form.customer_name" required>
                       <button type="button" class="btn btn-outline-secondary" @click="searchCustomersInline">
@@ -60,7 +60,7 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="email" class="form-label">Correo Electrónico</label>
+                    <label for="email" class="form-label">Correo electrónico</label>
                     <input type="email" class="form-control" id="email" v-model="form.email">
                   </div>
                 </div>
@@ -84,7 +84,7 @@
 
           <div class="d-flex justify-content-end mt-4">
             <button type="button" class="btn btn-secondary me-2" @click="cancelQuote">Cancelar</button>
-            <button type="submit" class="btn btn-primary">Crear Cotización</button>
+            <button type="submit" class="btn btn-primary">Crear cotización</button>
           </div>
         </form>
       </div>
@@ -93,11 +93,11 @@
         <!-- Inline Product Selector - Now at the top -->
         <div class="card mb-4">
           <div class="card-header">
-            <h5 class="mb-0">Agregar Producto</h5>
+            <h5 class="mb-0">Agregar producto</h5>
           </div>
           <div class="card-body">
             <div class="mb-3">
-              <label for="product-search" class="form-label">Buscar Producto</label>
+              <label for="product-search" class="form-label">Buscar producto</label>
               <input 
                 type="text" 
                 id="product-search" 
@@ -108,7 +108,7 @@
             </div>
             
             <div class="mb-3">
-              <label for="product-select" class="form-label">Seleccionar Producto</label>
+              <label for="product-select" class="form-label">Seleccionar producto</label>
               <select 
                 id="product-select" 
                 class="form-select" 
@@ -132,7 +132,7 @@
                 @click="addSelectedProduct()" 
                 :disabled="!selectedProductId"
               >
-                <i class="fas fa-plus"></i> Agregar a la Cotización
+                <i class="fas fa-plus"></i> Agregar a la cotización
               </button>
             </div>
           </div>
@@ -141,7 +141,7 @@
         <!-- Selected Products Card - Now in the middle -->
         <div class="card mb-4">
           <div class="card-header">
-            <h5 class="mb-0">Productos Seleccionados</h5>
+            <h5 class="mb-0">Productos seleccionados</h5>
           </div>
           <div class="card-body">
             <div v-if="selectedProducts.length === 0" class="alert alert-info">
@@ -177,7 +177,7 @@
         <!-- Totals Card - Still at the bottom -->
         <div class="card mb-4" v-if="selectedProducts.length > 0">
           <div class="card-header">
-            <h5 class="mb-0">Resumen de Precios</h5>
+            <h5 class="mb-0">Resumen de precios</h5>
           </div>
           <div class="card-body">
             <table class="table table-sm">
@@ -206,12 +206,12 @@
       <div class="modal-dialog modal-lg">
         <div class="modal-content bg-dark text-light">
           <div class="modal-header border-secondary">
-            <h5 class="modal-title">Buscar Cliente</h5>
+            <h5 class="modal-title">Buscar cliente</h5>
             <button type="button" class="btn-close btn-close-white" @click="showCustomerSearchModal = false"></button>
           </div>
           <div class="modal-body">
             <div class="mb-3">
-              <label for="customerSearchQuery" class="form-label">Nombre del Cliente</label>
+              <label for="customerSearchQuery" class="form-label">Nombre del cliente</label>
               <div class="input-group">
                 <input type="text" class="form-control bg-dark text-light border-secondary" id="customerSearchQuery" v-model="customerSearch.query" placeholder="Ingrese al menos 3 caracteres...">
                 <button class="btn btn-primary" @click="searchCustomers" :disabled="customerSearch.loading || customerSearch.query.length < 3">Buscar</button>
