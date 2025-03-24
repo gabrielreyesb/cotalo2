@@ -1,38 +1,43 @@
 // Base layout styles
 html {
   height: 100%;
-  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
 }
 
 body {
+  margin: 0;
+  padding: 0;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  margin: 0;
   font-family: 'Roboto', sans-serif;
   line-height: 1.5;
   background-color: var(--dark-bg);
   color: var(--text-primary);
-  overflow-x: hidden;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 // Main content area
 .main-content {
-  flex: 1 0 auto;
+  flex: 1;
   display: flex;
   flex-direction: column;
   padding: 1.5rem 0;
-  height: auto !important;
-  min-height: 0;
-  overflow: visible !important;
+  position: relative;
 }
 
 // Container adjustments
 .container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 1rem 15px;
-  height: auto !important;
-  min-height: 0;
-  overflow: visible !important;
   
   &.main-content {
     display: flex;
@@ -53,7 +58,5 @@ body {
 #product-form-app {
   display: flex;
   flex-direction: column;
-  min-height: 0;
-  height: auto !important;
-  overflow: visible !important;
+  position: relative;
 } 
