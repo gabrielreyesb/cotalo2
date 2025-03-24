@@ -1,12 +1,8 @@
-// Import Bootstrap only once
-import 'bootstrap/dist/css/bootstrap.min.css';
+// Import Bootstrap JS only
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 // Import Chart.js
 import 'chart.js/auto';
-
-// Import dark mode theme overrides
-import '../vue/vue_styles.css';
 
 // Debug message to confirm the script is loaded
 console.log('product_form.js loaded successfully');

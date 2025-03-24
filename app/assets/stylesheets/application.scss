@@ -14,10 +14,16 @@
  *= require_self
  */
 
-// Custom Bootstrap variables must be set or imported *before* bootstrap
+// Import Bootstrap
 @import "bootstrap";
 
-// Import our custom dark theme
+// Import base styles
+@import "base/layout";
+
+// Import components
+@import "components/vue";
+
+// Import theme
 @import "dark_theme";
 
 // Additional global styles

@@ -1,0 +1,139 @@
+// Vue component styles
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
+
+// Common styles for all tab components
+.tab-container {
+  position: relative;
+  padding: 1rem;
+}
+
+// Green accent panel for all tabs
+.green-accent-panel {
+  > .card,
+  > .table,
+  > div:not(.card):not(.table) {
+    border-left: 4px solid var(--cotalo-green);
+    margin-left: 0.5rem;
+  }
+}
+
+// Tab components
+.general-tab,
+.materials-tab,
+.processes-tab,
+.extras-tab,
+.pricing-tab {
+  @extend .tab-container;
+}
+
+// Form element dark mode
+.form-label {
+  color: #adb5bd;
+}
+
+.form-control {
+  color: #e1e1e1;
+  background-color: #2c3136;
+  border: 1px solid #495057;
+  border-radius: 4px;
+  
+  &:focus {
+    border-color: #42b983;
+    background-color: #2c3136;
+    color: #e1e1e1;
+    box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25);
+  }
+  
+  &::placeholder {
+    color: #6c757d;
+  }
+  
+  &.no-border {
+    border: none;
+    border-bottom: 1px solid #495057;
+    border-radius: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+// Table dark mode
+.table {
+  color: #e9ecef;
+  
+  th, td {
+    border-top-color: #32383e;
+  }
+  
+  thead th {
+    border-bottom-color: #32383e;
+  }
+}
+
+// Nav tabs with green active indicator
+.nav-tabs {
+  border-bottom-color: #32383e;
+  
+  .nav-link {
+    color: #adb5bd;
+    
+    &.active {
+      color: #f8f9fa;
+      background-color: #23272b;
+      border-color: #32383e #32383e #23272b;
+      border-top: 2px solid #42b983;
+    }
+    
+    &:hover:not(.active) {
+      border-color: #32383e;
+      color: #42b983;
+    }
+    
+    &.disabled {
+      color: #495057;
+    }
+  }
+}
+
+// Buttons with green primary
+.btn-primary {
+  color: #fff;
+  background-color: #42b983;
+  border-color: #42b983;
+  
+  &:hover {
+    background-color: #3aa876;
+    border-color: #3aa876;
+  }
+}
+
+// Form select dark mode
+.form-select.bg-dark {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23adb5bd' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  color: #f8f9fa;
+  
+  option {
+    background-color: #212529;
+    color: #f8f9fa;
+  }
+}
+
+// Layout utilities
+.row {
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+.col-md-6 {
+  position: relative;
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  
+  @include media-breakpoint-up(md) {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+} 

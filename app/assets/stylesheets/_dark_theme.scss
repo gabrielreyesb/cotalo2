@@ -8,16 +8,16 @@
 
 // Dark theme variables
 :root {
-  --cotalo-green: #8ABF50;           /* Brightened green for better contrast */
-  --cotalo-green-dark: #689939;      /* Adjusted darker version */
-  --dark-bg: #1a1a1a;                /* Main dark background */
-  --darker-bg: #141414;              /* Darker areas */
-  --nav-bg: #1e1f21;                 /* Navbar and elevated surfaces */
-  --card-bg: #1e1f21;                /* Card background */
-  --hover-bg: #2a2b2d;               /* Hover state background */
-  --border-color: #2a2b2d;           /* Subtle borders */
-  --text-primary: #ffffff;           /* Primary text - kept white for maximum contrast */
-  --text-secondary: #d1d1d1;         /* Secondary text - brightened for better contrast */
+  --cotalo-green: #42b983;
+  --cotalo-green-dark: #3aa876;
+  --dark-bg: #1a1a1a;
+  --darker-bg: #141414;
+  --nav-bg: #1e1f21;
+  --card-bg: #23272b;
+  --hover-bg: #2a2b2d;
+  --border-color: #32383e;
+  --text-primary: #ffffff;
+  --text-secondary: #d1d1d1;
 }
 
 // Base styles
@@ -96,26 +96,27 @@ body {
   }
 }
 
-// Button overrides
+// Button base styles
 .btn-primary {
   background-color: var(--cotalo-green);
   border-color: var(--cotalo-green);
   
-  &:hover, &:focus, &:active {
+  &:hover {
     background-color: var(--cotalo-green-dark);
     border-color: var(--cotalo-green-dark);
   }
 }
 
-// Card styles
+// Card base styles
 .card {
   background-color: var(--card-bg);
   border: 1px solid var(--border-color);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  height: auto;
+  margin-bottom: 1rem;
   
   &-body {
-    height: auto;
+    background-color: var(--card-bg);
+    padding: 1rem;
   }
   
   &-header {
@@ -129,7 +130,7 @@ body {
   }
 }
 
-// Form controls
+// Form controls base styles
 .form-control, .form-select {
   background-color: var(--darker-bg);
   border-color: var(--border-color);
@@ -141,20 +142,15 @@ body {
     box-shadow: 0 0 0 0.25rem rgba(138, 191, 80, 0.25);
     color: var(--text-primary);
   }
-  
-  &::placeholder {
-    color: #a0a0a0;  /* Brightened placeholder text */
-  }
 }
 
-// Table styling
+// Table base styles
 .table {
   color: var(--text-primary);
   
   thead th {
     background-color: var(--hover-bg);
     border-bottom: 2px solid var(--cotalo-green-dark);
-    color: var(--text-primary);
   }
   
   tbody tr {
@@ -247,12 +243,12 @@ body {
   }
 }
 
-// Link color adjustments
+// Links
 a {
   color: var(--cotalo-green);
   
   &:hover {
-    color: #a0d566; /* Brighter on hover for better visibility */
+    color: var(--cotalo-green-dark);
   }
 }
 
@@ -263,9 +259,9 @@ a {
   color: var(--text-primary);
 }
 
-// Form label improvements
-label, .form-label {
-  color: #ffffff;
+// Form labels
+.form-label {
+  color: var(--text-primary);
   font-weight: 500;
   margin-bottom: 0.5rem;
 }

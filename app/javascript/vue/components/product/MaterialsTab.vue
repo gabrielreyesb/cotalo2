@@ -1006,32 +1006,29 @@ export default {
   margin-left: 0.5rem;
 }
 
-/* Table styling with green accent */
+/* Table container styling */
+.green-accent-panel > div:not(.card) {
+  position: relative;
+  padding-left: 0.5rem;
+  margin-left: 0.5rem;
+}
+
+.green-accent-panel > div:not(.card)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: #42b983;
+  border-radius: 4px;
+}
+
+/* Table styling */
 .green-accent-panel > table.table {
-  border-left: 4px solid #42b983;
-  margin-left: 0.5rem;
-}
-
-/* Add green line only to direct container divs */
-.green-accent-panel > div.d-none,
-.green-accent-panel > div.d-md-none {
-  border-left: 4px solid #42b983;
-  padding-left: 0.5rem;
-  margin-left: 0.5rem;
-}
-
-/* No materials message styling */
-.green-accent-panel > .text-center {
-  border-left: 4px solid #42b983;
-  padding-left: 0.5rem;
-  margin-left: 0.5rem;
-}
-
-/* Card styling for content within responsive containers - no border */
-.green-accent-panel > div > .card.shadow-sm {
   border-left: none;
-  padding-left: 0;
-  margin-left: 0;
+  padding-left: 0.5rem;
+  margin-left: 0.5rem;
 }
 
 /* Card styling */

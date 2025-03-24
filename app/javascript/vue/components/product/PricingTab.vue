@@ -1,174 +1,85 @@
 <template>
   <div class="pricing-tab">
-    <div class="row">
-      <div class="col-md-12">
-        <!-- Table section with green accent -->
-        <div class="green-accent-panel">
-          <!-- Table view for medium and large screens -->
-          <div class="d-none d-md-block">
-            <table class="table table-dark table-bordered">
-              <tbody>
-                <tr>
-                  <th style="width: 40%">Costo de materiales:</th>
-                  <td class="fw-bold text-end">{{ formatCurrency(pricing.materials_cost) }}</td>
-                </tr>
-                <tr>
-                  <th>Costo de procesos:</th>
-                  <td class="fw-bold text-end">{{ formatCurrency(pricing.processes_cost) }}</td>
-                </tr>
-                <tr>
-                  <th>Costo de extras:</th>
-                  <td class="fw-bold text-end">{{ formatCurrency(pricing.extras_cost) }}</td>
-                </tr>
-                <tr class="subtotal-row">
-                  <th>Subtotal:</th>
-                  <td class="text-end">{{ formatCurrency(pricing.subtotal) }}</td>
-                </tr>
-                <tr>
-                  <th class="align-middle">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <span>Desperdicio:</span>
-                      <div class="input-group input-group-sm waste-margin-input">
-                        <input 
-                          type="number" 
-                          class="form-control form-control-sm" 
-                          v-model.number="localWastePercentage" 
-                          min="0"
-                          step="0.1"
-                          @change="handleWastePercentageChange"
-                          title="Puedes editar este valor manualmente para ajustar el porcentaje de desperdicio"
-                          data-toggle="tooltip"
-                        />
-                        <span class="input-group-text">%</span>
-                      </div>
+    <div class="green-accent-panel">
+      <div class="card">
+        <div class="card-body">
+          <table class="table table-dark">
+            <tbody>
+              <tr>
+                <th style="width: 40%">Costo de materiales:</th>
+                <td class="fw-bold text-end">{{ formatCurrency(pricing.materials_cost) }}</td>
+              </tr>
+              <tr>
+                <th>Costo de procesos:</th>
+                <td class="fw-bold text-end">{{ formatCurrency(pricing.processes_cost) }}</td>
+              </tr>
+              <tr>
+                <th>Costo de extras:</th>
+                <td class="fw-bold text-end">{{ formatCurrency(pricing.extras_cost) }}</td>
+              </tr>
+              <tr class="subtotal-row">
+                <th>Subtotal:</th>
+                <td class="text-end">{{ formatCurrency(pricing.subtotal) }}</td>
+              </tr>
+              <tr>
+                <th class="align-middle">Desperdicio:</th>
+                <td>
+                  <div class="d-flex justify-content-end align-items-center">
+                    <div class="input-group input-group-sm me-2" style="width: 100px;">
+                      <input 
+                        type="number" 
+                        class="form-control form-control-sm" 
+                        v-model.number="localWastePercentage" 
+                        min="0"
+                        step="0.1"
+                        @change="handleWastePercentageChange"
+                      />
+                      <span class="input-group-text">%</span>
                     </div>
-                  </th>
-                  <td class="text-end">{{ formatCurrency(pricing.waste_value) }}</td>
-                </tr>
-                <tr>
-                  <th>Precio por pieza (antes del margen):</th>
-                  <td class="text-end">{{ formatCurrency(pricing.price_per_piece_before_margin) }}</td>
-                </tr>
-                <tr>
-                  <th class="align-middle">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <span>Margen:</span>
-                      <div class="input-group input-group-sm waste-margin-input">
-                        <input 
-                          type="number" 
-                          class="form-control form-control-sm" 
-                          v-model.number="localMarginPercentage" 
-                          min="0"
-                          step="0.1"
-                          @change="handleMarginPercentageChange"
-                          title="Puedes editar este valor manualmente para ajustar el porcentaje de margen"
-                          data-toggle="tooltip"
-                        />
-                        <span class="input-group-text">%</span>
-                      </div>
+                    <span>{{ formatCurrency(pricing.waste_value) }}</span>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>Precio por pieza (antes del margen):</th>
+                <td class="text-end">{{ formatCurrency(pricing.price_per_piece_before_margin) }}</td>
+              </tr>
+              <tr>
+                <th class="align-middle">Margen:</th>
+                <td>
+                  <div class="d-flex justify-content-end align-items-center">
+                    <div class="input-group input-group-sm me-2" style="width: 100px;">
+                      <input 
+                        type="number" 
+                        class="form-control form-control-sm" 
+                        v-model.number="localMarginPercentage" 
+                        min="0"
+                        step="0.1"
+                        @change="handleMarginPercentageChange"
+                      />
+                      <span class="input-group-text">%</span>
                     </div>
-                  </th>
-                  <td class="text-end">{{ formatCurrency(pricing.margin_value) }}</td>
-                </tr>
-                <tr class="total-row">
-                  <th>Precio total:</th>
-                  <td class="fw-bold text-end">{{ formatCurrency(pricing.total_price) }}</td>
-                </tr>
-                <tr class="total-row">
-                  <th>Precio por pieza:</th>
-                  <td class="fw-bold text-end">{{ formatCurrency(pricing.final_price_per_piece) }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          
-          <!-- Card view for small screens -->
-          <div class="d-md-none">
-            <div class="table-responsive">
-              <table class="table table-dark table-bordered mb-0">
-                <tbody>
-                  <tr>
-                    <th style="width: 50%">Costo de materiales:</th>
-                    <td class="fw-bold text-end">{{ formatCurrency(pricing.materials_cost) }}</td>
-                  </tr>
-                  <tr>
-                    <th>Costo de procesos:</th>
-                    <td class="fw-bold text-end">{{ formatCurrency(pricing.processes_cost) }}</td>
-                  </tr>
-                  <tr>
-                    <th>Costo de extras:</th>
-                    <td class="fw-bold text-end">{{ formatCurrency(pricing.extras_cost) }}</td>
-                  </tr>
-                  <tr class="subtotal-row">
-                    <th>Subtotal:</th>
-                    <td class="text-end">{{ formatCurrency(pricing.subtotal) }}</td>
-                  </tr>
-                  <tr>
-                    <th class="align-middle">Desperdicio:</th>
-                    <td>
-                      <div class="d-flex justify-content-end align-items-center">
-                        <div class="input-group input-group-sm me-2" style="width: 100px;">
-                          <input 
-                            type="number" 
-                            class="form-control form-control-sm" 
-                            v-model.number="localWastePercentage" 
-                            min="0"
-                            step="0.1"
-                            @change="handleWastePercentageChange"
-                          />
-                          <span class="input-group-text">%</span>
-                        </div>
-                        <span>{{ formatCurrency(pricing.waste_value) }}</span>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>Precio por pieza (antes del margen):</th>
-                    <td class="text-end">{{ formatCurrency(pricing.price_per_piece_before_margin) }}</td>
-                  </tr>
-                  <tr>
-                    <th class="align-middle">Margen:</th>
-                    <td>
-                      <div class="d-flex justify-content-end align-items-center">
-                        <div class="input-group input-group-sm me-2" style="width: 100px;">
-                          <input 
-                            type="number" 
-                            class="form-control form-control-sm" 
-                            v-model.number="localMarginPercentage" 
-                            min="0"
-                            step="0.1"
-                            @change="handleMarginPercentageChange"
-                          />
-                          <span class="input-group-text">%</span>
-                        </div>
-                        <span>{{ formatCurrency(pricing.margin_value) }}</span>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr class="total-row">
-                    <th>Precio total:</th>
-                    <td class="fw-bold text-end">{{ formatCurrency(pricing.total_price) }}</td>
-                  </tr>
-                  <tr class="total-row">
-                    <th>Precio por pieza:</th>
-                    <td class="fw-bold text-end">{{ formatCurrency(pricing.final_price_per_piece) }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+                    <span>{{ formatCurrency(pricing.margin_value) }}</span>
+                  </div>
+                </td>
+              </tr>
+              <tr class="total-row">
+                <th>Precio total:</th>
+                <td class="fw-bold text-end">{{ formatCurrency(pricing.total_price) }}</td>
+              </tr>
+              <tr class="total-row">
+                <th>Precio por pieza:</th>
+                <td class="fw-bold text-end">{{ formatCurrency(pricing.final_price_per_piece) }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
     
-    <!-- Buttons section - outside the green accent panel -->
-    <div class="d-flex justify-content-end mt-4">
-      <a href="/products" class="btn btn-secondary me-2">
-        Cancel
-      </a>
-      <button type="button" class="btn btn-primary" @click="saveProduct" :disabled="saving">
-        {{ isNew ? 'Crear producto' : 'Guardar cambios' }}
-      </button>
+    <div class="d-flex justify-content-end gap-2 mt-4">
+      <button type="button" class="btn btn-secondary" @click="$emit('cancel')">Cancel</button>
+      <button type="button" class="btn btn-primary" @click="saveProduct">Crear producto</button>
     </div>
   </div>
 </template>
@@ -273,11 +184,51 @@ export default {
   position: relative;
 }
 
-/* Green accent panel styling */
-.green-accent-panel {
+/* Green accent panel styling - Base */
+.green-accent-panel > .card:not(.shadow-sm) {
   border-left: 4px solid #42b983;
-  padding-left: 1rem;
+  padding-left: 0.5rem;
   margin-left: 0.5rem;
+}
+
+/* Table styling with green accent */
+.green-accent-panel > table.table {
+  border-left: 4px solid #42b983;
+  margin-left: 0.5rem;
+}
+
+/* Add green line only to direct container divs */
+.green-accent-panel > div.d-none,
+.green-accent-panel > div.d-md-none {
+  border-left: 4px solid #42b983;
+  padding-left: 0.5rem;
+  margin-left: 0.5rem;
+}
+
+/* No content message styling */
+.green-accent-panel > .text-center {
+  border-left: 4px solid #42b983;
+  padding-left: 0.5rem;
+  margin-left: 0.5rem;
+}
+
+/* Card styling for content within responsive containers - no border */
+.green-accent-panel > div > .card.shadow-sm {
+  border-left: none;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+/* Card styling */
+.card {
+  background-color: #23272b;
+  border-color: #32383e;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.15);
+}
+
+.card-body {
+  padding: 1rem;
 }
 
 /* Table styling */
@@ -287,24 +238,6 @@ export default {
   margin-bottom: 0;
 }
 
-.table-dark {
-  background-color: #23272b;
-  color: #e9ecef;
-}
-
-.table-dark th {
-  background-color: #32383e;
-}
-
-.subtotal-row {
-  border-top: 2px solid #495057;
-}
-
-.total-row {
-  background-color: rgba(255, 255, 255, 0.05) !important;
-  border-top: 2px solid #495057;
-}
-
 .table th,
 .table td {
   border-color: #32383e;
@@ -312,8 +245,28 @@ export default {
   vertical-align: middle;
 }
 
-.input-group-sm {
-  margin-top: 5px;
+.subtotal-row,
+.total-row {
+  border-top: 2px solid #495057;
+}
+
+.total-row {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Form controls */
+.form-control {
+  color: #e1e1e1;
+  background-color: #2c3136;
+  border: 1px solid #495057;
+  border-radius: 4px;
+}
+
+.form-control:focus {
+  border-color: #42b983;
+  background-color: #2c3136;
+  color: #e1e1e1;
+  box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25);
 }
 
 .input-group-text {
@@ -322,26 +275,25 @@ export default {
   border-color: #495057;
 }
 
-.form-control-sm {
-  background-color: #2c3136;
-  color: #e9ecef;
+/* Button styling */
+.btn-primary {
+  color: #fff;
+  background-color: #42b983;
+  border-color: #42b983;
+}
+
+.btn-primary:hover {
+  background-color: #3aa876;
+  border-color: #3aa876;
+}
+
+.btn-secondary {
+  color: #adb5bd;
   border-color: #495057;
 }
 
-.form-control-sm:focus {
-  background-color: #2c3136;
-  color: #e9ecef;
-  border-color: #42b983;
-  box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25);
-}
-
-.fw-bold {
-  font-weight: bold;
-}
-
-.waste-margin-input {
-  width: 120px;
-  margin-top: 0;
-  margin-left: 10px;
+.btn-secondary:hover {
+  background-color: #495057;
+  color: #fff;
 }
 </style> 
