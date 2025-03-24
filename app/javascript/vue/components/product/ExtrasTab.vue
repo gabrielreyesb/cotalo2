@@ -290,6 +290,34 @@ export default {
   position: relative;
 }
 
+/* Form controls with dark theme */
+.form-select, 
+.form-control {
+  color: #e1e1e1;
+  background-color: #2c3136;
+  border: 1px solid #495057;
+  border-radius: 4px;
+}
+
+.form-select:focus,
+.form-control:focus {
+  border-color: #42b983;
+  background-color: #2c3136;
+  color: #e1e1e1;
+  box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25);
+}
+
+.form-select::placeholder,
+.form-control::placeholder {
+  color: #6c757d;
+}
+
+/* Add styling for select options */
+.form-select option {
+  color: #e1e1e1;
+  background-color: #2c3136;
+}
+
 /* Green accent panel styling - Base */
 .green-accent-panel > .card:not(.shadow-sm) {
   border-left: 4px solid #42b983;
@@ -363,34 +391,6 @@ export default {
 
 .table thead th {
   border-bottom-color: #32383e;
-}
-
-/* Form controls with green focus */
-.form-select, 
-.form-control {
-  color: #e1e1e1;
-  background-color: #2c3136;
-  border: 1px solid #495057;
-  border-radius: 4px;
-}
-
-/* Add styling for select options */
-.form-select option {
-  color: #212529;
-  background-color: #fff;
-}
-
-.form-select:focus,
-.form-control:focus {
-  border-color: #42b983;
-  background-color: #2c3136;
-  color: #e1e1e1;
-  box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25);
-}
-
-.form-select::placeholder,
-.form-control::placeholder {
-  color: #6c757d;
 }
 
 /* Label styling */

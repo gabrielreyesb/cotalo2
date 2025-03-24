@@ -1,3 +1,14 @@
+<style>
+.project-link {
+  color: var(--cotalo-green) !important;
+  text-decoration: none;
+}
+
+.project-link:hover {
+  text-decoration: underline;
+}
+</style>
+
 <div class="container-fluid">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>Cotizaciones</h1>
@@ -28,7 +39,7 @@
                 <% @quotes.each do |quote| %>
                   <tr>
                     <td><%= quote.quote_number %></td>
-                    <td><%= quote.project_name %></td>
+                    <td><%= link_to quote.project_name, quote_path(quote), class: "project-link" %></td>
                     <td><%= quote.customer_name %></td>
                     <td><%= quote.organization %></td>
                     <td><%= quote.created_at.strftime("%d/%m/%Y") %></td>
@@ -59,7 +70,7 @@
         <!-- Card view for small screens -->
         <div class="d-md-none">
           <% @quotes.each do |quote| %>
-            <div class="card mb-4 border-0 shadow-lg" style="border-bottom: 3px solid #28a745 !important;">
+            <div class="card mb-4 border-0 shadow-lg" style="border-bottom: 3px solid var(--cotalo-green) !important;">
               <!-- First row: date and quote # -->
               <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
                 <span class="badge bg-primary"><%= quote.created_at.strftime("%d/%m/%Y") %></span>
@@ -69,7 +80,7 @@
               <div class="card-body p-3">
                 <!-- Second row: project name -->
                 <div class="mb-3">
-                  <h5 class="fw-bold text-truncate"><%= quote.project_name %></h5>
+                  <h5 class="fw-bold text-truncate"><%= link_to quote.project_name, quote_path(quote), class: "project-link" %></h5>
                 </div>
                 
                 <!-- Third row: customer name and organization -->
