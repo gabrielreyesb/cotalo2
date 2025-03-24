@@ -4,7 +4,7 @@
       <div class="card">
         <div class="card-body">
           <div class="row align-items-end">
-            <div class="col-md-6 mb-3 mb-md-0 me-md-2">
+            <div class="col-md-9 mb-3 mb-md-0">
               <label for="material-select" class="form-label">Seleccionar material</label>
               <select 
                 id="material-select" 
@@ -21,12 +21,16 @@
                   {{ material.description }}
                 </option>
               </select>
+              <div v-if="validationMessage" class="text-danger mt-2">
+                {{ validationMessage }}
+              </div>
             </div>
             <div class="col-md-3 d-grid">
               <button 
                 class="btn btn-primary" 
                 @click="addMaterial" 
                 :disabled="!canAdd"
+                :title="validationMessage"
               >
                 <i class="fa fa-plus me-1"></i> Agregar Material
               </button>
@@ -242,7 +246,7 @@
         @click="showCustomMaterialForm = !showCustomMaterialForm"
       >
         <i class="fa" :class="showCustomMaterialForm ? 'fa-minus' : 'fa-plus'"></i>
-        {{ showCustomMaterialForm ? 'Ocultar formulario' : 'Agregar material personalizado' }}
+        {{ showCustomMaterialForm ? 'Ocultar' : 'Agregar material manualmente' }}
       </button>
       
       <div v-if="showCustomMaterialForm" class="card mt-2 mb-3">
@@ -283,7 +287,7 @@
               />
             </div>
             <div class="col-md-4 mb-3">
-              <label for="custom-material-price" class="form-label">Precio por m²</label>
+              <label for="custom-material-price" class="form-label">Precio</label>
               <input 
                 type="number" 
                 class="form-control" 
@@ -301,7 +305,7 @@
                 @click="addCustomMaterial"
                 :disabled="!canAddCustomMaterial"
               >
-                <i class="fa fa-plus me-1"></i> Agregar Material Personalizado
+                <i class="fa fa-plus me-1"></i> Agregar material manualmente
               </button>
             </div>
           </div>
@@ -337,7 +341,7 @@ export default {
     },
     productQuantity: {
       type: Number,
-      default: 1
+      default: null
     },
     selectedMaterialId: {
       type: [Number, String],
@@ -371,7 +375,33 @@ export default {
   },
   computed: {
     canAdd() {
-      return this.materialIdForAdd;
+      // Check if a material is selected
+      if (!this.materialIdForAdd) {
+        return false;
+      }
+
+      // Check if product dimensions and quantity are set and valid
+      if (!this.productWidth || this.productWidth <= 0 ||
+          !this.productLength || this.productLength <= 0 ||
+          !this.productQuantity || this.productQuantity <= 0) {
+        return false;
+      }
+
+      return true;
+    },
+    validationMessage() {
+      // Only show validation messages if a material is selected
+      if (!this.materialIdForAdd) {
+        return '';
+      }
+
+      if (!this.productWidth || this.productWidth <= 0 ||
+          !this.productLength || this.productLength <= 0 ||
+          !this.productQuantity || this.productQuantity <= 0) {
+        return 'Por favor, completa la información del producto en la pestaña de información general.';
+      }
+
+      return '';
     },
     canAddCustomMaterial() {
       return this.customMaterial.description &&
@@ -472,7 +502,7 @@ export default {
       // Emit the total cost of materials
       this.$emit('update:materials-cost', this.totalCost + (parseFloat(newMaterial.totalPrice) || 0));
       
-      // Auto select the newly added material if no material is currently selected
+      // Only select the newly added material if no material is currently selected
       if (!this.selectedMaterialForProducts) {
         this.selectedMaterialForProducts = newMaterial.id;
         this.selectMaterialForProducts(newMaterial.id);
@@ -487,11 +517,23 @@ export default {
         const updatedMaterials = [...this.productMaterials];
         updatedMaterials.splice(index, 1);
         
+        // Update materials first
         this.$emit('update:product-materials', updatedMaterials);
         
         // Calculate and emit the new total cost
         const newTotalCost = this.totalCost - (parseFloat(materialToRemove.totalPrice) || 0);
         this.$emit('update:materials-cost', newTotalCost);
+
+        // If we removed the selected material and there are remaining materials
+        if (materialToRemove.id === this.selectedMaterialForProducts && updatedMaterials.length > 0) {
+          // Select the first material
+          this.selectedMaterialForProducts = updatedMaterials[0].id;
+          this.selectMaterialForProducts(updatedMaterials[0].id);
+        } else if (updatedMaterials.length === 0) {
+          // If no materials remain, clear the selection
+          this.selectedMaterialForProducts = null;
+          this.selectMaterialForProducts(null);
+        }
       }
     },
     updateGlobalComments() {
@@ -919,8 +961,8 @@ export default {
           this.updateMaterialsCalculations();
         }
 
-        // Auto-select first material if none is selected and materials exist
-        if (!this.selectedMaterialForProducts && newMaterials.length > 0) {
+        // If there are materials but none is selected, select the first one
+        if (newMaterials.length > 0 && !this.selectedMaterialForProducts) {
           this.selectedMaterialForProducts = newMaterials[0].id;
           this.selectMaterialForProducts(newMaterials[0].id);
         }

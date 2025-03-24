@@ -86,7 +86,8 @@
                   class="form-control" 
                   v-model="form.data.general_info.comments" 
                   @input="emitFormChanges"
-                  rows="5"
+                  rows="11"
+                  style="height: 100%; min-height: 300px;"
                 ></textarea>
               </div>
             </div>
@@ -119,7 +120,7 @@ export default {
             width: null,
             length: null,
             inner_measurements: '',
-            quantity: 1,
+            quantity: null,
             comments: ''
           }
         }
@@ -145,7 +146,7 @@ export default {
         width: null,
         length: null,
         inner_measurements: '',
-        quantity: 1,
+        quantity: null,
         comments: ''
       };
       
@@ -160,11 +161,6 @@ export default {
           }
         }
       };
-      
-      // Ensure minimum value for quantity
-      if (!this.form.data.general_info.quantity || this.form.data.general_info.quantity < 1) {
-        this.form.data.general_info.quantity = 1;
-      }
     },
     emitFormChanges() {
       this.$emit('update:product', {

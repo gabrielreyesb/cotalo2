@@ -14,7 +14,7 @@
       <p class="mb-0">Please try refreshing the page or contact support if the problem persists.</p>
     </div>
     
-    <div v-else>
+    <div v-else class="product-form-container">
       <ul class="nav nav-tabs mb-4" id="product-tabs">
         <li class="nav-item">
           <a class="nav-link" :class="{ active: activeTab === 'general' }" 
@@ -299,7 +299,7 @@ export default {
       try {
         // Initialize with empty structure for a new product
         this.product = {
-          description: 'Descripción del producto',
+          description: '',
           data: {
             name: '',
             sku: '',
@@ -318,60 +318,12 @@ export default {
           }
         };
         
-        // Add demo data
-        this.addDemoData();
-        
         // Set loading to false for new products
         this.loading = false;
       } catch (error) {
         console.error('Error initializing new product:', error);
         this.error = error.message;
       }
-    },
-    addDemoData() {
-      // Only add demo data for new products
-      if (this.productId) return;
-      
-      // Set basic product info
-      this.product.data.name = 'Nuevo Producto';
-      this.product.data.description = 'Descripción del producto';
-      this.product.data.sku = 'NP' + Math.floor(Math.random() * 10000);
-      
-      // Set general info as requested
-      if (!this.product.data.general_info) {
-        this.product.data.general_info = {};
-      }
-      
-      // Set specific values as requested
-      this.product.data.general_info.quantity = 3000;
-      this.product.data.general_info.width = 32;
-      this.product.data.general_info.length = 22;
-      
-      // Set other general info fields with demo data
-      this.product.data.general_info.inner_measurements = '30cm x 20cm';
-      this.product.data.general_info.customer_name = 'Cliente Demo';
-      this.product.data.general_info.customer_organization = 'Organización Demo';
-      this.product.data.general_info.customer_email = 'cliente@demo.com';
-      this.product.data.general_info.customer_phone = '555-123-4567';
-      this.product.data.general_info.comments = 'Este es un producto de demostración para pruebas.';
-      
-      // Important: Also set the description in the main product object for the GeneralTab
-      this.product.description = 'Descripción del producto';
-      
-      // Add demo pricing data - set extras cost to 0 and let recalculatePricing handle the rest
-      const pricing = this.product.data.pricing;
-      pricing.extras_cost = 0;
-      pricing.waste_percentage = this.userConfig.waste_percentage;
-      pricing.margin_percentage = this.userConfig.margin_percentage;
-      
-      // Initialize empty materials array
-      this.product.data.materials = [];
-      
-      // Update quantity in product data to match general info
-      this.product.data.quantity = this.product.data.general_info.quantity;
-      
-      // Recalculate all pricing values
-      this.recalculatePricing();
     },
     async createProduct(productData) {
       try {
@@ -1264,3 +1216,51 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.product-form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-form-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-tabs {
+  flex-shrink: 0;
+  margin-bottom: 1rem !important;
+}
+
+.tab-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-pane {
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-pane > div {
+  margin-bottom: 0;
+}
+
+/* Remove any bottom margin from the last card in each tab */
+.tab-pane .card:last-child,
+.tab-pane > div:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Remove bottom margin from the last form group in cards */
+.card-body > :last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Remove the red border that was used for debugging */
+.tab-pane {
+  border: none !important;
+}
+</style>
