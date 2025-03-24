@@ -130,7 +130,7 @@
   padding-right: 15px;
   padding-left: 15px;
   
-  @include media-breakpoint-up(md) {
+  @media (min-width: 768px) {
     flex: 0 0 50%;
     max-width: 50%;
   }
