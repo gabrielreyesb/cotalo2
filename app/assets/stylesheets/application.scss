@@ -14,8 +14,8 @@
  *= require_self
  */
 
-// Import Bootstrap
-@import "~bootstrap/scss/bootstrap";
+// Import custom Bootstrap configuration
+@import "bootstrap_custom";
 
 // Import base styles
 @import "base/layout";

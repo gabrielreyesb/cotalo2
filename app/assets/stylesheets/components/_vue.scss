@@ -1,7 +1,5 @@
 // Vue component styles
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
-@import "~bootstrap/scss/mixins";
+// Bootstrap variables and mixins are already imported in _bootstrap_custom.scss
 
 // Common styles for all tab components
 .tab-container {
