@@ -1,0 +1,154 @@
+<div class="container">
+  <div class="row justify-content-center align-items-center" style="height: 70vh;">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-lg border-0">
+        <div class="card-body p-5">
+          <div class="text-center mb-4">
+            <h2 class="fw-bold mb-0">Registrarse</h2>
+            <p class="text-muted">Crea tu cuenta para continuar</p>
+          </div>
+
+          <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "login-form" }) do |f| %>
+            <div class="form-group mb-4">
+              <%= f.label :email, class: "form-label" %>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="fa fa-envelope"></i>
+                </span>
+                <%= f.email_field :email, autofocus: true, autocomplete: "email", 
+                    class: "form-control",
+                    placeholder: "nombre@ejemplo.com" %>
+              </div>
+            </div>
+
+            <div class="form-group mb-4">
+              <%= f.label :password, "Contraseña", class: "form-label" %>
+              <% if @minimum_password_length %>
+                <small class="text-muted d-block mb-2">Mínimo <%= @minimum_password_length %> caracteres</small>
+              <% end %>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="fa fa-lock"></i>
+                </span>
+                <%= f.password_field :password, autocomplete: "new-password",
+                    class: "form-control",
+                    placeholder: "••••••••" %>
+              </div>
+            </div>
+
+            <div class="form-group mb-4">
+              <%= f.label :password_confirmation, "Confirmar contraseña", class: "form-label" %>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="fa fa-lock"></i>
+                </span>
+                <%= f.password_field :password_confirmation, autocomplete: "new-password",
+                    class: "form-control",
+                    placeholder: "••••••••" %>
+              </div>
+            </div>
+
+            <div class="d-grid mb-4">
+              <%= f.submit "Registrarse", class: "btn btn-primary btn-lg" %>
+            </div>
+          <% end %>
+
+          <div class="text-center">
+            <div class="text-muted mb-2">¿Ya tienes una cuenta?</div>
+            <%= link_to "Iniciar sesión", new_session_path(resource_name), 
+                class: "text-primary text-decoration-none" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :styles do %>
+<style>
+  .card {
+    background-color: #1e2124;
+    border: none;
+  }
+
+  .form-label {
+    color: #e1e1e1;
+    font-weight: 500;
+  }
+
+  .form-control {
+    color: #e1e1e1;
+    background-color: #2c3136;
+    border: 1px solid #495057;
+    border-radius: 4px;
+  }
+
+  .form-control:focus {
+    color: #e1e1e1;
+    background-color: #2c3136;
+    border-color: var(--cotalo-green);
+    box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25);
+  }
+
+  .form-control::placeholder {
+    color: #6c757d;
+  }
+
+  .input-group-text {
+    color: #e1e1e1;
+    background-color: #2c3136;
+    border: 1px solid #495057;
+  }
+
+  .input-group-text i {
+    color: #e1e1e1;
+    font-size: 1.1rem;
+  }
+
+  .form-check-input {
+    background-color: #2c3136;
+    border-color: #495057;
+  }
+
+  .form-check-input:checked {
+    background-color: var(--cotalo-green);
+    border-color: var(--cotalo-green);
+  }
+
+  .form-check-label {
+    color: #e1e1e1;
+  }
+
+  .btn-primary {
+    background-color: var(--cotalo-green);
+    border-color: var(--cotalo-green);
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--cotalo-green-dark);
+    border-color: var(--cotalo-green-dark);
+  }
+
+  .text-primary {
+    color: var(--cotalo-green) !important;
+  }
+
+  .text-primary:hover {
+    color: var(--cotalo-green-dark) !important;
+  }
+
+  .text-muted {
+    color: #adb5bd !important;
+  }
+
+  h2 {
+    color: #e1e1e1;
+  }
+
+  small {
+    font-size: 0.875rem;
+  }
+</style>
+<% end %> 

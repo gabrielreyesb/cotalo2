@@ -1,0 +1,198 @@
+<div class="container">
+  <div class="row justify-content-center align-items-center" style="height: 70vh;">
+    <div class="col-md-8 col-lg-7">
+      <div class="green-accent-panel">
+        <div class="card shadow-lg border-0">
+          <div class="card-body p-5">
+            <div class="text-center mb-4">
+              <h2 class="fw-bold mb-0">Configuración de cuenta</h2>
+              <p class="text-muted">Actualiza tu información</p>
+            </div>
+
+            <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: "settings-form" }) do |f| %>
+              <div class="form-group mb-4">
+                <%= f.label :email, class: "form-label" %>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="fa fa-envelope"></i>
+                  </span>
+                  <%= f.email_field :email, autofocus: true, autocomplete: "email", 
+                      class: "form-control",
+                      placeholder: "nombre@ejemplo.com" %>
+                </div>
+              </div>
+
+              <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+                <div class="alert alert-info mb-4">
+                  Esperando confirmación para: <%= resource.unconfirmed_email %>
+                </div>
+              <% end %>
+
+              <div class="form-group mb-4">
+                <%= f.label :password, "Nueva contraseña", class: "form-label" %>
+                <small class="text-muted d-block mb-2">Dejar en blanco si no deseas cambiarla</small>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="fa fa-lock"></i>
+                  </span>
+                  <%= f.password_field :password, autocomplete: "new-password",
+                      class: "form-control",
+                      placeholder: "••••••••" %>
+                </div>
+                <% if @minimum_password_length %>
+                  <small class="text-muted d-block mt-2">Mínimo <%= @minimum_password_length %> caracteres</small>
+                <% end %>
+              </div>
+
+              <div class="form-group mb-4">
+                <%= f.label :password_confirmation, "Confirmar nueva contraseña", class: "form-label" %>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="fa fa-lock"></i>
+                  </span>
+                  <%= f.password_field :password_confirmation, autocomplete: "new-password",
+                      class: "form-control",
+                      placeholder: "••••••••" %>
+                </div>
+              </div>
+
+              <div class="form-group mb-4">
+                <%= f.label :current_password, "Contraseña actual", class: "form-label" %>
+                <small class="text-muted d-block mb-2">Necesitamos tu contraseña actual para confirmar los cambios</small>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="fa fa-key"></i>
+                  </span>
+                  <%= f.password_field :current_password, autocomplete: "current-password",
+                      class: "form-control",
+                      placeholder: "••••••••" %>
+                </div>
+              </div>
+
+              <div class="d-grid gap-2">
+                <%= f.submit "Actualizar cuenta", class: "btn btn-primary btn-lg mb-3" %>
+                <%= link_to "Volver", :back, class: "btn btn-outline-secondary" %>
+              </div>
+            <% end %>
+
+            <div class="mt-5">
+              <h3 class="h5 text-danger mb-4">Zona de peligro</h3>
+              <p class="text-muted mb-3">¿Deseas eliminar tu cuenta? Esta acción no se puede deshacer.</p>
+              <%= button_to "Eliminar mi cuenta", registration_path(resource_name), 
+                  data: { confirm: "¿Estás seguro?" }, 
+                  method: :delete, 
+                  class: "btn btn-outline-danger" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :styles do %>
+<style>
+  .green-accent-panel > .card {
+    border-left: 4px solid var(--cotalo-green);
+    margin-left: 0.5rem;
+  }
+
+  .card {
+    background-color: #1e2124;
+    border: none;
+  }
+
+  .form-label {
+    color: #e1e1e1;
+    font-weight: 500;
+  }
+
+  .form-control {
+    color: #e1e1e1;
+    background-color: #2c3136;
+    border: 1px solid #495057;
+    border-radius: 4px;
+  }
+
+  .form-control:focus {
+    color: #e1e1e1;
+    background-color: #2c3136;
+    border-color: var(--cotalo-green);
+    box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25);
+  }
+
+  .form-control::placeholder {
+    color: #6c757d;
+  }
+
+  .input-group-text {
+    color: #e1e1e1;
+    background-color: #2c3136;
+    border: 1px solid #495057;
+  }
+
+  .input-group-text i {
+    color: #e1e1e1;
+    font-size: 1.1rem;
+  }
+
+  .btn-primary {
+    background-color: var(--cotalo-green);
+    border-color: var(--cotalo-green);
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--cotalo-green-dark);
+    border-color: var(--cotalo-green-dark);
+  }
+
+  .btn-outline-secondary {
+    color: #adb5bd;
+    border-color: #495057;
+  }
+
+  .btn-outline-secondary:hover {
+    background-color: #495057;
+    color: #fff;
+  }
+
+  .btn-outline-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+  }
+
+  .btn-outline-danger:hover {
+    color: #fff;
+    background-color: #dc3545;
+    border-color: #dc3545;
+  }
+
+  .text-primary {
+    color: var(--cotalo-green) !important;
+  }
+
+  .text-primary:hover {
+    color: var(--cotalo-green-dark) !important;
+  }
+
+  .text-muted {
+    color: #adb5bd !important;
+  }
+
+  h2, h3 {
+    color: #e1e1e1;
+  }
+
+  small {
+    font-size: 0.875rem;
+  }
+
+  .alert-info {
+    color: #e1e1e1;
+    background-color: rgba(66, 185, 131, 0.1);
+    border-color: rgba(66, 185, 131, 0.2);
+  }
+</style>
+<% end %> 

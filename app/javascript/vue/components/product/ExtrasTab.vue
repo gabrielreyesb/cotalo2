@@ -293,8 +293,8 @@ export default {
 /* Form controls with dark theme */
 .form-select, 
 .form-control {
-  color: #e1e1e1;
-  background-color: #2c3136;
+  color: #e1e1e1 !important;
+  background-color: #2c3136 !important;
   border: 1px solid #495057;
   border-radius: 4px;
 }
@@ -302,8 +302,8 @@ export default {
 .form-select:focus,
 .form-control:focus {
   border-color: #42b983;
-  background-color: #2c3136;
-  color: #e1e1e1;
+  background-color: #2c3136 !important;
+  color: #e1e1e1 !important;
   box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25);
 }
 

@@ -1,133 +1,252 @@
-<div class="row">
-  <div class="col-12 mb-4">
-    <div class="d-flex justify-content-between align-items-center">
-      <h1>Configuraciones</h1>
+<div class="container-fluid">
+  <div class="row mb-4">
+    <div class="col-12">
+      <h1 class="text-light">Configuraciones</h1>
+    </div>
+  </div>
+
+  <%= form_with(url: app_configs_path, method: :put, class: "needs-validation") do |form| %>
+    <div class="row">
+      <div class="col-md-6 mb-4">
+        <div class="settings-tab">
+          <div class="green-accent-panel">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="mb-0">Configuraciones generales</h5>
+              </div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <%= form.label :waste_percentage, "Porcentaje de merma (%)", class: "form-label" %>
+                  <%= form.number_field :waste_percentage, value: @general_settings[:waste_percentage], step: '0.01', class: "form-control" %>
+                </div>
+                
+                <div class="mb-3">
+                  <%= form.label :margin_percentage, "Porcentaje de margen (%)", class: "form-label" %>
+                  <%= form.number_field :margin_percentage, value: @general_settings[:margin_percentage], step: '0.01', class: "form-control" %>
+                </div>
+                
+                <div class="mb-3">
+                  <%= form.label :width_margin, "Margen de ancho", class: "form-label" %>
+                  <%= form.number_field :width_margin, value: @general_settings[:width_margin], step: '0.01', class: "form-control" %>
+                </div>
+                
+                <div class="mb-3">
+                  <%= form.label :length_margin, "Margen de largo", class: "form-label" %>
+                  <%= form.number_field :length_margin, value: @general_settings[:length_margin], step: '0.01', class: "form-control" %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6 mb-4">
+        <div class="settings-tab">
+          <div class="green-accent-panel">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="mb-0">Información de firma</h5>
+              </div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <%= form.label :signature_name, "Nombre", class: "form-label" %>
+                  <%= form.text_field :signature_name, value: @signature_info[:name], class: "form-control" %>
+                </div>
+                
+                <div class="mb-3">
+                  <%= form.label :signature_email, "Correo", class: "form-label" %>
+                  <%= form.email_field :signature_email, value: @signature_info[:email], class: "form-control" %>
+                </div>
+                
+                <div class="mb-3">
+                  <%= form.label :signature_phone, "Teléfono", class: "form-label" %>
+                  <%= form.telephone_field :signature_phone, value: @signature_info[:phone], class: "form-control" %>
+                </div>
+                
+                <div class="mb-3">
+                  <%= form.label :signature_whatsapp, "WhatsApp", class: "form-label" %>
+                  <%= form.telephone_field :signature_whatsapp, value: @signature_info[:whatsapp], class: "form-control" %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 mb-4">
+        <div class="settings-tab">
+          <div class="green-accent-panel">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="mb-0">Condiciones de venta</h5>
+              </div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <%= form.label :condition_1, "Condición 1", class: "form-label" %>
+                  <%= form.text_field :condition_1, value: @sales_conditions[:condition_1], class: "form-control" %>
+                </div>
+                
+                <div class="mb-3">
+                  <%= form.label :condition_2, "Condición 2", class: "form-label" %>
+                  <%= form.text_field :condition_2, value: @sales_conditions[:condition_2], class: "form-control" %>
+                </div>
+                
+                <div class="mb-3">
+                  <%= form.label :condition_3, "Condición 3", class: "form-label" %>
+                  <%= form.text_field :condition_3, value: @sales_conditions[:condition_3], class: "form-control" %>
+                </div>
+                
+                <div class="mb-3">
+                  <%= form.label :condition_4, "Condición 4", class: "form-label" %>
+                  <%= form.text_field :condition_4, value: @sales_conditions[:condition_4], class: "form-control" %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 d-flex gap-2 justify-content-end">
+        <%= link_to "Cancelar", :back, class: "btn btn-outline-secondary" %>
+        <%= form.submit "Guardar", class: "btn btn-primary" %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- API Configuration section -->
+  <div class="row">
+    <div class="col-12 mb-4">
+      <div class="settings-tab">
+        <div class="green-accent-panel">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">API Configuration</h5>
+              <span class="badge <%= AppConfig.get_pipedrive_api_key.present? ? 'bg-success' : 'bg-danger' %>">
+                <%= AppConfig.get_pipedrive_api_key.present? ? 'Configured' : 'Not Configured' %>
+              </span>
+            </div>
+            <div class="card-body">
+              <p class="text-muted mb-3">
+                Configure external API connections. API keys are stored in the database and available immediately.
+              </p>
+              
+              <%= form_with(url: update_api_key_app_configs_path, method: :put, class: "mb-0", id: "api_key_form", local: true) do |api_form| %>
+                <div class="mb-3">
+                  <%= api_form.label :pipedrive_api_key, "Pipedrive API Key", class: "form-label" %>
+                  <div class="input-group">
+                    <%= api_form.password_field :pipedrive_api_key, placeholder: "Enter new API key", class: "form-control", autocomplete: "off", id: "pipedrive_api_key_input" %>
+                    <%= api_form.hidden_field :authenticity_token, value: form_authenticity_token, id: "authenticity_token_main" %>
+                    <button type="submit" class="btn btn-primary">Update API Key</button>
+                  </div>
+                  <small class="form-text text-muted">The API key will be stored in the database and will be used immediately.</small>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<%= form_with(url: app_configs_path, method: :put, class: "needs-validation") do |form| %>
-  <div class="row">
-    <div class="col-md-6 mb-4">
-      <div class="card">
-        <div class="card-header">
-          <h5>Configuraciones generales</h5>
-        </div>
-        <div class="card-body">
-          <div class="mb-3">
-            <%= form.label :waste_percentage, "Porcentaje de merma (%)", class: "form-label" %>
-            <%= form.number_field :waste_percentage, value: @general_settings[:waste_percentage], step: '0.01', class: "form-control" %>
-          </div>
-          
-          <div class="mb-3">
-            <%= form.label :margin_percentage, "Porcentaje de margen (%)", class: "form-label" %>
-            <%= form.number_field :margin_percentage, value: @general_settings[:margin_percentage], step: '0.01', class: "form-control" %>
-          </div>
-          
-          <div class="mb-3">
-            <%= form.label :width_margin, "Margen de ancho", class: "form-label" %>
-            <%= form.number_field :width_margin, value: @general_settings[:width_margin], step: '0.01', class: "form-control" %>
-          </div>
-          
-          <div class="mb-3">
-            <%= form.label :length_margin, "Margen de largo", class: "form-label" %>
-            <%= form.number_field :length_margin, value: @general_settings[:length_margin], step: '0.01', class: "form-control" %>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="col-md-6 mb-4">
-      <div class="card">
-        <div class="card-header">
-          <h5>Información de firma</h5>
-        </div>
-        <div class="card-body">
-          <div class="mb-3">
-            <%= form.label :signature_name, "Nombre", class: "form-label" %>
-            <%= form.text_field :signature_name, value: @signature_info[:name], class: "form-control" %>
-          </div>
-          
-          <div class="mb-3">
-            <%= form.label :signature_email, "Correo", class: "form-label" %>
-            <%= form.email_field :signature_email, value: @signature_info[:email], class: "form-control" %>
-          </div>
-          
-          <div class="mb-3">
-            <%= form.label :signature_phone, "Teléfono", class: "form-label" %>
-            <%= form.telephone_field :signature_phone, value: @signature_info[:phone], class: "form-control" %>
-          </div>
-          
-          <div class="mb-3">
-            <%= form.label :signature_whatsapp, "WhatsApp", class: "form-label" %>
-            <%= form.telephone_field :signature_whatsapp, value: @signature_info[:whatsapp], class: "form-control" %>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <div class="row">
-    <div class="col-12 mb-4">
-      <div class="card">
-        <div class="card-header">
-          <h5>Condiciones de venta</h5>
-        </div>
-        <div class="card-body">
-          <div class="mb-3">
+<% content_for :styles do %>
+<style>
+  .settings-tab {
+    position: relative;
+  }
 
-            <%= form.text_field :condition_1, value: @sales_conditions[:condition_1], class: "form-control" %>
-          </div>
-          
-          <div class="mb-3">
-            <%= form.text_field :condition_2, value: @sales_conditions[:condition_2], class: "form-control" %>
-          </div>
-          
-          <div class="mb-3">
-            <%= form.text_field :condition_3, value: @sales_conditions[:condition_3], class: "form-control" %>
-          </div>
-          
-          <div class="mb-3">
-            <%= form.text_field :condition_4, value: @sales_conditions[:condition_4], class: "form-control" %>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-4">
-    <%= link_to "Cancelar", dashboard_path, class: "btn btn-secondary me-md-2" %>
-    <%= form.submit "Guardar", class: "btn btn-primary" %>
-  </div>
-<% end %>
+  /* Green accent panel styling - Base */
+  .green-accent-panel > .card:not(.shadow-sm) {
+    border-left: 4px solid #42b983;
+    padding-left: 0.5rem;
+    margin-left: 0.5rem;
+  }
 
-<!-- API Configuration section moved OUTSIDE the main form -->
-<div class="row">
-  <div class="col-12 mb-4">
-    <div class="card">
-      <div class="card-header">
-        <h5>API Configuration</h5>
-        <span class="badge <%= AppConfig.get_pipedrive_api_key.present? ? 'bg-success' : 'bg-danger' %>">
-          <%= AppConfig.get_pipedrive_api_key.present? ? 'Configured' : 'Not Configured' %>
-        </span>
-      </div>
-      <div class="card-body">
-        <p class="text-muted mb-3">
-          Configure external API connections. API keys are stored in the database and available immediately.
-        </p>
-        
-        <%= form_with(url: update_api_key_app_configs_path, method: :put, class: "mb-0", id: "api_key_form", local: true) do |api_form| %>
-          <div class="mb-3">
-            <%= api_form.label :pipedrive_api_key, "Pipedrive API Key", class: "form-label" %>
-            <div class="input-group">
-              <%= api_form.password_field :pipedrive_api_key, placeholder: "Enter new API key", class: "form-control", autocomplete: "off", id: "pipedrive_api_key_input" %>
-              <%= api_form.hidden_field :authenticity_token, value: form_authenticity_token, id: "authenticity_token_main" %>
-              <button type="submit" class="btn btn-primary">Update API Key</button>
-            </div>
-            <small class="form-text text-muted">The API key will be stored in the database and will be used immediately.</small>
-          </div>
-        <% end %>
-      </div>
-    </div>
-  </div>
-</div> 
+  /* Card styling */
+  .card {
+    background-color: #23272b;
+    border-color: #32383e;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.15);
+  }
+
+  .card-body {
+    padding: 1rem;
+  }
+
+  .card-header {
+    background-color: #23272b;
+    border-bottom: 1px solid #32383e;
+    padding: 1rem;
+  }
+
+  .card-header h5 {
+    color: #e1e1e1;
+    margin: 0;
+  }
+
+  /* Form controls with dark theme */
+  .form-select, 
+  .form-control {
+    color: #e1e1e1 !important;
+    background-color: #2c3136 !important;
+    border: 1px solid #495057;
+    border-radius: 4px;
+  }
+
+  .form-select:focus,
+  .form-control:focus {
+    border-color: #42b983;
+    background-color: #2c3136 !important;
+    color: #e1e1e1 !important;
+    box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25);
+  }
+
+  .form-select::placeholder,
+  .form-control::placeholder {
+    color: #6c757d;
+  }
+
+  /* Label styling */
+  .form-label {
+    color: #adb5bd;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Button styling */
+  .btn-primary {
+    color: #fff;
+    background-color: #42b983;
+    border-color: #42b983;
+  }
+
+  .btn-primary:hover {
+    background-color: #3aa876;
+    border-color: #3aa876;
+  }
+
+  .btn-outline-secondary {
+    color: #adb5bd;
+    border-color: #495057;
+  }
+
+  .btn-outline-secondary:hover {
+    background-color: #495057;
+    color: #fff;
+    border-color: #495057;
+  }
+
+  /* Text colors */
+  .text-muted {
+    color: #6c757d !important;
+  }
+
+  .text-light {
+    color: #f8f9fa !important;
+  }
+</style>
+<% end %> 
