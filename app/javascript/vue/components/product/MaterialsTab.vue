@@ -218,22 +218,22 @@
     </div>
 
     <!-- Visualization Modal -->
-    <div class="modal" :class="{'show': showVisualization}" tabindex="-1">
+    <div class="modal" :class="{'show d-block': showVisualization, 'd-none': !showVisualization}" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
+        <div class="modal-content bg-dark">
+          <div class="modal-header border-secondary">
             <h5 class="modal-title">
               Disposición de Producto en Material: 
               <span class="material-title">{{ visualizationMaterial ? visualizationMaterial.description : '' }}</span>
             </h5>
-            <button type="button" class="btn-close" @click="closeVisualization"></button>
+            <button type="button" class="btn-close btn-close-white" @click="closeVisualization"></button>
           </div>
           <div class="modal-body">
             <div class="canvas-container">
               <canvas id="visualization-canvas"></canvas>
             </div>
           </div>
-          <div class="modal-footer">
+          <div class="modal-footer border-secondary">
             <button type="button" class="btn btn-secondary" @click="closeVisualization">Cerrar</button>
           </div>
         </div>
@@ -1162,122 +1162,30 @@ export default {
 
 /* Visualization modal styles */
 .modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1050;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  outline: 0;
   background-color: rgba(0, 0, 0, 0.5);
 }
 
 .modal.show {
-  display: block;
-}
-
-.modal-dialog {
-  position: relative;
-  width: auto;
-  margin: 0.5rem;
-  pointer-events: none;
-  max-width: 800px;
-  margin: 1.75rem auto;
-}
-
-.modal-content {
-  position: relative;
-  display: flex;
-  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  pointer-events: auto;
-  background-color: #343a40;
-  background-clip: padding-box;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 0.3rem;
-  outline: 0;
+  height: 100%;
+  z-index: 1050;
 }
 
-.modal-header {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 1rem;
-  border-bottom: 1px solid #495057;
-}
-
-.modal-title {
-  margin-bottom: 0;
-  line-height: 1.5;
-  color: #e9ecef;
-}
-
-.material-title {
-  color: #42b983;
-  font-weight: bold;
-}
-
-.modal-body {
-  position: relative;
-  flex: 1 1 auto;
-  padding: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #212529;
-}
-
-.modal-footer {
-  display: flex;
-  flex-wrap: wrap;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0.75rem;
-  border-top: 1px solid #495057;
-}
-
-.btn-close {
-  box-sizing: content-box;
-  width: 1em;
-  height: 1em;
-  padding: 0.25em 0.25em;
-  color: #fff;
-  background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
-  border: 0;
-  border-radius: 0.25rem;
-  opacity: 0.5;
-  cursor: pointer;
-}
-
-.btn-close:hover {
-  opacity: 1;
-}
-
-#visualization-canvas {
-  background-color: #212529;
-  border: 1px solid #495057;
-  border-radius: 4px;
-  width: 700px;
-  height: 600px;
-}
-
-/* Canvas container for responsive visualization */
 .canvas-container {
   width: 100%;
-  position: relative;
+  height: 100%;
+  min-height: 400px;
+  background-color: #1a1e21;
+  border-radius: 4px;
   overflow: auto;
 }
 
-/* Make the canvas responsive */
 #visualization-canvas {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin: 0 auto;
+  width: 100%;
+  height: 100%;
 }
 
 /* For small screens */
