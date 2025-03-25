@@ -168,9 +168,9 @@ class ProductsController < ApplicationController
     {
       id: material.id,
       description: material.description,
-      name: material.nombre,
+      name: material.client_description,
       price: material.price,
-      specifications: material.especificaciones,
+      specifications: material.resistance,
       width: material.ancho,
       length: material.largo,
       unit: material.unit ? {

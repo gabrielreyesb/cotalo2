@@ -233,7 +233,7 @@ class QuotesController < ApplicationController
     pdf_generator = QuotePdfGenerator.new(@quote)
     pdf_content = pdf_generator.generate
     
-    filename = "cotizacion_#{@quote.id}_#{Time.current.strftime('%Y%m%d')}.pdf"
+    filename = "#{@quote.quote_number}.pdf"
     
     respond_to do |format|
       format.pdf do

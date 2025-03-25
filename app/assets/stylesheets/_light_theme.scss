@@ -1,0 +1,97 @@
+/* Light theme variables */
+:root[data-theme="light"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --border-color: #dee2e6;
+  --input-bg: #ffffff;
+  --input-border: #ced4da;
+  --card-bg: #ffffff;
+  --card-border: #e9ecef;
+  --hover-bg: #e9ecef;
+  --cotalo-green: #42b983; /* Keep the same accent color */
+}
+
+/* Light theme styles */
+[data-theme="light"] {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+
+  /* Card styles */
+  .card {
+    background-color: var(--card-bg);
+    border-color: var(--card-border);
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  }
+
+  .card-header {
+    background-color: var(--bg-secondary);
+    border-bottom-color: var(--border-color);
+  }
+
+  .card-header h5 {
+    color: var(--text-primary);
+  }
+
+  /* Form controls */
+  .form-control,
+  .form-select {
+    color: var(--text-primary) !important;
+    background-color: var(--input-bg) !important;
+    border-color: var(--input-border);
+
+    &:focus {
+      border-color: var(--cotalo-green);
+      box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25);
+    }
+
+    &::placeholder {
+      color: var(--text-secondary);
+    }
+  }
+
+  /* Labels */
+  .form-label {
+    color: var(--text-primary);
+  }
+
+  /* Tables */
+  .table {
+    color: var(--text-primary);
+    
+    thead th {
+      background-color: var(--bg-secondary);
+      border-bottom-color: var(--border-color);
+    }
+    
+    td {
+      border-color: var(--border-color);
+    }
+  }
+
+  /* Buttons */
+  .btn-outline-secondary {
+    color: var(--text-secondary);
+    border-color: var(--border-color);
+
+    &:hover {
+      background-color: var(--hover-bg);
+      color: var(--text-primary);
+    }
+  }
+
+  /* Text colors */
+  .text-light {
+    color: var(--text-primary) !important;
+  }
+
+  .text-muted {
+    color: var(--text-secondary) !important;
+  }
+
+  /* Green accent panel */
+  .green-accent-panel > .card {
+    border-left: 4px solid var(--cotalo-green);
+  }
+} 

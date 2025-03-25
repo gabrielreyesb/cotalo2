@@ -1,15 +1,30 @@
-<div class="row">
-  <div class="col-12 mb-4">
-    <div class="d-flex justify-content-between align-items-center">
-      <h1>Nuevo material</h1>
-      <%= link_to "Volver a materiales", materials_path, class: "btn btn-secondary" %>
+<!-- Container to match form width -->
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-12">
+      <div class="position-relative mb-4">
+        <div class="text-center">
+          <h1 class="text-light">Nuevo material</h1>
+        </div>
+        <%= link_to materials_path, class: "btn btn-outline-secondary position-absolute top-50 end-0 translate-middle-y" do %>
+          <i class="fa fa-arrow-left me-1"></i> Volver
+        <% end %>
+      </div>
     </div>
   </div>
-  
-  <div class="col-md-8 offset-md-2">
-    <div class="card">
-      <div class="card-body">
-        <%= render 'form', material: @material %>
+</div>
+
+<!-- Include Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<!-- Main content container -->
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-12">
+      <div class="card shadow-sm" style="border-left: 4px solid #28a745;">
+        <div class="card-body p-4">
+          <%= render 'form', material: @material %>
+        </div>
       </div>
     </div>
   </div>

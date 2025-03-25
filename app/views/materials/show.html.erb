@@ -14,8 +14,8 @@
       <div class="card-body">
         <div class="row mb-3">
           <div class="col-md-6">
-            <strong>Nombre:</strong> 
-            <p><%= @material.nombre.present? ? @material.nombre : "N/A" %></p>
+            <strong>Descripción para cliente:</strong> 
+            <p><%= @material.client_description.present? ? @material.client_description : "N/A" %></p>
           </div>
           <div class="col-md-6">
             <strong>Unit:</strong> 
@@ -49,6 +49,15 @@
             <div class="col-12">
               <strong>Especificaciones:</strong> 
               <p><%= @material.especificaciones %></p>
+            </div>
+          </div>
+        <% end %>
+        
+        <% if @material.resistance.present? %>
+          <div class="row mb-3">
+            <div class="col-12">
+              <strong>Resistencia:</strong>
+              <p><%= @material.resistance %></p>
             </div>
           </div>
         <% end %>

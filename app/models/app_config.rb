@@ -11,6 +11,11 @@ class AppConfig < ApplicationRecord
   WIDTH_MARGIN = 'width_margin'
   LENGTH_MARGIN = 'length_margin'
   
+  # Theme settings
+  THEME_MODE = 'theme_mode'
+  THEME_DARK = 'dark'
+  THEME_LIGHT = 'light'
+  
   # API Keys (stored in ENV but configured through app)
   PIPEDRIVE_API_KEY = 'pipedrive_api_key'
   

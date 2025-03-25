@@ -1,9 +1,10 @@
 class Material < ApplicationRecord
   belongs_to :unit
   belongs_to :user
+  has_many :product_materials
+  has_many :products, through: :product_materials
   
-  validates :description, presence: true
-  validates :nombre, presence: true
+  validates :client_description, presence: true
   validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :unit, presence: true
   validates :user, presence: true

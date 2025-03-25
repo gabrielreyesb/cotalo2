@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_03_21_201408) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_24_215513) do
   create_table "app_configs", force: :cascade do |t|
     t.string "key", null: false
     t.text "value"
@@ -49,8 +49,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_21_201408) do
   create_table "materials", force: :cascade do |t|
     t.string "description"
     t.decimal "price", precision: 10, scale: 2
-    t.string "nombre"
-    t.string "especificaciones"
+    t.string "client_description"
+    t.string "resistance"
     t.decimal "ancho", precision: 10, scale: 2
     t.decimal "largo", precision: 10, scale: 2
     t.text "comments"

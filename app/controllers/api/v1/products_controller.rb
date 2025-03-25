@@ -204,11 +204,12 @@ class Api::V1::ProductsController < ApplicationController
   def material_json(material)
     {
       id: material.id,
-      description: material.description || material.nombre,
+      description: material.description,
+      client_description: material.client_description,
       ancho: material.ancho,
       largo: material.largo,
       price: material.price || 0,
-      specifications: material.especificaciones,
+      resistance: material.resistance,
       unit: material.unit ? material.unit.name : 'unidad',
       unit_object: material.unit ? {
         id: material.unit.id,

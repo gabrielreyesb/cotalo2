@@ -1,14 +1,25 @@
-<div class="container-fluid py-4 px-3">
-  <div class="row mb-4">
+<!-- Container to match form width -->
+<div class="container py-4">
+  <div class="row justify-content-center">
     <div class="col-12">
-      <div class="d-flex justify-content-between align-items-center">
-        <h1>Materiales</h1>
-        <%= link_to "Nuevo material", new_material_path, class: "btn btn-primary" %>
+      <div class="position-relative mb-4">
+        <div class="text-center">
+          <h1 class="text-light">Materiales</h1>
+        </div>
+        <%= link_to new_material_path, class: "btn btn-primary position-absolute top-50 end-0 translate-middle-y" do %>
+          <i class="fa fa-plus me-1"></i> Nuevo material
+        <% end %>
       </div>
     </div>
   </div>
-  
-  <div class="row">
+</div>
+
+<!-- Include Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<!-- Main content container -->
+<div class="container">
+  <div class="row justify-content-center">
     <div class="col-12">
       <% if @materials.any? %>
         <!-- Table view for medium and large screens -->
@@ -19,7 +30,7 @@
                 <thead>
                   <tr>
                     <th>Descripción</th>
-                    <th>Nombre</th>
+                    <th>Descripción para cliente</th>
                     <th>Precio</th>
                     <th>Unidad</th>
                     <th>Dimensiones</th>
@@ -30,7 +41,7 @@
                   <% @materials.each do |material| %>
                     <tr>
                       <td><%= material.description %></td>
-                      <td><%= material.nombre %></td>
+                      <td><%= material.client_description %></td>
                       <td><%= number_to_currency(material.price) %></td>
                       <td><%= material.unit.abbreviation %></td>
                       <td>
@@ -46,11 +57,17 @@
                       </td>
                       <td>
                         <div class="btn-group btn-group-sm">
-                          <%= link_to "Ver", material_path(material), class: "btn btn-outline-secondary" %>
-                          <%= link_to "Editar", edit_material_path(material), class: "btn btn-outline-primary" %>
-                          <%= button_to "Borrar", material_path(material), method: :delete, 
+                          <%= link_to material_path(material), class: "btn btn-outline-secondary" do %>
+                            <i class="fa fa-eye"></i>
+                          <% end %>
+                          <%= link_to edit_material_path(material), class: "btn btn-outline-primary" do %>
+                            <i class="fa fa-edit"></i>
+                          <% end %>
+                          <%= button_to material_path(material), method: :delete, 
                               class: "btn btn-outline-danger", 
-                              form: { data: { turbo_confirm: "¿Estás seguro de que quieres eliminar este material?" } } %>
+                              form: { data: { turbo_confirm: "¿Estás seguro de que quieres eliminar este material?" } } do %>
+                            <i class="fa fa-trash"></i>
+                          <% end %>
                         </div>
                       </td>
                     </tr>
@@ -67,7 +84,7 @@
             <div class="card mb-4 border-0 shadow-lg" style="border-bottom: 3px solid #28a745 !important;">
               <div class="card-body p-2">
                 <div class="d-flex justify-content-between align-items-center mb-1">
-                  <h6 class="card-title mb-0 fw-bold text-truncate" style="width: 30%"><%= material.description %></h6>
+                  <h6 class="card-title mb-0 fw-bold text-truncate" style="width: 30%"><%= material.client_description %></h6>
                   <div class="d-flex justify-content-evenly align-items-center" style="width: 40%">
                     <span class="badge bg-secondary">
                       <% if material.ancho.present? && material.largo.present? %>
@@ -99,7 +116,7 @@
                   </div>
                 </div>
                 <div class="small text-muted">
-                  <%= material.nombre %> | <%= material.unit.abbreviation %>
+                  <%= material.description %> | <%= material.unit.abbreviation %>
                 </div>
               </div>
             </div>
