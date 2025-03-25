@@ -1,0 +1,14 @@
+/* Green accent line styling - Global definition */
+.green-accent-panel {
+  border-left: 3px solid #42b983;
+  padding-left: 0.5rem;
+  margin-left: 0.5rem;
+  border-radius: 4px;
+
+  /* Card styling for content within responsive containers - no border */
+  > div > .card.shadow-sm {
+    border-left: none;
+    padding-left: 0;
+    margin-left: 0;
+  }
+} 

@@ -26,6 +26,9 @@
 // Import theme
 @import "dark_theme";
 
+// Import shared styles
+@import "shared";
+
 // Additional global styles
 body {
   font-family: 'Roboto', sans-serif;
@@ -35,11 +38,39 @@ body {
   min-height: 100vh;
   margin: 0;
   overflow-x: hidden;
+  overflow-y: auto;
+}
+
+// Dark scrollbar styling
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3a3a3a;
+  border-radius: 4px;
+  
+  &:hover {
+    background: #4a4a4a;
+  }
+}
+
+// Firefox scrollbar styling
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3a3a3a #1a1a1a;
 }
 
 html {
   height: 100%;
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
 // Container adjustments for dark theme
@@ -48,6 +79,7 @@ html {
   padding-bottom: 1rem;
   height: auto;
   overflow: visible;
+  position: static;
 }
 
 // Link styling for dark theme

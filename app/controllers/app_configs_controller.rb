@@ -13,7 +13,6 @@ class AppConfigsController < ApplicationController
     
     # Group configurations by category
     @general_settings = {
-      theme_mode: current_user.get_config(AppConfig::THEME_MODE) || AppConfig::THEME_DARK,
       waste_percentage: waste_pct,
       margin_percentage: margin_pct,
       width_margin: current_user.get_config(AppConfig::WIDTH_MARGIN) || 0,
@@ -39,9 +38,6 @@ class AppConfigsController < ApplicationController
   end
   
   def update
-    # Update theme settings
-    current_user.set_config(AppConfig::THEME_MODE, params[:theme_mode])
-    
     # Update general settings
     current_user.set_config(AppConfig::WASTE_PERCENTAGE, params[:waste_percentage], AppConfig::PERCENTAGE)
     current_user.set_config(AppConfig::MARGIN_PERCENTAGE, params[:margin_percentage], AppConfig::PERCENTAGE)

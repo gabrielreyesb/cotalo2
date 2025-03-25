@@ -1,5 +1,5 @@
 <template>
-  <div class="product-form">
+  <div class="product-form h-100 overflow-auto">
     <div v-if="loading" class="text-center my-5">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Loading...</span>

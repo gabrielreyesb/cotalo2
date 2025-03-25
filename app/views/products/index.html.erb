@@ -1,3 +1,14 @@
+<style>
+.project-link {
+  color: var(--cotalo-green) !important;
+  text-decoration: none;
+}
+
+.project-link:hover {
+  text-decoration: underline;
+}
+</style>
+
 <div class="container-fluid py-4 px-3">
   <div class="row mb-4">
     <div class="col-12">
@@ -7,11 +18,7 @@
           <i class="fa fa-plus me-1"></i> Nuevo producto
         <% end %>
       </div>
-      <% if Rails.env.development? %>
-        <div class="small text-muted mt-2">
-          Page rendered at: <%= Time.current.strftime("%Y-%m-%d %H:%M:%S") %>
-        </div>
-      <% end %>
+
     </div>
   </div>
 

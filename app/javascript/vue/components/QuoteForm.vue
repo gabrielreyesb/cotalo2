@@ -636,11 +636,30 @@ export default {
 </script>
 
 <style scoped>
-/* Product selector styles */
-.form-select {
-  background-color: #2c3136;
+.quote-form {
+  position: relative;
+  height: auto;
+  overflow: visible;
+}
+
+.row {
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+.col-lg-7,
+.col-lg-5 {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+/* Form controls with dark theme */
+.form-select, 
+.form-control {
   color: #e1e1e1;
+  background-color: #2c3136;
   border: 1px solid #495057;
+  border-radius: 4px;
 }
 
 .form-select:focus {

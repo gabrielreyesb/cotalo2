@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid h-100 overflow-auto">
   <div class="row mb-4">
     <div class="col-12">
       <h1 class="text-light">Configuraciones</h1>
@@ -16,34 +16,11 @@
               </div>
               <div class="card-body">
                 <div class="mb-3">
-                  <%= form.label :theme_mode, "Tema de la aplicación", class: "form-label" %>
-                  <div class="d-flex align-items-center gap-2" data-controller="theme">
-                    <div class="form-check">
-                      <%= form.radio_button :theme_mode, AppConfig::THEME_DARK, 
-                          checked: @general_settings[:theme_mode] != AppConfig::THEME_LIGHT, 
-                          class: "form-check-input",
-                          data: { 
-                            theme_target: "themeInput",
-                            action: "change->theme#toggle"
-                          } %>
-                      <%= form.label :theme_mode_dark, "Oscuro", class: "form-check-label" %>
-                    </div>
-                    <div class="form-check">
-                      <%= form.radio_button :theme_mode, AppConfig::THEME_LIGHT, 
-                          checked: @general_settings[:theme_mode] == AppConfig::THEME_LIGHT, 
-                          class: "form-check-input",
-                          data: { 
-                            theme_target: "themeInput",
-                            action: "change->theme#toggle"
-                          } %>
-                      <%= form.label :theme_mode_light, "Claro", class: "form-check-label" %>
-                    </div>
+                  <%= form.label :waste_percentage, "Porcentaje de desperdicio", class: "form-label" %>
+                  <div class="input-group">
+                    <%= form.number_field :waste_percentage, value: @general_settings[:waste_percentage], class: "form-control", min: 0, max: 100, step: 1 %>
+                    <span class="input-group-text">%</span>
                   </div>
-                </div>
-                
-                <div class="mb-3">
-                  <%= form.label :waste_percentage, "Porcentaje de merma (%)", class: "form-label" %>
-                  <%= form.number_field :waste_percentage, value: @general_settings[:waste_percentage], step: '0.01', class: "form-control" %>
                 </div>
                 
                 <div class="mb-3">
@@ -179,6 +156,12 @@
 <style>
   .settings-tab {
     position: relative;
+  }
+
+  /* Remove any fixed positioning or height constraints */
+  .container-fluid {
+    min-height: auto;
+    position: static;
   }
 
   /* Green accent panel styling - Base */

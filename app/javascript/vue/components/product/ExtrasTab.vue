@@ -28,7 +28,8 @@
                 id="extra-quantity" 
                 type="number" 
                 v-model.number="quantity" 
-                class="form-control" 
+                class="form-control bg-dark text-white border-secondary" 
+                style="color-scheme: dark;"
                 min="1" 
                 step="1"
                 :disabled="!selectedExtraId"
@@ -97,23 +98,28 @@
         <div v-for="(extra, index) in productExtras" :key="index" class="card mb-3 shadow-sm">
           <div class="card-body p-2">
             <!-- First row: Extra description only -->
-            <h6 class="card-title mb-2 text-truncate">{{ extra.name }}</h6>
+            <h6 class="card-title mb-2">{{ extra.name }}</h6>
             
             <!-- Second row: Material price and quantity -->
             <div class="row g-2 mb-2">
-              <div class="col">
-                <div class="badge bg-info d-block text-center p-2 w-100">
+              <div class="col-6">
+                <div class="badge bg-dark d-block text-center p-2 w-100 material-badge">
                   {{ formatCurrency(extra.unit_price) }}
                 </div>
               </div>
-              <div class="col">
-                <div class="badge bg-secondary d-block text-center p-2 w-100">
-                  {{ extra.quantity }}
-                </div>
+              <div class="col-6">
+                <input 
+                  type="number" 
+                  class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge bg-dark text-white"
+                  v-model.number="extra.quantity" 
+                  min="1"
+                  @change="updateExtraQuantity(index)"
+                  title="Haz clic para editar la cantidad"
+                />
               </div>
             </div>
             
-            <!-- Third row: Subtotal price and delete button -->
+            <!-- Third row: Total price and delete button -->
             <div class="d-flex justify-content-between align-items-center">
               <span class="badge bg-success fs-5">{{ formatCurrency(extra.unit_price * extra.quantity) }}</span>
               <button 
@@ -249,6 +255,11 @@ export default {
       
       // For now, just emit the current extras to ensure pricing gets updated
       this.$emit('update:product-extras', [...this.productExtras]);
+    },
+    updateExtraQuantity(index) {
+      const updatedExtras = [...this.productExtras];
+      updatedExtras[index].quantity = this.productExtras[index].quantity;
+      this.$emit('update:product-extras', updatedExtras);
     }
   },
   watch: {
@@ -284,174 +295,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.extras-tab {
-  position: relative;
-}
-
-/* Form controls with dark theme */
-.form-select, 
-.form-control {
-  color: #e1e1e1 !important;
-  background-color: #2c3136 !important;
-  border: 1px solid #495057;
-  border-radius: 4px;
-}
-
-.form-select:focus,
-.form-control:focus {
-  border-color: #42b983;
-  background-color: #2c3136 !important;
-  color: #e1e1e1 !important;
-  box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25);
-}
-
-.form-select::placeholder,
-.form-control::placeholder {
-  color: #6c757d;
-}
-
-/* Add styling for select options */
-.form-select option {
-  color: #e1e1e1;
-  background-color: #2c3136;
-}
-
-/* Green accent panel styling - Base */
-.green-accent-panel > .card:not(.shadow-sm) {
-  border-left: 4px solid #42b983;
-  padding-left: 0.5rem;
-  margin-left: 0.5rem;
-}
-
-/* Table container styling */
-.green-accent-panel > div:not(.card) {
-  position: relative;
-  padding-left: 0.5rem;
-  margin-left: 0.5rem;
-}
-
-.green-accent-panel > div:not(.card)::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background-color: #42b983;
-  border-radius: 4px;
-}
-
-/* Table styling */
-.green-accent-panel > table.table {
-  border-left: none;
-  padding-left: 0.5rem;
-  margin-left: 0.5rem;
-}
-
-/* Card styling */
-.card {
-  background-color: #23272b;
-  border-color: #32383e;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.15);
-}
-
-.card-body {
-  padding: 1rem;
-}
-
-/* Table styling */
-.table {
-  color: #e9ecef;
-  background-color: #23272b;
-  border-collapse: separate;
-  border-spacing: 0;
-}
-
-.table-dark {
-  background-color: #23272b;
-  color: #e9ecef;
-}
-
-.table-dark th {
-  background-color: #32383e;
-}
-
-.table-striped > tbody > tr:nth-of-type(odd) {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-.table th,
-.table td {
-  border-top-color: #32383e;
-  padding: 0.75rem;
-}
-
-.table thead th {
-  border-bottom-color: #32383e;
-}
-
-/* Label styling */
-.form-label {
-  color: #adb5bd;
-  margin-bottom: 0.5rem;
-}
-
-/* Button styling */
-.btn-primary {
-  color: #fff;
-  background-color: #42b983;
-  border-color: #42b983;
-}
-
-.btn-primary:hover {
-  background-color: #3aa876;
-  border-color: #3aa876;
-}
-
-.btn-outline-secondary,
-.btn-outline-danger {
-  color: #adb5bd;
-  border-color: #495057;
-}
-
-.btn-outline-secondary:hover {
-  background-color: #495057;
-  color: #fff;
-  border-color: #495057;
-}
-
-.btn-outline-danger:hover {
-  background-color: #dc3545;
-  color: #fff;
-}
-
-/* Text colors */
-.text-muted {
-  color: #6c757d !important;
-}
-
-.text-end {
-  text-align: right !important;
-}
-
-/* Modal styling */
-.modal-content {
-  background-color: #2c3136;
-  border-color: #495057;
-}
-
-.modal-header {
-  border-bottom-color: #32383e;
-}
-
-.modal-footer {
-  border-top-color: #32383e;
-}
-
-.modal-title {
-  color: #f8f9fa;
-}
-</style> 

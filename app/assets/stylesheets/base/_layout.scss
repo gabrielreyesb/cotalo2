@@ -15,6 +15,7 @@ body {
   line-height: 1.5;
   background-color: var(--dark-bg);
   color: var(--text-primary);
+  overflow-y: auto;
 }
 
 #app {
@@ -30,10 +31,11 @@ body {
   flex-direction: column;
   padding: 1.5rem 0;
   position: relative;
+  overflow: visible;
 }
 
 // Container adjustments
-.container {
+.container, .container-fluid {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
@@ -42,6 +44,7 @@ body {
   &.main-content {
     display: flex;
     flex-direction: column;
+    overflow: visible;
   }
 }
 

@@ -1,13 +1,13 @@
-<div class="container-fluid my-4">
-  <div class="row">
-    <div class="col-12 mb-5">
-      <div class="text-center">
-        <h1 class="mb-4">Panel de control</h1>
+<div class="container-fluid py-4 px-3">
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <h1>Panel de control</h1>
       </div>
     </div>
   </div>
 
-  <div class="row px-2">
+  <div class="row">
     <div class="col-md-6 mb-4">
       <div class="card shadow-lg border-0" style="border-bottom: 3px solid #28a745 !important;">
         <div class="card-body p-4">
@@ -62,14 +62,14 @@
                 <thead>
                   <tr>
                     <th>Descripción</th>
-                    <th>Precio</th>
+                    <th class="text-end">Precio</th>
                   </tr>
                 </thead>
                 <tbody>
                   <% current_user.products.order(created_at: :desc).limit(5).each do |product| %>
                     <tr>
                       <td><%= link_to product.description, product_path(product) %></td>
-                      <td><%= number_to_currency(product.data && product.data.dig('pricing', 'total_price') || 0) %></td>
+                      <td class="text-end"><%= number_to_currency(product.data && product.data.dig('pricing', 'total_price') || 0) %></td>
                     </tr>
                   <% end %>
                 </tbody>
@@ -101,7 +101,7 @@
                   <tr>
                     <th>Número</th>
                     <th>Cliente</th>
-                    <th>Total</th>
+                    <th class="text-end">Total</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -109,7 +109,7 @@
                     <tr>
                       <td><%= link_to quote.quote_number, quote_path(quote) %></td>
                       <td><%= quote.customer_name %></td>
-                      <td><%= number_to_currency(quote.data && quote.data.dig('totals', 'total') || 0) %></td>
+                      <td class="text-end"><%= number_to_currency(quote.data && quote.data.dig('totals', 'total') || 0) %></td>
                     </tr>
                   <% end %>
                 </tbody>

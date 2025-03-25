@@ -1,0 +1,90 @@
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container">
+    <%= link_to "Cotalo", root_path, class: "navbar-brand" %>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <% if user_signed_in? %>
+          <li class="nav-item">
+            <%= link_to dashboard_path, class: "nav-link #{current_page?(dashboard_path) ? 'active' : ''}" do %>
+              <i class="fa fa-tachometer-alt me-1"></i> Tablero
+            <% end %>
+          </li>
+          <li class="nav-item">
+            <%= link_to products_path, class: "nav-link #{current_page?(products_path) ? 'active' : ''}" do %>
+              <i class="fa fa-box me-1"></i> Productos
+            <% end %>
+          </li>
+          <li class="nav-item">
+            <%= link_to quotes_path, class: "nav-link #{current_page?(quotes_path) ? 'active' : ''}" do %>
+              <i class="fa fa-file-invoice-dollar me-1"></i> Cotizaciones
+            <% end %>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle <%= 'active' if current_page?(materials_path) || current_page?(units_path) || current_page?(manufacturing_processes_path) || current_page?(extras_path) %>" 
+               href="#" 
+               id="catalogsDropdown" 
+               role="button" 
+               data-bs-toggle="dropdown">
+              <i class="fa fa-list me-1"></i> Catálogos
+            </a>
+            <div class="dropdown-menu" aria-labelledby="catalogsDropdown">
+              <%= link_to materials_path, class: "dropdown-item #{current_page?(materials_path) ? 'active' : ''}" do %>
+                <i class="fa fa-cubes me-1"></i> Materiales
+              <% end %>
+              <%= link_to manufacturing_processes_path, class: "dropdown-item #{current_page?(manufacturing_processes_path) ? 'active' : ''}" do %>
+                <i class="fa fa-cogs me-1"></i> Procesos
+              <% end %>
+              <%= link_to extras_path, class: "dropdown-item #{current_page?(extras_path) ? 'active' : ''}" do %>
+                <i class="fa fa-plus-circle me-1"></i> Extras
+              <% end %>
+              <%= link_to units_path, class: "dropdown-item #{current_page?(units_path) ? 'active' : ''}" do %>
+                <i class="fa fa-ruler me-1"></i> Unidades
+              <% end %>
+            </div>
+          </li>
+          
+          <li class="nav-item">
+            <%= link_to edit_app_configs_path, class: "nav-link #{current_page?(edit_app_configs_path) ? 'active' : ''}" do %>
+              <i class="fa fa-cog me-1"></i> Configuraciones
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+      <ul class="navbar-nav">
+        <% if user_signed_in? %>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+              <i class="fa fa-user-circle me-1"></i> <%= current_user.email %>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <%= link_to edit_user_registration_path, class: "dropdown-item" do %>
+                <i class="fa fa-user-edit me-1"></i> Editar perfil
+              <% end %>
+              <%= link_to edit_app_configs_path, class: "dropdown-item" do %>
+                <i class="fa fa-cog me-1"></i> Configuraciones
+              <% end %>
+              <div class="dropdown-divider"></div>
+              <%= button_to destroy_user_session_path, method: :delete, class: "dropdown-item" do %>
+                <i class="fa fa-sign-out-alt me-1"></i> Cerrar sesión
+              <% end %>
+            </div>
+          </li>
+        <% else %>
+          <li class="nav-item">
+            <%= link_to new_user_session_path, class: "nav-link" do %>
+              <i class="fa fa-sign-in-alt me-1"></i> Iniciar sesión
+            <% end %>
+          </li>
+          <li class="nav-item">
+            <%= link_to new_user_registration_path, class: "nav-link" do %>
+              <i class="fa fa-user-plus me-1"></i> Registrarse
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</nav> 

@@ -98,34 +98,34 @@
         <div v-for="(process, index) in productProcesses" :key="index" class="card mb-3 shadow-sm">
           <div class="card-body p-2">
             <!-- First row: Process description only -->
-            <h6 class="card-title mb-2 text-truncate">{{ process.description }}</h6>
+            <h6 class="card-title mb-2">{{ process.description }}</h6>
             
             <!-- Second row: Unit, material, process price -->
             <div class="row g-2 mb-2">
-              <div class="col">
-                <div class="badge bg-secondary d-block text-center p-2 w-100">
+              <div class="col-4">
+                <div class="badge bg-dark d-block text-center p-2 w-100 material-badge">
                   {{ process.unit }}
                 </div>
               </div>
-              <div class="col-5">
-                <div class="badge bg-info d-block text-center p-2 w-100 text-truncate">
+              <div class="col-4">
+                <div class="badge bg-dark d-block text-center p-2 w-100 material-badge text-truncate">
                   {{ process.materialDescription || 'No especificado' }}
                 </div>
               </div>
-              <div class="col">
+              <div class="col-4">
                 <input 
                   type="number" 
-                  class="form-control form-control-sm text-center p-2 w-100"
+                  class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge"
                   v-model.number="process.unitPrice" 
                   min="0"
                   step="0.01"
                   @change="updateProcessUnitPrice(index)"
-                  style="height: 33px;"
+                  title="Haz clic para editar el precio unitario"
                 />
               </div>
             </div>
             
-            <!-- Third row: Subtotal price and delete button -->
+            <!-- Third row: Total price and delete button -->
             <div class="d-flex justify-content-between align-items-center">
               <span class="badge bg-success fs-5">{{ formatCurrency(process.price) }}</span>
               <button 
@@ -535,156 +535,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.processes-tab {
-  position: relative;
-}
-
-/* Green accent panel styling - Base */
-.green-accent-panel > .card:not(.shadow-sm) {
-  border-left: 4px solid #42b983;
-  padding-left: 0.5rem;
-  margin-left: 0.5rem;
-}
-
-/* Table container styling */
-.green-accent-panel > div:not(.card) {
-  position: relative;
-  padding-left: 0.5rem;
-  margin-left: 0.5rem;
-}
-
-.green-accent-panel > div:not(.card)::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background-color: #42b983;
-  border-radius: 4px;
-}
-
-/* Table styling */
-.green-accent-panel > table.table {
-  border-left: none;
-  padding-left: 0.5rem;
-  margin-left: 0.5rem;
-}
-
-/* Card styling */
-.card {
-  background-color: #23272b;
-  border-color: #32383e;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.15);
-}
-
-.card-body {
-  padding: 1rem;
-}
-
-/* Table styling */
-.table {
-  color: #e9ecef;
-  background-color: #23272b;
-  border-collapse: separate;
-  border-spacing: 0;
-}
-
-.table-dark {
-  background-color: #23272b;
-  color: #e9ecef;
-}
-
-.table-dark th {
-  background-color: #32383e;
-}
-
-.table-striped > tbody > tr:nth-of-type(odd) {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-.table th,
-.table td {
-  border-top-color: #32383e;
-  padding: 0.75rem;
-}
-
-.table thead th {
-  border-bottom-color: #32383e;
-}
-
-/* Form controls with green focus */
-.form-select, 
-.form-control {
-  color: #e1e1e1;
-  background-color: #2c3136;
-  border: 1px solid #495057;
-  border-radius: 4px;
-}
-
-/* Add styling for select options */
-.form-select option {
-  color: #212529;
-  background-color: #fff;
-}
-
-.form-select:focus,
-.form-control:focus {
-  border-color: #42b983;
-  background-color: #2c3136;
-  color: #e1e1e1;
-  box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25);
-}
-
-.form-select::placeholder,
-.form-control::placeholder {
-  color: #6c757d;
-}
-
-/* Label styling */
-.form-label {
-  color: #adb5bd;
-  margin-bottom: 0.5rem;
-}
-
-/* Button styling */
-.btn-primary {
-  color: #fff;
-  background-color: #42b983;
-  border-color: #42b983;
-}
-
-.btn-primary:hover {
-  background-color: #3aa876;
-  border-color: #3aa876;
-}
-
-.btn-outline-secondary,
-.btn-outline-danger {
-  color: #adb5bd;
-  border-color: #495057;
-}
-
-.btn-outline-secondary:hover {
-  background-color: #495057;
-  color: #fff;
-  border-color: #495057;
-}
-
-.btn-outline-danger:hover {
-  background-color: #dc3545;
-  color: #fff;
-}
-
-/* Text colors */
-.text-muted {
-  color: #6c757d !important;
-}
-
-.text-end {
-  text-align: right !important;
-}
-</style> 
