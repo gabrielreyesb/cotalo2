@@ -347,12 +347,25 @@ class QuotePdfGenerator
         pdf.move_cursor_to 80
         
         # Contact information (signature)
-        signature = quote.user.signature_info
-        contact_info = "#{signature[:name]}"
-        contact_info += " CORREO: #{signature[:email]}" if signature[:email].present?
-        contact_info += " CEL/TEL: #{signature[:phone]}" if signature[:phone].present?
-        contact_info += " WHATSAPP: #{signature[:whatsapp]}" if signature[:whatsapp].present?
-        pdf.text contact_info, size: 8, style: :bold
+        begin
+          signature = quote.user.signature_info
+          Rails.logger.info("PDF Signature Info: #{signature.inspect}")
+          
+          contact_info = signature[:name].to_s
+          contact_info += " CORREO: #{signature[:email]}" if signature[:email].present?
+          contact_info += " CEL/TEL: #{signature[:phone]}" if signature[:phone].present?
+          contact_info += " WHATSAPP: #{signature[:whatsapp]}" if signature[:whatsapp].present?
+          
+          if contact_info.present?
+            pdf.text contact_info, size: 8, style: :bold
+          else
+            pdf.text "Jonathan Gabriel Rubio Huerta", size: 8, style: :bold
+          end
+        rescue StandardError => e
+          Rails.logger.error("Error displaying signature in PDF: #{e.message}")
+          # Fallback signature in case of error
+          pdf.text "Jonathan Gabriel Rubio Huerta", size: 8, style: :bold
+        end
         
         pdf.move_down 5
         

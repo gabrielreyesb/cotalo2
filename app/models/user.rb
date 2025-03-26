@@ -66,11 +66,19 @@ class User < ApplicationRecord
   
   # Get signature information
   def signature_info
+    name = get_config(AppConfig::SIGNATURE_NAME)
+    email = get_config(AppConfig::SIGNATURE_EMAIL)
+    phone = get_config(AppConfig::SIGNATURE_PHONE)
+    whatsapp = get_config(AppConfig::SIGNATURE_WHATSAPP)
+    
+    # If name is missing, use a default
+    name = "Jonathan Gabriel Rubio Huerta" if name.blank?
+    
     {
-      name: get_config(AppConfig::SIGNATURE_NAME),
-      email: get_config(AppConfig::SIGNATURE_EMAIL),
-      phone: get_config(AppConfig::SIGNATURE_PHONE),
-      whatsapp: get_config(AppConfig::SIGNATURE_WHATSAPP)
+      name: name,
+      email: email,
+      phone: phone,
+      whatsapp: whatsapp
     }
   end
 
@@ -88,6 +96,12 @@ class User < ApplicationRecord
     set_config(AppConfig::SALES_CONDITION_2, "50% al entregar")
     set_config(AppConfig::SALES_CONDITION_3, "Precios más IVA")
     set_config(AppConfig::SALES_CONDITION_4, "Precios sujetos a cambio sin previo aviso")
+    
+    # Default signature information
+    set_config(AppConfig::SIGNATURE_NAME, "Jonathan Gabriel Rubio Huerta")
+    set_config(AppConfig::SIGNATURE_EMAIL, "jonathanrubio@surtibox.com")
+    set_config(AppConfig::SIGNATURE_PHONE, "3311764022 / 33 2484 9954")
+    set_config(AppConfig::SIGNATURE_WHATSAPP, "3311764022")
     
     # Add any other initial data setup here
   end
