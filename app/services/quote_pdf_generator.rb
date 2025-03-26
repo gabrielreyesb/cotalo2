@@ -343,8 +343,8 @@ class QuotePdfGenerator
         # Save current cursor position
         original_cursor = pdf.cursor
         
-        # Move to footer position (50 points from bottom instead of 100)
-        pdf.move_cursor_to 40
+        # Move to footer position - increased to 60 points to give more room
+        pdf.move_cursor_to 80
         
         # Contact information
         signature = quote.user.signature_info
@@ -358,7 +358,7 @@ class QuotePdfGenerator
         
         # Footer with sustainability message and horizontal rule
         pdf.stroke_horizontal_rule
-        pdf.move_down 5
+        pdf.move_down 10
         
         # Green text for sustainability message
         pdf.fill_color "009933"
@@ -368,37 +368,35 @@ class QuotePdfGenerator
                 align: :left
         pdf.fill_color "000000" # Reset to black
         
-        # Position for certification logos and QR code
-        y_position = pdf.cursor - 1
+        # Add more space for the logos
+        pdf.move_down 15
         
-        # FSC/Bosques logo
-        bosques_logo_path = "/Users/gabrielreyes/dev/personal/cotalo1/app/assets/images/Bosques.png"
-        if File.exist?(bosques_logo_path) && File.size(bosques_logo_path) > 0
-          begin
-            pdf.image bosques_logo_path, width: 45, at: [pdf.bounds.width - 150, y_position]
-          rescue StandardError => e
-            Rails.logger.error("Error including Bosques logo in PDF: #{e.message}")
-          end
+        # Use logos from the public directory (works in all environments)
+        begin
+          # FSC/Bosques logo (left)
+          pdf.image "#{Rails.root}/public/images/Bosques.png", 
+                    width: 45, 
+                    at: [pdf.bounds.width - 150, pdf.cursor]
+        rescue StandardError => e
+          Rails.logger.error("Error including FSC logo in PDF: #{e.message}")
         end
         
-        # FDA logo
-        fda_logo_path = "/Users/gabrielreyes/dev/personal/cotalo1/app/assets/images/FDA.jpg"
-        if File.exist?(fda_logo_path) && File.size(fda_logo_path) > 0
-          begin
-            pdf.image fda_logo_path, width: 45, at: [pdf.bounds.width - 95, y_position]
-          rescue StandardError => e
-            Rails.logger.error("Error including FDA logo in PDF: #{e.message}")
-          end
+        begin
+          # FDA logo (center-right)
+          pdf.image "#{Rails.root}/public/images/FDA.jpg", 
+                    width: 45, 
+                    at: [pdf.bounds.width - 95, pdf.cursor]
+        rescue StandardError => e
+          Rails.logger.error("Error including FDA logo in PDF: #{e.message}")
         end
         
-        # QR code
-        qr_code_path = "/Users/gabrielreyes/dev/personal/cotalo1/app/assets/images/qr-code.png"
-        if File.exist?(qr_code_path) && File.size(qr_code_path) > 0
-          begin
-            pdf.image qr_code_path, width: 35, at: [pdf.bounds.width - 35, y_position]
-          rescue StandardError => e
-            Rails.logger.error("Error including QR code in PDF: #{e.message}")
-          end
+        begin
+          # QR code (right)
+          pdf.image "#{Rails.root}/public/images/qr-code.png", 
+                    width: 35, 
+                    at: [pdf.bounds.width - 40, pdf.cursor]
+        rescue StandardError => e
+          Rails.logger.error("Error including QR code in PDF: #{e.message}")
         end
       end
       
