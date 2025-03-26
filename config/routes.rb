@@ -35,6 +35,7 @@ Rails.application.routes.draw do
       delete :remove_product
       patch :update_product_quantity
       get :pdf
+      get :duplicate
     end
     
     collection do

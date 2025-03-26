@@ -56,7 +56,7 @@ class AppConfigsController < ApplicationController
     current_user.set_config(AppConfig::SIGNATURE_PHONE, params[:signature_phone])
     current_user.set_config(AppConfig::SIGNATURE_WHATSAPP, params[:signature_whatsapp])
     
-    redirect_to edit_app_configs_path, notice: 'Configuration updated successfully'
+    redirect_to edit_app_configs_path
   end
   
   # Method to update API key

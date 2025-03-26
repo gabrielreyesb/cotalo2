@@ -48,17 +48,31 @@
                       <td><%= quote.customer_name %></td>
                       <td class="text-end"><%= number_to_currency(quote.data["totals"]["total"]) %></td>
                       <td class="text-end">
-                        <div class="btn-group" role="group">
-                          <%= link_to quote_path(quote), class: "btn btn-sm btn-outline-secondary me-1", title: "Ver" do %>
+                        <div class="btn-group">
+                          <%= link_to quote_path(quote), class: "btn btn-sm btn-outline-secondary", 
+                              data: { bs_toggle: "tooltip" }, 
+                              title: "Ver detalles" do %>
                             <i class="fas fa-eye"></i>
                           <% end %>
-                          <%= link_to edit_quote_path(quote), class: "btn btn-sm btn-outline-primary me-1", title: "Editar" do %>
+                          <%= link_to edit_quote_path(quote), class: "btn btn-sm btn-outline-primary", 
+                              data: { bs_toggle: "tooltip" }, 
+                              title: "Editar" do %>
                             <i class="fas fa-edit"></i>
                           <% end %>
-                          <%= link_to pdf_quote_path(quote, format: :pdf), class: "btn btn-sm btn-outline-secondary me-1", title: "Descargar PDF", target: "_blank" do %>
+                          <%= link_to pdf_quote_path(quote, format: :pdf), class: "btn btn-sm btn-outline-secondary", 
+                              data: { bs_toggle: "tooltip" }, 
+                              title: "Descargar PDF" do %>
                             <i class="fas fa-file-pdf"></i>
                           <% end %>
-                          <%= link_to quote_path(quote), method: :delete, data: { confirm: "¿Estás seguro de eliminar esta cotización?" }, class: "btn btn-sm btn-outline-danger", title: "Eliminar" do %>
+                          <%= link_to duplicate_quote_path(quote), class: "btn btn-sm btn-outline-info", 
+                              data: { bs_toggle: "tooltip", turbo_method: :get }, 
+                              title: "Duplicar" do %>
+                            <i class="fas fa-copy"></i>
+                          <% end %>
+                          <%= link_to quote_path(quote), class: "btn btn-sm btn-outline-danger",
+                              data: { bs_toggle: "tooltip", turbo_method: :delete, 
+                                      turbo_confirm: "¿Estás seguro de eliminar esta cotización?" }, 
+                              title: "Eliminar" do %>
                             <i class="fas fa-trash"></i>
                           <% end %>
                         </div>
@@ -104,16 +118,30 @@
                   <span class="fs-5 fw-bold text-success"><%= number_to_currency(quote.data["totals"]["total"]) %></span>
                   
                   <div class="d-flex">
-                    <%= link_to quote_path(quote), class: "btn btn-sm btn-outline-secondary px-2 py-1 me-1", title: "Ver" do %>
+                    <%= link_to quote_path(quote), class: "btn btn-sm btn-outline-secondary", 
+                        data: { bs_toggle: "tooltip" }, 
+                        title: "Ver" do %>
                       <i class="fas fa-eye fa-sm"></i>
                     <% end %>
-                    <%= link_to edit_quote_path(quote), class: "btn btn-sm btn-outline-primary px-2 py-1 me-1", title: "Editar" do %>
+                    <%= link_to edit_quote_path(quote), class: "btn btn-sm btn-outline-primary", 
+                        data: { bs_toggle: "tooltip" }, 
+                        title: "Editar" do %>
                       <i class="fas fa-edit fa-sm"></i>
                     <% end %>
-                    <%= link_to pdf_quote_path(quote, format: :pdf), class: "btn btn-sm btn-outline-secondary px-2 py-1 me-1", title: "Descargar PDF", target: "_blank" do %>
+                    <%= link_to pdf_quote_path(quote, format: :pdf), class: "btn btn-sm btn-outline-secondary", 
+                        data: { bs_toggle: "tooltip" }, 
+                        title: "Descargar PDF" do %>
                       <i class="fas fa-file-pdf fa-sm"></i>
                     <% end %>
-                    <%= link_to quote_path(quote), method: :delete, data: { confirm: "¿Estás seguro de eliminar esta cotización?" }, class: "btn btn-sm btn-outline-danger px-2 py-1", title: "Eliminar" do %>
+                    <%= link_to duplicate_quote_path(quote), class: "btn btn-sm btn-outline-info", 
+                        data: { bs_toggle: "tooltip", turbo_method: :get }, 
+                        title: "Duplicar" do %>
+                      <i class="fas fa-copy fa-sm"></i>
+                    <% end %>
+                    <%= link_to quote_path(quote), class: "btn btn-sm btn-outline-danger",
+                        data: { bs_toggle: "tooltip", turbo_method: :delete, 
+                                turbo_confirm: "¿Estás seguro de eliminar esta cotización?" }, 
+                        title: "Eliminar" do %>
                       <i class="fas fa-trash fa-sm"></i>
                     <% end %>
                   </div>

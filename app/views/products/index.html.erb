@@ -51,13 +51,20 @@
                       <td class="text-end"><%= number_to_currency(product.pricing["total_price"] || 0) %></td>
                       <td class="text-end"><%= number_to_currency(product.pricing["final_price_per_piece"] || 0) %></td>
                       <td class="text-end">
-                        <%= link_to edit_product_path(product), class: "btn btn-sm btn-outline-primary me-1" do %>
+                        <%= link_to edit_product_path(product), class: "btn btn-sm btn-outline-primary", 
+                            data: { bs_toggle: "tooltip" }, title: "Editar" do %>
                           <i class="fa fa-edit"></i>
                         <% end %>
-                        <%= button_to product_path(product), method: :delete, class: "btn btn-sm btn-outline-danger me-1", form: { style: 'display: inline-block;', data: { turbo_confirm: '¿Estás seguro?' } } do %>
+                        <%= button_to product_path(product), method: :delete, 
+                            class: "btn btn-sm btn-outline-danger", 
+                            form: { style: 'display: inline-block;', data: { turbo_confirm: '¿Estás seguro?' } },
+                            data: { bs_toggle: "tooltip" }, title: "Eliminar" do %>
                           <i class="fa fa-trash"></i>
                         <% end %>
-                        <%= button_to duplicate_product_path(product), method: :post, class: "btn btn-sm btn-outline-secondary", form: { style: 'display: inline-block;' } do %>
+                        <%= button_to duplicate_product_path(product), method: :post, 
+                            class: "btn btn-sm btn-outline-secondary", 
+                            form: { style: 'display: inline-block;' },
+                            data: { bs_toggle: "tooltip" }, title: "Duplicar" do %>
                           <i class="fa fa-copy"></i>
                         <% end %>
                       </td>
@@ -100,20 +107,24 @@
                   </div>
                   
                   <div class="d-flex">
-                    <%= link_to product_path(product), class: "btn btn-sm btn-outline-secondary px-2 py-1 me-1" do %>
+                    <%= link_to product_path(product), class: "btn btn-sm btn-outline-secondary", 
+                        data: { bs_toggle: "tooltip" }, title: "Ver detalles del producto" do %>
                       <i class="fa fa-eye fa-sm"></i>
                     <% end %>
-                    <%= link_to edit_product_path(product), class: "btn btn-sm btn-outline-primary px-2 py-1 me-1" do %>
+                    <%= link_to edit_product_path(product), class: "btn btn-sm btn-outline-primary", 
+                        data: { bs_toggle: "tooltip" }, title: "Editar producto" do %>
                       <i class="fa fa-edit fa-sm"></i>
                     <% end %>
                     <%= button_to product_path(product), method: :delete, 
-                        class: "btn btn-sm btn-outline-danger px-2 py-1 me-1", 
-                        form: { class: "d-inline", data: { turbo_confirm: "¿Estás seguro?" } } do %>
+                        class: "btn btn-sm btn-outline-danger", 
+                        form: { class: "d-inline", data: { turbo_confirm: "¿Estás seguro?" } },
+                        data: { bs_toggle: "tooltip" }, title: "Eliminar producto" do %>
                       <i class="fa fa-trash fa-sm"></i>
                     <% end %>
                     <%= button_to duplicate_product_path(product), method: :post, 
-                        class: "btn btn-sm btn-outline-secondary px-2 py-1", 
-                        form: { class: "d-inline" } do %>
+                        class: "btn btn-sm btn-outline-secondary", 
+                        form: { class: "d-inline" },
+                        data: { bs_toggle: "tooltip" }, title: "Duplicar producto" do %>
                       <i class="fa fa-copy fa-sm"></i>
                     <% end %>
                   </div>

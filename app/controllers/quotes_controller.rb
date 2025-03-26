@@ -245,6 +245,35 @@ class QuotesController < ApplicationController
     end
   end
   
+  def duplicate
+    @original_quote = current_user.quotes.find(params[:id])
+    
+    # Create a new quote with the same attributes
+    @quote = current_user.quotes.new(
+      project_name: "#{@original_quote.project_name} (Copia)",
+      customer_name: @original_quote.customer_name,
+      organization: @original_quote.organization,
+      email: @original_quote.email,
+      telephone: @original_quote.telephone,
+      comments: @original_quote.comments,
+      data: @original_quote.data
+    )
+    
+    if @quote.save
+      # Copy all quote products
+      @original_quote.quote_products.each do |quote_product|
+        @quote.quote_products.create(
+          product_id: quote_product.product_id,
+          quantity: quote_product.quantity
+        )
+      end
+      
+      redirect_to edit_quote_path(@quote), notice: "Cotización duplicada exitosamente."
+    else
+      redirect_to quotes_path, alert: "Error al duplicar la cotización."
+    end
+  end
+  
   private
   
   def set_quote
