@@ -346,7 +346,7 @@ class QuotePdfGenerator
         # Move to footer position - increased to 60 points to give more room
         pdf.move_cursor_to 80
         
-        # Contact information
+        # Contact information (signature)
         signature = quote.user.signature_info
         contact_info = "#{signature[:name]}"
         contact_info += " CORREO: #{signature[:email]}" if signature[:email].present?
