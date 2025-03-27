@@ -33,8 +33,9 @@ class AppConfigsController < ApplicationController
       whatsapp: current_user.get_config(AppConfig::SIGNATURE_WHATSAPP) || ''
     }
     
-    # Check if Pipedrive API is configured (don't show the actual key)
+    # Check if APIs are configured (don't show the actual keys)
     @pipedrive_api_configured = AppConfig.get_pipedrive_api_key.present?
+    @facturama_api_configured = AppConfig.get_facturama_api_key.present?
   end
   
   def update
@@ -59,7 +60,7 @@ class AppConfigsController < ApplicationController
     redirect_to edit_app_configs_path
   end
   
-  # Method to update API key
+  # Method to update API keys
   def update_api_key
     if params[:pipedrive_api_key].present?
       # Simply save the key directly to the user's record
@@ -76,9 +77,25 @@ class AppConfigsController < ApplicationController
       )
       
       # Show the saved key in a flash message
-      flash[:notice] = "API key updated successfully"
-    else
-      flash[:alert] = "API key cannot be blank"
+      flash[:notice] = "Pipedrive API key updated successfully"
+    end
+    
+    if params[:facturama_api_key].present?
+      # Simply save the key directly to the user's record
+      key_value = params[:facturama_api_key].strip
+      
+      # Clear any existing records
+      AppConfig.where(key: AppConfig::FACTURAMA_API_KEY).delete_all
+      
+      # Create a fresh record with the exact key from the form
+      AppConfig.create!(
+        key: AppConfig::FACTURAMA_API_KEY,
+        value: key_value,
+        user_id: current_user.id
+      )
+      
+      # Show the saved key in a flash message
+      flash[:notice] = "Facturama API key updated successfully"
     end
     
     redirect_to edit_app_configs_path

@@ -2,40 +2,46 @@ class Quote < ApplicationRecord
   belongs_to :user
   has_many :quote_products, dependent: :destroy
   has_many :products, through: :quote_products
+  has_many :invoices, dependent: :destroy
   
-  validates :quote_number, presence: true, uniqueness: { scope: :user_id }
+  validates :quote_number, presence: true, uniqueness: true
   validates :project_name, presence: true
   validates :customer_name, presence: true
   validates :organization, presence: true
   
-  before_validation :set_quote_number, on: :create
+  before_validation :generate_quote_number, on: :create
   
   # Scope to find quotes belonging to a specific user
   scope :for_user, ->(user) { where(user: user) }
   
-  # Generate a unique quote number
-  def set_quote_number
+  def total
+    quote_products.sum do |quote_product|
+      product = quote_product.product
+      unit_price = product.pricing.try(:[], "final_price_per_piece") || 0
+      unit_price * quote_product.quantity
+    end
+  end
+  
+  def create_invoice
+    Invoice.create_from_quote(self)
+  end
+  
+  # Public method to access quote data
+  def quote_data
+    self['data'] ||= self.class.default_data
+  end
+  
+  private
+  
+  def generate_quote_number
     return if quote_number.present?
     
-    # Format: COT-YYYYMMDD-XXXX where XXXX is a sequential number
-    date_part = Date.today.strftime('%Y%m%d')
+    # Get the last quote number
+    last_quote = Quote.order(created_at: :desc).first
+    last_number = last_quote&.quote_number&.split('-')&.last&.to_i || 0
     
-    # Find the latest quote number for today
-    latest_quote = Quote.where("quote_number LIKE ?", "COT-#{date_part}-%").order(quote_number: :desc).first
-    
-    if latest_quote
-      # Extract the sequential part and increment
-      seq_number = latest_quote.quote_number.split('-').last.to_i + 1
-    else
-      # Start with 1
-      seq_number = 1
-    end
-    
-    # Format the sequential part with leading zeros
-    seq_part = seq_number.to_s.rjust(4, '0')
-    
-    # Set the quote number
-    self.quote_number = "COT-#{date_part}-#{seq_part}"
+    # Generate new quote number
+    self.quote_number = "COT-#{Time.current.strftime('%Y%m')}-#{format('%04d', last_number + 1)}"
   end
   
   # Default data structure
@@ -65,7 +71,7 @@ class Quote < ApplicationRecord
     end
     
     # Get tax percentage (default 16% - Mexico)
-    tax_percentage = data['totals']['tax_percentage'].to_f
+    tax_percentage = quote_data['totals']['tax_percentage'].to_f
     
     # Calculate tax amount
     tax_amount = subtotal * (tax_percentage / 100)
@@ -74,7 +80,7 @@ class Quote < ApplicationRecord
     total = subtotal + tax_amount
     
     # Update data hash
-    data['totals'] = {
+    quote_data['totals'] = {
       'subtotal' => subtotal,
       'tax_percentage' => tax_percentage,
       'tax_amount' => tax_amount,
@@ -150,10 +156,5 @@ class Quote < ApplicationRecord
       Rails.logger.error("Error removing product from quote: #{e.message}")
       return false
     end
-  end
-  
-  # Initialize data hash if it's nil
-  def data
-    self['data'] ||= self.class.default_data
   end
 end

@@ -1,0 +1,19 @@
+<h1>Invoices#status</h1>
+<p>Find me in app/views/invoices/status.html.erb</p>
+
+<% if @invoice.created? %>
+  <div class="alert alert-success">
+    <h5>Factura creada exitosamente en Facturama</h5>
+    <p>Estado: <%= @invoice_status %></p>
+    <% if @invoice_data["pdf_url"].present? %>
+      <a href="<%= @invoice_data["pdf_url"] %>" target="_blank" class="btn btn-primary">
+        <i class="fas fa-file-pdf"></i> Descargar PDF
+      </a>
+    <% end %>
+  </div>
+<% else %>
+  <div class="alert alert-info">
+    <h5>Estado de la Factura</h5>
+    <p>Estado actual: <%= @invoice.status.titleize %></p>
+  </div>
+<% end %>

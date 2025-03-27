@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_03_24_215513) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_26_171553) do
   create_table "app_configs", force: :cascade do |t|
     t.string "key", null: false
     t.text "value"
@@ -32,6 +32,17 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_24_215513) do
     t.integer "unit_id"
     t.index ["unit_id"], name: "index_extras_on_unit_id"
     t.index ["user_id"], name: "index_extras_on_user_id"
+  end
+
+  create_table "invoices", force: :cascade do |t|
+    t.integer "quote_id", null: false
+    t.string "facturama_id"
+    t.string "status"
+    t.decimal "total"
+    t.json "data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["quote_id"], name: "index_invoices_on_quote_id"
   end
 
   create_table "manufacturing_processes", force: :cascade do |t|
@@ -121,6 +132,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_24_215513) do
   add_foreign_key "app_configs", "users"
   add_foreign_key "extras", "units"
   add_foreign_key "extras", "users"
+  add_foreign_key "invoices", "quotes"
   add_foreign_key "manufacturing_processes", "units"
   add_foreign_key "manufacturing_processes", "users"
   add_foreign_key "materials", "units"

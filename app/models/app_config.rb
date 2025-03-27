@@ -13,6 +13,7 @@ class AppConfig < ApplicationRecord
   
   # API Keys (stored in ENV but configured through app)
   PIPEDRIVE_API_KEY = 'pipedrive_api_key'
+  FACTURAMA_API_KEY = 'facturama_api_key'
   
   # Sales conditions
   SALES_CONDITION_1 = 'sales_condition_1'
@@ -71,6 +72,13 @@ class AppConfig < ApplicationRecord
     def get_pipedrive_api_key
       # Simply find the first record with that key and return its value
       config = AppConfig.find_by(key: PIPEDRIVE_API_KEY)
+      return config&.value
+    end
+
+    # Get the Facturama API key
+    def get_facturama_api_key
+      # Simply find the first record with that key and return its value
+      config = AppConfig.find_by(key: FACTURAMA_API_KEY)
       return config&.value
     end
   end

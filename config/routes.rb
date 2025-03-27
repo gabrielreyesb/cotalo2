@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  get 'invoices/create'
+  get 'invoices/show'
+  get 'invoices/status'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Authentication routes
@@ -40,6 +43,13 @@ Rails.application.routes.draw do
     
     collection do
       post :search_customer
+    end
+    
+    # Nested invoices resources
+    resources :invoices, only: [:create, :show] do
+      member do
+        get :status
+      end
     end
   end
   

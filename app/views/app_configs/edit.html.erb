@@ -144,6 +144,18 @@
                   <small class="form-text text-muted">The API key will be stored in the database and will be used immediately.</small>
                 </div>
               <% end %>
+
+              <%= form_with(url: update_api_key_app_configs_path, method: :put, class: "mb-0", id: "facturama_api_key_form", local: true) do |api_form| %>
+                <div class="mb-3">
+                  <%= api_form.label :facturama_api_key, "Facturama API Key", class: "form-label" %>
+                  <div class="input-group">
+                    <%= api_form.password_field :facturama_api_key, placeholder: "Enter new API key", class: "form-control", autocomplete: "off", id: "facturama_api_key_input" %>
+                    <%= api_form.hidden_field :authenticity_token, value: form_authenticity_token, id: "authenticity_token_facturama" %>
+                    <button type="submit" class="btn btn-primary">Update API Key</button>
+                  </div>
+                  <small class="form-text text-muted">The API key will be stored in the database and will be used immediately.</small>
+                </div>
+              <% end %>
             </div>
           </div>
         </div>

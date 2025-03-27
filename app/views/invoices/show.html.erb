@@ -1,0 +1,166 @@
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Factura #<%= @invoice.id %></h1>
+    <div>
+      <%= link_to quote_path(@quote), class: "btn btn-secondary" do %>
+        <i class="fas fa-arrow-left"></i> Volver a la cotización
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Información de la Factura</h5>
+        </div>
+        <div class="card-body">
+          <table class="table table-borderless">
+            <tr>
+              <th style="width: 30%">Número de Factura:</th>
+              <td><%= @invoice.id %></td>
+            </tr>
+            <tr>
+              <th>Cotización:</th>
+              <td><%= @quote.quote_number %></td>
+            </tr>
+            <tr>
+              <th>Fecha:</th>
+              <td><%= @invoice.created_at.strftime("%d/%m/%Y") %></td>
+            </tr>
+            <tr>
+              <th>Estado:</th>
+              <td>
+                <span class="badge bg-<%= case @invoice.status
+                  when 'draft' then 'secondary'
+                  when 'pending' then 'warning'
+                  when 'created' then 'success'
+                  when 'cancelled' then 'danger'
+                  end %>">
+                  <%= @invoice.status.titleize %>
+                </span>
+              </td>
+            </tr>
+            <% if @invoice.facturama_id.present? %>
+              <tr>
+                <th>ID Facturama:</th>
+                <td><%= @invoice.facturama_id %></td>
+              </tr>
+            <% end %>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Información del Cliente</h5>
+        </div>
+        <div class="card-body">
+          <table class="table table-borderless">
+            <tr>
+              <th style="width: 30%">Cliente:</th>
+              <td><%= @invoice.data["customer_name"] %></td>
+            </tr>
+            <tr>
+              <th>Organización:</th>
+              <td><%= @invoice.data["organization"] %></td>
+            </tr>
+            <tr>
+              <th>Email:</th>
+              <td><%= @invoice.data["email"].present? ? @invoice.data["email"] : "No especificado" %></td>
+            </tr>
+            <tr>
+              <th>Teléfono:</th>
+              <td><%= @invoice.data["telephone"].present? ? @invoice.data["telephone"] : "No especificado" %></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Productos</h5>
+    </div>
+    <div class="card-body">
+      <% if @invoice.data["products"].any? %>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Producto</th>
+                <th class="text-center">Cantidad</th>
+                <th class="text-end">Precio Unitario</th>
+                <th class="text-end">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @invoice.data["products"].each_with_index do |product, index| %>
+                <tr>
+                  <td><%= index + 1 %></td>
+                  <td><%= product["description"] %></td>
+                  <td class="text-center"><%= product["quantity"] %></td>
+                  <td class="text-end"><%= number_to_currency(product["unit_price"]) %></td>
+                  <td class="text-end"><%= number_to_currency(product["total"]) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+            <tfoot>
+              <tr>
+                <th colspan="4" class="text-end">Subtotal:</th>
+                <td class="text-end"><%= number_to_currency(@invoice.total) %></td>
+              </tr>
+              <tr>
+                <th colspan="4" class="text-end">IVA (16%):</th>
+                <td class="text-end"><%= number_to_currency(@invoice.total * 0.16) %></td>
+              </tr>
+              <tr>
+                <th colspan="4" class="text-end">Total:</th>
+                <td class="text-end fw-bold"><%= number_to_currency(@invoice.total * 1.16) %></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      <% else %>
+        <div class="alert alert-info">
+          No hay productos en esta factura.
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <% if @invoice.created? && @invoice_data.present? %>
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">Información de Facturama</h5>
+      </div>
+      <div class="card-body">
+        <div class="alert alert-success">
+          <h5>Factura creada exitosamente en Facturama</h5>
+          <p>Estado: <%= @invoice_status %></p>
+          <% if @invoice_data["pdf_url"].present? %>
+            <a href="<%= @invoice_data["pdf_url"] %>" target="_blank" class="btn btn-primary">
+              <i class="fas fa-file-pdf"></i> Descargar PDF
+            </a>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% elsif @invoice_error.present? %>
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">Error de Facturama</h5>
+      </div>
+      <div class="card-body">
+        <div class="alert alert-danger">
+          <h5>Error al obtener información de Facturama</h5>
+          <p><%= @invoice_error %></p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
