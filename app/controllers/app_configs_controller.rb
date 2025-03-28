@@ -1,6 +1,6 @@
 class AppConfigsController < ApplicationController
   before_action :authenticate_user!
-  skip_before_action :verify_authenticity_token, only: [:update_api_key]
+  skip_before_action :verify_authenticity_token, only: [:update_api_key, :test_facturama_api]
   
   def edit
     # Get raw percentage values
@@ -36,28 +36,141 @@ class AppConfigsController < ApplicationController
     # Check if APIs are configured (don't show the actual keys)
     @pipedrive_api_configured = AppConfig.get_pipedrive_api_key.present?
     @facturama_api_configured = AppConfig.get_facturama_api_key.present?
+
+    # Create a proper app_config object for the form
+    @app_config = OpenStruct.new(
+      waste_percentage: @general_settings[:waste_percentage],
+      margin_percentage: @general_settings[:margin_percentage],
+      width_margin: @general_settings[:width_margin],
+      length_margin: @general_settings[:length_margin],
+      signature_name: @signature_info[:name],
+      signature_email: @signature_info[:email],
+      signature_phone: @signature_info[:phone],
+      signature_whatsapp: @signature_info[:whatsapp],
+      condition_1: @sales_conditions[:condition_1],
+      condition_2: @sales_conditions[:condition_2],
+      condition_3: @sales_conditions[:condition_3],
+      condition_4: @sales_conditions[:condition_4]
+    )
+  end
+  
+  def test_facturama_api
+    api_key = AppConfig.get_facturama_api_key
+    if api_key.blank?
+      render json: { success: false, error: "Facturama API key is not configured" }, status: :unprocessable_entity
+      return
+    end
+
+    begin
+      # Initialize Facturama service
+      facturama = FacturamaService.new(api_key)
+      
+      # Test the connection by listing products
+      result = facturama.verify_account
+      
+      if result[:success]
+        render json: {
+          success: true,
+          message: result[:message],
+          products: result[:products]
+        }
+      else
+        render json: { success: false, error: result[:error] }, status: :unprocessable_entity
+      end
+    rescue => e
+      Rails.logger.error "Error testing Facturama API: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+      render json: { success: false, error: "Failed to test API connection: #{e.message}" }, status: :unprocessable_entity
+    end
+  end
+  
+  def test_create_product
+    api_key = AppConfig.get_facturama_api_key
+    if api_key.blank?
+      render json: { success: false, error: "Facturama API key is not configured" }, status: :unprocessable_entity
+      return
+    end
+
+    # Log the API key being used (first few characters only for security)
+    Rails.logger.info "Using Facturama API key: #{api_key[0..4]}..."
+
+    begin
+      # Initialize Facturama service
+      facturama_service = FacturamaService.new(api_key)
+
+      # Permit the product parameters
+      product_params = params.permit(:name, :description, :price)
+
+      Rails.logger.info "Creating product with params: #{product_params.inspect}"
+      
+      # Create the product
+      result = facturama_service.create_product(product_params)
+      
+      if result[:success]
+        render json: { success: true, product: result[:product] }
+      else
+        render json: { success: false, error: result[:error] }, status: :unprocessable_entity
+      end
+    rescue => e
+      Rails.logger.error "Error creating product: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+      render json: { success: false, error: "Failed to create product: #{e.message}" }, status: :unprocessable_entity
+    end
   end
   
   def update
     # Update general settings
-    current_user.set_config(AppConfig::WASTE_PERCENTAGE, params[:waste_percentage], AppConfig::PERCENTAGE)
-    current_user.set_config(AppConfig::MARGIN_PERCENTAGE, params[:margin_percentage], AppConfig::PERCENTAGE)
-    current_user.set_config(AppConfig::WIDTH_MARGIN, params[:width_margin], AppConfig::NUMERIC)
-    current_user.set_config(AppConfig::LENGTH_MARGIN, params[:length_margin], AppConfig::NUMERIC)
+    if params[:waste_percentage].present?
+      current_user.set_config(AppConfig::WASTE_PERCENTAGE, params[:waste_percentage].to_f / 100, AppConfig::PERCENTAGE)
+    end
+    
+    if params[:margin_percentage].present?
+      current_user.set_config(AppConfig::MARGIN_PERCENTAGE, params[:margin_percentage].to_f / 100, AppConfig::PERCENTAGE)
+    end
+    
+    if params[:width_margin].present?
+      current_user.set_config(AppConfig::WIDTH_MARGIN, params[:width_margin].to_f, AppConfig::NUMERIC)
+    end
+    
+    if params[:length_margin].present?
+      current_user.set_config(AppConfig::LENGTH_MARGIN, params[:length_margin].to_f, AppConfig::NUMERIC)
+    end
+    
+    # Update signature information
+    if params[:signature_name].present?
+      current_user.set_config(AppConfig::SIGNATURE_NAME, params[:signature_name])
+    end
+    
+    if params[:signature_email].present?
+      current_user.set_config(AppConfig::SIGNATURE_EMAIL, params[:signature_email])
+    end
+    
+    if params[:signature_phone].present?
+      current_user.set_config(AppConfig::SIGNATURE_PHONE, params[:signature_phone])
+    end
+    
+    if params[:signature_whatsapp].present?
+      current_user.set_config(AppConfig::SIGNATURE_WHATSAPP, params[:signature_whatsapp])
+    end
     
     # Update sales conditions
-    current_user.set_config(AppConfig::SALES_CONDITION_1, params[:condition_1])
-    current_user.set_config(AppConfig::SALES_CONDITION_2, params[:condition_2])
-    current_user.set_config(AppConfig::SALES_CONDITION_3, params[:condition_3])
-    current_user.set_config(AppConfig::SALES_CONDITION_4, params[:condition_4])
+    if params[:condition_1].present?
+      current_user.set_config(AppConfig::SALES_CONDITION_1, params[:condition_1])
+    end
     
-    # Update signature info
-    current_user.set_config(AppConfig::SIGNATURE_NAME, params[:signature_name])
-    current_user.set_config(AppConfig::SIGNATURE_EMAIL, params[:signature_email])
-    current_user.set_config(AppConfig::SIGNATURE_PHONE, params[:signature_phone])
-    current_user.set_config(AppConfig::SIGNATURE_WHATSAPP, params[:signature_whatsapp])
+    if params[:condition_2].present?
+      current_user.set_config(AppConfig::SALES_CONDITION_2, params[:condition_2])
+    end
     
-    redirect_to edit_app_configs_path
+    if params[:condition_3].present?
+      current_user.set_config(AppConfig::SALES_CONDITION_3, params[:condition_3])
+    end
+    
+    if params[:condition_4].present?
+      current_user.set_config(AppConfig::SALES_CONDITION_4, params[:condition_4])
+    end
+    
+    redirect_to edit_app_configs_path, notice: 'Configurations updated successfully'
   end
   
   # Method to update API keys
@@ -81,8 +194,14 @@ class AppConfigsController < ApplicationController
     end
     
     if params[:facturama_api_key].present?
-      # Simply save the key directly to the user's record
+      # Validate API key format
       key_value = params[:facturama_api_key].strip
+      
+      unless key_value.include?(':')
+        flash[:error] = "Invalid Facturama API key format. Expected format: username:password"
+        redirect_to edit_app_configs_path
+        return
+      end
       
       # Clear any existing records
       AppConfig.where(key: AppConfig::FACTURAMA_API_KEY).delete_all

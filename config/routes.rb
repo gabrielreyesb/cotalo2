@@ -80,7 +80,11 @@ Rails.application.routes.draw do
   
   # Application configs
   resource :app_configs, only: [:edit, :update] do
-    put :update_api_key, on: :collection
+    collection do
+      put :update_api_key
+      get :test_facturama_api
+      post :test_create_product
+    end
   end
   
   # Defines the root path route ("/")

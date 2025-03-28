@@ -1,6 +1,6 @@
 class Product < ApplicationRecord
   belongs_to :user
-  has_many :quote_products, dependent: :destroy
+  has_many :quote_products, dependent: :restrict_with_error
   has_many :quotes, through: :quote_products
   
   validates :description, presence: true
@@ -137,8 +137,22 @@ class Product < ApplicationRecord
   # Utility method to get a deep copy of the product (for duplication)
   def deep_clone
     new_product = self.dup
-    new_product.data = self.data.deep_dup
-    new_product.description = "#{self.description} (Copy)"
+    
+    # Create a deep copy of the data hash
+    new_data = {
+      'general_info' => self.data['general_info'].deep_dup,
+      'materials' => self.data['materials'].map(&:deep_dup),
+      'processes' => self.data['processes'].map(&:deep_dup),
+      'extras' => self.data['extras'].map(&:deep_dup),
+      'materials_comments' => self.data['materials_comments'],
+      'processes_comments' => self.data['processes_comments'],
+      'extras_comments' => self.data['extras_comments'],
+      'pricing' => self.data['pricing'].deep_dup,
+      'selected_material_id' => self.data['selected_material_id']
+    }
+    
+    new_product.data = new_data
+    new_product.description = "#{self.description} (Copia)"
     new_product
   end
   

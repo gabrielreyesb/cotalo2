@@ -31,32 +31,6 @@ class Quote < ApplicationRecord
     self['data'] ||= self.class.default_data
   end
   
-  private
-  
-  def generate_quote_number
-    return if quote_number.present?
-    
-    # Get the last quote number
-    last_quote = Quote.order(created_at: :desc).first
-    last_number = last_quote&.quote_number&.split('-')&.last&.to_i || 0
-    
-    # Generate new quote number
-    self.quote_number = "COT-#{Time.current.strftime('%Y%m')}-#{format('%04d', last_number + 1)}"
-  end
-  
-  # Default data structure
-  def self.default_data
-    {
-      products: [],  # Will contain objects with product_id, quantity, etc.
-      totals: {
-        subtotal: 0,
-        tax_percentage: 16, # Default VAT in Mexico
-        tax_amount: 0,
-        total: 0
-      }
-    }
-  end
-  
   # Calculate totals for the quote
   def calculate_totals
     subtotal = 0
@@ -89,6 +63,32 @@ class Quote < ApplicationRecord
     
     # Save the changes
     save
+  end
+  
+  private
+  
+  def generate_quote_number
+    return if quote_number.present?
+    
+    # Get the last quote number
+    last_quote = Quote.order(created_at: :desc).first
+    last_number = last_quote&.quote_number&.split('-')&.last&.to_i || 0
+    
+    # Generate new quote number
+    self.quote_number = "COT-#{Time.current.strftime('%Y%m')}-#{format('%04d', last_number + 1)}"
+  end
+  
+  # Default data structure
+  def self.default_data
+    {
+      products: [],  # Will contain objects with product_id, quantity, etc.
+      totals: {
+        subtotal: 0,
+        tax_percentage: 16, # Default VAT in Mexico
+        tax_amount: 0,
+        total: 0
+      }
+    }
   end
   
   # Add a product to the quote

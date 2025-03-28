@@ -16,9 +16,14 @@
     
     <%# Load application JavaScript %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+    
+    <%# Load page-specific scripts %>
+    <%= yield :scripts %>
   </head>
 
   <body>
+    <%= yield :styles %>
+    
     <header>
       <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">

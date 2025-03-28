@@ -116,6 +116,7 @@
             @save:product="savePricingProduct"
             @recalculate:pricing="ensurePricingUpdated"
             @update:pricing="handlePricingUpdate"
+            @cancel="handleCancel"
           />
         </div>
       </div>
@@ -361,36 +362,51 @@ export default {
       try {
         this.saving = true;
         
+        // Extract shouldRedirect flag
+        const shouldRedirect = data.data?.shouldRedirect;
+        
+        // Create a clean version of the data without the shouldRedirect flag
+        const cleanData = {
+          ...data,
+          data: {
+            ...data.data,
+            general_info: {
+              ...data.data.general_info
+            }
+          }
+        };
+        delete cleanData.data.shouldRedirect;
+        
         // Check if dimensions or quantity have changed
         const oldQuantity = this.product.data.general_info?.quantity;
         const oldWidth = this.product.data.general_info?.width;
         const oldLength = this.product.data.general_info?.length;
         
-        const newQuantity = data.data.general_info?.quantity;
-        const newWidth = data.data.general_info?.width;
-        const newLength = data.data.general_info?.length;
+        const newQuantity = cleanData.data.general_info?.quantity;
+        const newWidth = cleanData.data.general_info?.width;
+        const newLength = cleanData.data.general_info?.length;
         
         const quantityChanged = oldQuantity !== newQuantity;
         const widthChanged = oldWidth !== newWidth;
         const lengthChanged = oldLength !== newLength;
         
         // Properly merge the data to prevent losing information between tabs
-        if (data && data.data && data.data.general_info) {
+        if (cleanData && cleanData.data && cleanData.data.general_info) {
           // Make sure we don't lose the current data by doing a proper merge
           this.product = {
             ...this.product,
-            description: data.description,
+            description: cleanData.description,
             data: {
               ...this.product.data,
               general_info: {
-                ...data.data.general_info
+                ...cleanData.data.general_info
               }
             }
           };
           
           // Ensure quantity is also updated in the main data object for backwards compatibility
-          if (data.data.general_info.quantity) {
-            this.product.data.quantity = data.data.general_info.quantity;
+          if (cleanData.data.general_info.quantity) {
+            this.product.data.quantity = cleanData.data.general_info.quantity;
           }
         }
         
@@ -454,7 +470,7 @@ export default {
               'X-Requested-With': 'XMLHttpRequest'
             },
             body: JSON.stringify({
-              product: data
+              product: cleanData
             })
           });
           
@@ -464,6 +480,11 @@ export default {
           
           const updatedProduct = await response.json();
           this.product = updatedProduct;
+          
+          // Redirect if shouldRedirect flag was set
+          if (shouldRedirect) {
+            window.location.href = '/products';
+          }
         }
         
       } catch (error) {
@@ -996,6 +1017,8 @@ export default {
           const updatedProduct = await response.json();
           this.product = updatedProduct;
           
+          // Remove the automatic redirect from here
+          // window.location.href = '/products';
         } catch (error) {
           console.error('Error updating pricing:', error);
         } finally {
@@ -1187,6 +1210,9 @@ export default {
       this.$nextTick(() => {
         this.$forceUpdate();
       });
+    },
+    handleCancel() {
+      window.location.href = '/products';
     }
   },
   // Add the created hook to initialize the component

@@ -102,7 +102,7 @@ class QuotesController < ApplicationController
   
   def destroy
     @quote.destroy
-    redirect_to quotes_path, notice: 'Cotización eliminada exitosamente.'
+    redirect_to quotes_path
   end
   
   # Product management

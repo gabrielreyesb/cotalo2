@@ -13,7 +13,7 @@
                     id="product-description" 
                     class="form-control" 
                     v-model="form.description" 
-                    @input="emitFormChanges"
+                    @input="debouncedEmitFormChanges"
                     required
                   />
                 </div>
@@ -25,7 +25,7 @@
                     id="product-quantity" 
                     class="form-control" 
                     v-model.number="form.data.general_info.quantity" 
-                    @input="emitFormChanges"
+                    @input="debouncedEmitFormChanges"
                     min="1" 
                     required
                   />
@@ -40,7 +40,7 @@
                         id="product-width" 
                         class="form-control" 
                         v-model.number="form.data.general_info.width" 
-                        @input="emitFormChanges"
+                        @input="debouncedEmitFormChanges"
                         min="0" 
                         step="0.1"
                       />
@@ -54,7 +54,7 @@
                         id="product-length" 
                         class="form-control" 
                         v-model.number="form.data.general_info.length" 
-                        @input="emitFormChanges"
+                        @input="debouncedEmitFormChanges"
                         min="0" 
                         step="0.1"
                       />
@@ -69,7 +69,7 @@
                     id="product-inner-measurements" 
                     class="form-control" 
                     v-model="form.data.general_info.inner_measurements"
-                    @input="emitFormChanges"
+                    @input="debouncedEmitFormChanges"
                   />
                 </div>
               </div>
@@ -81,12 +81,19 @@
                     id="product-comments" 
                     class="form-control" 
                     v-model="form.data.general_info.comments" 
-                    @input="emitFormChanges"
+                    @input="debouncedEmitFormChanges"
                     rows="11"
                     style="height: 100%; min-height: 300px;"
                   ></textarea>
                 </div>
               </div>
+            </div>
+            
+            <div class="d-flex justify-content-end gap-2 mt-4">
+              <button type="button" class="btn btn-secondary" @click="$emit('cancel')">Cancelar</button>
+              <button type="submit" class="btn btn-primary">
+                {{ isNew ? 'Crear producto' : 'Actualizar producto' }}
+              </button>
             </div>
           </form>
         </div>
@@ -122,8 +129,15 @@ export default {
           }
         }
       },
-      saving: false
+      saving: false,
+      debouncedEmitFormChanges: null
     };
+  },
+  created() {
+    // Create a debounced version of emitFormChanges
+    this.debouncedEmitFormChanges = this.debounce(() => {
+      this.emitFormChanges();
+    }, 500);
   },
   watch: {
     product: {
@@ -137,6 +151,17 @@ export default {
     }
   },
   methods: {
+    debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    },
     initFormData() {
       // Default empty structure in case product data is incomplete
       const defaultGeneralInfo = {
@@ -182,7 +207,8 @@ export default {
           this.$emit('update:product', {
             description: this.form.description,
             data: {
-              general_info: this.form.data.general_info
+              general_info: this.form.data.general_info,
+              shouldRedirect: true
             }
           });
         }

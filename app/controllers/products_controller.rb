@@ -61,10 +61,17 @@ class ProductsController < ApplicationController
   end
 
   def destroy
-    @product.destroy
-    respond_to do |format|
-      format.html { redirect_to products_url, notice: 'Product was successfully destroyed.' }
-      format.json { head :no_content }
+    begin
+      if @product.quote_products.any?
+        quotes = @product.quotes.pluck(:quote_number).join(", ")
+        redirect_to products_path, 
+          alert: "No se puede eliminar el producto porque está siendo utilizado en las siguientes cotizaciones: #{quotes}"
+      else
+        @product.destroy
+        redirect_to products_path, notice: 'Producto eliminado exitosamente.'
+      end
+    rescue => e
+      redirect_to products_path, alert: 'Error al intentar eliminar el producto.'
     end
   end
   

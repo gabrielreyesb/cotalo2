@@ -20,7 +20,7 @@
                   <tr>
                     <th>Nombre</th>
                     <th>Abreviación</th>
-                    <th>Acciones</th>
+                    <th class="text-end" style="width: 130px;">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -28,13 +28,15 @@
                     <tr>
                       <td><%= unit.name %></td>
                       <td><%= unit.abbreviation %></td>
-                      <td>
-                        <div class="btn-group btn-group-sm">
-                          <%= link_to "Editar", edit_unit_path(unit), class: "btn btn-outline-primary" %>
-                          <%= button_to "Borrar", unit_path(unit), method: :delete, 
-                              class: "btn btn-outline-danger", 
-                              form: { data: { turbo_confirm: "¿Estás seguro de que quieres eliminar esta unidad?" } } %>
-                        </div>
+                      <td class="text-end">
+                        <%= link_to edit_unit_path(unit), class: "btn btn-sm btn-outline-primary me-1" do %>
+                          <i class="fa fa-edit"></i>
+                        <% end %>
+                        <%= button_to unit_path(unit), method: :delete, 
+                            class: "btn btn-sm btn-outline-danger", 
+                            form: { style: 'display: inline-block;', data: { turbo_confirm: "¿Estás seguro?" } } do %>
+                          <i class="fa fa-trash"></i>
+                        <% end %>
                       </td>
                     </tr>
                   <% end %>
@@ -53,14 +55,16 @@
                   <h6 class="card-title mb-0 fw-bold" style="width: 50%"><%= unit.name %></h6>
                   <span class="badge bg-primary"><%= unit.abbreviation %></span>
                   <div class="d-flex">
-                    <%= link_to edit_unit_path(unit), class: "btn btn-sm btn-outline-primary px-2 py-1 me-1" do %>
-                      <i class="fa fa-edit fa-sm"></i>
-                    <% end %>
-                    <%= button_to unit_path(unit), method: :delete, 
-                        class: "btn btn-sm btn-outline-danger px-2 py-1", 
-                        form: { class: "d-inline", data: { turbo_confirm: "¿Estás seguro?" } } do %>
-                      <i class="fa fa-trash fa-sm"></i>
-                    <% end %>
+                    <div class="btn-group btn-group-sm">
+                      <%= link_to edit_unit_path(unit), class: "btn btn-outline-primary" do %>
+                        <i class="fa fa-edit fa-sm"></i>
+                      <% end %>
+                      <%= button_to unit_path(unit), method: :delete, 
+                          class: "btn btn-outline-danger", 
+                          form: { style: 'display: inline-block;', data: { turbo_confirm: "¿Estás seguro?" } } do %>
+                        <i class="fa fa-trash fa-sm"></i>
+                      <% end %>
+                    </div>
                   </div>
                 </div>
               </div>

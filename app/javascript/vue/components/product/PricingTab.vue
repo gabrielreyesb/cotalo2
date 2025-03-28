@@ -78,8 +78,10 @@
     </div>
     
     <div class="d-flex justify-content-end gap-2 mt-4">
-      <button type="button" class="btn btn-secondary" @click="$emit('cancel')">Cancel</button>
-      <button type="button" class="btn btn-primary" @click="saveProduct">Crear producto</button>
+      <button type="button" class="btn btn-secondary" @click="$emit('cancel')">Cancelar</button>
+      <button type="button" class="btn btn-primary" @click="saveProduct">
+        {{ isNew ? 'Crear producto' : 'Actualizar producto' }}
+      </button>
     </div>
   </div>
 </template>
