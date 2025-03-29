@@ -344,6 +344,13 @@ class Product < ApplicationRecord
     self
   end
   
+  def calculate_margin_percentage
+    return 0 if price.blank?
+    
+    price_margin = user.price_margins.where("min_price <= ? AND max_price >= ?", price, price).first
+    price_margin&.margin_percentage || 0
+  end
+  
   private
   
   # Calculate cost for a material based on its properties and quantity

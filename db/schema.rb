@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_03_26_171553) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_29_192134) do
   create_table "app_configs", force: :cascade do |t|
     t.string "key", null: false
     t.text "value"
@@ -71,6 +71,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_26_171553) do
     t.datetime "updated_at", null: false
     t.index ["unit_id"], name: "index_materials_on_unit_id"
     t.index ["user_id"], name: "index_materials_on_user_id"
+  end
+
+  create_table "price_margins", force: :cascade do |t|
+    t.decimal "min_price"
+    t.decimal "max_price"
+    t.decimal "margin_percentage"
+    t.integer "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_price_margins_on_user_id"
   end
 
   create_table "products", force: :cascade do |t|
@@ -137,6 +147,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_26_171553) do
   add_foreign_key "manufacturing_processes", "users"
   add_foreign_key "materials", "units"
   add_foreign_key "materials", "users"
+  add_foreign_key "price_margins", "users"
   add_foreign_key "products", "users"
   add_foreign_key "quote_products", "products"
   add_foreign_key "quote_products", "quotes"

@@ -1,9 +1,4 @@
 Rails.application.routes.draw do
-  get 'invoices/create'
-  get 'invoices/show'
-  get 'invoices/status'
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
   # Authentication routes
   devise_for :users
   
@@ -15,6 +10,13 @@ Rails.application.routes.draw do
   resources :units
   resources :manufacturing_processes
   resources :extras
+  scope '/catalog' do
+    resources :price_margins do
+      collection do
+        get :calculate
+      end
+    end
+  end
   
   # Product routes with duplicate action
   resources :products do

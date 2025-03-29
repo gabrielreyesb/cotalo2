@@ -5,16 +5,13 @@ class AppConfigsController < ApplicationController
   def edit
     # Get raw percentage values
     waste_pct_raw = current_user.get_config(AppConfig::WASTE_PERCENTAGE)
-    margin_pct_raw = current_user.get_config(AppConfig::MARGIN_PERCENTAGE)
     
     # Convert decimal percentages (0.05) to whole numbers (5) for the form
     waste_pct = waste_pct_raw.nil? ? 5 : (waste_pct_raw * 100).round
-    margin_pct = margin_pct_raw.nil? ? 30 : (margin_pct_raw * 100).round
     
     # Group configurations by category
     @general_settings = {
       waste_percentage: waste_pct,
-      margin_percentage: margin_pct,
       width_margin: current_user.get_config(AppConfig::WIDTH_MARGIN) || 0,
       length_margin: current_user.get_config(AppConfig::LENGTH_MARGIN) || 0
     }
@@ -40,7 +37,6 @@ class AppConfigsController < ApplicationController
     # Create a proper app_config object for the form
     @app_config = OpenStruct.new(
       waste_percentage: @general_settings[:waste_percentage],
-      margin_percentage: @general_settings[:margin_percentage],
       width_margin: @general_settings[:width_margin],
       length_margin: @general_settings[:length_margin],
       signature_name: @signature_info[:name],
@@ -124,33 +120,12 @@ class AppConfigsController < ApplicationController
       current_user.set_config(AppConfig::WASTE_PERCENTAGE, params[:waste_percentage].to_f / 100, AppConfig::PERCENTAGE)
     end
     
-    if params[:margin_percentage].present?
-      current_user.set_config(AppConfig::MARGIN_PERCENTAGE, params[:margin_percentage].to_f / 100, AppConfig::PERCENTAGE)
-    end
-    
     if params[:width_margin].present?
-      current_user.set_config(AppConfig::WIDTH_MARGIN, params[:width_margin].to_f, AppConfig::NUMERIC)
+      current_user.set_config(AppConfig::WIDTH_MARGIN, params[:width_margin], AppConfig::NUMERIC)
     end
     
     if params[:length_margin].present?
-      current_user.set_config(AppConfig::LENGTH_MARGIN, params[:length_margin].to_f, AppConfig::NUMERIC)
-    end
-    
-    # Update signature information
-    if params[:signature_name].present?
-      current_user.set_config(AppConfig::SIGNATURE_NAME, params[:signature_name])
-    end
-    
-    if params[:signature_email].present?
-      current_user.set_config(AppConfig::SIGNATURE_EMAIL, params[:signature_email])
-    end
-    
-    if params[:signature_phone].present?
-      current_user.set_config(AppConfig::SIGNATURE_PHONE, params[:signature_phone])
-    end
-    
-    if params[:signature_whatsapp].present?
-      current_user.set_config(AppConfig::SIGNATURE_WHATSAPP, params[:signature_whatsapp])
+      current_user.set_config(AppConfig::LENGTH_MARGIN, params[:length_margin], AppConfig::NUMERIC)
     end
     
     # Update sales conditions
@@ -170,7 +145,24 @@ class AppConfigsController < ApplicationController
       current_user.set_config(AppConfig::SALES_CONDITION_4, params[:condition_4])
     end
     
-    redirect_to edit_app_configs_path, notice: 'Configurations updated successfully'
+    # Update signature information
+    if params[:signature_name].present?
+      current_user.set_config(AppConfig::SIGNATURE_NAME, params[:signature_name])
+    end
+    
+    if params[:signature_email].present?
+      current_user.set_config(AppConfig::SIGNATURE_EMAIL, params[:signature_email])
+    end
+    
+    if params[:signature_phone].present?
+      current_user.set_config(AppConfig::SIGNATURE_PHONE, params[:signature_phone])
+    end
+    
+    if params[:signature_whatsapp].present?
+      current_user.set_config(AppConfig::SIGNATURE_WHATSAPP, params[:signature_whatsapp])
+    end
+    
+    redirect_to edit_app_configs_path, notice: "Configuraciones actualizadas exitosamente."
   end
   
   # Method to update API keys

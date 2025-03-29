@@ -127,8 +127,53 @@
     
   </div>
 
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= form.label :price, "Precio", class: "form-label" %>
+      <div class="input-group">
+        <span class="input-group-text">$</span>
+        <%= form.number_field :price, class: "form-control", step: "0.01", min: 0, required: true %>
+      </div>
+      <div class="form-text">
+        Margen aplicado: <span id="margin-percentage">0</span>%
+      </div>
+    </div>
+    
+    <div class="col-md-6 mb-3">
+      <%= form.label :margin_percentage, "Margen personalizado (%)", class: "form-label" %>
+      <div class="input-group">
+        <%= form.number_field :margin_percentage, class: "form-control", step: "0.01", min: 0, max: 100 %>
+        <span class="input-group-text">%</span>
+      </div>
+      <div class="form-text">
+        Deje en blanco para usar el margen automático según el rango de precio
+      </div>
+    </div>
+  </div>
+
   <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
     <%= link_to "Cancelar", products_path, class: "btn btn-secondary me-md-2" %>
     <%= form.submit class: "btn btn-primary" %>
   </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const priceInput = document.querySelector('#product_price');
+      const marginPercentage = document.querySelector('#margin-percentage');
+      
+      function updateMargin() {
+        const price = parseFloat(priceInput.value) || 0;
+        fetch(`/catalog/price_margins/calculate?price=${price}`)
+          .then(response => response.json())
+          .then(data => {
+            marginPercentage.textContent = data.margin_percentage;
+          });
+      }
+      
+      priceInput.addEventListener('input', updateMargin);
+      updateMargin(); // Initial calculation
+    });
+  </script>
 <% end %> 

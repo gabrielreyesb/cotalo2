@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  min_price: 9.99
+  max_price: 9.99
+  margin_percentage: 9.99
+  user: one
+
+two:
+  min_price: 9.99
+  max_price: 9.99
+  margin_percentage: 9.99
+  user: two

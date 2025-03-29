@@ -7,7 +7,6 @@ class AppConfig < ApplicationRecord
   # Define constants for keys to avoid typos
   # General settings
   WASTE_PERCENTAGE = 'waste_percentage'
-  MARGIN_PERCENTAGE = 'margin_percentage'
   WIDTH_MARGIN = 'width_margin'
   LENGTH_MARGIN = 'length_margin'
   
@@ -55,12 +54,12 @@ class AppConfig < ApplicationRecord
     # Set a config value for a user
     def set(user, key, value, value_type = TEXT)
       config = user.app_configs.find_or_initialize_by(key: key)
-      config.value = value
+      config.value = value.to_s
       config.value_type = value_type
       config.save
     end
     
-    # Get all configs for a specific group (by prefix)
+    # Get all configs for a group (prefix)
     def get_group(user, prefix)
       configs = user.app_configs.where('key LIKE ?', "#{prefix}%")
       configs.each_with_object({}) do |config, hash|
@@ -68,18 +67,18 @@ class AppConfig < ApplicationRecord
       end
     end
     
-    # Get the Pipedrive API key
+    # Get Pipedrive API key
     def get_pipedrive_api_key
       # Simply find the first record with that key and return its value
       config = AppConfig.find_by(key: PIPEDRIVE_API_KEY)
-      return config&.value
+      config&.value
     end
-
-    # Get the Facturama API key
+    
+    # Get Facturama API key
     def get_facturama_api_key
       # Simply find the first record with that key and return its value
       config = AppConfig.find_by(key: FACTURAMA_API_KEY)
-      return config&.value
+      config&.value
     end
   end
 end 
