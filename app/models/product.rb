@@ -184,8 +184,12 @@ class Product < ApplicationRecord
     # Calculate total before margin (subtotal + waste)
     total_before_margin = subtotal + waste_value
     
-    # Get margin percentage from price_margins based on total_before_margin
-    margin_pct = calculate_margin_percentage(total_before_margin)
+    # Get margin percentage - use manually set if provided, otherwise calculate from price_margins
+    margin_pct = if pricing["margin_percentage"].present? || pricing[:margin_percentage].present?
+      pricing["margin_percentage"] || pricing[:margin_percentage]
+    else
+      calculate_margin_percentage(total_before_margin)
+    end
     
     # Calculate margin value
     margin_value = total_before_margin * (margin_pct / 100.0)

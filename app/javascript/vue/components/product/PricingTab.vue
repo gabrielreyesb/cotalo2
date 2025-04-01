@@ -52,9 +52,10 @@
                       <input 
                         type="number" 
                         class="form-control form-control-sm" 
-                        :value="localMarginPercentage"
-                        readonly
-                        disabled
+                        v-model.number="localMarginPercentage" 
+                        min="0"
+                        step="0.1"
+                        @change="handleMarginPercentageChange"
                       />
                       <span class="input-group-text">%</span>
                     </div>
@@ -96,6 +97,10 @@ export default {
     isNew: {
       type: Boolean,
       default: false
+    },
+    suggestedMargin: {
+      type: Number,
+      default: 0
     }
   },
   data() {
@@ -171,9 +176,24 @@ export default {
         if (newPricing) {
           this.localWastePercentage = newPricing.waste_percentage || 0;
           this.localMarginPercentage = newPricing.margin_percentage || 0;
+          
+          // If there's a subtotal but no margin percentage set, trigger recalculation
+          if (newPricing.subtotal > 0 && !newPricing.margin_percentage) {
+            this.recalculatePricing();
+          }
         }
       },
       deep: true,
+      immediate: true
+    },
+    suggestedMargin: {
+      handler(newSuggestedMargin) {
+        // Update the margin if there's a subtotal and the current margin is different
+        if (this.pricing && this.pricing.subtotal > 0 && this.localMarginPercentage !== newSuggestedMargin) {
+          this.localMarginPercentage = newSuggestedMargin;
+          this.handleMarginPercentageChange();
+        }
+      },
       immediate: true
     }
   }

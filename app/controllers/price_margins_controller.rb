@@ -4,6 +4,11 @@ class PriceMarginsController < ApplicationController
   
   def index
     @price_margins = current_user.price_margins.order(:min_price)
+    
+    respond_to do |format|
+      format.html
+      format.json { render json: @price_margins }
+    end
   end
   
   def new

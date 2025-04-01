@@ -75,6 +75,7 @@ Rails.application.routes.draw do
       get 'manufacturing_processes', to: 'products#available_manufacturing_processes'
       get 'materials', to: 'products#available_materials'
       get 'user_config', to: 'app_configs#user_config'
+      get 'price_margins', to: 'price_margins#index'
       post 'search_customer', to: 'customers#search'
       get 'verify_pipedrive', to: 'customers#verify_pipedrive_account'
     end

@@ -113,6 +113,7 @@
           <pricing-tab 
             :pricing="product.data.pricing || defaultPricing"
             :is-new="!productId"
+            :suggested-margin="suggestedMargin"
             @save:product="savePricingProduct"
             @recalculate:pricing="ensurePricingUpdated"
             @update:pricing="handlePricingUpdate"
@@ -160,9 +161,9 @@ export default {
       availableExtras: [],
       availableProcesses: [],
       availableMaterials: [],
+      suggestedMargin: 0,
       userConfig: {
         waste_percentage: 5,
-        margin_percentage: 30,
         width_margin: 0,
         length_margin: 0
       },
@@ -188,7 +189,7 @@ export default {
     }
   },
   methods: {
-    setActiveTab(tab) {
+    async setActiveTab(tab) {
       console.log(`Switching to ${tab} tab`);
       
       // Allow switching between general, extras, processes and pricing tabs even for new products
@@ -202,10 +203,13 @@ export default {
           console.log('Switching to pricing tab, preparing data');
           
           // First ensure all pricing values are up to date
-          this.ensurePricingUpdated();
+          await this.ensurePricingUpdated();
           
           // Then recalculate to make sure everything is consistent
           this.recalculatePricing();
+          
+          // Calculate suggested margin
+          this.suggestedMargin = await this.calculateSuggestedMargin();
           
           // Give components time to update before final calculations
           this.$nextTick(() => {
@@ -266,7 +270,6 @@ export default {
     },
     async fetchUserConfig() {
       try {
-        // Use the app_configs endpoint instead of product-specific endpoints
         const response = await fetch('/api/v1/user_config', {
           headers: {
             'Accept': 'application/json',
@@ -279,16 +282,18 @@ export default {
         }
         
         const data = await response.json();
+        console.log('Fetched user config:', data);
         
         // Update user configuration values
         if (data) {
           this.userConfig.waste_percentage = data.waste_percentage || 5;
-          this.userConfig.margin_percentage = data.margin_percentage || 30;
           this.userConfig.width_margin = data.width_margin || 0;
           this.userConfig.length_margin = data.length_margin || 0;
           
           // Update default pricing with user config values
           this.defaultPricing.waste_percentage = this.userConfig.waste_percentage;
+          
+          console.log('Updated user config:', this.userConfig);
         }
       } catch (error) {
         console.error('Error loading user config:', error);
@@ -910,8 +915,7 @@ export default {
       
       console.log('After calculation, pricing:', JSON.stringify(pricing));
     },
-    // Update materials, processes, and extras costs in pricing
-    ensurePricingUpdated() {
+    async ensurePricingUpdated() {
       if (!this.product || !this.product.data || !this.product.data.pricing) return;
       
       // Get total costs from materials, processes, and extras
@@ -938,12 +942,45 @@ export default {
       const extrasChanged = Math.abs(pricing.extras_cost - extrasCost) > 0.01;
       
       if (materialsChanged || processesChanged || extrasChanged) {
+        console.log('Costs have changed, updating pricing:', {
+          materialsChanged,
+          processesChanged,
+          extrasChanged,
+          oldMaterialsCost: pricing.materials_cost,
+          newMaterialsCost: materialsCost,
+          oldProcessesCost: pricing.processes_cost,
+          newProcessesCost: processesCost,
+          oldExtrasCost: pricing.extras_cost,
+          newExtrasCost: extrasCost
+        });
+        
         pricing.materials_cost = materialsCost;
         pricing.processes_cost = processesCost;
         pricing.extras_cost = extrasCost;
         
-        // Recalculate all pricing values
-        this.recalculatePricing();
+        // Calculate new subtotal
+        const newSubtotal = materialsCost + processesCost + extrasCost;
+        
+        // If subtotal has changed, update it and recalculate margin
+        if (Math.abs(pricing.subtotal - newSubtotal) > 0.01) {
+          console.log('Subtotal has changed, updating from', pricing.subtotal, 'to', newSubtotal);
+          pricing.subtotal = newSubtotal;
+          
+          // Calculate suggested margin based on the new subtotal
+          const newSuggestedMargin = await this.calculateSuggestedMargin();
+          console.log('New suggested margin:', newSuggestedMargin);
+          
+          // Update both the component's suggestedMargin and the pricing's margin_percentage
+          this.suggestedMargin = newSuggestedMargin;
+          pricing.margin_percentage = newSuggestedMargin;
+          
+          // Recalculate pricing to update all values
+          this.recalculatePricing();
+        } else {
+          // Just update the costs and recalculate
+          pricing.subtotal = newSubtotal;
+          this.recalculatePricing();
+        }
       }
     },
     async savePricingProduct() {
@@ -1207,6 +1244,75 @@ export default {
     },
     handleCancel() {
       window.location.href = '/products';
+    },
+    async calculateSuggestedMargin() {
+      if (!this.product || !this.product.data || !this.product.data.pricing) {
+        console.log('Cannot calculate suggested margin: missing product data or pricing');
+        return 0;
+      }
+      
+      const pricing = this.product.data.pricing;
+      const totalBeforeMargin = pricing.subtotal + pricing.waste_value;
+      
+      console.log('Calculating suggested margin:', {
+        totalBeforeMargin,
+        subtotal: pricing.subtotal,
+        wasteValue: pricing.waste_value
+      });
+      
+      try {
+        // Fetch price margins from the API
+        const response = await fetch('/api/v1/price_margins', {
+          headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Failed to load price margins: ${response.status} ${response.statusText}`);
+        }
+        
+        const priceMargins = await response.json();
+        console.log('Fetched price margins:', priceMargins);
+        
+        // Sort price margins by min_price to ensure we find the highest range
+        const sortedMargins = [...priceMargins].sort((a, b) => parseFloat(a.min_price) - parseFloat(b.min_price));
+        
+        // Find the appropriate price margin based on the total before margin
+        const priceMargin = sortedMargins.find(margin => {
+          const minPrice = parseFloat(margin.min_price) || 0;
+          const maxPrice = parseFloat(margin.max_price) || Infinity;
+          const isInRange = totalBeforeMargin >= minPrice && totalBeforeMargin <= maxPrice;
+          
+          console.log('Checking price margin:', {
+            minPrice,
+            maxPrice,
+            totalBeforeMargin,
+            isInRange,
+            margin
+          });
+          
+          return isInRange;
+        });
+        
+        // If no range matches, use the margin from the highest range
+        const suggestedMargin = priceMargin ? 
+          parseFloat(priceMargin.margin_percentage) || 0 : 
+          parseFloat(sortedMargins[sortedMargins.length - 1]?.margin_percentage) || 0;
+        
+        console.log('Suggested margin calculation result:', {
+          totalBeforeMargin,
+          priceMargin,
+          suggestedMargin,
+          usingHighestRange: !priceMargin
+        });
+        
+        return suggestedMargin;
+      } catch (error) {
+        console.error('Error calculating suggested margin:', error);
+        return 0;
+      }
     }
   },
   // Add the created hook to initialize the component
