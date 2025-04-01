@@ -181,14 +181,17 @@ class Product < ApplicationRecord
     quantity = 1 if quantity <= 0
     price_per_piece_before_margin = (subtotal + waste_value) / quantity
     
-    # Get margin percentage (from product or user default)
-    margin_pct = pricing["margin_percentage"] || pricing[:margin_percentage] || user.margin_percentage
+    # Calculate total before margin (subtotal + waste)
+    total_before_margin = subtotal + waste_value
+    
+    # Get margin percentage from price_margins based on total_before_margin
+    margin_pct = calculate_margin_percentage(total_before_margin)
     
     # Calculate margin value
-    margin_value = (subtotal + waste_value) * (margin_pct / 100.0)
+    margin_value = total_before_margin * (margin_pct / 100.0)
     
     # Calculate total price
-    total_price = subtotal + waste_value + margin_value
+    total_price = total_before_margin + margin_value
     
     # Calculate final price per piece
     final_price_per_piece = total_price / quantity
@@ -344,10 +347,9 @@ class Product < ApplicationRecord
     self
   end
   
-  def calculate_margin_percentage
-    return 0 if price.blank?
-    
-    price_margin = user.price_margins.where("min_price <= ? AND max_price >= ?", price, price).first
+  def calculate_margin_percentage(total_before_margin)
+    # Find the appropriate price margin based on the total before margin
+    price_margin = user.price_margins.where("min_price <= ? AND max_price >= ?", total_before_margin, total_before_margin).first
     price_margin&.margin_percentage || 0
   end
   

@@ -40,11 +40,6 @@ class User < ApplicationRecord
     get_config(AppConfig::WASTE_PERCENTAGE) || 0.05
   end
   
-  # Get margin percentage (default 30%)
-  def margin_percentage
-    get_config(AppConfig::MARGIN_PERCENTAGE) || 0.3
-  end
-  
   # Get width margin (default 0)
   def width_margin
     get_config(AppConfig::WIDTH_MARGIN) || 0
@@ -88,7 +83,6 @@ class User < ApplicationRecord
   def setup_initial_data
     # Setup default configuration values
     set_config(AppConfig::WASTE_PERCENTAGE, 5, AppConfig::PERCENTAGE)
-    set_config(AppConfig::MARGIN_PERCENTAGE, 30, AppConfig::PERCENTAGE)
     set_config(AppConfig::WIDTH_MARGIN, 0, AppConfig::NUMERIC)
     set_config(AppConfig::LENGTH_MARGIN, 0, AppConfig::NUMERIC)
     

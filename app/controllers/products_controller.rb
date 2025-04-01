@@ -124,7 +124,7 @@ class ProductsController < ApplicationController
     render json: {
       pricing: @product.pricing,
       config: {
-        margin_percentage: current_user.get_config(AppConfig::MARGIN_PERCENTAGE) || 30
+        margin_percentage: 0
       }
     }
   end
@@ -223,12 +223,6 @@ class ProductsController < ApplicationController
     if product.pricing["waste_percentage"].nil?
       waste_pct = current_user.get_config(AppConfig::WASTE_PERCENTAGE) || 5
       product.pricing = product.pricing.merge("waste_percentage" => waste_pct)
-    end
-    
-    # Set default margin percentage from user config
-    if product.pricing["margin_percentage"].nil?
-      margin_pct = current_user.get_config(AppConfig::MARGIN_PERCENTAGE) || 30
-      product.pricing = product.pricing.merge("margin_percentage" => margin_pct)
     end
     
     # Ensure general_info is properly initialized

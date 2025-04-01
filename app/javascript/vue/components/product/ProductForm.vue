@@ -174,7 +174,7 @@ export default {
         waste_percentage: 5,
         waste_value: 0,
         price_per_piece_before_margin: 0,
-        margin_percentage: 30,
+        margin_percentage: 0,
         margin_value: 0,
         total_price: 0,
         final_price_per_piece: 0
@@ -289,7 +289,6 @@ export default {
           
           // Update default pricing with user config values
           this.defaultPricing.waste_percentage = this.userConfig.waste_percentage;
-          this.defaultPricing.margin_percentage = this.userConfig.margin_percentage;
         }
       } catch (error) {
         console.error('Error loading user config:', error);
@@ -314,7 +313,7 @@ export default {
             pricing: {
               ...this.defaultPricing,
               waste_percentage: this.userConfig.waste_percentage,
-              margin_percentage: this.userConfig.margin_percentage
+              margin_percentage: 0
             }
           }
         };
@@ -866,11 +865,6 @@ export default {
       if (!pricing.waste_percentage && pricing.waste_percentage !== 0) {
         pricing.waste_percentage = this.userConfig.waste_percentage;
         console.log('Set default waste_percentage:', pricing.waste_percentage);
-      }
-      
-      if (!pricing.margin_percentage && pricing.margin_percentage !== 0) {
-        pricing.margin_percentage = this.userConfig.margin_percentage;
-        console.log('Set default margin_percentage:', pricing.margin_percentage);
       }
       
       // Calculate subtotal - ensure all values are numbers

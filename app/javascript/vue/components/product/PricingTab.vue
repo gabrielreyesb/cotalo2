@@ -52,10 +52,9 @@
                       <input 
                         type="number" 
                         class="form-control form-control-sm" 
-                        v-model.number="localMarginPercentage" 
-                        min="0"
-                        step="0.1"
-                        @change="handleMarginPercentageChange"
+                        :value="localMarginPercentage"
+                        readonly
+                        disabled
                       />
                       <span class="input-group-text">%</span>
                     </div>
