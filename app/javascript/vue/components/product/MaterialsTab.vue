@@ -86,9 +86,8 @@
                     type="radio"
                     :id="'material-radio-' + index"
                     :value="material.id"
-                    v-model="selectedMaterialForProducts"
+                    v-model="selectedMaterial"
                     class="form-check-input me-2"
-                    @change="selectMaterialForProducts(material.id)"
                   />
                   <button 
                     class="btn btn-sm btn-outline-danger" 
@@ -168,9 +167,8 @@
                   type="radio"
                   :id="'material-radio-mobile-' + index"
                   :value="material.id"
-                  v-model="selectedMaterialForProducts"
+                  v-model="selectedMaterial"
                   class="form-check-input me-2"
-                  @change="selectMaterialForProducts(material.id)"
                 />
                 <button 
                   class="btn btn-sm btn-outline-danger px-2 py-1" 
@@ -325,6 +323,10 @@ export default {
     lengthMargin: {
       type: Number,
       default: 0
+    },
+    selectedMaterialId: {
+      type: [Number, String],
+      default: null
     }
   },
   data() {
@@ -338,7 +340,6 @@ export default {
         price: null
       },
       globalComments: this.comments || '',
-      selectedMaterialForProducts: null,
       validationMessage: ''
     }
   },
@@ -370,6 +371,18 @@ export default {
              this.customMaterial.ancho > 0 &&
              this.customMaterial.largo > 0 &&
              this.customMaterial.price > 0;
+    },
+    selectedMaterial: {
+      get() {
+        return this.selectedMaterialId;
+      },
+      set(value) {
+        // If trying to deselect a material, prevent it
+        if (!value && this.productMaterials.length > 0) {
+          return;
+        }
+        this.$emit('material-selected-for-products', value);
+      }
     }
   },
   methods: {
@@ -392,18 +405,18 @@ export default {
       const effectiveProductLength = this.productLength + this.lengthMargin;
 
       // Calculate pieces that fit in both orientations
-        const horizontalPieces = Math.floor(materialWidth / effectiveProductWidth);
-        const verticalPieces = Math.floor(materialLength / effectiveProductLength);
-        
-        // Try the other orientation as well
-        const horizontalPiecesAlt = Math.floor(materialWidth / effectiveProductLength);
-        const verticalPiecesAlt = Math.floor(materialLength / effectiveProductWidth);
-        
-        // Use the orientation that fits more pieces
+      const horizontalPieces = Math.floor(materialWidth / effectiveProductWidth);
+      const verticalPieces = Math.floor(materialLength / effectiveProductLength);
+      
+      // Try the other orientation as well
+      const horizontalPiecesAlt = Math.floor(materialWidth / effectiveProductLength);
+      const verticalPiecesAlt = Math.floor(materialLength / effectiveProductWidth);
+      
+      // Use the orientation that fits more pieces
       const piecesPerMaterial = Math.max(
-          horizontalPieces * verticalPieces, 
-          horizontalPiecesAlt * verticalPiecesAlt
-        );
+        horizontalPieces * verticalPieces,
+        horizontalPiecesAlt * verticalPiecesAlt
+      );
       
       // Calculate total sheets needed based on pieces per material
       const totalSheets = Math.ceil(this.productQuantity / piecesPerMaterial);
@@ -428,9 +441,8 @@ export default {
       this.$emit('update:materials-cost', this.calculateTotalCost(updatedMaterials));
       
       // If this is the first material or no material is currently selected, select it
-      if (!this.selectedMaterialForProducts || this.productMaterials.length === 0) {
-        this.selectedMaterialForProducts = material.id;
-        this.$emit('material-selected-for-products', material.id);
+      if (this.productMaterials.length === 0) {
+        this.$emit('material-selected-for-products', newMaterial.id);
       }
       
       this.materialIdForAdd = '';
@@ -475,19 +487,9 @@ export default {
       this.$emit('update:materials-cost', this.calculateTotalCost(updatedMaterials));
 
       // If we removed the selected material and there are other materials, select the first one
-      if (removedMaterialId === this.selectedMaterialForProducts) {
-        if (updatedMaterials.length > 0) {
-          this.selectedMaterialForProducts = updatedMaterials[0].id;
-          this.$emit('material-selected-for-products', updatedMaterials[0].id);
-        } else {
-          // If no materials left, clear the selection
-          this.selectedMaterialForProducts = null;
-          this.$emit('material-selected-for-products', null);
-        }
+      if (removedMaterialId === this.selectedMaterialId && updatedMaterials.length > 0) {
+        this.$emit('material-selected-for-products', updatedMaterials[0].id);
       }
-    },
-    selectMaterialForProducts(materialId) {
-      this.$emit('material-selected-for-products', materialId);
     },
     calculateTotalCost(materials) {
       return materials.reduce((sum, material) => sum + (material.totalPrice || 0), 0);
@@ -547,8 +549,7 @@ export default {
       this.$emit('update:materials-cost', this.calculateTotalCost(updatedMaterials));
       
       // If this is the first material or no material is currently selected, select it
-      if (!this.selectedMaterialForProducts || this.productMaterials.length === 0) {
-        this.selectedMaterialForProducts = newMaterial.id;
+      if (this.productMaterials.length === 0) {
         this.$emit('material-selected-for-products', newMaterial.id);
       }
       
@@ -568,7 +569,28 @@ export default {
         this.globalComments = newComments;
       },
       immediate: true
+    },
+    productMaterials: {
+      handler(newMaterials) {
+        // If there are materials but none selected, select the first one
+        if (newMaterials.length > 0 && !this.selectedMaterialId) {
+          this.$emit('material-selected-for-products', newMaterials[0].id);
+        }
+      },
+      immediate: true
     }
   }
 }
 </script>
+
+<style scoped>
+.form-check-input:checked {
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.form-check-input:focus {
+  border-color: #198754;
+  box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+}
+</style>
