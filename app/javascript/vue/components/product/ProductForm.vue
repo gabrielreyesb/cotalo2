@@ -190,7 +190,6 @@ export default {
   },
   methods: {
     async setActiveTab(tab) {
-      console.log(`Switching to ${tab} tab`);
       
       // Allow switching between general, extras, processes and pricing tabs even for new products
       // Only restrict other tabs if product doesn't exist (has no ID)
@@ -200,7 +199,6 @@ export default {
         
         // If switching to pricing tab, ensure pricing is calculated
         if (tab === 'pricing') {
-          console.log('Switching to pricing tab, preparing data');
           
           // First ensure all pricing values are up to date
           await this.ensurePricingUpdated();
@@ -214,12 +212,10 @@ export default {
           // Give components time to update before final calculations
           this.$nextTick(() => {
             // Force a final update to ensure everything is rendered correctly
-            console.log('Forcing update after switching to pricing tab');
             this.$forceUpdate();
           });
         }
       } else if (!this.productId) {
-        console.warn(`Cannot switch to ${tab} tab: no product ID`);
         return;
       } else {
         // Other tabs require a product ID
@@ -282,7 +278,6 @@ export default {
         }
         
         const data = await response.json();
-        console.log('Fetched user config:', data);
         
         // Update user configuration values
         if (data) {
@@ -293,7 +288,6 @@ export default {
           // Update default pricing with user config values
           this.defaultPricing.waste_percentage = this.userConfig.waste_percentage;
           
-          console.log('Updated user config:', this.userConfig);
         }
       } catch (error) {
         console.error('Error loading user config:', error);
@@ -857,19 +851,14 @@ export default {
     },
     recalculatePricing() {
       if (!this.product || !this.product.data || !this.product.data.pricing) {
-        console.warn('Cannot recalculate pricing: missing product data or pricing object');
         return;
       }
       
-      console.log('Recalculating pricing...');
-      
       const pricing = this.product.data.pricing;
-      console.log('Before calculation, pricing:', JSON.stringify(pricing));
       
       // Ensure waste_percentage and margin_percentage are set from user config if not already set
       if (!pricing.waste_percentage && pricing.waste_percentage !== 0) {
         pricing.waste_percentage = this.userConfig.waste_percentage;
-        console.log('Set default waste_percentage:', pricing.waste_percentage);
       }
       
       // Calculate subtotal - ensure all values are numbers
@@ -878,42 +867,31 @@ export default {
       pricing.extras_cost = parseFloat(pricing.extras_cost) || 0;
       
       pricing.subtotal = pricing.materials_cost + pricing.processes_cost + pricing.extras_cost;
-      console.log('Calculated subtotal:', pricing.subtotal);
       
       // Calculate waste
       pricing.waste_value = pricing.subtotal * (pricing.waste_percentage / 100);
-      console.log('Calculated waste value:', pricing.waste_value, 
-                  '(', pricing.waste_percentage, '% of', pricing.subtotal, ')');
       
       // Calculate subtotal with waste
       const subtotalWithWaste = pricing.subtotal + pricing.waste_value;
-      console.log('Subtotal with waste:', subtotalWithWaste);
       
       // Get quantity from general_info if available, otherwise use product quantity or default to 1
       const quantity = 
         (this.product.data.general_info && this.product.data.general_info.quantity) || 
         this.product.data.quantity || 
         1;
-      console.log('Product quantity:', quantity);
       
       // Calculate price per piece before margin
       pricing.price_per_piece_before_margin = subtotalWithWaste / quantity;
-      console.log('Price per piece before margin:', pricing.price_per_piece_before_margin);
       
       // Calculate margin
       pricing.margin_value = subtotalWithWaste * (pricing.margin_percentage / 100);
-      console.log('Calculated margin value:', pricing.margin_value, 
-                  '(', pricing.margin_percentage, '% of', subtotalWithWaste, ')');
       
       // Calculate total price
       pricing.total_price = subtotalWithWaste + pricing.margin_value;
-      console.log('Total price:', pricing.total_price);
       
       // Calculate final price per piece
       pricing.final_price_per_piece = pricing.total_price / quantity;
-      console.log('Final price per piece:', pricing.final_price_per_piece);
       
-      console.log('After calculation, pricing:', JSON.stringify(pricing));
     },
     async ensurePricingUpdated() {
       if (!this.product || !this.product.data || !this.product.data.pricing) return;
@@ -963,12 +941,10 @@ export default {
         
         // If subtotal has changed, update it and recalculate margin
         if (Math.abs(pricing.subtotal - newSubtotal) > 0.01) {
-          console.log('Subtotal has changed, updating from', pricing.subtotal, 'to', newSubtotal);
           pricing.subtotal = newSubtotal;
           
           // Calculate suggested margin based on the new subtotal
           const newSuggestedMargin = await this.calculateSuggestedMargin();
-          console.log('New suggested margin:', newSuggestedMargin);
           
           // Update both the component's suggestedMargin and the pricing's margin_percentage
           this.suggestedMargin = newSuggestedMargin;
@@ -1225,7 +1201,6 @@ export default {
     handlePricingUpdate(updatedPricing) {
       if (!this.product || !this.product.data) return;
       
-      console.log('ProductForm received pricing update:', updatedPricing);
       
       // Update the pricing data with the new values
       this.product.data.pricing = {
@@ -1234,7 +1209,6 @@ export default {
       };
       
       // Recalculate pricing to update all derived values
-      console.log('Recalculating pricing after update');
       this.recalculatePricing();
       
       // Force update to ensure changes propagate
@@ -1247,19 +1221,12 @@ export default {
     },
     async calculateSuggestedMargin() {
       if (!this.product || !this.product.data || !this.product.data.pricing) {
-        console.log('Cannot calculate suggested margin: missing product data or pricing');
         return 0;
       }
       
       const pricing = this.product.data.pricing;
       const totalBeforeMargin = pricing.subtotal + pricing.waste_value;
-      
-      console.log('Calculating suggested margin:', {
-        totalBeforeMargin,
-        subtotal: pricing.subtotal,
-        wasteValue: pricing.waste_value
-      });
-      
+            
       try {
         // Fetch price margins from the API
         const response = await fetch('/api/v1/price_margins', {
@@ -1274,7 +1241,6 @@ export default {
         }
         
         const priceMargins = await response.json();
-        console.log('Fetched price margins:', priceMargins);
         
         // Sort price margins by min_price to ensure we find the highest range
         const sortedMargins = [...priceMargins].sort((a, b) => parseFloat(a.min_price) - parseFloat(b.min_price));
@@ -1285,14 +1251,6 @@ export default {
           const maxPrice = parseFloat(margin.max_price) || Infinity;
           const isInRange = totalBeforeMargin >= minPrice && totalBeforeMargin <= maxPrice;
           
-          console.log('Checking price margin:', {
-            minPrice,
-            maxPrice,
-            totalBeforeMargin,
-            isInRange,
-            margin
-          });
-          
           return isInRange;
         });
         
@@ -1300,13 +1258,6 @@ export default {
         const suggestedMargin = priceMargin ? 
           parseFloat(priceMargin.margin_percentage) || 0 : 
           parseFloat(sortedMargins[sortedMargins.length - 1]?.margin_percentage) || 0;
-        
-        console.log('Suggested margin calculation result:', {
-          totalBeforeMargin,
-          priceMargin,
-          suggestedMargin,
-          usingHighestRange: !priceMargin
-        });
         
         return suggestedMargin;
       } catch (error) {

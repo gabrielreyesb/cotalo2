@@ -128,25 +128,20 @@
     <%# Initialize Bootstrap components %>
     <script>
       document.addEventListener("DOMContentLoaded", function() {
-        console.log("DOMContentLoaded event fired");
         initializeTooltips();
       });
 
       document.addEventListener("turbo:load", function() {
-        console.log("turbo:load event fired");
         initializeTooltips();
       });
 
       function initializeTooltips() {
         // Check if bootstrap is available
-        console.log("Bootstrap available:", typeof bootstrap !== 'undefined');
         
         // Initialize all tooltips
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        console.log("Found tooltip elements:", tooltipTriggerList.length);
         
         tooltipTriggerList.forEach(function(tooltipTriggerEl) {
-          console.log("Initializing tooltip for element:", tooltipTriggerEl);
           try {
             new bootstrap.Tooltip(tooltipTriggerEl, {
               placement: 'bottom',
@@ -161,7 +156,6 @@
                 ],
               }
             });
-            console.log("Tooltip initialized successfully");
           } catch (error) {
             console.error("Error initializing tooltip:", error);
           }
@@ -170,13 +164,11 @@
 
       // Cleanup tooltips before Turbo cache
       document.addEventListener("turbo:before-cache", function() {
-        console.log("turbo:before-cache event fired");
         var tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
         tooltips.forEach(function(element) {
           var tooltip = bootstrap.Tooltip.getInstance(element);
           if (tooltip) {
             tooltip.dispose();
-            console.log("Tooltip disposed");
           }
         });
       });

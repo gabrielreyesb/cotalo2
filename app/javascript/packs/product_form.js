@@ -4,9 +4,6 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 // Import Chart.js
 import 'chart.js/auto';
 
-// Debug message to confirm the script is loaded
-console.log('product_form.js loaded successfully');
-
 // Set Vue feature flags - required for Vue 3 esm-bundler
 window.__VUE_OPTIONS_API__ = true;
 window.__VUE_PROD_DEVTOOLS__ = false;

@@ -88,13 +88,6 @@
                 </div>
               </div>
             </div>
-            
-            <div class="d-flex justify-content-end gap-2 mt-4">
-              <button type="button" class="btn btn-secondary" @click="$emit('cancel')">Cancelar</button>
-              <button type="submit" class="btn btn-primary">
-                {{ isNew ? 'Crear producto' : 'Actualizar producto' }}
-              </button>
-            </div>
           </form>
         </div>
       </div>

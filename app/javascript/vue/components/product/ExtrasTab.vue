@@ -199,9 +199,6 @@ export default {
     selectedExtra() {
       if (!this.selectedExtraId) return null;
       const extra = this.availableExtras.find(extra => extra.id === this.selectedExtraId);
-      if (extra) {
-        console.log('Selected extra:', extra);
-      }
       return extra;
     },
     totalCost() {
@@ -247,12 +244,7 @@ export default {
     updateGlobalComments() {
       this.$emit('update:comments', this.globalComments);
     },
-    updateExtrasCalculations() {
-      console.log('ExtrasTab: Recalculating extras with product quantity', this.productQuantity);
-      
-      // If we need to update calculations based on quantity in the future,
-      // this is where we would do it
-      
+    updateExtrasCalculations() {      
       // For now, just emit the current extras to ensure pricing gets updated
       this.$emit('update:product-extras', [...this.productExtras]);
     },
@@ -265,18 +257,15 @@ export default {
   watch: {
     // Watch for changes to product quantity
     productQuantity() {
-      console.log('ExtrasTab: Product quantity changed to', this.productQuantity);
       this.updateExtrasCalculations();
     },
     // Also watch for changes to extras array
     productExtras: {
       handler(newExtras) {
-        console.log('ExtrasTab: Extras array changed, checking for recalculation flag');
         // Check if any extras have the recalculation flag
         const needsRecalculation = newExtras.some(extra => extra._needsRecalculation);
         
         if (needsRecalculation) {
-          console.log('ExtrasTab: Found extras needing recalculation');
           this.updateExtrasCalculations();
         }
       },
@@ -284,12 +273,6 @@ export default {
     }
   },
   mounted() {
-    console.log('ExtrasTab mounted with props:', {
-      productExtras: this.productExtras,
-      availableExtras: this.availableExtras,
-      comments: this.comments
-    });
-    
     // Need to import Bootstrap Modal JS
     import('bootstrap/js/dist/modal');
   }

@@ -125,7 +125,6 @@ export default {
       this.$emit('save:product');
     },
     recalculatePricing() {
-      console.log('Manually triggering pricing recalculation');
       this.$emit('recalculate:pricing');
     },
     handleWastePercentageChange() {
