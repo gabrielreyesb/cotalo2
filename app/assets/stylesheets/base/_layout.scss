@@ -15,7 +15,6 @@ body {
   line-height: 1.5;
   background-color: var(--dark-bg);
   color: var(--text-primary);
-  overflow-y: auto;
 }
 
 #app {
@@ -26,12 +25,19 @@ body {
 
 // Main content area
 .main-content {
-  flex: 1;
+  flex: 1 0 auto;
   display: flex;
   flex-direction: column;
-  padding: 1.5rem 0;
   position: relative;
-  overflow: visible;
+  min-height: 0;
+  
+  .container-fluid {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: auto;
+  }
 }
 
 // Container adjustments
@@ -40,12 +46,6 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 1rem 15px;
-  
-  &.main-content {
-    display: flex;
-    flex-direction: column;
-    overflow: visible;
-  }
 }
 
 // Footer positioning
@@ -55,11 +55,13 @@ body {
   background-color: var(--nav-bg);
   border-top: 1px solid var(--border-color);
   color: var(--text-secondary);
+  margin-top: auto;
 }
 
 // Product form specific layout
 #product-form-app {
   display: flex;
   flex-direction: column;
-  position: relative;
+  flex: 1;
+  min-height: 0;
 } 

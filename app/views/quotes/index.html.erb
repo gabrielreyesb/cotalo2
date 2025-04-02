@@ -73,7 +73,8 @@
                             <% end %>
                             <%= link_to pdf_quote_path(quote, format: :pdf), class: "btn btn-sm btn-outline-secondary", 
                                 data: { bs_toggle: "tooltip" }, 
-                                title: "Descargar PDF" do %>
+                                title: "Descargar PDF",
+                                target: "_blank" do %>
                               <i class="fas fa-file-pdf"></i>
                             <% end %>
                             <%= link_to duplicate_quote_path(quote), class: "btn btn-sm btn-outline-info", 
@@ -149,7 +150,8 @@
                     <% end %>
                     <%= link_to pdf_quote_path(quote, format: :pdf), class: "btn btn-sm btn-outline-secondary", 
                         data: { bs_toggle: "tooltip" }, 
-                        title: "Descargar PDF" do %>
+                        title: "Descargar PDF",
+                        target: "_blank" do %>
                       <i class="fas fa-file-pdf fa-sm"></i>
                     <% end %>
                     <%= link_to duplicate_quote_path(quote), class: "btn btn-sm btn-outline-info", 

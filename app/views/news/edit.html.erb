@@ -1,0 +1,14 @@
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Editar Novedad</h1>
+    <%= link_to news_index_path, class: "btn btn-secondary" do %>
+      <i class="fas fa-arrow-left"></i> Volver
+    <% end %>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <%= render 'form', news: @news %>
+    </div>
+  </div>
+</div>

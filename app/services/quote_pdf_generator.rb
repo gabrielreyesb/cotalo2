@@ -148,17 +148,19 @@ class QuotePdfGenerator
            
           # Get resistance from the materials
           resistance = "N/A"
-          client_description = "N/A"
+          client_descriptions = []
            
-          # If there are materials in the product's JSON, use the first one or the selected one
+          # If there are materials in the product's JSON, collect all client descriptions
           if product.materials.present?
-            selected_material = product.materials.find { |m| m["id"].to_s == product_info["selected_material_id"].to_s }
-            material = selected_material || product.materials.first
-             
-            # Use resistance and client_description from the stored material data
-            resistance = material["resistance"] if material && material["resistance"].present?
-            client_description = material["client_description"] if material && material["client_description"].present?
+            product.materials.each do |material|
+              if material["client_description"].present?
+                client_descriptions << material["client_description"]
+              end
+            end
           end
+          
+          # Join all client descriptions with comma and space
+          client_description = client_descriptions.any? ? client_descriptions.join(", ") : "N/A"
           
           # Combine all processes into a single string
           process_descriptions = []

@@ -26,29 +26,27 @@
     
     <%= render 'shared/navbar' %>
     
-    <div class="container-fluid py-4">
-      <% if notice %>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-          <%= notice %>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-      <% end %>
-      
-      <% if alert %>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-          <%= alert %>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-      <% end %>
-      
-      <%= yield %>
-    </div>
-
-    <footer class="footer text-center">
-      <div class="container">
-        <p>&copy; <%= Date.today.year %> Cotalo - Todos los derechos reservados (v<%= app_version %>)</p>
+    <main class="main-content">
+      <div class="container-fluid py-4">
+        <% if notice %>
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <%= notice %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        <% end %>
+        
+        <% if alert %>
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <%= alert %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        <% end %>
+        
+        <%= yield %>
       </div>
-    </footer>
+    </main>
+
+    <%= render 'shared/footer' %>
 
     <!-- Simple dropdown fix -->
     <style>

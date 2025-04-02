@@ -8,13 +8,24 @@
     
     <% if user_signed_in? %>
       <div class="d-md-flex justify-content-md-center mb-3">
-        <%= link_to "Ver productos", products_path, class: "btn btn-primary mx-2", style: "min-width: 150px; max-width: 200px;" %>
-        <%= link_to "Cotizaciones", quotes_path, class: "btn btn-primary mx-2", style: "min-width: 150px; max-width: 200px;" %>
+        <%= link_to products_path, class: "btn btn-primary mx-2", style: "min-width: 150px; max-width: 200px;" do %>
+          <i class="fas fa-box me-2"></i> Ver productos
+        <% end %>
+        <%= link_to quotes_path, class: "btn btn-primary mx-2", style: "min-width: 150px; max-width: 200px;" do %>
+          <i class="fas fa-file-invoice-dollar me-2"></i> Cotizaciones
+        <% end %>
+        <%= link_to news_index_path, class: "btn btn-outline-primary mx-2", style: "min-width: 150px; max-width: 200px;" do %>
+          <i class="fas fa-newspaper me-2"></i> Novedades
+        <% end %>
       </div>
     <% else %>
       <div class="d-md-flex justify-content-md-center mb-3">
-        <%= link_to "Iniciar sesión", new_user_session_path, class: "btn btn-primary mx-2", style: "min-width: 150px; max-width: 200px;" %>
-        <%= link_to "Registrarse", new_user_registration_path, class: "btn btn-outline-primary mx-2", style: "min-width: 150px; max-width: 200px;" %>
+        <%= link_to new_user_session_path, class: "btn btn-primary mx-2", style: "min-width: 150px; max-width: 200px;" do %>
+          <i class="fas fa-sign-in-alt me-2"></i> Iniciar sesión
+        <% end %>
+        <%= link_to new_user_registration_path, class: "btn btn-outline-primary mx-2", style: "min-width: 150px; max-width: 200px;" do %>
+          <i class="fas fa-user-plus me-2"></i> Registrarse
+        <% end %>
       </div>
     <% end %>
   </div>

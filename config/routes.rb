@@ -1,9 +1,18 @@
 Rails.application.routes.draw do
+  get 'news/index'
+  get 'news/new'
+  get 'news/create'
+  get 'news/edit'
+  get 'news/update'
+  get 'news/destroy'
   # Authentication routes
   devise_for :users
   
   # Dashboard route
   get 'dashboard', to: 'home#dashboard', as: 'dashboard'
+  
+  # News routes
+  resources :news
   
   # Catalog routes
   resources :materials

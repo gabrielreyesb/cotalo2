@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_03_29_192134) do
+ActiveRecord::Schema[7.1].define(version: 2025_04_02_173212) do
   create_table "app_configs", force: :cascade do |t|
     t.string "key", null: false
     t.text "value"
@@ -71,6 +71,14 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_29_192134) do
     t.datetime "updated_at", null: false
     t.index ["unit_id"], name: "index_materials_on_unit_id"
     t.index ["user_id"], name: "index_materials_on_user_id"
+  end
+
+  create_table "news", force: :cascade do |t|
+    t.string "title"
+    t.text "content"
+    t.datetime "published_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "price_margins", force: :cascade do |t|

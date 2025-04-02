@@ -1,0 +1,32 @@
+<%= form_with(model: news, local: true) do |f| %>
+  <% if news.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(news.errors.count, "error") %> impidieron guardar la novedad:</h4>
+      <ul>
+        <% news.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= f.label :title, "Título", class: "form-label" %>
+    <%= f.text_field :title, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :content, "Contenido", class: "form-label" %>
+    <%= f.text_area :content, class: "form-control", rows: 10 %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :published_at, "Fecha de publicación", class: "form-label" %>
+    <%= f.datetime_local_field :published_at, class: "form-control" %>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <%= link_to "Cancelar", news_index_path, class: "btn btn-secondary me-2" %>
+    <%= f.submit "Guardar", class: "btn btn-primary" %>
+  </div>
+<% end %> 
