@@ -69,6 +69,7 @@ Rails.application.routes.draw do
           put :update_materials_comments
           put :update_pricing
           put :update_selected_material
+          put :update_include_extras_in_subtotal
         end
       end
       get 'extras', to: 'products#available_extras'

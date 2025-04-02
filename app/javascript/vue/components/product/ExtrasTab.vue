@@ -54,6 +54,18 @@
 
       <!-- Table view for medium and large screens -->
       <div v-if="productExtras.length" class="d-none d-md-block">
+        <div class="form-check mb-3">
+          <input 
+            class="form-check-input" 
+            type="checkbox" 
+            id="include-extras-subtotal" 
+            v-model="includeInSubtotal"
+            @change="updateIncludeInSubtotal"
+          >
+          <label class="form-check-label" for="include-extras-subtotal">
+            Incluir extras al valor del producto
+          </label>
+        </div>
         <table class="table table-dark table-striped">
           <thead>
             <tr>
@@ -95,6 +107,18 @@
 
       <!-- Card view for small screens -->
       <div v-if="productExtras.length" class="d-md-none">
+        <div class="form-check mb-3">
+          <input 
+            class="form-check-input" 
+            type="checkbox" 
+            id="include-extras-subtotal-mobile" 
+            v-model="includeInSubtotal"
+            @change="updateIncludeInSubtotal"
+          >
+          <label class="form-check-label" for="include-extras-subtotal-mobile">
+            Incluir extras en el subtotal del producto
+          </label>
+        </div>
         <div v-for="(extra, index) in productExtras" :key="index" class="card mb-3 shadow-sm">
           <div class="card-body p-2">
             <!-- First row: Extra description only -->
@@ -183,13 +207,18 @@ export default {
     productQuantity: {
       type: Number,
       default: 1
+    },
+    includeExtrasInSubtotal: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
     return {
       selectedExtraId: '',
       quantity: 1,
-      globalComments: this.comments || ''
+      globalComments: this.comments || '',
+      includeInSubtotal: this.includeExtrasInSubtotal
     }
   },
   computed: {
@@ -235,11 +264,9 @@ export default {
       this.quantity = 1;
     },
     removeExtra(index) {
-      if (confirm('¿Estás seguro de que quieres eliminar este extra?')) {
-        const updatedExtras = [...this.productExtras];
-        updatedExtras.splice(index, 1);
-        this.$emit('update:product-extras', updatedExtras);
-      }
+      const updatedExtras = [...this.productExtras];
+      updatedExtras.splice(index, 1);
+      this.$emit('update:product-extras', updatedExtras);
     },
     updateGlobalComments() {
       this.$emit('update:comments', this.globalComments);
@@ -252,6 +279,9 @@ export default {
       const updatedExtras = [...this.productExtras];
       updatedExtras[index].quantity = this.productExtras[index].quantity;
       this.$emit('update:product-extras', updatedExtras);
+    },
+    updateIncludeInSubtotal() {
+      this.$emit('update:include-extras-in-subtotal', this.includeInSubtotal);
     }
   },
   watch: {
@@ -278,3 +308,15 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.form-check-input:checked {
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.form-check-input:focus {
+  border-color: #198754;
+  box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+}
+</style>

@@ -37,7 +37,7 @@ class ProductsController < ApplicationController
     respond_to do |format|
       if @product.update(product_params)
         @product.calculate_totals.save
-        format.html { redirect_to products_path, notice: 'Product was successfully updated.' }
+        format.html { redirect_to products_path }
         format.json { render :show, status: :ok, location: @product }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -51,7 +51,7 @@ class ProductsController < ApplicationController
     
     respond_to do |format|
       if new_product.save
-        format.html { redirect_to edit_product_path(new_product), notice: 'Product was successfully duplicated.' }
+        format.html { redirect_to edit_product_path(new_product) }
         format.json { render :show, status: :created, location: new_product }
       else
         format.html { redirect_to products_path, alert: 'Failed to duplicate product.' }
@@ -68,7 +68,7 @@ class ProductsController < ApplicationController
           alert: "No se puede eliminar el producto porque está siendo utilizado en las siguientes cotizaciones: #{quotes}"
       else
         @product.destroy
-        redirect_to products_path, notice: 'Producto eliminado exitosamente.'
+        redirect_to products_path
       end
     rescue => e
       redirect_to products_path, alert: 'Error al intentar eliminar el producto.'

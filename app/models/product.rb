@@ -167,8 +167,9 @@ class Product < ApplicationRecord
     # Calculate extras cost
     extras_cost = extras.sum { |e| e["subtotal_price"].to_f }
     
-    # Calculate subtotal
-    subtotal = materials_cost + processes_cost + extras_cost
+    # Calculate subtotal based on whether extras should be included
+    include_extras_in_subtotal = data["include_extras_in_subtotal"] != false
+    subtotal = materials_cost + processes_cost + (include_extras_in_subtotal ? extras_cost : 0)
     
     # Get waste percentage (from product or user default)
     waste_pct = pricing["waste_percentage"] || pricing[:waste_percentage] || user.waste_percentage

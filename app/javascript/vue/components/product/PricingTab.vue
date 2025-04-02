@@ -13,7 +13,7 @@
                 <th>Costo de procesos:</th>
                 <td class="fw-bold text-end">{{ formatCurrency(pricing.processes_cost) }}</td>
               </tr>
-              <tr>
+              <tr :class="{ 'bg-danger bg-opacity-10': pricing.extras_cost > 0 && pricing.include_extras_in_subtotal === false }">
                 <th>Costo de extras:</th>
                 <td class="fw-bold text-end">{{ formatCurrency(pricing.extras_cost) }}</td>
               </tr>

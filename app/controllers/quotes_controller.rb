@@ -43,7 +43,7 @@ class QuotesController < ApplicationController
           end
         end
         
-        redirect_to quotes_path, notice: "Cotización creada exitosamente."
+        redirect_to quotes_path
       else
         @products = current_user.products
         render :new

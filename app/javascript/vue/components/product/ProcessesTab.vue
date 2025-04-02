@@ -298,17 +298,15 @@ export default {
       this.selectedProcessId = '';
     },
     removeProcess(index) {
-      if (confirm('¿Estás seguro de que quieres eliminar este proceso?')) {
-        const processToRemove = this.productProcesses[index];
-        const updatedProcesses = [...this.productProcesses];
-        updatedProcesses.splice(index, 1);
-        
-        this.$emit('update:product-processes', updatedProcesses);
-        
-        // Calculate and emit the new total cost
-        const newTotalCost = this.totalCost - (parseFloat(processToRemove.price) || 0);
-        this.$emit('update:processes-cost', newTotalCost);
-      }
+      const processToRemove = this.productProcesses[index];
+      const updatedProcesses = [...this.productProcesses];
+      updatedProcesses.splice(index, 1);
+      
+      this.$emit('update:product-processes', updatedProcesses);
+      
+      // Calculate and emit the new total cost
+      const newTotalCost = this.totalCost - (parseFloat(processToRemove.price) || 0);
+      this.$emit('update:processes-cost', newTotalCost);
     },
     updateGlobalComments() {
       this.$emit('update:comments', this.globalComments);

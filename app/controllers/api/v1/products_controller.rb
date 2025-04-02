@@ -143,6 +143,17 @@ class Api::V1::ProductsController < ApplicationController
     end
   end
 
+  # PUT /api/v1/products/:id/update_include_extras_in_subtotal
+  def update_include_extras_in_subtotal
+    @product.data["include_extras_in_subtotal"] = params[:include_extras_in_subtotal]
+    
+    if @product.save
+      render json: { success: true }
+    else
+      render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_product

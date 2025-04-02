@@ -103,8 +103,10 @@
             :available-extras="availableExtras"
             :comments="product && product.data && product.data.extras_comments ? product.data.extras_comments : ''"
             :product-quantity="product && product.data && product.data.general_info ? product.data.general_info.quantity : 1"
+            :include-extras-in-subtotal="product && product.data && product.data.include_extras_in_subtotal !== undefined ? product.data.include_extras_in_subtotal : true"
             @update:product-extras="updateExtras"
             @update:comments="updateExtrasComments"
+            @update:include-extras-in-subtotal="updateIncludeExtrasInSubtotal"
           />
         </div>
         
@@ -866,7 +868,15 @@ export default {
       pricing.processes_cost = parseFloat(pricing.processes_cost) || 0;
       pricing.extras_cost = parseFloat(pricing.extras_cost) || 0;
       
-      pricing.subtotal = pricing.materials_cost + pricing.processes_cost + pricing.extras_cost;
+      // Calculate subtotal based on whether extras should be included
+      const includeExtrasInSubtotal = this.product.data.include_extras_in_subtotal !== undefined ? 
+        this.product.data.include_extras_in_subtotal : true;
+      
+      pricing.subtotal = pricing.materials_cost + pricing.processes_cost + 
+        (includeExtrasInSubtotal ? pricing.extras_cost : 0);
+      
+      // Add the include_extras_in_subtotal property to the pricing object
+      pricing.include_extras_in_subtotal = includeExtrasInSubtotal;
       
       // Calculate waste
       pricing.waste_value = pricing.subtotal * (pricing.waste_percentage / 100);
@@ -891,7 +901,6 @@ export default {
       
       // Calculate final price per piece
       pricing.final_price_per_piece = pricing.total_price / quantity;
-      
     },
     async ensurePricingUpdated() {
       if (!this.product || !this.product.data || !this.product.data.pricing) return;
@@ -989,22 +998,28 @@ export default {
             throw new Error(`Failed to create product: ${response.status} ${response.statusText}`);
           }
           
-          const createdProduct = await response.json();
-          
-          // Redirect to the products index page instead of edit
+          // Redirect to products index after successful creation
           window.location.href = '/products';
+          
         } catch (error) {
           console.error('Error creating product:', error);
-          this.error = error.message;
         } finally {
           this.saving = false;
         }
       } else {
-        // For existing products, update the pricing data
+        // For existing products, update with all data
+        const productData = {
+          description: this.product.description,
+          data: {
+            ...this.product.data,
+            shouldRedirect: true
+          }
+        };
+        
         try {
           this.saving = true;
           
-          const response = await fetch(`/api/v1/products/${this.productId}/update_pricing`, {
+          const response = await fetch(`/api/v1/products/${this.productId}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
@@ -1013,21 +1028,19 @@ export default {
               'X-Requested-With': 'XMLHttpRequest'
             },
             body: JSON.stringify({
-              pricing: this.product.data.pricing
+              product: productData
             })
           });
           
           if (!response.ok) {
-            throw new Error(`Failed to update pricing: ${response.status} ${response.statusText}`);
+            throw new Error('Failed to update product');
           }
           
-          const updatedProduct = await response.json();
-          this.product = updatedProduct;
+          // Redirect to products index after successful update
+          window.location.href = '/products';
           
-          // Remove the automatic redirect from here
-          // window.location.href = '/products';
         } catch (error) {
-          console.error('Error updating pricing:', error);
+          console.error('Error updating product:', error);
         } finally {
           this.saving = false;
         }
@@ -1261,8 +1274,44 @@ export default {
         
         return suggestedMargin;
       } catch (error) {
-        console.error('Error calculating suggested margin:', error);
-        return 0;
+        console.warn('Price margins API not available, using default margin:', error);
+        // Use a default margin based on the total price
+        if (totalBeforeMargin <= 1000) return 30; // 30% for small orders
+        if (totalBeforeMargin <= 5000) return 25; // 25% for medium orders
+        return 20; // 20% for large orders
+      }
+    },
+    async updateIncludeExtrasInSubtotal(value) {
+      if (!this.product || !this.product.data) return;
+      
+      // Update locally
+      this.product.data.include_extras_in_subtotal = value;
+      
+      // Recalculate pricing
+      this.recalculatePricing();
+      
+      // If we have a productId, also update on the server
+      if (this.productId) {
+        try {
+          const response = await fetch(`/api/v1/products/${this.productId}/update_include_extras_in_subtotal`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-CSRF-Token': this.apiToken,
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+              include_extras_in_subtotal: value
+            })
+          });
+          
+          if (!response.ok) {
+            console.error('Failed to update include extras in subtotal preference');
+          }
+        } catch (error) {
+          console.error('Error updating include extras in subtotal preference:', error);
+        }
       }
     }
   },
