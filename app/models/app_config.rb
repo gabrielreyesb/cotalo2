@@ -9,6 +9,7 @@ class AppConfig < ApplicationRecord
   WASTE_PERCENTAGE = 'waste_percentage'
   WIDTH_MARGIN = 'width_margin'
   LENGTH_MARGIN = 'length_margin'
+  COMPANY_LOGO = 'company_logo'
   
   # API Keys (stored in ENV but configured through app)
   PIPEDRIVE_API_KEY = 'pipedrive_api_key'
@@ -69,14 +70,12 @@ class AppConfig < ApplicationRecord
     
     # Get Pipedrive API key
     def get_pipedrive_api_key
-      # Simply find the first record with that key and return its value
       config = AppConfig.find_by(key: PIPEDRIVE_API_KEY)
       config&.value
     end
     
     # Get Facturama API key
     def get_facturama_api_key
-      # Simply find the first record with that key and return its value
       config = AppConfig.find_by(key: FACTURAMA_API_KEY)
       config&.value
     end

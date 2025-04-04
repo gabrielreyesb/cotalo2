@@ -95,8 +95,8 @@ Rails.application.routes.draw do
   resource :app_configs, only: [:edit, :update] do
     collection do
       put :update_api_key
-      get :test_facturama_api
-      post :test_create_product
+      post :test_facturama_api
+      post :update_logo
     end
   end
   

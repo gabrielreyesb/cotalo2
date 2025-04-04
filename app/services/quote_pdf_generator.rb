@@ -16,12 +16,16 @@ class QuotePdfGenerator
         # Save current cursor position
         original_cursor = pdf.cursor
 
-        # Add logo and date at the top
-        logo_path = "#{Rails.root}/app/assets/images/logo.png"
-        if File.exist?(logo_path) && File.size(logo_path) > 0
+        # Get logo URL from user's config
+        logo_url = quote.user.get_config(AppConfig::COMPANY_LOGO)
+
+        if logo_url.present?
           begin
+            # Download the image from Cloudinary
+            logo_tempfile = Down.download(logo_url)
+            
             # Position logo higher than the top margin
-            pdf.image logo_path, width: 160, at: [0, pdf.bounds.top + 15]
+            pdf.image logo_tempfile.path, width: 160, at: [0, pdf.bounds.top + 15]
             
             # Add quote number in the middle
             pdf.text_box "Cotización: #{quote.quote_number}",
@@ -36,32 +40,16 @@ class QuotePdfGenerator
                       at: [0, pdf.bounds.top + 15],
                       width: pdf.bounds.width,
                       align: :right
+                      
+            # Clean up the tempfile
+            logo_tempfile.close
+            logo_tempfile.unlink
           rescue StandardError => e
             Rails.logger.error("Error including logo in PDF: #{e.message}")
-            # Fallback to text logo
-            pdf.text_box "SURTIBOX", at: [0, pdf.bounds.top + 15], size: 24, style: :bold
-            pdf.text_box "Soluciones en empaques y más...", at: [0, pdf.bounds.top - 10], size: 12, style: :italic
-            
-            # Add quote number in the middle even in fallback
-            pdf.text_box "Cotización: #{quote.quote_number}",
-                      at: [pdf.bounds.width/3, pdf.bounds.top + 15],
-                      width: pdf.bounds.width/3,
-                      align: :center,
-                      size: 12,
-                      style: :bold
+            fallback_header(pdf)
           end
         else
-          # No logo file - use text instead
-          pdf.text_box "SURTIBOX", at: [0, pdf.bounds.top + 15], size: 24, style: :bold
-          pdf.text_box "Soluciones en empaques y más...", at: [0, pdf.bounds.top - 10], size: 12, style: :italic
-          
-          # Add quote number in the middle even without logo
-          pdf.text_box "Cotización: #{quote.quote_number}",
-                    at: [pdf.bounds.width/3, pdf.bounds.top + 15],
-                    width: pdf.bounds.width/3,
-                    align: :center,
-                    size: 12,
-                    style: :bold
+          fallback_header(pdf)
         end
 
         # Move cursor down for separator line
@@ -70,6 +58,20 @@ class QuotePdfGenerator
 
         # Move cursor to where content should start
         pdf.move_cursor_to pdf.bounds.top - 50
+      end
+
+      def fallback_header(pdf)
+        # Fallback to text logo
+        pdf.text_box "SURTIBOX", at: [0, pdf.bounds.top + 15], size: 24, style: :bold
+        pdf.text_box "Soluciones en empaques y más...", at: [0, pdf.bounds.top - 10], size: 12, style: :italic
+        
+        # Add quote number in the middle
+        pdf.text_box "Cotización: #{quote.quote_number}",
+                  at: [pdf.bounds.width/3, pdf.bounds.top + 15],
+                  width: pdf.bounds.width/3,
+                  align: :center,
+                  size: 12,
+                  style: :bold
       end
       
       # Add header to first page

@@ -1,6 +1,6 @@
 class AppConfigsController < ApplicationController
   before_action :authenticate_user!
-  skip_before_action :verify_authenticity_token, only: [:update_api_key, :test_facturama_api]
+  skip_before_action :verify_authenticity_token, only: [:update_api_key, :test_facturama_api, :update_logo]
   
   def edit
     # Get raw percentage values
@@ -13,7 +13,8 @@ class AppConfigsController < ApplicationController
     @general_settings = {
       waste_percentage: waste_pct,
       width_margin: current_user.get_config(AppConfig::WIDTH_MARGIN) || 0,
-      length_margin: current_user.get_config(AppConfig::LENGTH_MARGIN) || 0
+      length_margin: current_user.get_config(AppConfig::LENGTH_MARGIN) || 0,
+      company_logo: current_user.get_config(AppConfig::COMPANY_LOGO)
     }
     
     @sales_conditions = {
@@ -168,48 +169,79 @@ class AppConfigsController < ApplicationController
   # Method to update API keys
   def update_api_key
     if params[:pipedrive_api_key].present?
-      # Simply save the key directly to the user's record
       key_value = params[:pipedrive_api_key].strip
-      
-      # Clear any existing records
       AppConfig.where(key: AppConfig::PIPEDRIVE_API_KEY).delete_all
-      
-      # Create a fresh record with the exact key from the form
       AppConfig.create!(
         key: AppConfig::PIPEDRIVE_API_KEY,
         value: key_value,
         user_id: current_user.id
       )
-      
-      # Show the saved key in a flash message
-      flash[:notice] = "Pipedrive API key updated successfully"
     end
     
     if params[:facturama_api_key].present?
-      # Validate API key format
       key_value = params[:facturama_api_key].strip
-      
-      unless key_value.include?(':')
-        flash[:error] = "Invalid Facturama API key format. Expected format: username:password"
-        redirect_to edit_app_configs_path
-        return
-      end
-      
-      # Clear any existing records
       AppConfig.where(key: AppConfig::FACTURAMA_API_KEY).delete_all
-      
-      # Create a fresh record with the exact key from the form
       AppConfig.create!(
         key: AppConfig::FACTURAMA_API_KEY,
         value: key_value,
         user_id: current_user.id
       )
-      
-      # Show the saved key in a flash message
-      flash[:notice] = "Facturama API key updated successfully"
     end
     
     redirect_to edit_app_configs_path
+  end
+  
+  def update_logo
+    if params[:logo].present?
+      begin
+        # Validate file type
+        unless params[:logo].content_type.in?(%w[image/jpeg image/png image/gif])
+          render json: { success: false, error: 'Tipo de archivo no válido. Por favor sube una imagen JPG, PNG o GIF.' }, status: :unprocessable_entity
+          return
+        end
+
+        # Validate file size (2MB max)
+        if params[:logo].size > 2.megabytes
+          render json: { success: false, error: 'El archivo es demasiado grande. El tamaño máximo es 2MB.' }, status: :unprocessable_entity
+          return
+        end
+
+        # Log Cloudinary configuration
+        Rails.logger.info "Cloudinary Configuration before upload:"
+        Rails.logger.info "Cloud name: #{Cloudinary.config.cloud_name}"
+        Rails.logger.info "API key present: #{Cloudinary.config.api_key.present?}"
+        Rails.logger.info "API secret present: #{Cloudinary.config.api_secret.present?}"
+
+        # Upload to Cloudinary
+        result = Cloudinary::Uploader.upload(
+          params[:logo].tempfile, 
+          folder: "company_logos/#{current_user.id}",
+          public_id: "logo_#{Time.current.to_i}",
+          overwrite: true,
+          resource_type: :auto
+        )
+        
+        Rails.logger.info "Cloudinary upload successful. URL: #{result['secure_url']}"
+        
+        # Save the Cloudinary URL in AppConfig
+        current_user.set_config(AppConfig::COMPANY_LOGO, result['secure_url'])
+        
+        render json: { success: true, url: result['secure_url'] }
+      rescue Cloudinary::Api::Error => e
+        Rails.logger.error "Cloudinary API error: #{e.message}"
+        Rails.logger.error "Cloudinary Configuration at error:"
+        Rails.logger.error "Cloud name: #{Cloudinary.config.cloud_name}"
+        Rails.logger.error "API key present: #{Cloudinary.config.api_key.present?}"
+        Rails.logger.error "API secret present: #{Cloudinary.config.api_secret.present?}"
+        render json: { success: false, error: "Error de Cloudinary: #{e.message}" }, status: :unprocessable_entity
+      rescue => e
+        Rails.logger.error "Error uploading logo: #{e.message}"
+        Rails.logger.error e.backtrace.join("\n")
+        render json: { success: false, error: "Error interno del servidor: #{e.message}" }, status: :unprocessable_entity
+      end
+    else
+      render json: { success: false, error: 'No se ha seleccionado ningún archivo' }, status: :unprocessable_entity
+    end
   end
   
   private

@@ -80,3 +80,7 @@ group :test do
 end
 
 gem "dotenv-rails", "~> 3.1"
+
+gem "cloudinary", "~> 2.3"
+
+gem "down", "~> 5.4"
