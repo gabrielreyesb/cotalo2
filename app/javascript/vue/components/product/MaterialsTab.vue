@@ -90,6 +90,13 @@
                     class="form-check-input me-2"
                   />
                   <button 
+                    class="btn btn-sm btn-outline-info me-1" 
+                    @click="showVisualization(material)"
+                    title="Visualizar distribución"
+                  >
+                    <i class="fa fa-eye"></i>
+                  </button>
+                  <button 
                     class="btn btn-sm btn-outline-danger" 
                     @click="removeMaterial(index)"
                     title="Eliminar material"
@@ -170,6 +177,12 @@
                   v-model="selectedMaterial"
                   class="form-check-input me-2"
                 />
+                <button 
+                  class="btn btn-sm btn-outline-info me-1" 
+                  @click="showVisualization(material)"
+                >
+                  <i class="fa fa-eye"></i>
+                </button>
                 <button 
                   class="btn btn-sm btn-outline-danger px-2 py-1" 
                   @click="removeMaterial(index)"
@@ -285,12 +298,27 @@
       </div>
     </div>
 
+    <material-visualization-modal
+      v-if="showVisualizationModal"
+      :material="selectedMaterialForVisualization"
+      :product-width="productWidth"
+      :product-length="productLength"
+      :width-margin="widthMargin"
+      :length-margin="lengthMargin"
+      @close="showVisualizationModal = false"
+    />
+
   </div>
 </template>
 
 <script>
+import MaterialVisualizationModal from './MaterialVisualizationModal.vue';
+
 export default {
   name: 'MaterialsTab',
+  components: {
+    MaterialVisualizationModal
+  },
   props: {
     productMaterials: {
       type: Array,
@@ -333,6 +361,8 @@ export default {
     return {
       materialIdForAdd: '',
       showCustomMaterialForm: false,
+      showVisualizationModal: false,
+      selectedMaterialForVisualization: null,
       customMaterial: {
         description: '',
         ancho: null,
@@ -561,6 +591,10 @@ export default {
         price: null
       };
       this.showCustomMaterialForm = false;
+    },
+    showVisualization(material) {
+      this.selectedMaterialForVisualization = material;
+      this.showVisualizationModal = true;
     }
   },
   watch: {
