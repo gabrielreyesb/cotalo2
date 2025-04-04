@@ -6,7 +6,7 @@ class QuotesController < ApplicationController
   layout 'vue_application', only: [:new, :edit]
   
   def index
-    @quotes = current_user.quotes.order(created_at: :desc)
+    @quotes = current_user.quotes.order(created_at: :desc).limit(10)
   end
   
   def show

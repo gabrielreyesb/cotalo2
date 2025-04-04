@@ -2,10 +2,50 @@
   <div class="row mb-4">
     <div class="col-12">
       <div class="d-flex justify-content-between align-items-center">
-        <h1>Panel de control</h1>
+        <div>
+          <h1>Panel de control</h1>
+          <p class="text-light-gray small mb-0">Resumen de actividad</p>
+        </div>
       </div>
     </div>
   </div>
+
+  <style>
+    /* Product description link */
+    .product-link {
+      color: var(--cotalo-green) !important;
+      text-decoration: none;
+      display: block;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .product-link:hover {
+      text-decoration: underline;
+    }
+    
+    /* Fix table layout to prevent wrapping */
+    .table {
+      table-layout: fixed;
+    }
+    
+    .table th, .table td {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    /* Light gray text that is visible in dark mode */
+    .text-light-gray {
+      color: #adb5bd !important;
+    }
+    
+    /* Prevent text wrapping in table headers */
+    .nowrap {
+      white-space: nowrap;
+    }
+  </style>
 
   <div class="row">
     <div class="col-md-6 mb-4">
@@ -49,26 +89,55 @@
     </div>
   </div>
 
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div>
+          <h3>Productos recientes</h3>
+          <p class="text-light-gray small mb-0">Mostrando los 5 productos más recientes</p>
+        </div>
+        <%= link_to new_product_path, class: "btn btn-sm btn-primary" do %>
+          <i class="fa fa-plus me-1"></i> Nuevo producto
+        <% end %>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div>
+          <h3>Cotizaciones recientes</h3>
+          <p class="text-light-gray small mb-0">Mostrando las 5 cotizaciones más recientes</p>
+        </div>
+        <%= link_to new_quote_path, class: "btn btn-sm btn-primary" do %>
+          <i class="fa fa-plus me-1"></i> Nueva cotización
+        <% end %>
+      </div>
+    </div>
+  </div>
+
   <div class="row d-none d-md-flex px-2">
     <div class="col-md-6 mb-4">
-      <div class="card shadow-lg border-0" style="border-bottom: 3px solid #28a745 !important;">
-        <div class="card-header p-3">
-          <h5 class="mb-0">Productos recientes</h5>
-        </div>
-        <div class="card-body p-4">
-          <% if current_user.products.any? %>
+      <% if current_user.products.any? %>
+        <div class="card shadow-lg border-0" style="border-bottom: 3px solid #28a745 !important;">
+          <div class="card-body p-4">
             <div class="table-responsive">
-              <table class="table">
+              <table class="table table-striped table-hover">
                 <thead>
                   <tr>
-                    <th>Descripción</th>
-                    <th class="text-end">Precio</th>
+                    <th style="width: 70%;">
+                      <span class="nowrap">Descripción</span>
+                    </th>
+                    <th style="width: 30%;" class="text-end">
+                      <span class="nowrap">Precio</span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   <% current_user.products.order(created_at: :desc).limit(5).each do |product| %>
                     <tr>
-                      <td><%= link_to product.description, product_path(product) %></td>
+                      <td class="text-truncate" style="max-width: 0;">
+                        <%= link_to product.description, product_path(product), class: "product-link", title: product.description %>
+                      </td>
                       <td class="text-end"><%= number_to_currency(product.data && product.data.dig('pricing', 'total_price') || 0) %></td>
                     </tr>
                   <% end %>
@@ -79,36 +148,43 @@
             <div class="text-end mt-4">
               <%= link_to "Ver todos los productos", products_path, class: "btn btn-outline-primary" %>
             </div>
-          <% else %>
+          </div>
+        </div>
+      <% else %>
+        <div class="card shadow-lg border-0" style="border-bottom: 3px solid #28a745 !important;">
+          <div class="card-body p-4">
             <div class="alert alert-info">
               No hay productos. <%= link_to "Crea tu primer producto", new_product_path %>.
             </div>
-          <% end %>
+          </div>
         </div>
-      </div>
+      <% end %>
     </div>
     
     <div class="col-md-6 mb-4">
-      <div class="card shadow-lg border-0" style="border-bottom: 3px solid #28a745 !important;">
-        <div class="card-header p-3">
-          <h5 class="mb-0">Cotizaciones recientes</h5>
-        </div>
-        <div class="card-body p-4">
-          <% if current_user.quotes.any? %>
+      <% if current_user.quotes.any? %>
+        <div class="card shadow-lg border-0" style="border-bottom: 3px solid #28a745 !important;">
+          <div class="card-body p-4">
             <div class="table-responsive">
-              <table class="table">
+              <table class="table table-striped table-hover">
                 <thead>
                   <tr>
-                    <th>Número</th>
-                    <th>Cliente</th>
-                    <th class="text-end">Total</th>
+                    <th style="width: 20%;">
+                      <span class="nowrap">Número</span>
+                    </th>
+                    <th style="width: 50%;">
+                      <span class="nowrap">Cliente</span>
+                    </th>
+                    <th style="width: 30%;" class="text-end">
+                      <span class="nowrap">Total</span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   <% current_user.quotes.order(created_at: :desc).limit(5).each do |quote| %>
                     <tr>
-                      <td><%= link_to quote.quote_number, quote_path(quote) %></td>
-                      <td><%= quote.customer_name %></td>
+                      <td><%= link_to quote.quote_number, quote_path(quote), class: "product-link" %></td>
+                      <td class="text-truncate" style="max-width: 0;" title="<%= quote.customer_name %>"><%= quote.customer_name %></td>
                       <td class="text-end"><%= number_to_currency(quote.data && quote.data.dig('totals', 'total') || 0) %></td>
                     </tr>
                   <% end %>
@@ -119,13 +195,17 @@
             <div class="text-end mt-4">
               <%= link_to "Ver todas las cotizaciones", quotes_path, class: "btn btn-outline-primary" %>
             </div>
-          <% else %>
+          </div>
+        </div>
+      <% else %>
+        <div class="card shadow-lg border-0" style="border-bottom: 3px solid #28a745 !important;">
+          <div class="card-body p-4">
             <div class="alert alert-info">
               No hay cotizaciones. <%= link_to "Crea tu primera cotización", new_quote_path %>.
             </div>
-          <% end %>
+          </div>
         </div>
-      </div>
+      <% end %>
     </div>
   </div>
 </div>
