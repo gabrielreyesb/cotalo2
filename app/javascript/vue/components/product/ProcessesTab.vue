@@ -4,8 +4,23 @@
       <div class="card">
         <div class="card-body">
           <div class="row align-items-end">
-            <div class="col-md-6 mb-3 mb-md-0 me-md-2">
-              <label for="process-select" class="form-label">Seleccionar proceso</label>
+            <div class="col-md-9 mb-3 mb-md-0">
+              <div class="d-flex align-items-center">
+                <label for="process-select" class="form-label mb-0 me-2">Seleccionar proceso</label>
+                <button 
+                  type="button" 
+                  class="btn btn-outline-success btn-sm"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="right"
+                  data-bs-html="true"
+                  title="<strong>Cómo se calculan los costos:</strong><br>
+                  • <u>Pieza</u>: precio de proceso × cantidad de piezas de producto<br>
+                  • <u>Pliego</u>: precio de proceso × total de pliegos de material<br>
+                  • <u>Metro cuadrado</u>: precio de proceso × total de metros cuadrados de material"
+                >
+                  <i class="fa fa-question-circle"></i>
+                </button>
+              </div>
               <select 
                 id="process-select" 
                 v-model="selectedProcessId" 
@@ -21,12 +36,16 @@
                   {{ process.description }}
                 </option>
               </select>
+              <div v-if="validationMessage" class="text-danger mt-2">
+                {{ validationMessage }}
+              </div>
             </div>
             <div class="col-md-3 d-grid">
               <button 
                 class="btn btn-primary" 
                 @click="addProcess" 
                 :disabled="!canAdd"
+                :title="validationMessage"
               >
                 <i class="fa fa-plus me-1"></i> Agregar Proceso
               </button>
@@ -190,6 +209,14 @@ export default {
       type: Number,
       default: 1
     },
+    productWidth: {
+      type: Number,
+      default: 0
+    },
+    productLength: {
+      type: Number,
+      default: 0
+    },
     totalSheets: {
       type: Number,
       default: 0
@@ -205,17 +232,54 @@ export default {
     selectedMaterialData: {
       type: Object,
       default: () => null
+    },
+    productMaterials: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
     return {
       selectedProcessId: '',
-      globalComments: this.comments || ''
+      globalComments: this.comments || '',
+      validationMessage: ''
     }
   },
   computed: {
     canAdd() {
-      return this.selectedProcessId;
+      if (!this.selectedProcessId) {
+        this.validationMessage = '';
+        return false;
+      }
+
+      const process = this.selectedProcess;
+      if (!process) return false;
+
+      // First validate that there is at least one material
+      if (!this.productMaterials || this.productMaterials.length === 0) {
+        this.validationMessage = 'Primero debes agregar al menos un material en la pestaña de materiales';
+        return false;
+      }
+
+      // Then validate based on process unit type
+      if (process.unit === 'mt2' || process.unit === 'pliego') {
+        // No additional validation needed for m2 and pliego units since we already checked for materials
+        this.validationMessage = '';
+        return true;
+      } else if (process.unit === 'pieza') {
+        // For pieza unit, validate product dimensions and quantity
+        if (!this.productQuantity || this.productQuantity <= 0) {
+          this.validationMessage = 'Por favor, especifica la cantidad de piezas del producto en la pestaña de información general';
+          return false;
+        }
+        if (!this.productWidth || this.productWidth <= 0 || !this.productLength || this.productLength <= 0) {
+          this.validationMessage = 'Por favor, especifica el ancho y largo del producto en la pestaña de información general';
+          return false;
+        }
+      }
+
+      this.validationMessage = '';
+      return true;
     },
     selectedProcess() {
       if (!this.selectedProcessId) return null;
@@ -364,14 +428,12 @@ export default {
       this.$emit('update:product-processes', updatedProcesses);
       this.$emit('update:processes-cost', newTotalCost);
     },
-    // Method to recalculate all processes when quantity, sheets, or square meters change
     updateProcessCalculations() {      
       if (this.productProcesses.length === 0) {
         return;
       }
       
       const updatedProcesses = this.productProcesses.map((process, index) => {
-        
         // Skip processes that don't have the _needsRecalculation flag
         // This ensures we don't recalculate processes when selected material changes
         if (!process._needsRecalculation) {
@@ -461,7 +523,12 @@ export default {
     }
   },
   mounted() {
-    
+    // Initialize tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
     // Emit initial processes cost when component mounts
     const initialCost = this.productProcesses.reduce((sum, process) => {
       return sum + (parseFloat(process.price) || 0);

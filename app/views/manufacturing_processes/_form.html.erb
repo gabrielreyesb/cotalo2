@@ -27,10 +27,29 @@
 
   <div class="row">
     <div class="col-md-6 mb-3">
-      <%= form.label :unit_id, "Unidad", class: "form-label" %>
+      <%= form.label :unit_id, "Unidad", class: "form-label" do %>
+        Unidad
+        <i class="fa fa-question-circle ms-1 text-success" 
+           data-bs-toggle="tooltip" 
+           data-bs-placement="right"
+           data-bs-html="true"
+           title="<strong>El seleccionar una unidad determina como se calculan los costos del proceso. Así se calculan los costos:</strong><br>
+           • <u>Unidad pieza</u>: Precio de proceso × cantidad de piezas de producto<br>
+           • <u>Unidad pliego</u>: Precio de proceso × total de pliegos de material<br>
+           • <u>Unidad metro cuadrado</u>: Precio de proceso × total de metros cuadrados de material"></i>
+      <% end %>
       <%= form.collection_select :unit_id, current_user.units, :id, :name, { prompt: "Seleccionar unidad" }, { class: "form-select" } %>
-      <div class="form-text mt-1">
-        <%= link_to "Crear nueva unidad", new_unit_path, target: "_blank" %>
+      <div class="form-text">
+        <small class="text-muted">
+          <i class="fa fa-lightbulb me-1"></i>
+          <strong>Tipos de unidades:</strong>
+          <ul class="mb-0 mt-1">
+            <li><strong>Pieza (pcs):</strong> Costo por cada pieza del producto</li>
+            <li><strong>Metro lineal (lm):</strong> Costo por metro de material</li>
+            <li><strong>Metro cuadrado (m²):</strong> Costo por área de material</li>
+            <li><strong>Hora (hr):</strong> Costo por hora de trabajo</li>
+          </ul>
+        </small>
       </div>
       <% if Rails.env.development? %>
         <div class="text-muted mt-2 small">

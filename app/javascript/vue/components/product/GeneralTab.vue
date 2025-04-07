@@ -19,7 +19,7 @@
                 </div>
                 
                 <div class="mb-3">
-                  <label for="product-quantity" class="form-label">Cantidad</label>
+                  <label for="product-quantity" class="form-label">Cantidad de piezas</label>
                   <input 
                     type="number" 
                     id="product-quantity" 

@@ -54,7 +54,7 @@
               <th>Largo</th>
               <th>Precio</th>
               <th>Piezas por material</th>
-              <th>Total hojas</th>
+              <th>Total pliegos</th>
               <th>Total m²</th>
               <th>Precio total</th>
               <th>Acciones</th>

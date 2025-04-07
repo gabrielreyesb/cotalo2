@@ -16,7 +16,6 @@ Rails.application.routes.draw do
   
   # Catalog routes
   resources :materials
-  resources :units
   resources :manufacturing_processes
   resources :extras
   scope '/catalog' do
