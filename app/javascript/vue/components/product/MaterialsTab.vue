@@ -90,9 +90,9 @@
                     class="form-check-input me-2"
                   />
                   <button 
-                    class="btn btn-sm btn-outline-info me-1" 
-                    @click="showVisualization(material)"
-                    title="Visualizar distribución"
+                    class="btn btn-sm btn-outline-info" 
+                    @click="showMaterialVisualization(material)"
+                    title="Visualizar material"
                   >
                     <i class="fa fa-eye"></i>
                   </button>
@@ -178,8 +178,8 @@
                   class="form-check-input me-2"
                 />
                 <button 
-                  class="btn btn-sm btn-outline-info me-1" 
-                  @click="showVisualization(material)"
+                  class="btn btn-sm btn-outline-info" 
+                  @click="showMaterialVisualization(material)"
                 >
                   <i class="fa fa-eye"></i>
                 </button>
@@ -298,26 +298,26 @@
       </div>
     </div>
 
-    <material-visualization-modal
-      v-if="showVisualizationModal"
+    <material-visualization-panel
+      :is-open="showVisualization"
       :material="selectedMaterialForVisualization"
       :product-width="productWidth"
       :product-length="productLength"
       :width-margin="widthMargin"
       :length-margin="lengthMargin"
-      @close="showVisualizationModal = false"
+      @close="closeVisualization"
     />
 
   </div>
 </template>
 
 <script>
-import MaterialVisualizationModal from './MaterialVisualizationModal.vue';
+import MaterialVisualizationPanel from './MaterialVisualizationPanel.vue'
 
 export default {
   name: 'MaterialsTab',
   components: {
-    MaterialVisualizationModal
+    MaterialVisualizationPanel
   },
   props: {
     productMaterials: {
@@ -361,7 +361,7 @@ export default {
     return {
       materialIdForAdd: '',
       showCustomMaterialForm: false,
-      showVisualizationModal: false,
+      showVisualization: false,
       selectedMaterialForVisualization: null,
       customMaterial: {
         description: '',
@@ -592,9 +592,13 @@ export default {
       };
       this.showCustomMaterialForm = false;
     },
-    showVisualization(material) {
+    showMaterialVisualization(material) {
       this.selectedMaterialForVisualization = material;
-      this.showVisualizationModal = true;
+      this.showVisualization = true;
+    },
+    closeVisualization() {
+      this.showVisualization = false;
+      this.selectedMaterialForVisualization = null;
     }
   },
   watch: {

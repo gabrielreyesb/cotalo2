@@ -1,9 +1,11 @@
 import { createApp } from 'vue'
 import ProductForm from './components/Product.vue'
+import SimpleModal from './components/SimpleModal.vue'
 
 // Create and mount the root instance
 document.addEventListener('DOMContentLoaded', () => {
   const productEl = document.getElementById('product-app')
+  const modalTestEl = document.getElementById('app')
   
   if (productEl) {
     // Get data from the element's data attributes
@@ -75,5 +77,16 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Mount the app
     app.mount('#product-app')
+  }
+
+  if (modalTestEl) {
+    const app = createApp({
+      components: {
+        SimpleModal
+      },
+      template: '<SimpleModal />'
+    })
+    
+    app.mount('#app')
   }
 }) 

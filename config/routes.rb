@@ -32,6 +32,7 @@ Rails.application.routes.draw do
       post :duplicate
       get :general_info
       get :pricing
+      get :modal_test
     end
     
     collection do

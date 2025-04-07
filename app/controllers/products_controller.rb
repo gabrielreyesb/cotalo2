@@ -118,15 +118,11 @@ class ProductsController < ApplicationController
   end
   
   def pricing
-    # Ensure the product's pricing is up-to-date
-    @product.calculate_totals if params[:recalculate]
-    
-    render json: {
-      pricing: @product.pricing,
-      config: {
-        margin_percentage: 0
-      }
-    }
+    @product = Product.find(params[:id])
+  end
+
+  def modal_test
+    # This action is just for testing modals
   end
 
   private
