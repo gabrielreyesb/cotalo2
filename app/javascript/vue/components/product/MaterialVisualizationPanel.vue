@@ -1,65 +1,55 @@
 <template>
-  <div>
-    <!-- Backdrop -->
-    <div 
-      class="panel-backdrop" 
-      :class="{ 'is-open': isOpen }"
-      @click="$emit('close')"
-    ></div>
+  <div class="visualization-panel" :class="{ 'is-open': isOpen }">
+    <div class="panel-content">
+      <div class="panel-header">
+        <h3>Visualización del Material</h3>
+        <button class="btn-close" @click="$emit('close')" aria-label="Cerrar">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
 
-    <!-- Panel -->
-    <div class="visualization-panel" :class="{ 'is-open': isOpen }">
-      <div class="panel-content">
-        <div class="panel-header">
-          <h3>Visualización del Material</h3>
-          <button class="btn-close" @click="$emit('close')" aria-label="Cerrar">
-            <i class="fa fa-times"></i>
-          </button>
+      <div class="panel-body" v-if="material">
+        <div class="material-info">
+          <h4>{{ material.description }}</h4>
+          <div class="dimensions">
+            <span>{{ material.ancho }}cm x {{ material.largo }}cm</span>
+            <small class="ms-2 text-muted">(Márgenes: {{ widthMargin }}cm x {{ lengthMargin }}cm)</small>
+          </div>
         </div>
 
-        <div class="panel-body" v-if="material">
-          <div class="material-info">
-            <h4>{{ material.description }}</h4>
-            <div class="dimensions">
-              <span>{{ material.ancho }}cm x {{ material.largo }}cm</span>
-              <small class="ms-2 text-muted">(Márgenes: {{ widthMargin }}cm x {{ lengthMargin }}cm)</small>
-            </div>
+        <div class="visualization-container">
+          <div class="material-sheet" :style="materialStyle">
+            <!-- Material dimensions -->
+            <div class="dimension-label width-label">{{ material.ancho }}cm</div>
+            <div class="dimension-label length-label">{{ material.largo }}cm</div>
+            
+            <!-- Margin areas -->
+            <div class="margin-area margin-top" :style="marginTopStyle"></div>
+            <div class="margin-area margin-bottom" :style="marginBottomStyle"></div>
+            <div class="margin-area margin-left" :style="marginLeftStyle"></div>
+            <div class="margin-area margin-right" :style="marginRightStyle"></div>
+            
+            <!-- Product pieces -->
+            <template v-for="(piece, index) in pieces" :key="index">
+              <div class="piece" :style="getPieceStyle(piece)">
+                <span class="piece-label">{{ productWidth }} x {{ productLength }}</span>
+              </div>
+            </template>
           </div>
+        </div>
 
-          <div class="visualization-container">
-            <div class="material-sheet" :style="materialStyle">
-              <!-- Material dimensions -->
-              <div class="dimension-label width-label">{{ material.ancho }}cm</div>
-              <div class="dimension-label length-label">{{ material.largo }}cm</div>
-              
-              <!-- Margin areas -->
-              <div class="margin-area margin-top" :style="marginTopStyle"></div>
-              <div class="margin-area margin-bottom" :style="marginBottomStyle"></div>
-              <div class="margin-area margin-left" :style="marginLeftStyle"></div>
-              <div class="margin-area margin-right" :style="marginRightStyle"></div>
-              
-              <!-- Product pieces -->
-              <template v-for="(piece, index) in pieces" :key="index">
-                <div class="piece" :style="getPieceStyle(piece)">
-                  <span class="piece-label">{{ productWidth }} x {{ productLength }}</span>
-                </div>
-              </template>
-            </div>
+        <div class="visualization-info">
+          <div class="info-row">
+            <span>Piezas por material:</span>
+            <strong>{{ pieces.length }}</strong>
           </div>
-
-          <div class="visualization-info">
-            <div class="info-row">
-              <span>Piezas por material:</span>
-              <strong>{{ pieces.length }}</strong>
-            </div>
-            <div class="info-row">
-              <span>Área total:</span>
-              <strong>{{ totalArea }}cm²</strong>
-            </div>
-            <div class="info-row">
-              <span>Área útil:</span>
-              <strong>{{ usableArea }}cm²</strong>
-            </div>
+          <div class="info-row">
+            <span>Área total:</span>
+            <strong>{{ totalArea }}cm²</strong>
+          </div>
+          <div class="info-row">
+            <span>Área útil:</span>
+            <strong>{{ usableArea }}cm²</strong>
           </div>
         </div>
       </div>
@@ -212,36 +202,11 @@ export default {
   background: #1e2124;
   border-left: 1px solid #2d3238;
   transition: right 0.3s ease;
-  z-index: 9999;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  will-change: right;
+  z-index: 1000;
 }
 
 .visualization-panel.is-open {
   right: 0;
-  transform: translate3d(0, 0, 0);
-  -webkit-transform: translate3d(0, 0, 0);
-}
-
-.panel-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 9998;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease;
-}
-
-.panel-backdrop.is-open {
-  opacity: 1;
-  visibility: visible;
 }
 
 .panel-content {
@@ -313,7 +278,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2;
 }
 
 .piece-label {
@@ -360,7 +324,7 @@ export default {
 
 .margin-area {
   position: absolute;
-  background: rgba(220, 53, 69, 0.1);  /* Bootstrap danger color with opacity */
+  background: rgba(220, 53, 69, 0.1);
   border: 1px dashed rgba(220, 53, 69, 0.5);
   pointer-events: none;
   z-index: 1;
