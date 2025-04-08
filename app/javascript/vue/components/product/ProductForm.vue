@@ -972,6 +972,13 @@ export default {
       }
     },
     async savePricingProduct() {
+      // *** Add validation check here ***
+      if (!this.product || !this.product.description || this.product.description.trim() === '') {
+        alert('Por favor, ingresa una descripción para el producto antes de guardar.');
+        return; // Abort save
+      }
+      // *** End validation check ***
+
       // Create or update the product
       if (!this.productId) {
         // For new products, create with all data
@@ -1006,6 +1013,8 @@ export default {
           
         } catch (error) {
           console.error('Error creating product:', error);
+          // *** Add error handling for validation failure (optional, alert is primary) ***
+          this.error = 'Error al crear el producto. Asegúrate de que la descripción no esté vacía.'; 
         } finally {
           this.saving = false;
         }
@@ -1044,6 +1053,8 @@ export default {
           
         } catch (error) {
           console.error('Error updating product:', error);
+           // *** Add error handling for validation failure (optional, alert is primary) ***
+          this.error = 'Error al actualizar el producto. Asegúrate de que la descripción no esté vacía.';
         } finally {
           this.saving = false;
         }
