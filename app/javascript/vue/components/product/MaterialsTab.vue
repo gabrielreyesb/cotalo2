@@ -93,13 +93,6 @@
                           class="form-check-input me-2"
                         />
                         <button 
-                          class="btn btn-sm btn-outline-info" 
-                          @click="showMaterialVisualization(material)"
-                          title="Visualizar material"
-                        >
-                          <i class="fa fa-eye"></i>
-                        </button>
-                        <button 
                           class="btn btn-sm btn-outline-danger" 
                           @click="removeMaterial(index)"
                           title="Eliminar material"
@@ -178,12 +171,6 @@
                         v-model="selectedMaterial"
                         class="form-check-input me-2"
                       />
-                      <button 
-                        class="btn btn-sm btn-outline-info" 
-                        @click="showMaterialVisualization(material)"
-                      >
-                        <i class="fa fa-eye"></i>
-                      </button>
                       <button 
                         class="btn btn-sm btn-outline-danger px-2 py-1" 
                         @click="removeMaterial(index)"
@@ -301,30 +288,13 @@
           <!-- END MOVED SECTIONS -->
         </div> <!-- Close main card-body -->
       </div> <!-- Close main card -->
-
-      <!-- Section 7: Visualization Panel (Keep outside the main card) -->
-      <material-visualization-panel
-        :is-open="showVisualization"
-        :material="selectedMaterialForVisualization"
-        :product-width="productWidth"
-        :product-length="productLength"
-        :width-margin="widthMargin"
-        :length-margin="lengthMargin"
-        @close="closeVisualization"
-      />
-      
     </div> <!-- Close green-accent-panel -->
   </div> <!-- Close materials-tab -->
 </template>
 
 <script>
-import MaterialVisualizationPanel from './MaterialVisualizationPanel.vue'
-
 export default {
   name: 'MaterialsTab',
-  components: {
-    MaterialVisualizationPanel
-  },
   props: {
     productMaterials: {
       type: Array,
@@ -367,8 +337,6 @@ export default {
     return {
       materialIdForAdd: '',
       showCustomMaterialForm: false,
-      showVisualization: false,
-      selectedMaterialForVisualization: null,
       customMaterial: {
         description: '',
         ancho: null,
@@ -597,14 +565,6 @@ export default {
         price: null
       };
       this.showCustomMaterialForm = false;
-    },
-    showMaterialVisualization(material) {
-      this.selectedMaterialForVisualization = material;
-      this.showVisualization = true;
-    },
-    closeVisualization() {
-      this.showVisualization = false;
-      this.selectedMaterialForVisualization = null;
     }
   },
   watch: {
