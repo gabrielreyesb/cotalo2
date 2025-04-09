@@ -308,6 +308,7 @@ export default {
             name: '',
             sku: '',
             quantity: 1,
+            general_info: {},
             extras: [],
             extras_comments: '',
             processes: [],
@@ -361,140 +362,99 @@ export default {
         this.saving = false;
       }
     },
-    async updateProduct(data) {
+    async updateProduct(updatePayload) {
       try {
-        this.saving = true;
-        
-        // Extract shouldRedirect flag
-        const shouldRedirect = data.data?.shouldRedirect;
-        
-        // Create a clean version of the data without the shouldRedirect flag
-        const cleanData = {
-          ...data,
-          data: {
-            ...data.data,
-            general_info: {
-              ...data.data.general_info
-            }
-          }
-        };
-        delete cleanData.data.shouldRedirect;
-        
-        // Check if dimensions or quantity have changed
+        // Remove saving flag logic - no saving happens here
+        // this.saving = true; 
+
+        // --- Calculate dimension changes BEFORE merge --- 
         const oldQuantity = this.product.data.general_info?.quantity;
         const oldWidth = this.product.data.general_info?.width;
         const oldLength = this.product.data.general_info?.length;
-        
-        const newQuantity = cleanData.data.general_info?.quantity;
-        const newWidth = cleanData.data.general_info?.width;
-        const newLength = cleanData.data.general_info?.length;
-        
-        const quantityChanged = oldQuantity !== newQuantity;
-        const widthChanged = oldWidth !== newWidth;
-        const lengthChanged = oldLength !== newLength;
-        
-        // Properly merge the data to prevent losing information between tabs
-        if (cleanData && cleanData.data && cleanData.data.general_info) {
-          // Make sure we don't lose the current data by doing a proper merge
-          this.product = {
-            ...this.product,
-            description: cleanData.description,
-            data: {
-              ...this.product.data,
-              general_info: {
-                ...cleanData.data.general_info
-              }
-            }
+
+        // Use optional chaining on updatePayload
+        const newQuantity = updatePayload.data?.general_info?.quantity;
+        const newWidth = updatePayload.data?.general_info?.width;
+        const newLength = updatePayload.data?.general_info?.length;
+
+        // Only consider it changed if the new value is defined and different
+        const quantityChanged = newQuantity !== undefined && oldQuantity !== newQuantity;
+        const widthChanged = newWidth !== undefined && oldWidth !== newWidth;
+        const lengthChanged = newLength !== undefined && oldLength !== newLength;
+        // --- End dimension check ---
+
+        // Remove cleanData and related logic
+        // const shouldRedirect = data.data?.shouldRedirect;
+        // const cleanData = { ... };
+        // delete cleanData.data.shouldRedirect;
+
+        console.log('[ProductForm] Received update:', JSON.parse(JSON.stringify(updatePayload)));
+        console.log('[ProductForm] State BEFORE merge:', JSON.parse(JSON.stringify(this.product)));
+
+        // --- Simplified State Merge --- 
+        if (updatePayload.description !== undefined) {
+          this.product.description = updatePayload.description;
+        }
+        if (updatePayload.data && updatePayload.data.general_info) {
+          // Use Vue.set or spread operator for reactivity on nested objects
+          // Remove the $set block - general_info is initialized in initializeNewProduct
+          // Merge changes into general_info
+          this.product.data.general_info = {
+            ...this.product.data.general_info, 
+            ...updatePayload.data.general_info
           };
-          
-          // Ensure quantity is also updated in the main data object for backwards compatibility
-          if (cleanData.data.general_info.quantity) {
-            this.product.data.quantity = cleanData.data.general_info.quantity;
+
+          // Update legacy quantity if present in the payload
+          if (updatePayload.data.general_info.quantity !== undefined) {
+            this.product.data.quantity = updatePayload.data.general_info.quantity;
           }
         }
+        // --- End Simplified State Merge --- 
         
+        console.log('[ProductForm] State AFTER merge:', JSON.parse(JSON.stringify(this.product)));
+
         // If quantity, width, or length changed, trigger recalculations
         if (quantityChanged || widthChanged || lengthChanged) {
+          console.log('[ProductForm] Dimensions changed, starting recalculations...');
+          console.log('[ProductForm] Materials before recalc:', JSON.parse(JSON.stringify(this.product.data.materials)));
+          console.log('[ProductForm] Processes before recalc:', JSON.parse(JSON.stringify(this.product.data.processes)));
+          console.log('[ProductForm] Extras before recalc:', JSON.parse(JSON.stringify(this.product.data.extras)));
           
-          // Force a full recalculation of materials
+          // --- Keep Recalculation Logic --- 
           if (this.product.data.materials && this.product.data.materials.length > 0) {
-            // Call the parent's update method which will trigger recalculation in MaterialsTab
-            const updatedMaterials = this.product.data.materials.map(material => {
-              return {
-                ...material,
-                // Force material to be recalculated by setting these properties
-                _needsRecalculation: true
-              };
-            });
-            
-            // This will trigger recalculation via updateMaterials
+            const updatedMaterials = this.product.data.materials.map(material => ({
+              ...material,
+              _needsRecalculation: true
+            }));
             this.updateMaterials(updatedMaterials);
           }
-          
-          // Force a full recalculation of processes
           if (this.product.data.processes && this.product.data.processes.length > 0) {
-            // Call the parent's update method which will trigger recalculation in ProcessesTab
-            const updatedProcesses = this.product.data.processes.map(process => {
-              return {
-                ...process,
-                // We don't need to change anything here, just ensure the object is new
-                _needsRecalculation: true
-              };
-            });
-            
-            // This will trigger recalculation
+            const updatedProcesses = this.product.data.processes.map(process => ({
+              ...process,
+              _needsRecalculation: true
+            }));
             this.updateProcesses(updatedProcesses);
           }
-          
-          // Calculate extras in case quantity affects them
           if (this.product.data.extras && this.product.data.extras.length > 0) {
-            const updatedExtras = this.product.data.extras.map(extra => {
-              return {
-                ...extra,
-                _needsRecalculation: true
-              };
-            });
-            
+            const updatedExtras = this.product.data.extras.map(extra => ({
+              ...extra,
+              _needsRecalculation: true
+            }));
             this.updateExtras(updatedExtras);
           }
-          
-          // Always recalculate pricing
           this.ensurePricingUpdated();
-        }
-        
-        // Only save to server if we have a product ID (not for new products)
-        if (this.productId) {
-          const response = await fetch(`/api/v1/products/${this.productId}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'X-CSRF-Token': this.apiToken,
-              'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-              product: cleanData
-            })
-          });
-          
-          if (!response.ok) {
-            throw new Error('Failed to update product');
-          }
-          
-          const updatedProduct = await response.json();
-          this.product = updatedProduct;
-          
-          // Redirect if shouldRedirect flag was set
-          if (shouldRedirect) {
-            window.location.href = '/products';
-          }
+          // --- End Recalculation Logic --- 
+          console.log('[ProductForm] State AFTER recalculations:', JSON.parse(JSON.stringify(this.product.data)));
         }
         
       } catch (error) {
-        console.error('[ProductForm] Error updating product:', error);
-      } finally {
-        this.saving = false;
-      }
+        // Keep error logging
+        console.error('[ProductForm] Error in updateProduct:', error);
+      } 
+      // Remove finally block
+      // finally {
+      //   this.saving = false;
+      // }
     },
     async updateExtras(extras) {
       if (!this.product || !this.product.data) return;
@@ -519,41 +479,6 @@ export default {
       
       // Recalculate pricing
       this.recalculatePricing();
-      
-      // If we have a productId, update on the server
-      if (this.productId) {
-        try {
-          this.saving = true;
-          
-          const response = await fetch(`/api/v1/products/${this.productId}/update_extras`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'X-CSRF-Token': this.apiToken,
-              'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-              extras: extras
-            })
-          });
-          
-          if (!response.ok) {
-            throw new Error('Failed to update extras');
-          }
-          
-          // Update the local data with the updated extras
-          this.product.data.extras = await response.json();
-          
-          // Fetch the updated product with new pricing
-          this.fetchProduct();
-          
-        } catch (error) {
-          console.error('Error updating extras:', error);
-        } finally {
-          this.saving = false;
-        }
-      }
     },
     async fetchAvailableExtras() {
       try {
@@ -761,38 +686,6 @@ export default {
       
       // Recalculate pricing
       this.recalculatePricing();
-      
-      // If we have a productId, update on the server
-      if (this.productId) {
-        try {
-          this.saving = true;
-          
-          const response = await fetch(`/api/v1/products/${this.productId}/update_materials`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'X-CSRF-Token': this.apiToken,
-              'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-              materials: materials
-            })
-          });
-          
-          if (!response.ok) {
-            throw new Error('Failed to update materials');
-          }
-          
-          // Update the local data with the updated materials
-          this.product.data.materials = await response.json();
-          
-        } catch (error) {
-          console.error('Error updating materials:', error);
-        } finally {
-          this.saving = false;
-        }
-      }
     },
     async updateMaterialsComments(comments) {
       if (!this.product || !this.product.data) return;
@@ -1113,38 +1006,6 @@ export default {
       
       // Recalculate pricing
       this.recalculatePricing();
-      
-      // If we have a productId, update on the server
-      if (this.productId) {
-        try {
-          this.saving = true;
-          
-          const response = await fetch(`/api/v1/products/${this.productId}/update_processes`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'X-CSRF-Token': this.apiToken,
-              'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-              processes: processes
-            })
-          });
-          
-          if (!response.ok) {
-            throw new Error('Failed to update processes');
-          }
-          
-          // Update the local data with the updated processes
-          this.product.data.processes = await response.json();
-          
-        } catch (error) {
-          console.error('Error updating processes:', error);
-        } finally {
-          this.saving = false;
-        }
-      }
     },
     
     async updateProcessesComments(comments) {

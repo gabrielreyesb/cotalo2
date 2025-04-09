@@ -1,0 +1,117 @@
+// --- Start :has() Scoped Layout for Product Form ---
+
+// When .product-form-container is present within main.main-content:
+main.main-content:has(.product-form-container) {
+  // Ensure it acts as a flex container but doesn't scroll itself
+  flex: 1 1 auto;
+  overflow: hidden; // Prevent main from scrolling
+  padding: 0; // Remove default padding, apply to inner container
+  height: 0; // Needed for flex child height calculation
+  
+  // The immediate child .container-fluid should handle scrolling
+  > .container-fluid {
+    height: 100%; // Fill the main-content height
+    overflow-y: auto; // Make this container scroll
+    overflow-x: hidden;
+    padding: 1.5rem; // Re-apply padding here
+  }
+}
+
+// --- End :has() Scoped Layout ---
+
+// Styles specifically for the product form and its components
+
+.product-form-container {
+  // --- REMOVE Height/Overflow Styling --- 
+  // height: calc(100vh - 200px); 
+  // overflow-y: auto; 
+  // overflow-x: hidden; 
+  // padding-bottom: 1rem; 
+  // --- End REMOVE Height/Overflow Styling ---
+
+  // This establishes the primary scope
+
+  // Tab Component Styling - Target the common inner panel
+  .green-accent-panel {
+    position: relative; // Keep for potential children positioning
+    // Remove visual styles: padding, background, border-radius, border
+    // padding: 1.5rem; 
+    // background-color: var(--bg-secondary);
+    // border-radius: 0.5rem;
+    // border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem; // Keep spacing below the panel
+
+    // Remove Green left accent border
+    // &::before {
+    //   content: '';
+    //   position: absolute;
+    //   left: 0; 
+    //   top: 0; 
+    //   bottom: 0;
+    //   width: 4px;
+    //   background-color: var(--cotalo-green); 
+    //   border-top-left-radius: inherit;    
+    //   border-bottom-left-radius: inherit; 
+    // }
+  }
+  
+  // Add specific tab adjustments if needed later, e.g.:
+  // .general-tab .green-accent-panel { ... }
+  // .materials-tab .green-accent-panel { ... }
+
+  // Form Control Styling (Scoped)
+  .form-control,
+  .form-select {
+    background-color: var(--bg-primary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+
+    &:focus {
+      border-color: var(--cotalo-green);
+      box-shadow: 0 0 0 0.25rem rgba(var(--cotalo-green-rgb), 0.25); // Use RGB version for alpha
+      background-color: var(--bg-primary); // Ensure background doesn't change on focus
+      color: var(--text-primary); // Ensure text color doesn't change on focus
+    }
+
+    // Placeholder text color
+    &::placeholder {
+      color: var(--text-secondary);
+      opacity: 0.7; // Make it slightly less prominent
+    }
+
+    // Handle disabled state
+    &:disabled,
+    &[readonly] {
+      background-color: var(--bs-secondary-bg); // Use Bootstrap's variable for disabled bg
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  }
+
+  // Specific styling for form-select dropdown arrow (if needed)
+  .form-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23#{rgba(var(--text-primary-rgb), 0.7)}' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+  }
+
+  // Style labels
+  .form-label {
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem; 
+  }
+
+  // Tab Layout Adjustments (Flexbox for vertical spacing)
+  // Target the root element of each tab component Vue renders
+  .general-tab,
+  .materials-tab,
+  .processes-tab, // Assuming these classes exist
+  .extras-tab,    // Assuming these classes exist
+  .pricing-tab {   // Assuming these classes exist
+    display: flex;         
+    flex-direction: column;
+    gap: 1.5rem; // Creates space between elements inside the tab (like the green panel and tables/forms)
+    margin-bottom: 1.5rem; // Add space *below* each tab section 
+  }
+} 

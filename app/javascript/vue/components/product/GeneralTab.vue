@@ -1,7 +1,7 @@
 <template>
   <div class="general-tab">
     <div class="green-accent-panel">
-      <div class="card">
+
         <div class="card-body">
           <form @submit.prevent="saveProduct">
             <div class="row">
@@ -24,8 +24,8 @@
                     type="number" 
                     id="product-quantity" 
                     class="form-control" 
-                    v-model.number="form.data.general_info.quantity" 
-                    @input="debouncedEmitFormChanges"
+                    :value="form.data.general_info.quantity" 
+                    @input="handleQuantityInput"
                     min="1" 
                     required
                   />
@@ -39,8 +39,8 @@
                         type="number" 
                         id="product-width" 
                         class="form-control" 
-                        v-model.number="form.data.general_info.width" 
-                        @input="debouncedEmitFormChanges"
+                        :value="form.data.general_info.width" 
+                        @input="handleWidthInput"
                         min="0" 
                         step="0.1"
                       />
@@ -53,8 +53,8 @@
                         type="number" 
                         id="product-length" 
                         class="form-control" 
-                        v-model.number="form.data.general_info.length" 
-                        @input="debouncedEmitFormChanges"
+                        :value="form.data.general_info.length" 
+                        @input="handleLengthInput"
                         min="0" 
                         step="0.1"
                       />
@@ -90,7 +90,6 @@
             </div>
           </form>
         </div>
-      </div>
     </div>
   </div>
 </template>
@@ -127,21 +126,14 @@ export default {
     };
   },
   created() {
+    // Initialize form data when component is created
+    if (this.product) {
+      this.initFormData();
+    }
     // Create a debounced version of emitFormChanges
     this.debouncedEmitFormChanges = this.debounce(() => {
       this.emitFormChanges();
     }, 500);
-  },
-  watch: {
-    product: {
-      handler(product) {
-        if (product) {
-          this.initFormData();
-        }
-      },
-      immediate: true,
-      deep: true
-    }
   },
   methods: {
     debounce(func, wait) {
@@ -184,6 +176,21 @@ export default {
           general_info: this.form.data.general_info
         }
       });
+    },
+    
+    handleQuantityInput(event) {
+      this.form.data.general_info.quantity = event.target.value === '' ? null : parseInt(event.target.value);
+      this.debouncedEmitFormChanges();
+    },
+    handleWidthInput(event) {
+      // Update local state directly from input value
+      this.form.data.general_info.width = event.target.value === '' ? null : parseFloat(event.target.value);
+      // Trigger the debounced emit
+      this.debouncedEmitFormChanges();
+    },
+    handleLengthInput(event) {
+      this.form.data.general_info.length = event.target.value === '' ? null : parseFloat(event.target.value);
+      this.debouncedEmitFormChanges();
     },
     async saveProduct() {
       this.saving = true;
