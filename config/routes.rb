@@ -1,12 +1,15 @@
 Rails.application.routes.draw do
-  get 'news/index'
-  get 'news/new'
-  get 'news/create'
-  get 'news/edit'
-  get 'news/update'
-  get 'news/destroy'
   # Authentication routes
   devise_for :users
+  
+  # Admin routes
+  namespace :admin do
+    root to: 'dashboard#index'
+    resources :users
+    resources :impersonations, only: [:create]
+    delete 'impersonations', to: 'impersonations#destroy', as: :impersonations_destroy
+    resources :units
+  end
   
   # Dashboard route
   get 'dashboard', to: 'home#dashboard', as: 'dashboard'
@@ -99,6 +102,9 @@ Rails.application.routes.draw do
       post :update_logo
     end
   end
+  
+  # Simple admin route
+  get 'admin', to: 'admin#index'
   
   # Defines the root path route ("/")
   root "home#index"

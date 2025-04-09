@@ -38,7 +38,7 @@
            • <u>Unidad pliego</u>: Precio de proceso × total de pliegos de material<br>
            • <u>Unidad metro cuadrado</u>: Precio de proceso × total de metros cuadrados de material"></i>
       <% end %>
-      <%= form.collection_select :unit_id, current_user.units, :id, :name, { prompt: "Seleccionar unidad" }, { class: "form-select" } %>
+      <%= form.collection_select :unit_id, Unit.all.order(:name), :id, :name, { prompt: "Seleccionar unidad" }, { class: "form-select" } %>
       <div class="form-text">
         <small class="text-muted">
           <i class="fa fa-lightbulb me-1"></i>

@@ -1,11 +1,19 @@
 class Unit < ApplicationRecord
-  belongs_to :user
-  has_many :materials, dependent: :restrict_with_error
+  has_many :materials
+  has_many :manufacturing_processes
+  has_many :extras
 
-  validates :name, presence: true
-  validates :abbreviation, presence: true
-  validates :user, presence: true
+  validates :name, presence: true, uniqueness: true
+  validates :abbreviation, presence: true, uniqueness: true
 
-  # Scope to find units belonging to a specific user
-  scope :for_user, ->(user) { where(user: user) }
+  before_destroy :check_for_dependencies
+
+  private
+
+  def check_for_dependencies
+    if materials.any? || manufacturing_processes.any? || extras.any?
+      errors.add(:base, 'No se puede eliminar una unidad que está siendo utilizada')
+      throw :abort
+    end
+  end
 end

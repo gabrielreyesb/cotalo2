@@ -1,4 +1,4 @@
-class UnitsController < ApplicationController
+class Admin::UnitsController < ApplicationController
   before_action :authenticate_user!
   before_action :require_admin
   before_action :set_unit, only: [:show, :edit, :update, :destroy]
@@ -22,7 +22,7 @@ class UnitsController < ApplicationController
 
     respond_to do |format|
       if @unit.save
-        format.html { redirect_to units_path, notice: 'Unidad creada exitosamente.' }
+        format.html { redirect_to admin_units_path, notice: 'Unidad creada exitosamente.' }
         format.json { render :show, status: :created, location: @unit }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -34,7 +34,7 @@ class UnitsController < ApplicationController
   def update
     respond_to do |format|
       if @unit.update(unit_params)
-        format.html { redirect_to units_path, notice: 'Unidad actualizada exitosamente.' }
+        format.html { redirect_to admin_units_path, notice: 'Unidad actualizada exitosamente.' }
         format.json { render :show, status: :ok, location: @unit }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -46,10 +46,10 @@ class UnitsController < ApplicationController
   def destroy
     respond_to do |format|
       if @unit.destroy
-        format.html { redirect_to units_url, notice: 'Unidad eliminada exitosamente.' }
+        format.html { redirect_to admin_units_url, notice: 'Unidad eliminada exitosamente.' }
         format.json { head :no_content }
       else
-        format.html { redirect_to units_url, alert: 'No se puede eliminar una unidad que está siendo utilizada por materiales.' }
+        format.html { redirect_to admin_units_url, alert: 'No se puede eliminar una unidad que está siendo utilizada por materiales.' }
         format.json { render json: { error: 'No se puede eliminar una unidad que está siendo utilizada por materiales.' }, status: :unprocessable_entity }
       end
     end
@@ -71,4 +71,4 @@ class UnitsController < ApplicationController
       redirect_to root_path
     end
   end
-end
+end 

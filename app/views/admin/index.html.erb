@@ -1,0 +1,83 @@
+<div class="container mt-5">
+  <% if session[:impersonated_user_id] %>
+    <div class="alert alert-warning">
+      You are currently impersonating <%= current_user.email %>
+      <%= button_to "Stop Impersonating", admin_impersonations_destroy_path, method: :delete, class: "btn btn-warning" %>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-4 mb-4">
+      <div class="card bg-dark text-white">
+        <div class="card-body">
+          <h5 class="card-title">Total Users</h5>
+          <h2 class="card-text"><%= User.count %></h2>
+          <%= link_to "Manage Users", "#", class: "btn btn-primary" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card bg-dark text-white">
+        <div class="card-body">
+          <h5 class="card-title">Total Products</h5>
+          <h2 class="card-text"><%= Product.count %></h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card bg-dark text-white">
+        <div class="card-body">
+          <h5 class="card-title">Total Quotes</h5>
+          <h2 class="card-text"><%= Quote.count %></h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-dark text-white mt-4">
+    <div class="card-body">
+      <h5 class="card-title">Recent Users</h5>
+      <div class="table-responsive">
+        <table class="table table-dark">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Admin</th>
+              <th>Created At</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% User.order(created_at: :desc).each do |user| %>
+              <tr>
+                <td><%= user.email %></td>
+                <td>
+                  <span class="badge <%= user.admin? ? 'bg-success' : 'bg-secondary' %>">
+                    <%= user.admin? ? 'Yes' : 'No' %>
+                  </span>
+                </td>
+                <td><%= user.created_at.strftime('%Y-%m-%d') %></td>
+                <td>
+                  <div class="btn-group">
+                    <% unless user == current_user %>
+                      <%= button_to admin_impersonations_path(user_id: user.id), 
+                                  method: :post, 
+                                  class: "btn btn-sm btn-success me-2" do %>
+                        <i class="fas fa-user-secret"></i> Impersonate
+                      <% end %>
+                    <% end %>
+                    <%= link_to "#", class: "btn btn-sm btn-secondary" do %>
+                      <i class="fas fa-edit"></i> Edit
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div> 

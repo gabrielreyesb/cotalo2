@@ -33,7 +33,7 @@
     
     <div class="col-md-6 mb-3">
       <%= form.label :unit_id, "Unidad", class: "form-label" %>
-      <%= form.collection_select :unit_id, current_user.units, :id, :name, { prompt: "Seleccionar unidad" }, { class: "form-select", required: true } %>
+      <%= form.collection_select :unit_id, Unit.all.order(:name), :id, :name, { prompt: "Seleccionar unidad" }, { class: "form-select", required: true } %>
     </div>
   </div>
   

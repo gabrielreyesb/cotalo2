@@ -5,7 +5,6 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   has_many :materials, dependent: :destroy
-  has_many :units, dependent: :destroy
   has_many :manufacturing_processes, dependent: :destroy
   has_many :extras, dependent: :destroy
   has_many :app_configs, dependent: :destroy
@@ -16,11 +15,7 @@ class User < ApplicationRecord
   after_create :setup_initial_data
 
   def admin?
-    # Change this to match your authentication system's way of determining admins
-    # This is a placeholder implementation
-    # For example, you might have an 'admin' boolean column, or a role-based system
-    admin_emails = ['gabrielreyesb@gmail.com'] # Add your admin emails here
-    admin_emails.include?(email)
+    admin
   end
 
   # Helper methods to access configuration values
@@ -62,42 +57,22 @@ class User < ApplicationRecord
   
   # Get signature information
   def signature_info
-    name = get_config(AppConfig::SIGNATURE_NAME)
-    email = get_config(AppConfig::SIGNATURE_EMAIL)
-    phone = get_config(AppConfig::SIGNATURE_PHONE)
-    whatsapp = get_config(AppConfig::SIGNATURE_WHATSAPP)
-    
-    # If name is missing, use a default
-    name = "Jonathan Gabriel Rubio Huerta" if name.blank?
-    
     {
-      name: name,
-      email: email,
-      phone: phone,
-      whatsapp: whatsapp
+      name: get_config(AppConfig::SIGNATURE_NAME) || '',
+      email: get_config(AppConfig::SIGNATURE_EMAIL) || '',
+      phone: get_config(AppConfig::SIGNATURE_PHONE) || '',
+      whatsapp: get_config(AppConfig::SIGNATURE_WHATSAPP) || ''
     }
   end
 
   private
 
   def setup_initial_data
-    # Setup default configuration values
-    set_config(AppConfig::WASTE_PERCENTAGE, 5, AppConfig::PERCENTAGE)
+    # Set default waste percentage
+    set_config(AppConfig::WASTE_PERCENTAGE, 0.05, AppConfig::PERCENTAGE)
+    
+    # Set default margins
     set_config(AppConfig::WIDTH_MARGIN, 0, AppConfig::NUMERIC)
     set_config(AppConfig::LENGTH_MARGIN, 0, AppConfig::NUMERIC)
-    
-    # Default sales conditions
-    set_config(AppConfig::SALES_CONDITION_1, "50% de anticipo para iniciar el trabajo")
-    set_config(AppConfig::SALES_CONDITION_2, "50% al entregar")
-    set_config(AppConfig::SALES_CONDITION_3, "Precios más IVA")
-    set_config(AppConfig::SALES_CONDITION_4, "Precios sujetos a cambio sin previo aviso")
-    
-    # Default signature information
-    set_config(AppConfig::SIGNATURE_NAME, "Jonathan Gabriel Rubio Huerta")
-    set_config(AppConfig::SIGNATURE_EMAIL, "jonathanrubio@surtibox.com")
-    set_config(AppConfig::SIGNATURE_PHONE, "3311764022 / 33 2484 9954")
-    set_config(AppConfig::SIGNATURE_WHATSAPP, "3311764022")
-    
-    # Add any other initial data setup here
   end
 end

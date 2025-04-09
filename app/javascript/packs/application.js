@@ -18,21 +18,13 @@
 import * as bootstrap from 'bootstrap'
 import '@popperjs/core'
 
-// Only try to import Stimulus controllers if actually being used in the page
-try {
-  // Import Stimulus controllers conditionally
-  import("../controllers").catch(e => {
-    console.log("Stimulus not loaded, continuing without it");
-  });
-} catch (e) {
-  console.log("Stimulus not available, continuing without it");
-}
-
-console.log('Hello World from Webpacker')
-
-// Initialize Bootstrap 5 dropdowns and clean up debug elements
+// Initialize all Bootstrap dropdowns
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOMContentLoaded in application.js');
+  // Initialize all dropdowns
+  var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+  var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+    return new bootstrap.Dropdown(dropdownToggleEl)
+  })
   
   // Remove debug elements in production
   document.querySelectorAll('*').forEach(function(node) {
@@ -46,3 +38,15 @@ document.addEventListener('DOMContentLoaded', function() {
     node.style.display = 'none';
   });
 });
+
+// Only try to import Stimulus controllers if actually being used in the page
+try {
+  // Import Stimulus controllers conditionally
+  import("../controllers").catch(e => {
+    console.log("Stimulus not loaded, continuing without it");
+  });
+} catch (e) {
+  console.log("Stimulus not available, continuing without it");
+}
+
+console.log('Hello World from Webpacker')
