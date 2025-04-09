@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     resources :impersonations, only: [:create]
     delete 'impersonations', to: 'impersonations#destroy', as: :impersonations_destroy
     resources :units
+    resources :news
   end
   
   # Dashboard route

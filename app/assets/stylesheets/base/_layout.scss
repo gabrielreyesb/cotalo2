@@ -15,6 +15,7 @@ body {
   line-height: 1.5;
   background-color: var(--dark-bg);
   color: var(--text-primary);
+  overflow: hidden; // Prevent body scroll
 }
 
 #app {
@@ -25,18 +26,19 @@ body {
 
 // Main content area
 .main-content {
-  flex: 1 0 auto;
+  flex: 1;
   display: flex;
   flex-direction: column;
   position: relative;
-  min-height: 0;
+  overflow-y: auto; // Enable scrolling
+  padding: 0; // Remove padding to prevent double scroll
   
   .container-fluid {
-    flex: 1 0 auto;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    height: auto;
+    flex: 1;
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
   }
 }
 
@@ -55,7 +57,14 @@ body {
   background-color: var(--nav-bg);
   border-top: 1px solid var(--border-color);
   color: var(--text-secondary);
-  margin-top: auto;
+  width: 100%;
+  z-index: 1000;
+}
+
+// Navbar positioning
+.navbar {
+  flex-shrink: 0;
+  z-index: 1000;
 }
 
 // Product form specific layout

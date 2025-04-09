@@ -1,0 +1,48 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Noticias</h2>
+    <%= link_to new_admin_news_path, class: 'btn btn-success' do %>
+      <i class="fas fa-plus me-1"></i> Nueva Noticia
+    <% end %>
+  </div>
+
+  <div class="card bg-dark text-white">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-dark table-striped">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Fecha de publicación</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @news.each do |news| %>
+              <tr>
+                <td><%= news.title %></td>
+                <td><%= news.published_at.strftime('%d/%m/%Y %H:%M') %></td>
+                <td>
+                  <div class="btn-group">
+                    <%= link_to admin_news_path(news), class: 'btn btn-sm btn-outline-info', title: 'Ver' do %>
+                      <i class="fas fa-eye"></i>
+                    <% end %>
+                    <%= link_to edit_admin_news_path(news), class: 'btn btn-sm btn-outline-primary', title: 'Editar' do %>
+                      <i class="fas fa-edit"></i>
+                    <% end %>
+                    <%= link_to admin_news_path(news), 
+                        class: 'btn btn-sm btn-outline-danger', 
+                        title: 'Eliminar',
+                        data: { turbo_method: :delete, turbo_confirm: '¿Estás seguro?' } do %>
+                      <i class="fas fa-trash"></i>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div> 
