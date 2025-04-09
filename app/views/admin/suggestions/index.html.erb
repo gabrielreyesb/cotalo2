@@ -1,0 +1,61 @@
+<div class="container mt-4">
+  <div class="card bg-dark border-0">
+    <div class="card-header bg-dark border-bottom border-secondary d-flex justify-content-between align-items-center">
+      <h2 class="mb-0">Sugerencias</h2>
+    </div>
+    
+    <div class="card-body">
+      <% if @suggestions.any? %>
+        <div class="table-responsive">
+          <table class="table table-dark table-hover">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Usuario</th>
+                <th>Sugerencia</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @suggestions.each do |suggestion| %>
+                <tr>
+                  <td><%= suggestion.created_at.strftime("%d/%m/%Y %H:%M") %></td>
+                  <td>
+                    <% if suggestion.user %>
+                      <%= suggestion.user.email %>
+                    <% else %>
+                      <span class="text-muted">Usuario anónimo</span>
+                    <% end %>
+                  </td>
+                  <td style="max-width: 400px;"><%= suggestion.content %></td>
+                  <td>
+                    <% if suggestion.reviewed? %>
+                      <span class="badge bg-success">Revisada</span>
+                    <% else %>
+                      <span class="badge bg-warning text-dark">Pendiente</span>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% unless suggestion.reviewed? %>
+                      <%= button_to admin_suggestion_path(suggestion), 
+                          method: :patch,
+                          class: "btn btn-sm btn-outline-success",
+                          title: "Marcar como revisada" do %>
+                        <i class="fas fa-check"></i>
+                      <% end %>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="alert alert-info">
+          No hay sugerencias pendientes.
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div> 

@@ -1,0 +1,20 @@
+Cotización de Cotalo
+
+Estimado/a cliente,
+
+<% if @message.present? %>
+<%= @message %>
+
+<% end %>
+Adjunto encontrará la cotización solicitada en formato PDF.
+
+Detalles de la cotización:
+* Número de cotización: <%= @quote.quote_number %>
+* Fecha: <%= @quote.created_at.strftime('%d/%m/%Y') %>
+* Total: <%= number_to_currency(@quote.data["totals"]["total"]) %>
+
+Si tiene alguna pregunta o necesita aclaraciones, no dude en contactarnos.
+
+Saludos cordiales,
+<%= @user.email %>
+Cotalo 

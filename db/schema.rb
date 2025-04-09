@@ -126,6 +126,15 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_09_153846) do
     t.index ["user_id"], name: "index_quotes_on_user_id"
   end
 
+  create_table "suggestions", force: :cascade do |t|
+    t.text "content", null: false
+    t.integer "user_id"
+    t.boolean "reviewed", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_suggestions_on_user_id"
+  end
+
   create_table "units", force: :cascade do |t|
     t.string "name"
     t.string "abbreviation"
@@ -160,4 +169,5 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_09_153846) do
   add_foreign_key "quote_products", "products"
   add_foreign_key "quote_products", "quotes"
   add_foreign_key "quotes", "users"
+  add_foreign_key "suggestions", "users"
 end

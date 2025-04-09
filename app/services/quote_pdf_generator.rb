@@ -25,7 +25,13 @@ class QuotePdfGenerator
             logo_tempfile = Down.download(logo_url)
             
             # Position logo higher than the top margin
-            pdf.image logo_tempfile.path, width: 160, at: [0, pdf.bounds.top + 15]
+            pdf.image logo_tempfile.path, 
+                     width: 160, 
+                     at: [0, pdf.bounds.top + 15],
+                     position: :left,
+                     vposition: :top,
+                     fit: [160, 50],  # Constrain dimensions while maintaining aspect ratio
+                     align: :left     # Align to left
             
             # Add quote number in the middle
             pdf.text_box "Cotización: #{quote.quote_number}",
@@ -36,7 +42,7 @@ class QuotePdfGenerator
                       style: :bold
             
             # Add date on the right
-            pdf.text_box "Guadalajara, Jalisco. A #{Time.current.day} de #{month_name(Time.current.month).upcase} del #{Time.current.year}",
+            pdf.text_box "Guadalajara, Jalisco. A #{quote.created_at.day} de #{month_name(quote.created_at.month).upcase} del #{quote.created_at.year}",
                       at: [0, pdf.bounds.top + 15],
                       width: pdf.bounds.width,
                       align: :right
@@ -46,6 +52,7 @@ class QuotePdfGenerator
             logo_tempfile.unlink
           rescue StandardError => e
             Rails.logger.error("Error including logo in PDF: #{e.message}")
+            Rails.logger.error(e.backtrace.join("\n"))
             fallback_header(pdf)
           end
         else
@@ -257,25 +264,67 @@ class QuotePdfGenerator
         quote.quote_products.each do |quote_product|
           product = quote_product.product
           
-          if product.data["extras"].present? && product.data["extras"].any?
+          # Track extras by name to prevent duplicates
+          extras_by_name = {}
+          
+          # Add extras from data hash if present
+          if product.data["extras"].present?
+            product.data["extras"].each do |extra|
+              name = extra["name"] || extra["description"]
+              next unless name.present?
+              extras_by_name[name] = extra
+            end
+          end
+          
+          # Add extras from the extras association if present
+          if product.extras.present?
+            product.extras.each do |extra|
+              # Handle both hash and object formats
+              name = extra.respond_to?(:description) ? extra.description : extra["name"] || extra["description"]
+              next unless name.present?
+              
+              price = extra.respond_to?(:price) ? extra.price : extra["price"] || extra["unit_price"]
+              quantity = extra.respond_to?(:quantity) ? extra.quantity : extra["quantity"] || 1
+
+              extras_by_name[name] = {
+                "name" => name,
+                "price" => price,
+                "quantity" => quantity
+              }
+            end
+          end
+          
+          # Add extras from the product's JSON data if present
+          if product.data["product_extras"].present?
+            product.data["product_extras"].each do |extra|
+              name = extra["name"] || extra["description"]
+              next unless name.present?
+              extras_by_name[name] = extra
+            end
+          end
+          
+          if extras_by_name.any?
             # Add product-specific header
             extras_data << ["HERRAMENTALES - #{product.description.upcase}", "PRECIO"]
             
             # Add extras for this product
-            product.data["extras"].each do |extra|
+            extras_by_name.each_value do |extra|
               name = extra["name"] || extra["description"]
               price = extra["price"] || extra["unit_price"] || 0
               quantity = extra["quantity"] || 1
               
+              # Calculate total price if quantity > 1
+              total_price = price.to_f * quantity
+              
               # Format the price display with thousand separators
               price_display = if quantity > 1
-                "$ #{helpers.number_with_delimiter(helpers.number_with_precision(price.to_f, precision: 2))} x #{quantity}"
+                "$ #{helpers.number_with_delimiter(helpers.number_with_precision(total_price, precision: 2))} (#{quantity} x #{helpers.number_with_delimiter(helpers.number_with_precision(price.to_f, precision: 2))})"
               else
                 "$ #{helpers.number_with_delimiter(helpers.number_with_precision(price.to_f, precision: 2))}"
               end
               
-              # Only add if we have a name and price
-              extras_data << [name.upcase, price_display] if name.present?
+              # Add the extra to the table
+              extras_data << [name.upcase, price_display]
             end
           end
         end

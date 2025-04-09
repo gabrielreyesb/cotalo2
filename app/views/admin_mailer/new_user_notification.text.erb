@@ -1,0 +1,12 @@
+Nuevo Usuario en Cotalo
+
+Se ha registrado un nuevo usuario en la plataforma:
+
+Email: <%= @user.email %>
+Fecha de registro: <%= @user.created_at.strftime('%d/%m/%Y %H:%M') %>
+
+Puedes ver los detalles del usuario en el panel de administración:
+<%= admin_user_url(@user) %>
+
+Saludos,
+Sistema de Cotalo 

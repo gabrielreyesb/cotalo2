@@ -51,6 +51,12 @@
                 <%= link_to admin_news_index_path, class: "dropdown-item #{current_page?(admin_news_index_path) ? 'active' : ''}" do %>
                   <i class="fa fa-newspaper me-1"></i> Noticias
                 <% end %>
+                <%= link_to admin_suggestions_path, class: "dropdown-item #{current_page?(admin_suggestions_path) ? 'active' : ''}" do %>
+                  <i class="fas fa-lightbulb me-1"></i> Sugerencias
+                  <% if Suggestion.where(reviewed: false).exists? %>
+                    <span class="badge bg-warning text-dark">Nuevo</span>
+                  <% end %>
+                <% end %>
               <% end %>
             </div>
           </li>

@@ -230,9 +230,7 @@ class QuotesController < ApplicationController
   
   # PDF Generation
   def pdf
-    pdf_generator = QuotePdfGenerator.new(@quote)
-    pdf_content = pdf_generator.generate
-    
+    pdf_content = generate_pdf_for_quote(@quote)
     filename = "#{@quote.quote_number}.pdf"
     
     respond_to do |format|
@@ -274,10 +272,43 @@ class QuotesController < ApplicationController
     end
   end
   
+  def send_email
+    @quote = current_user.quotes.includes(:user, :quote_products => [:product]).find(params[:id])
+    
+    begin
+      pdf_content = generate_pdf_for_quote(@quote)
+      
+      QuoteMailer.with(
+        quote: @quote,
+        user: current_user,
+        message: params[:message],
+        pdf_content: pdf_content
+      ).send_quote.deliver_now
+      
+      respond_to do |format|
+        format.html { redirect_to @quote, notice: 'La cotización ha sido enviada por correo.' }
+        format.json { render json: { message: 'Email sent successfully' }, status: :ok }
+      end
+    rescue => e
+      Rails.logger.error "Error sending email: #{e.message}"
+      respond_to do |format|
+        format.html { redirect_to @quote, alert: 'Error al enviar el correo. Por favor intente nuevamente.' }
+        format.json { render json: { error: e.message }, status: :unprocessable_entity }
+      end
+    end
+  end
+  
   private
   
+  def generate_pdf_for_quote(quote)
+    # Ensure we have all the necessary associations loaded
+    quote = Quote.includes(:user, :quote_products => [:product]).find(quote.id) unless quote.quote_products.loaded?
+    pdf_generator = QuotePdfGenerator.new(quote)
+    pdf_generator.generate
+  end
+  
   def set_quote
-    @quote = current_user.quotes.find(params[:id])
+    @quote = current_user.quotes.includes(:user, quote_products: [:product]).find(params[:id])
   end
   
   def quote_params

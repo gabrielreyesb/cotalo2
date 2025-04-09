@@ -68,3 +68,88 @@
     </div>
   </div>
 </div>
+
+<div class="row mt-4">
+  <div class="col-12 text-center mb-3">
+    <button class="btn btn-outline-success" type="button" data-bs-toggle="collapse" data-bs-target="#suggestionForm" aria-expanded="false" aria-controls="suggestionForm">
+      <i class="fas fa-lightbulb me-2"></i>Enviar sugerencia
+    </button>
+  </div>
+</div>
+
+<div class="collapse" id="suggestionForm">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card bg-dark border-success mb-4">
+        <div class="card-header bg-dark border-bottom border-secondary">
+          <h5 class="mb-0">Enviar sugerencia</h5>
+        </div>
+        <%= form_tag suggestions_path, method: :post, class: "needs-validation", novalidate: true do %>
+          <div class="card-body">
+            <div class="mb-3">
+              <label for="suggestion" class="form-label">Tu sugerencia</label>
+              <textarea class="form-control bg-dark text-light border-secondary" 
+                        id="suggestion" 
+                        name="suggestion" 
+                        rows="4" 
+                        required
+                        placeholder="Escribe aquí tu sugerencia para mejorar Cotalo..."></textarea>
+              <div class="invalid-feedback">
+                Por favor, escribe tu sugerencia.
+              </div>
+            </div>
+          </div>
+          <div class="card-footer bg-dark border-top border-secondary text-end">
+            <button type="button" class="btn btn-secondary me-2" id="cancelSuggestion">
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-success">
+              <i class="fas fa-paper-plane me-2"></i>Enviar
+            </button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Form validation
+    const forms = document.querySelectorAll('.needs-validation');
+    const suggestionForm = document.getElementById('suggestionForm');
+    const collapse = new bootstrap.Collapse(suggestionForm, { toggle: false });
+    
+    Array.from(forms).forEach(form => {
+      form.addEventListener('submit', event => {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        
+        form.classList.add('was-validated');
+      }, false);
+    });
+
+    // Auto-focus the textarea when the form is shown
+    suggestionForm.addEventListener('shown.bs.collapse', function () {
+      document.getElementById('suggestion').focus();
+    });
+
+    // Handle cancel button click
+    document.getElementById('cancelSuggestion').addEventListener('click', function() {
+      const form = suggestionForm.querySelector('form');
+      form.reset();
+      form.classList.remove('was-validated');
+      bootstrap.Collapse.getInstance(suggestionForm).hide();
+    });
+
+    // Handle successful form submission
+    suggestionForm.querySelector('form').addEventListener('submit', function() {
+      // The form will be collapsed after successful submission when the page reloads
+      // Reset the form state
+      this.reset();
+      this.classList.remove('was-validated');
+    });
+  });
+</script>

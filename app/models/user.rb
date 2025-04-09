@@ -13,6 +13,7 @@ class User < ApplicationRecord
   has_many :price_margins
 
   after_create :setup_initial_data
+  after_create :send_admin_notification
 
   def admin?
     admin
@@ -74,5 +75,9 @@ class User < ApplicationRecord
     # Set default margins
     set_config(AppConfig::WIDTH_MARGIN, 0, AppConfig::NUMERIC)
     set_config(AppConfig::LENGTH_MARGIN, 0, AppConfig::NUMERIC)
+  end
+
+  def send_admin_notification
+    AdminMailer.new_user_notification(self).deliver_later
   end
 end

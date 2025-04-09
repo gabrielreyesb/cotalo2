@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2 style="color: #333;">Cotización de Cotalo</h2>
+      
+      <p>Estimado/a cliente,</p>
+      
+      <% if @message.present? %>
+        <div style="margin: 20px 0; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
+          <%= simple_format(@message) %>
+        </div>
+      <% end %>
+      
+      <p>Adjunto encontrará la cotización solicitada en formato PDF.</p>
+      
+      <p>Detalles de la cotización:</p>
+      <ul>
+        <li>Número de cotización: <%= @quote.quote_number %></li>
+        <li>Fecha: <%= @quote.created_at.strftime('%d/%m/%Y') %></li>
+        <li>Total: <%= number_to_currency(@quote.data["totals"]["total"]) %></li>
+      </ul>
+      
+      <p>Si tiene alguna pregunta o necesita aclaraciones, no dude en contactarnos.</p>
+      
+      <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+        <p style="margin: 0;">Saludos cordiales,</p>
+        <p style="margin: 5px 0;"><strong><%= @user.email %></strong></p>
+        <p style="margin: 0;">Cotalo</p>
+      </div>
+    </div>
+  </body>
+</html> 

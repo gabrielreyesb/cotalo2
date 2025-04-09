@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     delete 'impersonations', to: 'impersonations#destroy', as: :impersonations_destroy
     resources :units
     resources :news
+    resources :suggestions, only: [:index, :update]
   end
   
   # Dashboard route
@@ -54,6 +55,7 @@ Rails.application.routes.draw do
       patch :update_product_quantity
       get :pdf
       get :duplicate
+      post :send_email
     end
     
     collection do
@@ -113,4 +115,6 @@ Rails.application.routes.draw do
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
+
+  resources :suggestions, only: [:create]
 end
