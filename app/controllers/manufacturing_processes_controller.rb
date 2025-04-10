@@ -1,13 +1,13 @@
 class ManufacturingProcessesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_manufacturing_process, only: [:show, :edit, :update, :destroy]
+  before_action :set_manufacturing_process, only: [:show, :edit, :update, :destroy, :duplicate]
   before_action :no_cache, only: [:index, :show]
 
   def index
     # Clear any potential AR cache to ensure fresh data
     ActiveRecord::Base.connection.clear_query_cache
     
-    @manufacturing_processes = current_user.manufacturing_processes.includes(:unit).reload
+    @manufacturing_processes = current_user.manufacturing_processes.includes(:unit).order(name: :asc).reload
     
     # Debug logs
     puts "INDEX - MANUFACTURING PROCESSES:"
@@ -37,7 +37,7 @@ class ManufacturingProcessesController < ApplicationController
 
     respond_to do |format|
       if @manufacturing_process.save
-        format.html { redirect_to manufacturing_processes_path, notice: 'Manufacturing process was successfully created.' }
+        format.html { redirect_to manufacturing_processes_path }
         format.json { render :show, status: :created, location: @manufacturing_process }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -55,7 +55,7 @@ class ManufacturingProcessesController < ApplicationController
     respond_to do |format|
       if @manufacturing_process.update(manufacturing_process_params)
         puts "AFTER UPDATE - PROCESS UNIT ID: #{@manufacturing_process.unit_id}"
-        format.html { redirect_to manufacturing_processes_path, notice: 'Manufacturing process was successfully updated.' }
+        format.html { redirect_to manufacturing_processes_path }
         format.json { render :show, status: :ok, location: @manufacturing_process }
       else
         puts "UPDATE FAILED - ERRORS: #{@manufacturing_process.errors.full_messages}"
@@ -68,8 +68,19 @@ class ManufacturingProcessesController < ApplicationController
   def destroy
     @manufacturing_process.destroy
     respond_to do |format|
-      format.html { redirect_to manufacturing_processes_url, notice: 'Manufacturing process was successfully destroyed.' }
+      format.html { redirect_to manufacturing_processes_url }
       format.json { head :no_content }
+    end
+  end
+
+  def duplicate
+    @new_process = @manufacturing_process.dup
+    @new_process.name = "#{@manufacturing_process.name} (Copia)"
+    
+    if @new_process.save
+      redirect_to manufacturing_processes_path
+    else
+      redirect_to manufacturing_processes_path, alert: 'Error duplicating process.'
     end
   end
 

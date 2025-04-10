@@ -1,113 +1,116 @@
-<div class="row">
-  <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2 text-center my-5">
-    <h2 class="mb-4">Bienvenido a Cotalo</h2>
-    <p class="lead mb-5 px-4 px-md-5 mx-2">
-      Gestiona tus materiales, crea productos y genera presupuestos con facilidad.
-      Cotalo te ayuda a organizar tu catálogo y a simplificar tu proceso de precios.
-    </p>
-    
-    <% if user_signed_in? %>
-      <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-2 gap-md-3">
-        <%= link_to products_path, class: "btn btn-success w-100 w-md-auto", style: "min-width: 150px; max-width: 200px;" do %>
-          <i class="fas fa-box me-2"></i> Ver productos
-        <% end %>
-        <%= link_to quotes_path, class: "btn btn-success w-100 w-md-auto", style: "min-width: 150px; max-width: 200px;" do %>
-          <i class="fas fa-file-invoice-dollar me-2"></i> Cotizaciones
-        <% end %>
-        <%= link_to news_index_path, class: "btn btn-outline-success w-100 w-md-auto mt-2 mt-md-0", style: "min-width: 150px; max-width: 200px;" do %>
-          <i class="fas fa-newspaper me-2"></i> Novedades
-        <% end %>
-      </div>
-    <% else %>
-      <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-2 gap-md-3">
-        <%= link_to new_user_session_path, class: "btn btn-success w-100 w-md-auto", style: "min-width: 150px; max-width: 200px;" do %>
-          <i class="fas fa-sign-in-alt me-2"></i> Iniciar sesión
-        <% end %>
-        <%= link_to new_user_registration_path, class: "btn btn-outline-success w-100 w-md-auto", style: "min-width: 150px; max-width: 200px;" do %>
-          <i class="fas fa-user-plus me-2"></i> Registrarse
-        <% end %>
-      </div>
-    <% end %>
-  </div>
-</div>
-
-<div class="row mt-5">
-  <div class="col-md-4 mb-4">
-    <div class="card h-100">
-      <div class="card-body text-center p-4">
-        <i class="fa fa-cubes fa-2x mb-3" style="color: var(--cotalo-green);"></i>
-        <h5 class="card-title mb-3">Gestionar materiales</h5>
-        <p class="card-text px-2">
-          Mantén un seguimiento de todos tus materiales con información detallada.
-        </p>
-      </div>
-    </div>
-  </div>
-  
-  <div class="col-md-4 mb-4">
-    <div class="card h-100">
-      <div class="card-body text-center p-4">
-        <i class="fa fa-box fa-2x mb-3" style="color: var(--cotalo-green);"></i>
-        <h5 class="card-title mb-3">Crear productos</h5>
-        <p class="card-text px-2">
-          Define productos usando tu catálogo y calcula costos automáticamente.
-        </p>
-      </div>
-    </div>
-  </div>
-  
-  <div class="col-md-4 mb-4">
-    <div class="card h-100">
-      <div class="card-body text-center p-4">
-        <i class="fa fa-file-invoice-dollar fa-2x mb-3" style="color: var(--cotalo-green);"></i>
-        <h5 class="card-title mb-3">Generar presupuestos</h5>
-        <p class="card-text px-2">
-          Crea presupuestos profesionales para tus clientes.
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="row mt-4">
-  <div class="col-12 text-center mb-3">
-    <button class="btn btn-outline-success" type="button" data-bs-toggle="collapse" data-bs-target="#suggestionForm" aria-expanded="false" aria-controls="suggestionForm">
-      <i class="fas fa-lightbulb me-2"></i>Enviar sugerencia
-    </button>
-  </div>
-</div>
-
-<div class="collapse" id="suggestionForm">
-  <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-      <div class="card bg-dark border-success mb-4">
-        <div class="card-header bg-dark border-bottom border-secondary">
-          <h5 class="mb-0">Enviar sugerencia</h5>
+<%# Main container with fixed height and scrolling handled by _scrollable_view.scss %>
+<div class="scrollable-view-container">
+  <div class="row">
+    <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2 text-center my-5">
+      <h2 class="mb-4">Bienvenido a Cotalo</h2>
+      <p class="lead mb-5 px-4 px-md-5 mx-2">
+        Gestiona tus materiales, crea productos y genera presupuestos con facilidad.
+        Cotalo te ayuda a organizar tu catálogo y a simplificar tu proceso de precios.
+      </p>
+      
+      <% if user_signed_in? %>
+        <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-2 gap-md-3">
+          <%= link_to products_path, class: "btn btn-success w-100 w-md-auto", style: "min-width: 150px; max-width: 200px;" do %>
+            <i class="fas fa-box me-2"></i> Ver productos
+          <% end %>
+          <%= link_to quotes_path, class: "btn btn-success w-100 w-md-auto", style: "min-width: 150px; max-width: 200px;" do %>
+            <i class="fas fa-file-invoice-dollar me-2"></i> Cotizaciones
+          <% end %>
+          <%= link_to news_index_path, class: "btn btn-outline-success w-100 w-md-auto mt-2 mt-md-0", style: "min-width: 150px; max-width: 200px;" do %>
+            <i class="fas fa-newspaper me-2"></i> Novedades
+          <% end %>
         </div>
-        <%= form_tag suggestions_path, method: :post, class: "needs-validation", novalidate: true do %>
-          <div class="card-body">
-            <div class="mb-3">
-              <label for="suggestion" class="form-label">Tu sugerencia</label>
-              <textarea class="form-control bg-dark text-light border-secondary" 
-                        id="suggestion" 
-                        name="suggestion" 
-                        rows="4" 
-                        required
-                        placeholder="Escribe aquí tu sugerencia para mejorar Cotalo..."></textarea>
-              <div class="invalid-feedback">
-                Por favor, escribe tu sugerencia.
+      <% else %>
+        <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-2 gap-md-3">
+          <%= link_to new_user_session_path, class: "btn btn-success w-100 w-md-auto", style: "min-width: 150px; max-width: 200px;" do %>
+            <i class="fas fa-sign-in-alt me-2"></i> Iniciar sesión
+          <% end %>
+          <%= link_to new_user_registration_path, class: "btn btn-outline-success w-100 w-md-auto", style: "min-width: 150px; max-width: 200px;" do %>
+            <i class="fas fa-user-plus me-2"></i> Registrarse
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body text-center p-4">
+          <i class="fa fa-cubes fa-2x mb-3" style="color: var(--cotalo-green);"></i>
+          <h5 class="card-title mb-3">Gestionar materiales</h5>
+          <p class="card-text px-2">
+            Mantén un seguimiento de todos tus materiales con información detallada.
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body text-center p-4">
+          <i class="fa fa-box fa-2x mb-3" style="color: var(--cotalo-green);"></i>
+          <h5 class="card-title mb-3">Crear productos</h5>
+          <p class="card-text px-2">
+            Define productos usando tu catálogo y calcula costos automáticamente.
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body text-center p-4">
+          <i class="fa fa-file-invoice-dollar fa-2x mb-3" style="color: var(--cotalo-green);"></i>
+          <h5 class="card-title mb-3">Generar presupuestos</h5>
+          <p class="card-text px-2">
+            Crea presupuestos profesionales para tus clientes.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-12 text-center mb-3">
+      <button class="btn btn-outline-success" type="button" data-bs-toggle="collapse" data-bs-target="#suggestionForm" aria-expanded="false" aria-controls="suggestionForm">
+        <i class="fas fa-lightbulb me-2"></i>Enviar sugerencia
+      </button>
+    </div>
+  </div>
+
+  <div class="collapse" id="suggestionForm">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        <div class="card bg-dark border-success mb-4">
+          <div class="card-header bg-dark border-bottom border-secondary">
+            <h5 class="mb-0">Enviar sugerencia</h5>
+          </div>
+          <%= form_tag suggestions_path, method: :post, class: "needs-validation", novalidate: true do %>
+            <div class="card-body">
+              <div class="mb-3">
+                <label for="suggestion" class="form-label">Tu sugerencia</label>
+                <textarea class="form-control bg-dark text-light border-secondary" 
+                          id="suggestion" 
+                          name="suggestion" 
+                          rows="4" 
+                          required
+                          placeholder="Escribe aquí tu sugerencia para mejorar Cotalo..."></textarea>
+                <div class="invalid-feedback">
+                  Por favor, escribe tu sugerencia.
+                </div>
               </div>
             </div>
-          </div>
-          <div class="card-footer bg-dark border-top border-secondary text-end">
-            <button type="button" class="btn btn-secondary me-2" id="cancelSuggestion">
-              Cancelar
-            </button>
-            <button type="submit" class="btn btn-success">
-              <i class="fas fa-paper-plane me-2"></i>Enviar
-            </button>
-          </div>
-        <% end %>
+            <div class="card-footer bg-dark border-top border-secondary text-end">
+              <button type="button" class="btn btn-secondary me-2" id="cancelSuggestion">
+                Cancelar
+              </button>
+              <button type="submit" class="btn btn-success">
+                <i class="fas fa-paper-plane me-2"></i>Enviar
+              </button>
+            </div>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>

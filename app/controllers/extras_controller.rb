@@ -1,13 +1,13 @@
 class ExtrasController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_extra, only: [:show, :edit, :update, :destroy]
+  before_action :set_extra, only: [:show, :edit, :update, :destroy, :duplicate]
   before_action :no_cache, only: [:index, :show]
 
   def index
     # Clear any potential AR cache to ensure fresh data
     ActiveRecord::Base.connection.clear_query_cache
     
-    @extras = current_user.extras.includes(:unit).reload
+    @extras = current_user.extras.includes(:unit).order(name: :asc).reload
     
     # Debug logs
     puts "INDEX - EXTRAS:"
@@ -37,7 +37,7 @@ class ExtrasController < ApplicationController
 
     respond_to do |format|
       if @extra.save
-        format.html { redirect_to extras_path, notice: 'Extra was successfully created.' }
+        format.html { redirect_to extras_path }
         format.json { render :show, status: :created, location: @extra }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -55,7 +55,7 @@ class ExtrasController < ApplicationController
     respond_to do |format|
       if @extra.update(extra_params)
         puts "AFTER UPDATE - EXTRA UNIT ID: #{@extra.unit_id}"
-        format.html { redirect_to extras_path, notice: 'Extra was successfully updated.' }
+        format.html { redirect_to extras_path }
         format.json { render :show, status: :ok, location: @extra }
       else
         puts "UPDATE FAILED - ERRORS: #{@extra.errors.full_messages}"
@@ -68,8 +68,19 @@ class ExtrasController < ApplicationController
   def destroy
     @extra.destroy
     respond_to do |format|
-      format.html { redirect_to extras_url, notice: 'Extra was successfully destroyed.' }
+      format.html { redirect_to extras_url }
       format.json { head :no_content }
+    end
+  end
+
+  def duplicate
+    @new_extra = @extra.dup
+    @new_extra.name = "#{@extra.name} (Copia)"
+    
+    if @new_extra.save
+      redirect_to extras_path
+    else
+      redirect_to extras_path, alert: 'Error duplicating extra.'
     end
   end
 

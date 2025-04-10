@@ -1,9 +1,9 @@
 class MaterialsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_material, only: [:show, :edit, :update, :destroy]
+  before_action :set_material, only: [:show, :edit, :update, :destroy, :duplicate]
 
   def index
-    @materials = current_user.materials.includes(:unit)
+    @materials = current_user.materials.includes(:unit).order(description: :asc)
   end
 
   def show
@@ -21,7 +21,7 @@ class MaterialsController < ApplicationController
 
     respond_to do |format|
       if @material.save
-        format.html { redirect_to materials_path, notice: 'Material was successfully created.' }
+        format.html { redirect_to materials_path }
         format.json { render :show, status: :created, location: @material }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -33,7 +33,7 @@ class MaterialsController < ApplicationController
   def update
     respond_to do |format|
       if @material.update(material_params)
-        format.html { redirect_to materials_path, notice: 'Material was successfully updated.' }
+        format.html { redirect_to materials_path }
         format.json { render :show, status: :ok, location: @material }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -45,8 +45,20 @@ class MaterialsController < ApplicationController
   def destroy
     @material.destroy
     respond_to do |format|
-      format.html { redirect_to materials_url, notice: 'Material was successfully destroyed.' }
+      format.html { redirect_to materials_url }
       format.json { head :no_content }
+    end
+  end
+
+  def duplicate
+    @new_material = @material.dup
+    @new_material.description = "#{@material.description} (Copia)"
+    @new_material.client_description = "#{@material.client_description} (Copia)"
+    
+    if @new_material.save
+      redirect_to materials_path
+    else
+      redirect_to materials_path, alert: 'Error duplicating material.'
     end
   end
 

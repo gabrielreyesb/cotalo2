@@ -1,0 +1,73 @@
+// --- Start :has() Scoped Layout for Home Page ---
+
+// When .main-view-container is present within main.main-content:
+main.main-content:has(.main-view-container) {
+  // Ensure it acts as a flex container but doesn't scroll itself
+  flex: 1 1 auto;
+  overflow: hidden; // Prevent main from scrolling
+  padding: 0; // Remove default padding, apply to inner container
+  height: 0; // Needed for flex child height calculation
+  
+  // The immediate child .container-fluid should handle scrolling
+  > .container-fluid {
+    height: 100%; // Fill the main-content height
+    overflow-y: auto; // Make this container scroll
+    overflow-x: hidden;
+    padding: 1.5rem; // Re-apply padding here
+  }
+}
+
+// --- End :has() Scoped Layout ---
+
+// Styles specifically for the home page
+.main-view-container {
+  display: flex;
+  flex-direction: column;
+  min-height: auto;
+  position: static;
+  
+  // Card styling
+  .card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    
+    .card-body {
+      background-color: var(--card-bg);
+    }
+  }
+  
+  // Button styling
+  .btn-success {
+    background-color: var(--cotalo-green);
+    border-color: var(--cotalo-green);
+    
+    &:hover {
+      background-color: var(--cotalo-green-dark);
+      border-color: var(--cotalo-green-dark);
+    }
+  }
+  
+  .btn-outline-success {
+    color: var(--cotalo-green);
+    border-color: var(--cotalo-green);
+    
+    &:hover {
+      background-color: var(--cotalo-green);
+      border-color: var(--cotalo-green);
+    }
+  }
+  
+  // Form styling
+  .form-control {
+    background-color: var(--darker-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+    
+    &:focus {
+      background-color: var(--darker-bg);
+      border-color: var(--cotalo-green);
+      box-shadow: 0 0 0 0.25rem rgba(66, 185, 131, 0.25);
+      color: var(--text-primary);
+    }
+  }
+} 

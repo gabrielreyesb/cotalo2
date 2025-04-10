@@ -20,9 +20,21 @@ Rails.application.routes.draw do
   resources :news
   
   # Catalog routes
-  resources :materials
-  resources :manufacturing_processes
-  resources :extras
+  resources :materials do
+    member do
+      post :duplicate
+    end
+  end
+  resources :manufacturing_processes do
+    member do
+      post :duplicate
+    end
+  end
+  resources :extras do
+    member do
+      post :duplicate
+    end
+  end
   scope '/catalog' do
     resources :price_margins do
       collection do

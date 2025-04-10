@@ -1,4 +1,5 @@
-<div class="container-fluid py-4 px-3">
+<!-- Container with fixed height and scrolling -->
+<div class="scrollable-view-container">
   <div class="row mb-4">
     <div class="col-12">
       <div class="d-flex justify-content-between align-items-center">
@@ -21,43 +22,47 @@
         <!-- Table view for medium and large screens -->
         <div class="card d-none d-md-block shadow-sm mb-4">
           <div class="card-body p-4">
-            <div class="table-responsive">
-              <table class="table table-striped table-hover">
-                <thead>
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Descripción</th>
+                  <th>Costo</th>
+                  <th>Unidad</th>
+                  <th class="text-end">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @extras.each do |extra| %>
                   <tr>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
-                    <th>Costo</th>
-                    <th>Unidad</th>
-                    <th class="text-end">Acciones</th>
+                    <td><%= link_to extra.name, extra_path(extra) %></td>
+                    <td><%= truncate(extra.description, length: 50) %></td>
+                    <td><%= number_to_currency(extra.cost) %></td>
+                    <td>
+                      <% if extra.unit %>
+                        <%= extra.unit.name %> (<%= extra.unit.abbreviation %>)
+                      <% else %>
+                        <span class="text-muted">Sin unidad</span>
+                      <% end %>
+                    </td>
+                    <td class="text-end">
+                      <%= link_to edit_extra_path(extra), class: "btn btn-sm btn-outline-primary me-1" do %>
+                        <i class="fa fa-edit"></i>
+                      <% end %>
+                      <%= button_to duplicate_extra_path(extra), 
+                          method: :post,
+                          class: "btn btn-sm btn-outline-secondary me-1",
+                          form: { style: 'display: inline-block;' } do %>
+                        <i class="fa fa-copy"></i>
+                      <% end %>
+                      <%= button_to extra_path(extra), method: :delete, class: "btn btn-sm btn-outline-danger", form: { style: 'display: inline-block;', data: { turbo_confirm: '¿Estás seguro?' } } do %>
+                        <i class="fa fa-trash"></i>
+                      <% end %>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  <% @extras.each do |extra| %>
-                    <tr>
-                      <td><%= link_to extra.name, extra_path(extra) %></td>
-                      <td><%= truncate(extra.description, length: 50) %></td>
-                      <td><%= number_to_currency(extra.cost) %></td>
-                      <td>
-                        <% if extra.unit %>
-                          <%= extra.unit.name %> (<%= extra.unit.abbreviation %>)
-                        <% else %>
-                          <span class="text-muted">Sin unidad</span>
-                        <% end %>
-                      </td>
-                      <td class="text-end">
-                        <%= link_to edit_extra_path(extra), class: "btn btn-sm btn-outline-primary me-1" do %>
-                          <i class="fa fa-edit"></i>
-                        <% end %>
-                        <%= button_to extra_path(extra), method: :delete, class: "btn btn-sm btn-outline-danger", form: { style: 'display: inline-block;', data: { turbo_confirm: '¿Estás seguro?' } } do %>
-                          <i class="fa fa-trash"></i>
-                        <% end %>
-                      </td>
-                    </tr>
-                  <% end %>
-                </tbody>
-              </table>
-            </div>
+                <% end %>
+              </tbody>
+            </table>
           </div>
         </div>
         
@@ -87,6 +92,12 @@
                     <%= link_to edit_extra_path(extra), class: "btn btn-sm btn-outline-primary px-2 py-1 me-1" do %>
                       <i class="fa fa-edit fa-sm"></i>
                     <% end %>
+                    <%= button_to duplicate_extra_path(extra), 
+                        method: :post,
+                        class: "btn btn-sm btn-outline-secondary px-2 py-1 me-1",
+                        form: { style: 'display: inline-block;' } do %>
+                      <i class="fa fa-copy fa-sm"></i>
+                    <% end %>
                     <%= button_to extra_path(extra), method: :delete, 
                         class: "btn btn-sm btn-outline-danger px-2 py-1", 
                         form: { class: "d-inline", data: { turbo_confirm: "¿Estás seguro?" } } do %>
@@ -113,3 +124,6 @@
     </div>
   </div>
 </div>
+
+<!-- Include Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">

@@ -22,7 +22,7 @@ class Admin::UnitsController < ApplicationController
 
     respond_to do |format|
       if @unit.save
-        format.html { redirect_to admin_units_path, notice: 'Unidad creada exitosamente.' }
+        format.html { redirect_to admin_units_path }
         format.json { render :show, status: :created, location: @unit }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -34,7 +34,7 @@ class Admin::UnitsController < ApplicationController
   def update
     respond_to do |format|
       if @unit.update(unit_params)
-        format.html { redirect_to admin_units_path, notice: 'Unidad actualizada exitosamente.' }
+        format.html { redirect_to admin_units_path }
         format.json { render :show, status: :ok, location: @unit }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -46,7 +46,7 @@ class Admin::UnitsController < ApplicationController
   def destroy
     respond_to do |format|
       if @unit.destroy
-        format.html { redirect_to admin_units_url, notice: 'Unidad eliminada exitosamente.' }
+        format.html { redirect_to admin_units_url }
         format.json { head :no_content }
       else
         format.html { redirect_to admin_units_url, alert: 'No se puede eliminar una unidad que está siendo utilizada por materiales.' }
