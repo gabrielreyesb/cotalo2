@@ -3,18 +3,19 @@
     <div class="green-accent-panel">
       <div class="card">
         <div class="card-body">
-          <!-- Section 1: Material Selection/Add (already inside) -->
-          <div class="row align-items-end">
+          <!-- Section 1: Material Selection/Add (simplified) -->
+          <div class="row align-items-end g-3">
             <!-- Material selection -->
-            <div class="col-md-9 mb-3 mb-md-0">
+            <div class="col-md-10 mb-3 mb-md-0">
               <label for="material-select" class="form-label">Seleccionar material</label>
               <select 
                 id="material-select" 
                 v-model="materialIdForAdd" 
-                class="form-select"
+                class="form-select bg-dark text-white border-secondary"
                 :disabled="!availableMaterials.length"
+                @change="onMaterialSelect"
               >
-                <option value="" disabled>Seleccionar un material para agregar</option>
+                <option value="" disabled>Seleccionar un material</option>
                 <option 
                   v-for="material in availableMaterials" 
                   :key="material.id" 
@@ -23,21 +24,22 @@
                   {{ material.description }}
                 </option>
               </select>
-              <div v-if="validationMessage" class="text-danger mt-2">
-                {{ validationMessage }}
-              </div>
             </div>
             <!-- Add material button -->
-            <div class="col-md-3 d-grid">
+            <div class="col-md-2 mb-3 mb-md-0 d-flex justify-content-end">
               <button 
-                class="btn btn-primary" 
+                class="btn btn-primary w-100" 
                 @click="addMaterial" 
                 :disabled="!canAdd"
                 :title="validationMessage"
               >
-                <i class="fa fa-plus me-1"></i> Agregar Material
+                <i class="fa fa-plus me-1"></i> Agregar material
               </button>
             </div>
+          </div>
+          
+          <div v-if="validationMessage" class="text-danger mt-2">
+            {{ validationMessage }}
           </div>
           
           <!-- Section 2: No materials message -->
@@ -53,8 +55,8 @@
                 <thead>
                   <tr>
                     <th>Descripción</th>
-                    <th>Ancho</th>
-                    <th>Largo</th>
+                    <th>Ancho (cm)</th>
+                    <th>Largo (cm)</th>
                     <th>Precio</th>
                     <th>Piezas por material</th>
                     <th>Total pliegos</th>
@@ -66,16 +68,49 @@
                 <tbody>
                   <tr v-for="(material, index) in productMaterials" :key="index">
                     <td>{{ material.description }}</td>
-                    <td>{{ material.ancho }} cm</td>
-                    <td>{{ material.largo }} cm</td>
-                    <td class="text-end">{{ formatCurrency(material.price) }}</td>
+                    <td>
+                      <input 
+                        type="number" 
+                        class="form-control form-control-sm" 
+                        v-model.number="material.ancho" 
+                        min="0"
+                        step="0.1"
+                        @change="updateMaterialCalculations(index, true)"
+                        title="Editar ancho del material"
+                        data-toggle="tooltip"
+                      />
+                    </td>
+                    <td>
+                      <input 
+                        type="number" 
+                        class="form-control form-control-sm" 
+                        v-model.number="material.largo" 
+                        min="0"
+                        step="0.1"
+                        @change="updateMaterialCalculations(index, true)"
+                        title="Editar largo del material"
+                        data-toggle="tooltip"
+                      />
+                    </td>
+                    <td>
+                      <input 
+                        type="number" 
+                        class="form-control form-control-sm text-end" 
+                        v-model.number="material.price" 
+                        min="0"
+                        step="0.01"
+                        @change="updateMaterialCalculations(index)"
+                        title="Editar precio del material"
+                        data-toggle="tooltip"
+                      />
+                    </td>
                     <td class="text-center">
                       <input 
                         type="number" 
                         class="form-control form-control-sm" 
                         v-model.number="material.piecesPerMaterial" 
                         min="1"
-                        @change="updateMaterialCalculations(index)"
+                        @change="updateMaterialCalculations(index, false)"
                         title="Puedes editar este valor manualmente para ajustar la cantidad de piezas por material"
                         data-toggle="tooltip"
                       />
@@ -122,22 +157,40 @@
                   <!-- Second row: Width, length, price -->
                   <div class="row g-2 mb-2">
                     <div class="col-4">
-                      <div class="badge bg-dark d-block text-center p-2 w-100 material-badge">
-                        {{ material.ancho }} cm
-                      </div>
+                      <input 
+                        type="number" 
+                        class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge"
+                        v-model.number="material.ancho" 
+                        min="0"
+                        step="0.1"
+                        @change="updateMaterialCalculations(index, true)"
+                        placeholder="Ancho"
+                      />
                     </div>
                     <div class="col-4">
-                      <div class="badge bg-dark d-block text-center p-2 w-100 material-badge">
-                        {{ material.largo }} cm
-                      </div>
+                      <input 
+                        type="number" 
+                        class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge"
+                        v-model.number="material.largo" 
+                        min="0"
+                        step="0.1"
+                        @change="updateMaterialCalculations(index, true)"
+                        placeholder="Largo"
+                      />
                     </div>
                     <div class="col-4">
-                      <div class="badge bg-dark d-block text-center p-2 w-100 material-badge">
-                        {{ formatCurrency(material.price) }}
-                      </div>
+                      <input 
+                        type="number" 
+                        class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge"
+                        v-model.number="material.price" 
+                        min="0"
+                        step="0.01"
+                        @change="updateMaterialCalculations(index)"
+                        placeholder="Precio"
+                      />
                     </div>
                   </div>
-                  <!-- Third row: Pieces per material, total sheets, total m2 -->
+                  <!-- Rest of mobile card remains the same -->
                   <div class="row g-2 mb-2">
                     <div class="col-4">
                       <input 
@@ -145,8 +198,8 @@
                         class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge"
                         v-model.number="material.piecesPerMaterial" 
                         min="1"
-                        @change="updateMaterialCalculations(index)"
-                        title="Haz clic para editar la cantidad de piezas por material"
+                        @change="updateMaterialCalculations(index, false)"
+                        title="Puedes editar este valor manualmente para ajustar la cantidad de piezas por material"
                       />
                     </div>
                     <div class="col-4">
@@ -194,102 +247,25 @@
           </div>
 
           <!-- Section 5: Comments -->
-          <div class="card mt-3"> <!-- This is another card, maybe just use a form-group? -->
-             <div class="card-body"> <!-- Let's remove this nested card structure for comments -->
-               <div class="form-group">
-                 <label for="material-comments" class="form-label">Comentarios sobre los materiales</label>
-                 <textarea 
-                   id="material-comments" 
-                   class="form-control" 
-                   v-model="globalComments" 
-                   rows="3"
-                   placeholder="Agregar notas o comentarios generales sobre los materiales de este producto"
-                   @change="updateGlobalComments"
-                 ></textarea>
-               </div>
-             </div>
-          </div>
-          
-          <!-- Section 6: Manual material form button and form -->
-          <div class="mt-3">
-            <button 
-              class="btn btn-sm btn-outline-secondary mb-2" 
-              @click="showCustomMaterialForm = !showCustomMaterialForm"
-            >
-              <i class="fa" :class="showCustomMaterialForm ? 'fa-minus' : 'fa-plus'"></i>
-              {{ showCustomMaterialForm ? 'Ocultar' : 'Agregar material manualmente' }}
-            </button>
-            
-            <div v-if="showCustomMaterialForm">
-              <!-- Using another card here might be okay for visual separation, or remove it too -->
-              <div class="card mb-3"> 
-                <div class="card-body">
-                    <h6 class="mb-3">Agregar material manualmente</h6>
-                    <div class="mb-3">
-                      <label for="custom-material-description" class="form-label">Descripción</label>
-                      <input 
-                        type="text" 
-                        class="form-control" 
-                        id="custom-material-description" 
-                        v-model="customMaterial.description"
-                      />
-                    </div>
-                    <div class="row">
-                      <div class="col-md-4 mb-3">
-                        <label for="custom-material-width" class="form-label">Ancho (cm)</label>
-                        <input 
-                          type="number" 
-                          class="form-control" 
-                          id="custom-material-width" 
-                          v-model.number="customMaterial.ancho" 
-                          min="0"
-                          step="0.1"
-                        />
-                      </div>
-                      <div class="col-md-4 mb-3">
-                        <label for="custom-material-length" class="form-label">Largo (cm)</label>
-                        <input 
-                          type="number" 
-                          class="form-control" 
-                          id="custom-material-length" 
-                          v-model.number="customMaterial.largo" 
-                          min="0"
-                          step="0.1"
-                        />
-                      </div>
-                      <div class="col-md-4 mb-3">
-                        <label for="custom-material-price" class="form-label">Precio</label>
-                        <input 
-                          type="number" 
-                          class="form-control" 
-                          id="custom-material-price" 
-                          v-model.number="customMaterial.price" 
-                          min="0"
-                          step="0.01"
-                        />
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-12 d-grid">
-                        <button 
-                          class="btn btn-success" 
-                          @click="addCustomMaterial"
-                          :disabled="!canAddCustomMaterial"
-                        >
-                          <i class="fa fa-plus me-1"></i> Agregar material manualmente
-                        </button>
-                      </div>
-                    </div>
-                </div>
+          <div class="card mt-3">
+            <div class="card-body">
+              <div class="form-group">
+                <label for="material-comments" class="form-label">Comentarios sobre los materiales</label>
+                <textarea 
+                  id="material-comments" 
+                  class="form-control" 
+                  v-model="globalComments" 
+                  rows="3"
+                  placeholder="Agregar notas o comentarios generales sobre los materiales de este producto"
+                  @change="updateGlobalComments"
+                ></textarea>
               </div>
             </div>
           </div>
-
-          <!-- END MOVED SECTIONS -->
-        </div> <!-- Close main card-body -->
-      </div> <!-- Close main card -->
-    </div> <!-- Close green-accent-panel -->
-  </div> <!-- Close materials-tab -->
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -298,19 +274,15 @@ export default {
   props: {
     productMaterials: {
       type: Array,
-      default: () => []
+      required: true
     },
     availableMaterials: {
       type: Array,
-      default: () => []
+      required: true
     },
     comments: {
       type: String,
       default: ''
-    },
-    productQuantity: {
-      type: Number,
-      default: 1
     },
     productWidth: {
       type: Number,
@@ -320,6 +292,14 @@ export default {
       type: Number,
       default: 0
     },
+    productQuantity: {
+      type: Number,
+      default: 1
+    },
+    selectedMaterialId: {
+      type: Number,
+      default: null
+    },
     widthMargin: {
       type: Number,
       default: 0
@@ -327,274 +307,238 @@ export default {
     lengthMargin: {
       type: Number,
       default: 0
-    },
-    selectedMaterialId: {
-      type: [Number, String],
-      default: null
     }
   },
   data() {
     return {
       materialIdForAdd: '',
-      showCustomMaterialForm: false,
-      customMaterial: {
-        description: '',
-        ancho: null,
-        largo: null,
-        price: null
-      },
-      globalComments: this.comments || '',
+      selectedMaterial: this.selectedMaterialId,
+      globalComments: this.comments,
       validationMessage: ''
-    }
+    };
   },
   computed: {
     canAdd() {
-      // Only validate if a material is selected
-      if (!this.materialIdForAdd) {
-        this.validationMessage = '';
-        return false;
-      }
-
-      // Check if any required information is missing
-      if (!this.productQuantity || this.productQuantity <= 0 ||
-          !this.productWidth || this.productWidth <= 0 ||
-          !this.productLength || this.productLength <= 0) {
-        this.validationMessage = 'Por favor, completa la información del producto en la pestaña de información general';
-        return false;
-      }
-
-      // Clear validation message if all checks pass
-      this.validationMessage = '';
-      return true;
+      return this.materialIdForAdd && this.selectedMaterialDetails;
+    },
+    selectedMaterialDetails() {
+      if (!this.materialIdForAdd) return null;
+      return this.availableMaterials.find(m => m.id === this.materialIdForAdd);
     },
     totalCost() {
-      return this.productMaterials.reduce((sum, material) => sum + (material.totalPrice || 0), 0);
-    },
-    canAddCustomMaterial() {
-      return this.customMaterial.description &&
-             this.customMaterial.ancho > 0 &&
-             this.customMaterial.largo > 0 &&
-             this.customMaterial.price > 0;
-    },
-    selectedMaterial: {
-      get() {
-        return this.selectedMaterialId;
-      },
-      set(value) {
-        // If trying to deselect a material, prevent it
-        if (!value && this.productMaterials.length > 0) {
-          return;
-        }
-        this.$emit('material-selected-for-products', value);
-      }
+      return this.productMaterials.reduce((sum, material) => sum + material.totalPrice, 0);
     }
   },
   methods: {
     formatCurrency(value) {
-      return new Intl.NumberFormat('en-US', {
+      return new Intl.NumberFormat('es-AR', {
         style: 'currency',
-        currency: 'USD'
-      }).format(value || 0);
+        currency: 'ARS'
+      }).format(value);
+    },
+    onMaterialSelect() {
+      if (this.selectedMaterialDetails) {
+        this.validationMessage = '';
+      }
     },
     addMaterial() {
-      const material = this.availableMaterials.find(m => m.id === this.materialIdForAdd);
-      if (!material) return;
+      if (!this.selectedMaterialDetails) {
+        this.validationMessage = 'Por favor, selecciona un material.';
+        return;
+      }
 
-      // Calculate how many pieces fit in the material sheet
-      const materialWidth = parseFloat(material.ancho) || 0;
-      const materialLength = parseFloat(material.largo) || 0;
+      // Calculate initial pieces per material
+      const initialPiecesPerSheet = this.calculatePiecesPerSheet(
+        this.selectedMaterialDetails.ancho,
+        this.selectedMaterialDetails.largo,
+        this.productWidth,
+        this.productLength,
+        this.widthMargin,
+        this.lengthMargin
+      );
+
+      const material = {
+        id: this.selectedMaterialDetails.id,
+        description: this.selectedMaterialDetails.description,
+        ancho: this.selectedMaterialDetails.ancho,
+        largo: this.selectedMaterialDetails.largo,
+        price: this.selectedMaterialDetails.price,
+        piecesPerMaterial: initialPiecesPerSheet || 1, // Use calculated value or fallback to 1
+        totalSheets: 0,
+        totalSquareMeters: 0,
+        totalPrice: 0
+      };
+
+      // Add to materials array
+      this.productMaterials.push(material);
+      
+      // Calculate initial values
+      this.updateMaterialCalculations(this.productMaterials.length - 1);
+      
+      // Reset selection
+      this.materialIdForAdd = '';
+      this.validationMessage = '';
+      
+      // If this is the first material, select it automatically
+      if (this.productMaterials.length === 1) {
+        this.selectedMaterial = material.id;
+      }
+      
+      // Emit update event
+      this.$emit('update:product-materials', this.productMaterials);
+      this.$emit('material-selected-for-products', material.id);
+    },
+    updateMaterialCalculations(index, updatePiecesPerMaterial = false) {
+      console.log('Starting updateMaterialCalculations:', {
+        index,
+        updatePiecesPerMaterial,
+        material: this.productMaterials[index]
+      });
+
+      const material = this.productMaterials[index];
+      
+      // Calculate pieces that fit in one sheet
+      const piecesPerSheet = this.calculatePiecesPerSheet(
+        material.ancho,
+        material.largo,
+        this.productWidth,
+        this.productLength,
+        this.widthMargin,
+        this.lengthMargin
+      );
+
+      console.log('Calculated piecesPerSheet:', piecesPerSheet);
+
+      // Update pieces per material only when dimensions change
+      if (updatePiecesPerMaterial) {
+        material.piecesPerMaterial = piecesPerSheet || 1;
+      }
+
+      console.log('Current piecesPerMaterial:', material.piecesPerMaterial);
+
+      // Calculate total sheets needed (product quantity / pieces per material)
+      material.totalSheets = Math.ceil(this.productQuantity / material.piecesPerMaterial);
+      
+      // Calculate total square meters
+      material.totalSquareMeters = (material.ancho * material.largo * material.totalSheets) / 10000; // Convert to m²
+      
+      // Calculate total price (price per m² * total m²)
+      material.totalPrice = material.price * material.totalSquareMeters;
+
+      console.log('After calculations:', {
+        totalSheets: material.totalSheets,
+        totalSquareMeters: material.totalSquareMeters,
+        totalPrice: material.totalPrice
+      });
+
+      // Mark all processes for recalculation
+      material._needsProcessRecalculation = true;
+
+      // Emit updates in the correct order
+      // 1. Update the materials array first
+      this.$emit('update:product-materials', [...this.productMaterials]);
+      
+      // 2. Emit the total cost for pricing tab
+      this.$emit('update:materials-cost', this.totalCost);
+      
+      // 3. Emit detailed changes for process and pricing recalculation
+      const eventData = {
+        materialId: material.id,
+        totalSheets: material.totalSheets,
+        totalSquareMeters: material.totalSquareMeters,
+        totalPrice: material.totalPrice,
+        needsProcessRecalculation: true,
+        needsPricingRecalculation: true
+      };
+      console.log('Emitting material-calculation-changed with:', eventData);
+      this.$emit('material-calculation-changed', eventData);
+    },
+    calculatePiecesPerSheet(materialWidth, materialLength, productWidth, productLength, widthMargin, lengthMargin) {
+      if (!materialWidth || !materialLength || !productWidth || !productLength) return 0;
       
       // Add margins to product dimensions
-      const effectiveProductWidth = this.productWidth + this.widthMargin;
-      const effectiveProductLength = this.productLength + this.lengthMargin;
-
-      // Calculate pieces that fit in both orientations
-      const horizontalPieces = Math.floor(materialWidth / effectiveProductWidth);
-      const verticalPieces = Math.floor(materialLength / effectiveProductLength);
+      const totalProductWidth = productWidth + widthMargin;
+      const totalProductLength = productLength + lengthMargin;
       
-      // Try the other orientation as well
-      const horizontalPiecesAlt = Math.floor(materialWidth / effectiveProductLength);
-      const verticalPiecesAlt = Math.floor(materialLength / effectiveProductWidth);
+      // Calculate how many pieces fit in each direction
+      const piecesAcross = Math.floor(materialWidth / totalProductWidth);
+      const piecesDown = Math.floor(materialLength / totalProductLength);
       
-      // Use the orientation that fits more pieces
-      const piecesPerMaterial = Math.max(
-        horizontalPieces * verticalPieces,
-        horizontalPiecesAlt * verticalPiecesAlt
+      // Try rotating the piece if it yields more pieces
+      const piecesAcrossRotated = Math.floor(materialWidth / totalProductLength);
+      const piecesDownRotated = Math.floor(materialLength / totalProductWidth);
+      
+      // Return the maximum number of pieces possible
+      return Math.max(
+        piecesAcross * piecesDown,
+        piecesAcrossRotated * piecesDownRotated
       );
-      
-      // Calculate total sheets needed based on pieces per material
-      const totalSheets = Math.ceil(this.productQuantity / piecesPerMaterial);
-      
-      // Calculate total square meters
-      const totalSquareMeters = (materialWidth * materialLength * totalSheets) / 10000; // convert to m²
-      
-      // Calculate total price based on square meters
-      const totalPrice = material.price * totalSquareMeters;
-      
-      const newMaterial = {
-        ...material,
-        piecesPerMaterial,
-        totalSheets,
-        totalSquareMeters,
-        totalPrice
-      };
-
-      // Add the new material to the existing materials
-      const updatedMaterials = [...this.productMaterials, newMaterial];
-      this.$emit('update:product-materials', updatedMaterials);
-      this.$emit('update:materials-cost', this.calculateTotalCost(updatedMaterials));
-      
-      // If this is the first material or no material is currently selected, select it
-      if (this.productMaterials.length === 0) {
-        this.$emit('material-selected-for-products', newMaterial.id);
-      }
-      
-      this.materialIdForAdd = '';
-    },
-    updateMaterialCalculations(index) {
-      const material = this.productMaterials[index];
-      if (!material || material.piecesPerMaterial <= 0) return;
-
-      // Calculate total sheets needed based on pieces per material
-      const totalSheets = Math.ceil(this.productQuantity / material.piecesPerMaterial);
-
-      // Calculate total square meters
-      const totalSquareMeters = (material.ancho * material.largo * totalSheets) / 10000;
-
-      // Calculate total price based on square meters
-      const totalPrice = material.price * totalSquareMeters;
-
-      const updatedMaterial = {
-        ...material,
-        totalSheets,
-        totalSquareMeters,
-        totalPrice
-      };
-      
-      // Update the material in the array
-      const updatedMaterials = [...this.productMaterials];
-      updatedMaterials[index] = updatedMaterial;
-      
-      this.$emit('update:product-materials', updatedMaterials);
-      this.$emit('update:materials-cost', this.calculateTotalCost(updatedMaterials));
-      this.$emit('material-calculation-changed', { index, material: updatedMaterial });
     },
     removeMaterial(index) {
-      // Store the ID of the material being removed
-      const removedMaterialId = this.productMaterials[index].id;
+      const removedMaterial = this.productMaterials[index];
+      this.productMaterials.splice(index, 1);
       
-      // Remove the material
-      const updatedMaterials = this.productMaterials.filter((_, i) => i !== index);
-      
-      // Update materials and cost
-      this.$emit('update:product-materials', updatedMaterials);
-      this.$emit('update:materials-cost', this.calculateTotalCost(updatedMaterials));
-
-      // If we removed the selected material and there are other materials, select the first one
-      if (removedMaterialId === this.selectedMaterialId && updatedMaterials.length > 0) {
-        this.$emit('material-selected-for-products', updatedMaterials[0].id);
-      }
-    },
-    calculateTotalCost(materials) {
-      return materials.reduce((sum, material) => sum + (material.totalPrice || 0), 0);
+      // Emit updates in the correct order
+      this.$emit('update:product-materials', this.productMaterials);
+      this.$emit('update:materials-cost', this.totalCost);
+      this.$emit('material-calculation-changed', {
+        materialId: removedMaterial.id,
+        totalSheets: 0,
+        totalSquareMeters: 0,
+        totalPrice: 0,
+        needsProcessRecalculation: true,
+        needsPricingRecalculation: true
+      });
     },
     updateGlobalComments() {
       this.$emit('update:comments', this.globalComments);
-    },
-    addCustomMaterial() {
-      if (!this.canAddCustomMaterial) return;
-
-      // Calculate how many pieces fit in the material sheet
-      const materialWidth = parseFloat(this.customMaterial.ancho) || 0;
-      const materialLength = parseFloat(this.customMaterial.largo) || 0;
-      
-      // Add margins to product dimensions
-      const effectiveProductWidth = this.productWidth + this.widthMargin;
-      const effectiveProductLength = this.productLength + this.lengthMargin;
-
-      // Calculate pieces that fit in both orientations
-      const horizontalPieces = Math.floor(materialWidth / effectiveProductWidth);
-      const verticalPieces = Math.floor(materialLength / effectiveProductLength);
-      
-      // Try the other orientation as well
-      const horizontalPiecesAlt = Math.floor(materialWidth / effectiveProductLength);
-      const verticalPiecesAlt = Math.floor(materialLength / effectiveProductWidth);
-      
-      // Use the orientation that fits more pieces
-      const piecesPerMaterial = Math.max(
-        horizontalPieces * verticalPieces,
-        horizontalPiecesAlt * verticalPiecesAlt
-      );
-
-      // Calculate total sheets needed based on pieces per material
-      const totalSheets = Math.ceil(this.productQuantity / piecesPerMaterial);
-
-      // Calculate total square meters
-      const totalSquareMeters = (materialWidth * materialLength * totalSheets) / 10000; // convert to m²
-
-      // Calculate total price based on square meters
-      const totalPrice = this.customMaterial.price * totalSquareMeters;
-
-      const newMaterial = {
-        id: Date.now(), // Temporary ID for custom materials
-        description: this.customMaterial.description,
-        ancho: materialWidth,
-        largo: materialLength,
-        price: this.customMaterial.price,
-        piecesPerMaterial,
-        totalSheets,
-        totalSquareMeters,
-        totalPrice
-      };
-
-      // Add the new material to the existing materials
-      const updatedMaterials = [...this.productMaterials, newMaterial];
-      this.$emit('update:product-materials', updatedMaterials);
-      this.$emit('update:materials-cost', this.calculateTotalCost(updatedMaterials));
-      
-      // If this is the first material or no material is currently selected, select it
-      if (this.productMaterials.length === 0) {
-        this.$emit('material-selected-for-products', newMaterial.id);
-      }
-      
-      // Reset form
-      this.customMaterial = {
-        description: '',
-        ancho: null,
-        largo: null,
-        price: null
-      };
-      this.showCustomMaterialForm = false;
     }
   },
   watch: {
-    comments: {
-      handler(newComments) {
-        this.globalComments = newComments;
-      },
-      immediate: true
+    selectedMaterial(newValue) {
+      this.$emit('material-selected-for-products', newValue);
     },
-    productMaterials: {
-      handler(newMaterials) {
-        // If there are materials but none selected, select the first one
-        if (newMaterials.length > 0 && !this.selectedMaterialId) {
-          this.$emit('material-selected-for-products', newMaterials[0].id);
-        }
-      },
-      immediate: true
+    comments(newValue) {
+      this.globalComments = newValue;
+    },
+    productWidth() {
+      // Recalculate all materials when product width changes
+      this.productMaterials.forEach((_, index) => {
+        this.updateMaterialCalculations(index, true);
+      });
+    },
+    productLength() {
+      // Recalculate all materials when product length changes
+      this.productMaterials.forEach((_, index) => {
+        this.updateMaterialCalculations(index, true);
+      });
     }
   }
-}
+};
 </script>
 
 <style scoped>
-.form-check-input:checked {
-  background-color: #198754;
-  border-color: #198754;
+.green-accent-panel {
+  border-left: 4px solid var(--cotalo-green);
+  border-radius: 4px;
+  padding: 1px;
 }
 
-.form-check-input:focus {
-  border-color: #198754;
-  box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+.material-badge {
+  font-size: 0.9rem;
+  font-weight: normal;
+}
+
+.editable-badge {
+  background-color: var(--dark-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.editable-badge:focus {
+  background-color: var(--dark-bg);
+  border-color: var(--cotalo-green);
+  color: var(--text-primary);
+  box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25);
 }
 </style>

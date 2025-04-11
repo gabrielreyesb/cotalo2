@@ -37,7 +37,7 @@ body {
     flex: 1;
     padding: 1.5rem;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1800px;
     margin: 0 auto;
   }
 }
@@ -45,26 +45,20 @@ body {
 // Container adjustments
 .container, .container-fluid {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1800px;
   margin: 0 auto;
   padding: 1rem 15px;
-}
-
-// Footer positioning
-.footer {
-  flex-shrink: 0;
-  padding: 1rem 0;
-  background-color: var(--nav-bg);
-  border-top: 1px solid var(--border-color);
-  color: var(--text-secondary);
-  width: 100%;
-  z-index: 1000;
 }
 
 // Navbar positioning
 .navbar {
   flex-shrink: 0;
   z-index: 1000;
+  
+  .container-fluid {
+    max-width: 1800px;
+    margin: 0 auto;
+  }
 }
 
 // Product form specific layout

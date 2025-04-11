@@ -1068,11 +1068,34 @@ export default {
       }
     },
     
-    handleMaterialCalculationChanged(materialId) {
+    handleMaterialCalculationChanged(eventData) {
+      console.log('[ProductForm] Received material-calculation-changed event:', eventData);
+      
       if (!this.product || !this.product.data) return;
       
+      // Update the material in the product data
+      const materialIndex = this.product.data.materials.findIndex(m => m.id === eventData.materialId);
+      if (materialIndex !== -1) {
+        console.log('[ProductForm] Updating material data:', {
+          materialId: eventData.materialId,
+          totalSheets: eventData.totalSheets,
+          totalSquareMeters: eventData.totalSquareMeters,
+          totalPrice: eventData.totalPrice
+        });
+        
+        // Update the material data
+        this.product.data.materials[materialIndex] = {
+          ...this.product.data.materials[materialIndex],
+          totalSheets: eventData.totalSheets,
+          totalSquareMeters: eventData.totalSquareMeters,
+          totalPrice: eventData.totalPrice
+        };
+      }
+      
       // Check if this is the selected material for processes
-      if (materialId === this.product.data.selected_material_id && this.product.data.processes && this.product.data.processes.length > 0) {
+      if (eventData.materialId === this.product.data.selected_material_id && this.product.data.processes && this.product.data.processes.length > 0) {
+        console.log('[ProductForm] Selected material changed, recalculating processes');
+        
         // Force recalculation of all processes by marking them with the recalculation flag
         const processesNeedingRecalculation = this.product.data.processes.map(process => {
           return {
@@ -1083,6 +1106,12 @@ export default {
         
         // This will trigger the recalculation in updateProcesses
         this.updateProcesses(processesNeedingRecalculation);
+      }
+      
+      // If pricing needs recalculation, update it
+      if (eventData.needsPricingRecalculation) {
+        console.log('[ProductForm] Recalculating pricing');
+        this.recalculatePricing();
       }
     },
     

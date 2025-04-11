@@ -69,20 +69,48 @@
         <table class="table table-dark table-striped">
           <thead>
             <tr>
+              <th>Nombre</th>
               <th>Descripción</th>
-              <th>Precio unitario</th>
-              <th>Cantidad</th>
-              <th>Subtotal</th>
-              <th>Acciones</th>
+              <th class="text-end" style="width: 150px;">Precio unitario</th>
+              <th class="text-center" style="width: 150px;">Cantidad</th>
+              <th class="text-end" style="width: 180px;">Total</th>
+              <th class="text-center" style="width: 80px;">Acciones</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(extra, index) in productExtras" :key="index">
               <td>{{ extra.name }}</td>
-              <td class="text-end">{{ formatCurrency(extra.unit_price) }}</td>
-              <td class="text-center">{{ extra.quantity }}</td>
-              <td class="text-end">{{ formatCurrency(extra.unit_price * extra.quantity) }}</td>
-              <td>
+              <td>{{ extra.description }}</td>
+              <td class="text-end" style="width: 150px;">
+                <input
+                  type="number"
+                  class="form-control form-control-sm text-end"
+                  v-model.number="extra.unit_price"
+                  @change="updateExtraPrice(index)"
+                  min="0"
+                  step="0.01"
+                  title="Editar precio del extra"
+                  data-toggle="tooltip"
+                  style="width: 100px;"
+                >
+              </td>
+              <td class="text-center" style="width: 150px;">
+                <div class="input-group input-group-sm">
+                  <input 
+                    type="number" 
+                    class="form-control form-control-sm text-center"
+                    v-model.number="extra.quantity"
+                    min="1"
+                    @change="updateExtraQuantity(index)"
+                    title="Editar cantidad"
+                    data-toggle="tooltip"
+                    style="width: 80px;"
+                  >
+                  <span class="input-group-text">{{ extra.unit }}</span>
+                </div>
+              </td>
+              <td class="text-end" style="width: 180px;">{{ formatCurrency(calculateExtraTotal(extra)) }}</td>
+              <td class="text-center" style="width: 80px;">
                 <div class="btn-group">
                   <button 
                     class="btn btn-sm btn-outline-danger" 
@@ -189,6 +217,8 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+
 export default {
   name: 'ExtrasTab',
   props: {
@@ -231,17 +261,36 @@ export default {
       return extra;
     },
     totalCost() {
-      return this.productExtras.reduce((sum, extra) => {
-        return sum + (extra.unit_price * extra.quantity);
-      }, 0);
+      return this.productExtras.reduce((sum, extra) => sum + extra.total, 0);
     }
   },
   methods: {
     formatCurrency(value) {
-      return new Intl.NumberFormat('en-US', {
+      return new Intl.NumberFormat('es-AR', {
         style: 'currency',
-        currency: 'USD'
+        currency: 'ARS'
       }).format(value);
+    },
+    calculateExtraTotal(extra) {
+      return extra.total;
+    },
+    updateExtraQuantity(index) {
+      const extra = this.productExtras[index];
+      if (extra.quantity < 1) {
+        extra.quantity = 1;
+      }
+      extra.total = extra.unit_price * extra.quantity;
+      this.$emit('update:product-extras', this.productExtras);
+      this.$emit('update:extras-cost', this.totalCost);
+    },
+    updateExtraPrice(index) {
+      const extra = this.productExtras[index];
+      if (extra.unit_price < 0) {
+        extra.unit_price = 0;
+      }
+      extra.total = extra.unit_price * extra.quantity;
+      this.$emit('update:product-extras', this.productExtras);
+      this.$emit('update:extras-cost', this.totalCost);
     },
     addExtra() {
       if (!this.canAdd || !this.selectedExtra) return;
@@ -253,11 +302,13 @@ export default {
         unit_price: this.selectedExtra.unit_price,
         unit: this.selectedExtra.unit,
         quantity: this.quantity,
+        total: this.selectedExtra.unit_price * this.quantity,
         comments: ''
       };
       
       const updatedExtras = [...this.productExtras, newExtra];
       this.$emit('update:product-extras', updatedExtras);
+      this.$emit('update:extras-cost', this.totalCost);
       
       // Reset form
       this.selectedExtraId = '';
@@ -274,11 +325,6 @@ export default {
     updateExtrasCalculations() {      
       // For now, just emit the current extras to ensure pricing gets updated
       this.$emit('update:product-extras', [...this.productExtras]);
-    },
-    updateExtraQuantity(index) {
-      const updatedExtras = [...this.productExtras];
-      updatedExtras[index].quantity = this.productExtras[index].quantity;
-      this.$emit('update:product-extras', updatedExtras);
     },
     updateIncludeInSubtotal() {
       this.$emit('update:include-extras-in-subtotal', this.includeInSubtotal);
