@@ -7,15 +7,15 @@
             <tbody>
               <tr>
                 <th style="width: 40%">Costo de materiales:</th>
-                <td class="fw-bold text-end">{{ formatCurrency(pricing.materials_cost) }}</td>
+                <td class="text-end">{{ formatCurrency(pricing.materials_cost) }}</td>
               </tr>
               <tr>
                 <th>Costo de procesos:</th>
-                <td class="fw-bold text-end">{{ formatCurrency(pricing.processes_cost) }}</td>
+                <td class="text-end">{{ formatCurrency(pricing.processes_cost) }}</td>
               </tr>
               <tr :class="{ 'bg-danger bg-opacity-10': pricing.extras_cost > 0 && pricing.include_extras_in_subtotal === false }">
                 <th>Costo de extras:</th>
-                <td class="fw-bold text-end">{{ formatCurrency(pricing.extras_cost) }}</td>
+                <td class="text-end">{{ formatCurrency(pricing.extras_cost) }}</td>
               </tr>
               <tr class="subtotal-row">
                 <th>Subtotal:</th>
@@ -65,11 +65,11 @@
               </tr>
               <tr class="total-row">
                 <th>Precio total:</th>
-                <td class="fw-bold text-end">{{ formatCurrency(pricing.total_price) }}</td>
+                <td class="text-end">{{ formatCurrency(pricing.total_price) }}</td>
               </tr>
               <tr class="total-row">
                 <th>Precio por pieza:</th>
-                <td class="fw-bold text-end">{{ formatCurrency(pricing.final_price_per_piece) }}</td>
+                <td class="text-end">{{ formatCurrency(pricing.final_price_per_piece) }}</td>
               </tr>
             </tbody>
           </table>

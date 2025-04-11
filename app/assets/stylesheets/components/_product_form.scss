@@ -33,26 +33,7 @@ main.main-content:has(.product-form-container) {
 
   // Tab Component Styling - Target the common inner panel
   .green-accent-panel {
-    position: relative; // Keep for potential children positioning
-    // Remove visual styles: padding, background, border-radius, border
-    // padding: 1.5rem; 
-    // background-color: var(--bg-secondary);
-    // border-radius: 0.5rem;
-    // border: 1px solid var(--border-color);
     margin-bottom: 1.5rem; // Keep spacing below the panel
-
-    // Remove Green left accent border
-    // &::before {
-    //   content: '';
-    //   position: absolute;
-    //   left: 0; 
-    //   top: 0; 
-    //   bottom: 0;
-    //   width: 4px;
-    //   background-color: var(--cotalo-green); 
-    //   border-top-left-radius: inherit;    
-    //   border-bottom-left-radius: inherit; 
-    // }
   }
   
   // Add specific tab adjustments if needed later, e.g.:

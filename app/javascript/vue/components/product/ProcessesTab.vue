@@ -40,6 +40,7 @@
                 {{ validationMessage }}
               </div>
             </div>
+
             <div class="col-md-3 d-grid">
               <button 
                 class="btn btn-primary" 
@@ -184,7 +185,6 @@
           </div>
         </div>
       </div>
-      
     </div>
   </div>
 </template>
