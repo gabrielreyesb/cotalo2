@@ -4,9 +4,10 @@
       <div class="card">
         <div class="card-body">
           <form @submit.prevent="saveProduct">
-            <!-- First row: Description and Quantity -->
             <div class="row">
+              <!-- Left column with form fields -->
               <div class="col-md-8">
+                <!-- Product Description -->
                 <div class="mb-3">
                   <label for="product-description" class="form-label">Descripción del producto</label>
                   <input 
@@ -18,8 +19,8 @@
                     required
                   />
                 </div>
-              </div>
-              <div class="col-md-4">
+
+                <!-- Quantity -->
                 <div class="mb-3">
                   <label for="product-quantity" class="form-label">Cantidad de piezas</label>
                   <input 
@@ -32,54 +33,64 @@
                     required
                   />
                 </div>
-              </div>
-            </div>
 
-            <!-- Second row: Width and Length -->
-            <div class="row">
-              <div class="col-md-6">
+                <!-- Width and Length -->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="product-width" class="form-label">Ancho (cm)</label>
+                      <input 
+                        type="number" 
+                        id="product-width" 
+                        class="form-control" 
+                        :value="form.data.general_info.width" 
+                        @input="handleWidthInput"
+                        min="0" 
+                        step="0.1"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="product-length" class="form-label">Largo (cm)</label>
+                      <input 
+                        type="number" 
+                        id="product-length" 
+                        class="form-control" 
+                        :value="form.data.general_info.length" 
+                        @input="handleLengthInput"
+                        min="0" 
+                        step="0.1"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Internal Measurements -->
                 <div class="mb-3">
-                  <label for="product-width" class="form-label">Ancho (cm)</label>
+                  <label for="product-inner-measurements" class="form-label">Medidas internas</label>
                   <input 
-                    type="number" 
-                    id="product-width" 
+                    type="text" 
+                    id="product-inner-measurements" 
                     class="form-control" 
-                    :value="form.data.general_info.width" 
-                    @input="handleWidthInput"
-                    min="0" 
-                    step="0.1"
-                    required
+                    v-model="form.data.general_info.inner_measurements" 
+                    @input="debouncedEmitFormChanges"
                   />
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="product-length" class="form-label">Largo (cm)</label>
-                  <input 
-                    type="number" 
-                    id="product-length" 
-                    class="form-control" 
-                    :value="form.data.general_info.length" 
-                    @input="handleLengthInput"
-                    min="0" 
-                    step="0.1"
-                    required
-                  />
-                </div>
-              </div>
-            </div>
 
-            <!-- Comments section -->
-            <div class="row">
-              <div class="col-12">
+              <!-- Right column with comments -->
+              <div class="col-md-4">
                 <div class="mb-3">
-                  <label for="product-comments" class="form-label">Comentarios generales</label>
+                  <label for="product-comments" class="form-label">Comentarios</label>
                   <textarea 
                     id="product-comments" 
-                    class="form-control" 
+                    class="form-control"
+                    style="min-height: 295px; height: calc(100% - 24px); resize: none;"
                     v-model="form.data.general_info.comments" 
                     @input="debouncedEmitFormChanges"
-                    rows="3"
                   ></textarea>
                 </div>
               </div>
@@ -218,3 +229,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.h-100 {
+  height: 100%;
+}
+</style>

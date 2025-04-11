@@ -15,8 +15,8 @@
                   data-bs-html="true"
                   title="<strong>Cómo se calculan los costos:</strong><br>
                   • <u>Piezas por material</u>: Cantidad de piezas que se pueden obtener de un pliego de material<br>
-                  • <u>Total pliegos</u>: Cantidad de pliegos de material necesarios para imprimir el producto<br>
-                  • <u>Total m²</u>: Cantidad de metros cuadrados de material necesarios para imprimir el producto<br>
+                  • <u>Total pliegos</u>: Cantidad de pliegos de material necesarios para crear el producto<br>
+                  • <u>Total m²</u>: Cantidad de metros cuadrados de material necesarios para crear el producto<br>
                   • <u>Precio total</u>: Precio total del material para crear el producto"
                 >
                   <i class="fa fa-question-circle"></i>
