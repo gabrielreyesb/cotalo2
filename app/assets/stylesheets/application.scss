@@ -20,11 +20,13 @@
 // Import base styles
 @import "base/layout";
 
-// Import components
-@import "components/vue";
-
 // Import theme
 @import "dark_theme";
+
+// Import components
+@import "components/vue";
+@import "components/navbar";
+@import "components/subnavbar";
 
 // Import shared styles
 @import "shared";

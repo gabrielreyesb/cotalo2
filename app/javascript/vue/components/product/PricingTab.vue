@@ -110,6 +110,20 @@ export default {
       localMarginPercentage: this.pricing ? (this.pricing.margin_percentage || 0) : 0
     };
   },
+  mounted() {
+    // Add event listener for the save button in the subnavbar
+    const saveButton = document.getElementById('save-product-button');
+    if (saveButton) {
+      saveButton.addEventListener('click', this.saveProduct);
+    }
+  },
+  beforeDestroy() {
+    // Remove event listener when component is destroyed
+    const saveButton = document.getElementById('save-product-button');
+    if (saveButton) {
+      saveButton.removeEventListener('click', this.saveProduct);
+    }
+  },
   methods: {
     formatCurrency(value) {
       return new Intl.NumberFormat('en-US', {

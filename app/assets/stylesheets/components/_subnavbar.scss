@@ -1,0 +1,57 @@
+// Subnavbar styles
+.subnavbar {
+  background-color: var(--cotalo-dark) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.85);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.85);
+  padding: 0.3rem 1rem;
+  margin-bottom: 0.75rem;
+  min-height: unset;
+  position: relative;
+  z-index: 2;  /* Below navbar but above main content */
+
+  // Title styling
+  .navbar-brand {
+    font-size: 1.5rem;
+    color: var(--cotalo-green);
+    margin: 0;
+    padding: 0;
+    line-height: 1.2;
+  }
+
+  // Button styling
+  .btn {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.9375rem;
+    line-height: 1.2;
+    margin: 0;
+    background-color: transparent;
+    color: var(--cotalo-green);
+    border-color: var(--cotalo-green);
+
+    &:hover {
+      background-color: var(--cotalo-green);
+      color: white;
+      border-color: var(--cotalo-green);
+    }
+
+    // Icon spacing
+    i {
+      margin-right: 0.25rem;
+    }
+  }
+
+  // Container adjustments
+  .container-fluid {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+  }
+
+  // Actions container
+  .ms-auto {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+} 

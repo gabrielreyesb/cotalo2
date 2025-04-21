@@ -1,11 +1,17 @@
-<div class="container-fluid">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Editar Cotización #<%= @quote.id %></h1>
-    <%= link_to quotes_path, class: 'btn btn-outline-secondary' do %>
-      <i class="bi bi-arrow-left"></i> Volver
-    <% end %>
-  </div>
+<% content_for :page_title do %>
+  Editar Cotización #<%= @quote.id %>
+<% end %>
 
+<% content_for :page_actions do %>
+  <%= link_to quotes_path, class: "btn btn-outline-light me-2" do %>
+    <i class="fa fa-arrow-left me-1"></i> Cancelar
+  <% end %>
+  <button type="button" class="btn btn-primary" id="save-quote-button">
+    <i class="fa fa-save me-1"></i> Guardar cotización
+  </button>
+<% end %>
+
+<div class="container-fluid">
   <!-- Vue app mount point -->
   <div id="quote-form-app" 
        data-available-products="<%= @products.to_json(methods: [:formatted_description], except: [:created_at, :updated_at]) %>"

@@ -1,13 +1,12 @@
-<div class="row">
-  <div class="col-12 mb-4">
-    <div class="d-flex justify-content-between align-items-center">
-      <h1>Nuevo material</h1>
-      <%= link_to materials_path, class: "btn btn-outline-secondary" do %>
-        <i class="fa fa-arrow-left me-1"></i> Volver
-      <% end %>
-    </div>
-  </div>
-</div>
+<% content_for :page_title do %>
+  Nuevo material
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= button_tag class: "btn btn-outline-light", form: "material-form" do %>
+    Guardar
+  <% end %>
+<% end %>
 
 <div class="row">
   <div class="col-12">

@@ -81,11 +81,6 @@
               </div>
             </div>
           </div>
-
-          <div class="d-flex justify-content-end mt-4">
-            <button type="button" class="btn btn-secondary me-2" @click="cancelQuote">Cancelar</button>
-            <button type="submit" class="btn btn-primary">Crear cotización</button>
-          </div>
         </form>
       </div>
 
@@ -630,6 +625,20 @@ export default {
       window.quoteFormEventBus.on('add-product', (product) => {
         this.addProduct(product);
       });
+    }
+
+    // Add event listener for the save button in the subnavbar
+    const saveButton = document.getElementById('save-quote-button');
+    if (saveButton) {
+      saveButton.addEventListener('click', this.saveQuote);
+    }
+  },
+
+  beforeDestroy() {
+    // Remove event listener when component is destroyed
+    const saveButton = document.getElementById('save-quote-button');
+    if (saveButton) {
+      saveButton.removeEventListener('click', this.saveQuote);
     }
   }
 }
