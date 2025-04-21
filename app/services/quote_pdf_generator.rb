@@ -158,17 +158,25 @@ class QuotePdfGenerator
           # Get resistance from the materials
           resistance = "N/A"
           client_descriptions = []
+          resistance_values = []
            
           # If there are materials in the product's JSON, collect all client descriptions
           if product.materials.present?
             product.materials.each do |material|
+              # Get resistance value if present
+              if material["resistance"].present?
+                resistance_values << material["resistance"]
+              end
+              
+              # Get client description if present
               if material["client_description"].present?
                 client_descriptions << material["client_description"]
               end
             end
           end
           
-          # Join all client descriptions with comma and space
+          # Join all resistance values and client descriptions with comma and space
+          resistance = resistance_values.any? ? resistance_values.join(", ") : "N/A"
           client_description = client_descriptions.any? ? client_descriptions.join(", ") : "N/A"
           
           # Combine all processes into a single string

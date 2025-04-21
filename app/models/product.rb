@@ -49,6 +49,8 @@ class Product < ApplicationRecord
     {
       "material_id" => nil,            # Reference to the material in the database
       "description" => "",             # Material description
+      "client_description" => "",      # Description shown to clients
+      "resistance" => "",             # Material resistance
       "price" => 0,                    # Unit price
       "unit" => nil,                   # Unit information (id, name, abbreviation)
       "width" => 0,                    # Width in cm
@@ -396,9 +398,11 @@ class Product < ApplicationRecord
       subtotal_price = quantity * material_price
     end
     
-    # Update the material with calculated values
+    # Update the material with calculated values and material details
     updated_material = material.merge(
       "description" => material_record.description,
+      "resistance" => material_record.resistance,
+      "client_description" => material_record.client_description,
       "price" => material_price,
       "unit" => material_unit ? {
         "id" => material_unit.id,

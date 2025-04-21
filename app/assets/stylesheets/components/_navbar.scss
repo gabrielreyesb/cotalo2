@@ -11,10 +11,10 @@
     align-items: center;
     height: 50px;
     font-size: 1.5rem;
-    color: var(--cotalo-green);
+    color: white;
     
     &:hover {
-      color: var(--cotalo-green-dark);
+      color: rgba(255, 255, 255, 0.8);
     }
   }
 

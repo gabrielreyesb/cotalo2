@@ -401,10 +401,12 @@ export default {
       const material = {
         id: this.selectedMaterialDetails.id,
         description: this.selectedMaterialDetails.description,
+        client_description: this.selectedMaterialDetails.client_description,
+        resistance: this.selectedMaterialDetails.resistance,
         ancho: this.selectedMaterialDetails.ancho,
         largo: this.selectedMaterialDetails.largo,
         price: this.selectedMaterialDetails.price,
-        piecesPerMaterial: initialPiecesPerSheet || 1, // Use calculated value or fallback to 1
+        piecesPerMaterial: initialPiecesPerSheet || 1,
         totalSheets: 0,
         totalSquareMeters: 0,
         totalPrice: 0

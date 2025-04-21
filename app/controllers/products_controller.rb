@@ -171,11 +171,11 @@ class ProductsController < ApplicationController
     {
       id: material.id,
       description: material.description,
-      name: material.client_description,
+      client_description: material.client_description,
       price: material.price,
-      specifications: material.resistance,
-      width: material.ancho,
-      length: material.largo,
+      resistance: material.resistance,
+      ancho: material.ancho,
+      largo: material.largo,
       unit: material.unit ? {
         id: material.unit.id,
         name: material.unit.name,

@@ -195,6 +195,10 @@ export default {
   },
   methods: {
     async setActiveTab(tab) {
+      // Only prevent default if the click is within the product form
+      if (event.target.closest('.product-form-container')) {
+        event.preventDefault();
+      }
       
       // Allow switching between general, extras, processes and pricing tabs even for new products
       // Only restrict other tabs if product doesn't exist (has no ID)
