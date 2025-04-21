@@ -120,4 +120,36 @@
       </ul>
     </div>
   </div>
-</nav> 
+</nav>
+
+<style>
+  .main-navbar {
+    padding: 0.2rem 0;
+    border-bottom: none;  /* Remove border since subnavbar will handle division */
+    position: relative;
+    z-index: 3;  /* Ensure navbar and its dropdowns are above subnavbar */
+  }
+  
+  .main-navbar .navbar-brand,
+  .main-navbar .nav-link {
+    padding-top: 0;
+    padding-bottom: 0;
+    line-height: 1;
+  }
+  
+  .main-navbar .navbar-brand {
+    font-size: 1.5rem;
+  }
+  
+  .main-navbar .nav-link {
+    font-size: 1rem;
+  }
+
+  /* Ensure dropdowns appear above everything */
+  .main-navbar .dropdown-menu {
+    margin-top: 0;
+    border: 1px solid var(--border-color);
+    border-top: none;
+    background: var(--dark);
+  }
+</style> 

@@ -1,16 +1,12 @@
-<div class="row mb-4">
-  <div class="col-12">
-    <div class="d-flex justify-content-between align-items-center">
-      <div>
-        <h1>Productos</h1>
-        <p class="text-light-gray small mb-0">Mostrando los productos más recientes</p>
-      </div>
-      <%= link_to new_product_path, class: "btn btn-primary" do %>
-        <i class="fa fa-plus me-1"></i> Nuevo producto
-      <% end %>
-    </div>
-  </div>
-</div>
+<% content_for :page_title do %>
+  Productos
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to new_product_path, class: "btn btn-outline-light" do %>
+    <i class="fa fa-plus me-1"></i> Nuevo producto
+  <% end %>
+<% end %>
 
 <style>
   .description-column {
@@ -29,6 +25,7 @@
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
   }
   
   .product-link:hover {

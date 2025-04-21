@@ -1,21 +1,15 @@
-<!-- Container to match form width -->
-<div class="container-fluid px-4 py-4">
-  <div class="row">
-    <div class="col-12">
-      <div class="position-relative mb-4">
-        <div class="text-center">
-          <h1 class="text-light">Nuevo producto</h1>
-        </div>
-        <%= link_to products_path, class: "btn btn-outline-secondary position-absolute top-50 end-0 translate-middle-y" do %>
-          <i class="fa fa-arrow-left me-1"></i> Volver
-        <% end %>
-      </div>
-    </div>
-  </div>
-</div>
+<% content_for :page_title do %>
+  Nuevo producto
+<% end %>
 
-<!-- Include Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<% content_for :page_actions do %>
+  <%= link_to products_path, class: "btn btn-outline-light me-2" do %>
+    <i class="fa fa-arrow-left me-1"></i> Volver
+  <% end %>
+  <button type="button" class="btn btn-primary" id="save-product-button">
+    <i class="fa fa-save me-1"></i> Guardar producto
+  </button>
+<% end %>
 
 <!-- Vue app mount point -->
 <div id="product-form-app" data-product-id=""></div>

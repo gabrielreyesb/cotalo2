@@ -1,21 +1,15 @@
+<% content_for :page_title do %>
+  Materiales
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to new_material_path, class: "btn btn-outline-light" do %>
+    <i class="fa fa-plus me-1"></i> Nuevo material
+  <% end %>
+<% end %>
+
 <!-- Container with fixed height and scrolling -->
 <div class="scrollable-view-container">
-  <div class="row mb-4">
-    <div class="col-12">
-      <div class="d-flex justify-content-between align-items-center">
-        <h1>Materiales</h1>
-        <%= link_to new_material_path, class: "btn btn-primary" do %>
-          <i class="fa fa-plus me-1"></i> Nuevo material
-        <% end %>
-      </div>
-      <% if Rails.env.development? %>
-        <div class="small text-muted mt-2">
-          Page rendered at: <%= Time.current.strftime("%Y-%m-%d %H:%M:%S") %>
-        </div>
-      <% end %>
-    </div>
-  </div>
-
   <div class="row">
     <div class="col-12">
       <% if @materials.any? %>

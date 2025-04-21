@@ -1,15 +1,14 @@
-<div class="container-fluid">
-  <div class="row mb-3">
-    <div class="col-12">
-      <div class="d-flex justify-content-between align-items-center">
-        <h1 style="color: var(--cotalo-green); margin-bottom: 0;">Novedades</h1>
-        <%= link_to root_path, class: "btn btn-outline-secondary" do %>
-          <i class="fas fa-arrow-left"></i> Volver
-        <% end %>
-      </div>
-    </div>
-  </div>
+<% content_for :page_title do %>
+  Novedades
+<% end %>
 
+<% content_for :page_actions do %>
+  <%= link_to root_path, class: "btn btn-outline-light" do %>
+    <i class="fas fa-arrow-left"></i> Volver
+  <% end %>
+<% end %>
+
+<div class="container-fluid">
   <div class="row">
     <div class="col-12">
       <% if @news.any? %>

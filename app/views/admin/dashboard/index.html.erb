@@ -1,4 +1,8 @@
-<div class="container mt-5">
+<% content_for :page_title do %>
+  Panel de control de Administrador
+<% end %>
+
+<div class="scrollable-view-container">
   <% if session[:impersonated_user_id] %>
     <div class="alert alert-warning">
       You are currently impersonating <%= current_user.email %>

@@ -1,3 +1,13 @@
+<% content_for :page_title do %>
+  Cotizaciones
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to new_quote_path, class: "btn btn-outline-light" do %>
+    <i class="fas fa-plus me-1"></i> Nueva cotización
+  <% end %>
+<% end %>
+
 <style>
 .project-link {
   color: var(--cotalo-green) !important;
@@ -55,20 +65,6 @@
 </style>
 
 <div class="quotes-container">
-  <div class="row mb-4">
-    <div class="col-12">
-      <div class="d-flex justify-content-between align-items-center">
-        <div>
-          <h1>Cotizaciones</h1>
-          <p class="text-light-gray small mb-0">Mostrando las 10 cotizaciones más recientes</p>
-        </div>
-        <%= link_to new_quote_path, class: "btn btn-primary" do %>
-          <i class="fas fa-plus"></i> Nueva cotización
-        <% end %>
-      </div>
-    </div>
-  </div>
-
   <div class="row">
     <div class="col-12">
       <% if @quotes.any? %>

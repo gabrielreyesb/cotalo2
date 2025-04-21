@@ -1,14 +1,15 @@
-<!-- Scrollable container for settings -->
-<div class="app-settings-container">
-  <div class="row mb-4">
-    <div class="col-12">
-      <div class="d-flex justify-content-between align-items-center">
-        <h1 class="text-light">Configuraciones</h1>
-      </div>
-    </div>
-  </div>
+<%= form_with(url: app_configs_path, method: :put, class: "needs-validation") do |form| %>
+  <% content_for :page_title do %>
+    Configuraciones
+  <% end %>
 
-  <%= form_with(url: app_configs_path, method: :put, class: "needs-validation") do |form| %>
+  <% content_for :page_actions do %>
+    <%= link_to "Cancelar", :back, class: "btn btn-outline-light me-2" %>
+    <%= form.submit "Guardar", class: "btn btn-outline-light" %>
+  <% end %>
+
+  <!-- Scrollable container for settings -->
+  <div class="app-settings-container">
     <div class="row">
       <div class="col-12 mb-4">
         <div class="settings-tab">
@@ -144,7 +145,7 @@
         <%= form.submit "Guardar", class: "btn btn-primary" %>
       </div>
     </div>
-  <% end %>
+  </div>
 
   <!-- API Configuration section -->
   <div class="row">
@@ -218,7 +219,7 @@
       </div>
     </div>
   </div>
-</div>
+<% end %>
 
 <% content_for :styles do %>
 <style>
