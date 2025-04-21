@@ -69,15 +69,15 @@
           <table class="table table-dark table-striped">
             <thead>
               <tr>
-                <th>Descripción</th>
-                <th>Ancho (cm)</th>
-                <th>Largo (cm)</th>
-                <th>Precio</th>
-                <th>Piezas por material</th>
-                <th>Total pliegos</th>
-                <th>Total m²</th>
-                <th>Precio total</th>
-                <th>Acciones</th>
+                <th style="width: 40%">Descripción</th>
+                <th style="width: 12%">Ancho (cm)</th>
+                <th style="width: 12%">Largo (cm)</th>
+                <th style="width: 12%">Precio</th>
+                <th style="width: 12%">Piezas por material</th>
+                <th style="width: 12%">Total pliegos</th>
+                <th style="width: 12%">Total m²</th>
+                <th style="width: 12%">Precio total</th>
+                <th style="width: 8%">Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -131,7 +131,7 @@
                   />
                 </td>
                 <td class="text-center">{{ material.totalSheets }}</td>
-                <td class="text-center">{{ material.totalSquareMeters.toFixed(2) }} m²</td>
+                <td class="text-center">{{ material.totalSquareMeters.toFixed(2) }}</td>
                 <td class="text-end">{{ formatCurrency(material.totalPrice) }}</td>
                 <td>
                   <div class="btn-group">
@@ -224,7 +224,7 @@
                 </div>
                 <div class="col-4">
                   <div class="badge bg-dark d-block text-center p-2 w-100 material-badge">
-                    {{ material.totalSquareMeters.toFixed(1) }} m²
+                    {{ material.totalSquareMeters.toFixed(1) }}
                   </div>
                 </div>
               </div>
@@ -566,3 +566,47 @@ export default {
   }
 };
 </script>
+
+<style scoped lang="scss">
+.materials-tab {
+  .table {
+    td {
+      vertical-align: middle;
+      padding: 0.5rem;
+
+      .form-control {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        min-width: 80px;
+        text-align: right;
+      }
+
+      &:first-child {
+        // Description column
+        .form-control {
+          text-align: left;
+        }
+      }
+    }
+
+    th {
+      padding: 0.5rem;
+      white-space: nowrap;
+      font-size: 0.875rem;
+    }
+  }
+
+  // Custom radio button styles
+  .form-check-input[type="radio"] {
+    &:checked {
+      background-color: #198754;
+      border-color: #198754;
+    }
+
+    &:focus {
+      border-color: #198754;
+      box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+    }
+  }
+}
+</style>

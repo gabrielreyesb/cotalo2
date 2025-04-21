@@ -1,87 +1,83 @@
 <template>
   <div class="pricing-tab">
-    <div class="green-accent-panel">
-      <div class="card">
-        <div class="card-body">
-          <table class="table table-dark">
-            <tbody>
-              <tr>
-                <th style="width: 40%">Costo de materiales:</th>
-                <td class="text-end">{{ formatCurrency(pricing.materials_cost) }}</td>
-              </tr>
-              <tr>
-                <th>Costo de procesos:</th>
-                <td class="text-end">{{ formatCurrency(pricing.processes_cost) }}</td>
-              </tr>
-              <tr :class="{ 'bg-danger bg-opacity-10': pricing.extras_cost > 0 && pricing.include_extras_in_subtotal === false }">
-                <th>Costo de extras:</th>
-                <td class="text-end">{{ formatCurrency(pricing.extras_cost) }}</td>
-              </tr>
-              <tr class="subtotal-row">
-                <th>Subtotal:</th>
-                <td class="text-end">{{ formatCurrency(pricing.subtotal) }}</td>
-              </tr>
-              <tr>
-                <th class="align-middle">Desperdicio:</th>
-                <td>
-                  <div class="d-flex justify-content-end align-items-center">
-                    <div class="input-group input-group-sm me-2" style="width: 100px;">
-                      <input 
-                        type="number" 
-                        class="form-control form-control-sm" 
-                        v-model.number="localWastePercentage" 
-                        min="0"
-                        step="0.1"
-                        @change="handleWastePercentageChange"
-                      />
-                      <span class="input-group-text">%</span>
-                    </div>
-                    <span>{{ formatCurrency(pricing.waste_value) }}</span>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <th>Precio por pieza (antes del margen):</th>
-                <td class="text-end">{{ formatCurrency(pricing.price_per_piece_before_margin) }}</td>
-              </tr>
-              <tr>
-                <th class="align-middle">Margen:</th>
-                <td>
-                  <div class="d-flex justify-content-end align-items-center">
-                    <div class="input-group input-group-sm me-2" style="width: 100px;">
-                      <input 
-                        type="number" 
-                        class="form-control form-control-sm" 
-                        v-model.number="localMarginPercentage" 
-                        min="0"
-                        step="0.1"
-                        @change="handleMarginPercentageChange"
-                      />
-                      <span class="input-group-text">%</span>
-                    </div>
-                    <span>{{ formatCurrency(pricing.margin_value) }}</span>
-                  </div>
-                </td>
-              </tr>
-              <tr class="total-row">
-                <th>Precio total:</th>
-                <td class="text-end">{{ formatCurrency(pricing.total_price) }}</td>
-              </tr>
-              <tr class="total-row">
-                <th>Precio por pieza:</th>
-                <td class="text-end">{{ formatCurrency(pricing.final_price_per_piece) }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+    <div class="card">
+      <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">
+          <i class="fa fa-calculator me-2"></i>Precio
+        </h5>
       </div>
-    </div>
-    
-    <div class="d-flex justify-content-end gap-2 mt-4">
-      <button type="button" class="btn btn-secondary" @click="$emit('cancel')">Cancelar</button>
-      <button type="button" class="btn btn-primary" @click="saveProduct">
-        {{ isNew ? 'Crear producto' : 'Actualizar producto' }}
-      </button>
+      <div class="card-body p-0">
+        <table class="table table-dark mb-0">
+          <tbody>
+            <tr>
+              <th style="width: 50%">Costo de materiales:</th>
+              <td class="text-end">{{ formatCurrency(pricing.materials_cost) }}</td>
+            </tr>
+            <tr>
+              <th>Costo de procesos:</th>
+              <td class="text-end">{{ formatCurrency(pricing.processes_cost) }}</td>
+            </tr>
+            <tr :class="{ 'bg-danger bg-opacity-10': pricing.extras_cost > 0 && pricing.include_extras_in_subtotal === false }">
+              <th>Costo de extras:</th>
+              <td class="text-end">{{ formatCurrency(pricing.extras_cost) }}</td>
+            </tr>
+            <tr class="subtotal-row">
+              <th>Subtotal:</th>
+              <td class="text-end">{{ formatCurrency(pricing.subtotal) }}</td>
+            </tr>
+            <tr>
+              <th class="align-middle">Desperdicio:</th>
+              <td>
+                <div class="d-flex justify-content-end align-items-center gap-2">
+                  <div class="input-group input-group-sm" style="width: 100px;">
+                    <input 
+                      type="number" 
+                      class="form-control form-control-sm text-end" 
+                      v-model.number="localWastePercentage" 
+                      min="0"
+                      step="0.1"
+                      @change="handleWastePercentageChange"
+                    />
+                    <span class="input-group-text">%</span>
+                  </div>
+                  <span class="value-display">{{ formatCurrency(pricing.waste_value) }}</span>
+                </div>
+              </td>
+            </tr>
+            <tr class="subtotal-with-waste-row">
+              <th>Subtotal con desperdicio:</th>
+              <td class="text-end">{{ formatCurrency(pricing.subtotal + pricing.waste_value) }}</td>
+            </tr>
+            <tr>
+              <th class="align-middle">Margen:</th>
+              <td>
+                <div class="d-flex justify-content-end align-items-center gap-2">
+                  <div class="input-group input-group-sm" style="width: 100px;">
+                    <input 
+                      type="number" 
+                      class="form-control form-control-sm text-end" 
+                      v-model.number="localMarginPercentage" 
+                      min="0"
+                      step="0.1"
+                      @change="handleMarginPercentageChange"
+                    />
+                    <span class="input-group-text">%</span>
+                  </div>
+                  <span class="value-display">{{ formatCurrency(pricing.margin_value) }}</span>
+                </div>
+              </td>
+            </tr>
+            <tr class="total-row">
+              <th>Precio total:</th>
+              <td class="text-end">{{ formatCurrency(pricing.total_price) }}</td>
+            </tr>
+            <tr class="final-price-row">
+              <th>Precio por pieza:</th>
+              <td class="text-end">{{ formatCurrency(pricing.final_price_per_piece) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </template>
@@ -105,110 +101,179 @@ export default {
   },
   data() {
     return {
-      saving: false,
-      localWastePercentage: this.pricing ? (this.pricing.waste_percentage || 0) : 0,
-      localMarginPercentage: this.pricing ? (this.pricing.margin_percentage || 0) : 0
+      localWastePercentage: this.pricing.waste_percentage || 5,
+      localMarginPercentage: this.pricing.margin_percentage || 0
     };
-  },
-  mounted() {
-    // Add event listener for the save button in the subnavbar
-    const saveButton = document.getElementById('save-product-button');
-    if (saveButton) {
-      saveButton.addEventListener('click', this.saveProduct);
-    }
-  },
-  beforeDestroy() {
-    // Remove event listener when component is destroyed
-    const saveButton = document.getElementById('save-product-button');
-    if (saveButton) {
-      saveButton.removeEventListener('click', this.saveProduct);
-    }
   },
   methods: {
     formatCurrency(value) {
-      return new Intl.NumberFormat('en-US', {
+      return new Intl.NumberFormat('es-MX', {
         style: 'currency',
-        currency: 'USD'
-      }).format(value || 0);
-    },
-    saveProduct() {
-      // Set saving state
-      this.saving = true;
-      
-      // Just emit the save event directly
-      this.$emit('save:product');
-    },
-    recalculatePricing() {
-      this.$emit('recalculate:pricing');
+        currency: 'MXN'
+      }).format(value);
     },
     handleWastePercentageChange() {
-      // Ensure value is valid
-      if (this.localWastePercentage < 0) {
-        this.localWastePercentage = 0;
-      }
-      
-      // Create a new pricing object with the updated waste percentage
-      const updatedPricing = {
+      this.$emit('update:pricing', {
         ...this.pricing,
         waste_percentage: this.localWastePercentage
-      };
-      
-      // Emit an update event instead of directly modifying the prop
-      this.$emit('update:pricing', updatedPricing);
-      
-      // Schedule recalculation for next tick to ensure proper data flow
-      this.$nextTick(() => {
-        this.recalculatePricing();
       });
+      this.$emit('recalculate:pricing');
     },
     handleMarginPercentageChange() {
-      // Ensure value is valid
-      if (this.localMarginPercentage < 0) {
-        this.localMarginPercentage = 0;
-      }
-      
-      // Create a new pricing object with the updated margin percentage
-      const updatedPricing = {
+      this.$emit('update:pricing', {
         ...this.pricing,
         margin_percentage: this.localMarginPercentage
-      };
-      
-      // Emit an update event instead of directly modifying the prop
-      this.$emit('update:pricing', updatedPricing);
-      
-      // Schedule recalculation for next tick to ensure proper data flow
-      this.$nextTick(() => {
-        this.recalculatePricing();
       });
+      this.$emit('recalculate:pricing');
     }
   },
   watch: {
-    pricing: {
-      handler(newPricing) {
-        // Keep local variables in sync with props when external changes occur
-        if (newPricing) {
-          this.localWastePercentage = newPricing.waste_percentage || 0;
-          this.localMarginPercentage = newPricing.margin_percentage || 0;
-          
-          // If there's a subtotal but no margin percentage set, trigger recalculation
-          if (newPricing.subtotal > 0 && !newPricing.margin_percentage) {
-            this.recalculatePricing();
-          }
-        }
+    'pricing.waste_percentage': {
+      handler(newVal) {
+        this.localWastePercentage = newVal;
       },
-      deep: true,
       immediate: true
     },
-    suggestedMargin: {
-      handler(newSuggestedMargin) {
-        // Update the margin if there's a subtotal and the current margin is different
-        if (this.pricing && this.pricing.subtotal > 0 && this.localMarginPercentage !== newSuggestedMargin) {
-          this.localMarginPercentage = newSuggestedMargin;
-          this.handleMarginPercentageChange();
-        }
+    'pricing.margin_percentage': {
+      handler(newVal) {
+        this.localMarginPercentage = newVal;
       },
       immediate: true
     }
   }
 };
 </script>
+
+<style scoped>
+.pricing-tab {
+  .card {
+    border: none;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: #1a1e21;
+    border-left: 2px solid #42b983;
+    
+    .card-header {
+      background-color: #23272b;
+      border-bottom: none;
+      padding: 0.75rem 1rem;
+      
+      h5 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #f8f9fa;
+        
+        i {
+          color: #42b983;
+        }
+      }
+    }
+
+    .btn {
+      font-size: 0.9rem;
+      padding: 0.5rem 1rem;
+      
+      &.btn-primary {
+        background-color: #42b983;
+        border-color: #42b983;
+        
+        &:hover {
+          background-color: #3aa876;
+          border-color: #3aa876;
+        }
+      }
+      
+      &.btn-secondary {
+        background-color: #2c3136;
+        border-color: #2c3136;
+        
+        &:hover {
+          background-color: #23272b;
+          border-color: #23272b;
+        }
+      }
+    }
+  }
+
+  .table {
+    margin-bottom: 0;
+    width: 100%;
+    background-color: transparent;
+    
+    th {
+      font-weight: 500;
+      font-size: 0.9rem;
+      padding: 0.625rem 0.75rem;
+      white-space: nowrap;
+      border-top: 1px solid #32383e;
+    }
+    
+    td {
+      font-weight: 400;
+      font-size: 0.9rem;
+      padding: 0.625rem 0.75rem;
+      min-width: 180px;
+      border-top: 1px solid #32383e;
+    }
+    
+    tr:first-child {
+      th, td {
+        border-top: none;
+      }
+    }
+    
+    .subtotal-row, .subtotal-with-waste-row {
+      th, td {
+        border-top: 2px solid #42b983;
+        font-weight: 600;
+      }
+    }
+    
+    .total-row {
+      th, td {
+        border-top: 2px solid #42b983;
+        font-weight: 700;
+        font-size: 1rem;
+      }
+    }
+    
+    .final-price-row {
+      th, td {
+        font-weight: 700;
+        color: #42b983;
+        font-size: 1rem;
+      }
+    }
+  }
+  
+  .input-group {
+    .form-control {
+      background-color: #1a1e21;
+      border-color: #32383e;
+      color: #f8f9fa;
+      font-size: 0.9rem;
+      padding: 0.25rem 0.5rem;
+      
+      &:focus {
+        background-color: #1a1e21;
+        border-color: #42b983;
+        box-shadow: 0 0 0 0.25rem rgba(66, 185, 131, 0.25);
+      }
+    }
+    
+    .input-group-text {
+      background-color: #1a1e21;
+      border-color: #32383e;
+      color: #adb5bd;
+      font-size: 0.9rem;
+      padding: 0.25rem 0.5rem;
+    }
+  }
+
+  .value-display {
+    min-width: 100px;
+    text-align: right;
+    font-size: 0.9rem;
+  }
+}
+</style>

@@ -15,115 +15,131 @@
     </div>
     
     <div v-else class="product-form-container">
-      <ul class="nav nav-tabs mb-4" id="product-tabs">
-        <li class="nav-item">
-          <a class="nav-link" :class="{ active: activeTab === 'general' }" 
-             href="#" @click.prevent="setActiveTab('general')">
-            <i class="fa fa-info-circle me-1"></i> Información general
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" :class="{ active: activeTab === 'materials' }" 
-             href="#" @click.prevent="setActiveTab('materials')">
-            <i class="fa fa-cubes me-1"></i> Materiales
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" :class="{ active: activeTab === 'processes' }" 
-             href="#" @click.prevent="setActiveTab('processes')">
-            <i class="fa fa-cogs me-1"></i> Procesos
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" :class="{ active: activeTab === 'extras' }" 
-             href="#" @click.prevent="setActiveTab('extras')">
-            <i class="fa fa-plus-circle me-1"></i> Extras
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" :class="{ active: activeTab === 'pricing' }" 
-             href="#" @click.prevent="setActiveTab('pricing')">
-            <i class="fa fa-calculator me-1"></i> Precio
-          </a>
-        </li>
-      </ul>
-      
-      <div class="tab-content">
-        <!-- General Tab -->
-        <div v-if="activeTab === 'general' && product" class="tab-pane active">
-          <general-tab 
-            :product="product" 
-            :is-new="isNew"
-            @update:product="updateProduct"
-            @create:product="createProduct"
-          />
+      <!-- Add event listeners for the top navigation bar buttons -->
+      <div class="d-none">
+        <button id="save-product-button" @click="savePricingProduct"></button>
+        <button id="cancel-product-button" @click="handleCancel"></button>
+      </div>
+
+      <div class="row g-0">
+        <!-- Left Column - Main Tabs -->
+        <div class="col-md-9 pe-md-3">
+          <ul class="nav nav-tabs mb-4" id="product-tabs">
+            <li class="nav-item">
+              <a class="nav-link" :class="{ active: activeTab === 'general' }" 
+                 href="#" @click.prevent="setActiveTab('general')">
+                <i class="fa fa-info-circle me-1"></i> Información general
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" :class="{ active: activeTab === 'materials' }" 
+                 href="#" @click.prevent="setActiveTab('materials')">
+                <i class="fa fa-cubes me-1"></i> Materiales
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" :class="{ active: activeTab === 'processes' }" 
+                 href="#" @click.prevent="setActiveTab('processes')">
+                <i class="fa fa-cogs me-1"></i> Procesos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" :class="{ active: activeTab === 'extras' }" 
+                 href="#" @click.prevent="setActiveTab('extras')">
+                <i class="fa fa-plus-circle me-1"></i> Extras
+              </a>
+            </li>
+          </ul>
+          
+          <div class="tab-content">
+            <!-- General Tab -->
+            <div v-if="activeTab === 'general' && product" class="tab-pane active">
+              <general-tab 
+                :product="product" 
+                :is-new="isNew"
+                @update:product="updateProduct"
+                @create:product="createProduct"
+              />
+            </div>
+            
+            <!-- Materials Tab -->
+            <div v-if="activeTab === 'materials' && product" class="tab-pane active">
+              <materials-tab 
+                :product-materials="product && product.data && product.data.materials ? product.data.materials : []"
+                :available-materials="availableMaterials"
+                :comments="product && product.data && product.data.materials_comments ? product.data.materials_comments : ''"
+                :product-width="product && product.data && product.data.general_info ? product.data.general_info.width : 0"
+                :product-length="product && product.data && product.data.general_info ? product.data.general_info.length : 0"
+                :product-quantity="product && product.data && product.data.general_info ? product.data.general_info.quantity : 1"
+                :selected-material-id="product && product.data && product.data.selected_material_id ? product.data.selected_material_id : null"
+                :width-margin="userConfig.width_margin"
+                :length-margin="userConfig.length_margin"
+                @update:product-materials="updateMaterials"
+                @update:comments="updateMaterialsComments"
+                @update:materials-cost="updateMaterialsCost"
+                @material-selected-for-products="handleMaterialSelectedForProducts"
+                @material-calculation-changed="handleMaterialCalculationChanged"
+              />
+            </div>
+            
+            <!-- Processes Tab -->
+            <div v-if="activeTab === 'processes' && product" class="tab-pane active">
+              <processes-tab 
+                :product-processes="product && product.data && product.data.processes ? product.data.processes : []"
+                :available-processes="availableProcesses"
+                :comments="product && product.data && product.data.processes_comments ? product.data.processes_comments : ''"
+                :product-quantity="product && product.data && product.data.general_info ? product.data.general_info.quantity : 1"
+                :product-width="product && product.data && product.data.general_info ? product.data.general_info.width : 0"
+                :product-length="product && product.data && product.data.general_info ? product.data.general_info.length : 0"
+                :total-sheets="calculateTotalSheets()"
+                :total-square-meters="calculateTotalSquareMeters()"
+                :selected-material-id="product && product.data ? product.data.selected_material_id : null"
+                :selected-material-data="getSelectedMaterial()"
+                :product-materials="product && product.data && product.data.materials ? product.data.materials : []"
+                @update:product-processes="updateProcesses"
+                @update:comments="updateProcessesComments"
+                @update:processes-cost="updateProcessesCost"
+              />
+            </div>
+            
+            <!-- Extras Tab -->
+            <div v-if="activeTab === 'extras' && product" class="tab-pane active">
+              <extras-tab 
+                :product-extras="product && product.data && product.data.extras ? product.data.extras : []"
+                :available-extras="availableExtras"
+                :comments="product && product.data && product.data.extras_comments ? product.data.extras_comments : ''"
+                :product-quantity="product && product.data && product.data.general_info ? product.data.general_info.quantity : 1"
+                :include-extras-in-subtotal="product && product.data && product.data.include_extras_in_subtotal !== undefined ? product.data.include_extras_in_subtotal : true"
+                @update:product-extras="updateExtras"
+                @update:comments="updateExtrasComments"
+                @update:include-extras-in-subtotal="updateIncludeExtrasInSubtotal"
+              />
+            </div>
+          </div>
         </div>
-        
-        <!-- Materials Tab -->
-        <div v-if="activeTab === 'materials' && product" class="tab-pane active">
-          <materials-tab 
-            :product-materials="product && product.data && product.data.materials ? product.data.materials : []"
-            :available-materials="availableMaterials"
-            :comments="product && product.data && product.data.materials_comments ? product.data.materials_comments : ''"
-            :product-width="product && product.data && product.data.general_info ? product.data.general_info.width : 0"
-            :product-length="product && product.data && product.data.general_info ? product.data.general_info.length : 0"
-            :product-quantity="product && product.data && product.data.general_info ? product.data.general_info.quantity : 1"
-            :selected-material-id="product && product.data && product.data.selected_material_id ? product.data.selected_material_id : null"
-            :width-margin="userConfig.width_margin"
-            :length-margin="userConfig.length_margin"
-            @update:product-materials="updateMaterials"
-            @update:comments="updateMaterialsComments"
-            @update:materials-cost="updateMaterialsCost"
-            @material-selected-for-products="handleMaterialSelectedForProducts"
-            @material-calculation-changed="handleMaterialCalculationChanged"
-          />
-        </div>
-        
-        <!-- Processes Tab -->
-        <div v-if="activeTab === 'processes' && product" class="tab-pane active">
-          <processes-tab 
-            :product-processes="product && product.data && product.data.processes ? product.data.processes : []"
-            :available-processes="availableProcesses"
-            :comments="product && product.data && product.data.processes_comments ? product.data.processes_comments : ''"
-            :product-quantity="product && product.data && product.data.general_info ? product.data.general_info.quantity : 1"
-            :product-width="product && product.data && product.data.general_info ? product.data.general_info.width : 0"
-            :product-length="product && product.data && product.data.general_info ? product.data.general_info.length : 0"
-            :total-sheets="calculateTotalSheets()"
-            :total-square-meters="calculateTotalSquareMeters()"
-            :selected-material-id="product && product.data ? product.data.selected_material_id : null"
-            :selected-material-data="getSelectedMaterial()"
-            :product-materials="product && product.data && product.data.materials ? product.data.materials : []"
-            @update:product-processes="updateProcesses"
-            @update:comments="updateProcessesComments"
-            @update:processes-cost="updateProcessesCost"
-          />
-        </div>
-        
-        <!-- Extras Tab -->
-        <div v-if="activeTab === 'extras' && product" class="tab-pane active">
-          <extras-tab 
-            :product-extras="product && product.data && product.data.extras ? product.data.extras : []"
-            :available-extras="availableExtras"
-            :comments="product && product.data && product.data.extras_comments ? product.data.extras_comments : ''"
-            :product-quantity="product && product.data && product.data.general_info ? product.data.general_info.quantity : 1"
-            :include-extras-in-subtotal="product && product.data && product.data.include_extras_in_subtotal !== undefined ? product.data.include_extras_in_subtotal : true"
-            @update:product-extras="updateExtras"
-            @update:comments="updateExtrasComments"
-            @update:include-extras-in-subtotal="updateIncludeExtrasInSubtotal"
-          />
-        </div>
-        
-        <!-- Pricing Tab -->
-        <div v-if="activeTab === 'pricing' && product" class="tab-pane active">
-          <pricing-tab 
-            :pricing="product.data.pricing || defaultPricing"
-            :is-new="!productId"
-            :suggested-margin="suggestedMargin"
-            @save:product="savePricingProduct"
-            @recalculate:pricing="ensurePricingUpdated"
-            @update:pricing="handlePricingUpdate"
-            @cancel="handleCancel"
-          />
+
+        <!-- Right Column - Pricing Panel -->
+        <div class="col-md-3">
+          <div class="pricing-panel">
+            <div class="card">
+              <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">
+                  <i class="fa fa-calculator me-2"></i>Precio
+                </h5>
+              </div>
+              <div class="card-body p-0">
+                <pricing-tab 
+                  :pricing="product.data.pricing || defaultPricing"
+                  :is-new="isNew"
+                  :suggested-margin="suggestedMargin"
+                  @save:product="savePricingProduct"
+                  @recalculate:pricing="ensurePricingUpdated"
+                  @update:pricing="handlePricingUpdate"
+                  @cancel="handleCancel"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -874,87 +890,40 @@ export default {
         alert('Por favor, ingresa una descripción para el producto antes de guardar.');
         return; // Abort save
       }
-      // *** End validation check ***
 
-      // Create or update the product
-      if (!this.productId) {
-        // For new products, create with all data
+      try {
+        this.saving = true;
+        
         const productData = {
           description: this.product.description,
           data: this.product.data
         };
-        
-        // Save product data directly without recalculation
-        this.saving = true;
-        
-        try {
-          const response = await fetch('/api/v1/products', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'X-CSRF-Token': this.apiToken,
-              'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-              product: productData
-            })
-          });
-          
-          if (!response.ok) {
-            throw new Error(`Failed to create product: ${response.status} ${response.statusText}`);
-          }
-          
-          // Redirect to products index after successful creation
-          window.location.href = '/products';
-          
-        } catch (error) {
-          console.error('Error creating product:', error);
-          // *** Add error handling for validation failure (optional, alert is primary) ***
-          this.error = 'Error al crear el producto. Asegúrate de que la descripción no esté vacía.'; 
-        } finally {
-          this.saving = false;
+
+        const response = await fetch(`/api/v1/products/${this.productId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-Token': this.apiToken,
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          body: JSON.stringify({
+            product: productData
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update product');
         }
-      } else {
-        // For existing products, update with all data
-        const productData = {
-          description: this.product.description,
-          data: {
-            ...this.product.data,
-            shouldRedirect: true
-          }
-        };
-        
-        try {
-          this.saving = true;
-          
-          const response = await fetch(`/api/v1/products/${this.productId}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'X-CSRF-Token': this.apiToken,
-              'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-              product: productData
-            })
-          });
-          
-          if (!response.ok) {
-            throw new Error('Failed to update product');
-          }
-          
-          // Redirect to products index after successful update
-          window.location.href = '/products';
-          
-        } catch (error) {
-          console.error('Error updating product:', error);
-           // *** Add error handling for validation failure (optional, alert is primary) ***
-          this.error = 'Error al actualizar el producto. Asegúrate de que la descripción no esté vacía.';
-        } finally {
-          this.saving = false;
-        }
+
+        // Redirect to products index after successful update
+        window.location.href = '/products';
+
+      } catch (error) {
+        console.error('Error updating product:', error);
+        alert('Error al guardar el producto. Por favor, intenta de nuevo.');
+      } finally {
+        this.saving = false;
       }
     },
     async updateProcesses(processes) {
@@ -1246,6 +1215,36 @@ export default {
     } finally {
       // Ensure loading is set to false when all initialization is complete
       this.loading = false;
+    }
+  },
+  mounted() {
+    // Connect to the top navigation bar buttons
+    const topNavSaveButton = document.getElementById('save-product-button');
+    const topNavCancelButton = document.querySelector('a[href="/products"]');
+
+    if (topNavSaveButton) {
+      topNavSaveButton.addEventListener('click', () => this.savePricingProduct());
+    }
+    if (topNavCancelButton) {
+      topNavCancelButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.handleCancel();
+      });
+    }
+  },
+  beforeDestroy() {
+    // Clean up event listeners
+    const topNavSaveButton = document.getElementById('save-product-button');
+    const topNavCancelButton = document.querySelector('a[href="/products"]');
+
+    if (topNavSaveButton) {
+      topNavSaveButton.removeEventListener('click', () => this.savePricingProduct());
+    }
+    if (topNavCancelButton) {
+      topNavCancelButton.removeEventListener('click', (e) => {
+        e.preventDefault();
+        this.handleCancel();
+      });
     }
   }
 };

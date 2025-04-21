@@ -125,7 +125,7 @@
           </tbody>
           <tfoot>
             <tr>
-              <th colspan="3" class="text-end">Total:</th>
+              <th colspan="4" class="text-end">Total:</th>
               <th class="text-end">{{ formatCurrency(totalCost) }}</th>
               <th></th>
             </tr>
@@ -187,8 +187,8 @@
         <!-- Total cost for small screens -->
         <div class="card bg-dark text-white">
           <div class="card-body py-2">
-            <div class="d-flex justify-content-between align-items-center">
-              <span class="fw-bold">Total extras:</span>
+            <div class="d-flex justify-content-end align-items-center">
+              <span class="fw-bold me-3">Total:</span>
               <span class="fs-5">{{ formatCurrency(totalCost) }}</span>
             </div>
           </div>

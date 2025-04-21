@@ -64,12 +64,12 @@
         <table class="table table-dark table-striped">
           <thead>
             <tr>
-              <th>Descripción</th>
-              <th>Unidad</th>
-              <th>Aplicado a material</th>
-              <th>Precio por Unidad</th>
-              <th>Precio Total</th>
-              <th>Acciones</th>
+              <th style="width: 45%">Descripción</th>
+              <th style="width: 10%">Unidad</th>
+              <th style="width: 15%">Aplicado a material</th>
+              <th style="width: 10%">Precio por Unidad</th>
+              <th style="width: 12%">Precio Total</th>
+              <th style="width: 8%">Acciones</th>
             </tr>
           </thead>
           <tbody>
