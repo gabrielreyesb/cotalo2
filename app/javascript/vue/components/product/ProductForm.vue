@@ -21,9 +21,9 @@
         <button id="cancel-product-button" @click="handleCancel"></button>
       </div>
 
-      <div class="row g-0 w-100">
+      <div class="row g-0">
         <!-- Left Column - Main Tabs -->
-        <div class="col-md-9 pe-md-3 d-flex flex-column">
+        <div class="col-9">
           <ul class="nav nav-tabs" id="product-tabs">
             <li class="nav-item">
               <a class="nav-link" :class="{ active: activeTab === 'general' }" 
@@ -51,7 +51,7 @@
             </li>
           </ul>
           
-          <div class="tab-content flex-grow-1">
+          <div class="tab-content">
             <!-- General Tab -->
             <div v-if="activeTab === 'general' && product" class="tab-pane active">
               <general-tab 
@@ -119,8 +119,8 @@
         </div>
 
         <!-- Right Column - Pricing Panel -->
-        <div class="col-md-3 pt-tabs d-flex flex-column">
-          <div class="pricing-panel flex-grow-1">
+        <div class="col-3 pt-tabs">
+          <div class="pricing-panel">
             <pricing-tab 
               :pricing="product.data.pricing || defaultPricing"
               :is-new="isNew"
@@ -1185,8 +1185,8 @@ export default {
     debugLayout() {
       // Get key elements
       const formContainer = document.querySelector('.product-form-container');
-      const mainPanel = document.querySelector('.col-md-9');
-      const pricingPanel = document.querySelector('.col-md-3');
+      const mainPanel = document.querySelector('.col-9');
+      const pricingPanel = document.querySelector('.col-3');
       const pricingCard = pricingPanel?.querySelector('.card');
       const pricingTable = pricingPanel?.querySelector('.table');
 
@@ -1371,64 +1371,19 @@ export default {
 <style scoped>
 .product-form {
   position: relative;
-  display: flex;
-  flex-direction: column;
   width: 100%;
 }
 
 .product-form-container {
-  display: flex;
-  flex-direction: column;
   width: 100%;
-}
-
-.row {
-  margin: 0;
-  width: 100%;
-  min-height: 0; /* Prevent row from growing unnecessarily */
 }
 
 .nav-tabs {
-  flex-shrink: 0;
   margin-bottom: 1rem !important;
-  width: 100%;
-}
-
-.tab-content {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.tab-pane {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.tab-pane > div {
-  margin-bottom: 0;
-  width: 100%;
 }
 
 .pricing-panel {
   width: 100%;
-}
-
-/* Remove any bottom margin from the last card in each tab */
-.tab-pane .card:last-child,
-.tab-pane > div:last-child {
-  margin-bottom: 0 !important;
-}
-
-/* Remove bottom margin from the last form group in cards */
-.card-body > :last-child {
-  margin-bottom: 0 !important;
-}
-
-/* Remove the red border that was used for debugging */
-.tab-pane {
-  border: none !important;
 }
 
 /* Add padding to align pricing panel with tabs */
@@ -1439,10 +1394,6 @@ export default {
 @media (max-width: 768px) {
   .pt-tabs {
     padding-top: 1rem;
-  }
-  
-  .col-md-9.pe-md-3 {
-    padding-right: 0 !important;
   }
 }
 </style>

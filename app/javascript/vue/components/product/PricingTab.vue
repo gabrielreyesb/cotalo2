@@ -201,18 +201,38 @@ export default {
       margin-bottom: 0;
       width: 100%;
       table-layout: fixed;
-      background-color: transparent;
       
       th, td {
-        font-weight: 500;
-        font-size: 0.9rem;
         padding: 0.625rem 0.75rem;
         border-top: 1px solid #32383e;
-        width: 50%;
+      }
+
+      th {
+        width: 60%;
+        font-weight: 500;
+        font-size: 0.9rem;
       }
       
       td {
+        width: 40%;
         font-weight: 400;
+        font-size: 0.9rem;
+        padding-left: 0;
+
+        .d-flex {
+          width: 100%;
+          
+          .input-group {
+            width: 80px;
+            flex-shrink: 0;
+          }
+          
+          .value-display {
+            flex-grow: 1;
+            text-align: right;
+            padding-left: 0.5rem;
+          }
+        }
       }
       
       tr:first-child {
@@ -253,6 +273,7 @@ export default {
       color: #f8f9fa;
       font-size: 0.9rem;
       padding: 0.25rem 0.5rem;
+      text-align: right;
       
       &:focus {
         background-color: #1a1e21;
