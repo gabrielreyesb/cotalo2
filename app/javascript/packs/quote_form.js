@@ -1,6 +1,3 @@
-// Import Bootstrap
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-
 // Import dark mode theme overrides
 import '../vue/vue_styles.css';
 

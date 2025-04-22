@@ -1,6 +1,3 @@
-// Import Bootstrap JS only
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-
 // Import Chart.js
 import 'chart.js/auto';
 
