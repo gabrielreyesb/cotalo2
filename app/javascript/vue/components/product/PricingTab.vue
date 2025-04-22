@@ -135,34 +135,17 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .pricing-tab {
   width: 100%;
   display: block;
 
   .table {
-    margin: 0;
-    width: 100%;
-    table-layout: fixed;
-    border-collapse: collapse;
-    
     th, td {
-      padding: 0.625rem 1rem;
-      border-top: 1px solid #32383e;
-      white-space: nowrap;
+      width: 50%;
     }
 
-    th {
-      width: 50%;
-      font-weight: 500;
-      font-size: 0.9rem;
-    }
-    
     td {
-      width: 50%;
-      font-weight: 400;
-      font-size: 0.9rem;
-
       .d-flex {
         justify-content: flex-end;
         align-items: center;
@@ -182,12 +165,6 @@ export default {
       }
     }
     
-    tr:first-child {
-      th, td {
-        border-top: none;
-      }
-    }
-    
     .subtotal-row, .subtotal-with-waste-row {
       th, td {
         border-top: 2px solid #42b983;
@@ -197,7 +174,7 @@ export default {
     
     .total-row {
       th, td {
-        border-top: 2px solid #42b983;
+        border-top: 2px solid var(--cotalo-green);
         font-weight: 700;
         font-size: 1rem;
       }
@@ -209,31 +186,6 @@ export default {
         color: #42b983;
         font-size: 1rem;
       }
-    }
-  }
-  
-  .input-group {
-    .form-control {
-      background-color: #1a1e21;
-      border-color: #32383e;
-      color: #f8f9fa;
-      font-size: 0.9rem;
-      padding: 0.25rem 0.5rem;
-      text-align: right;
-      
-      &:focus {
-        background-color: #1a1e21;
-        border-color: #42b983;
-        box-shadow: 0 0 0 0.25rem rgba(66, 185, 131, 0.25);
-      }
-    }
-    
-    .input-group-text {
-      background-color: #1a1e21;
-      border-color: #32383e;
-      color: #adb5bd;
-      font-size: 0.9rem;
-      padding: 0.25rem 0.5rem;
     }
   }
 

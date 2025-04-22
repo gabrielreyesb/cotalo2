@@ -354,15 +354,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.form-check-input:checked {
-  background-color: #198754;
-  border-color: #198754;
-}
-
-.form-check-input:focus {
-  border-color: #198754;
-  box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
-}
-</style>

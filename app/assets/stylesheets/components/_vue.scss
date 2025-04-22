@@ -272,4 +272,99 @@
   .table th {
     font-weight: normal;
   }
+}
+
+// Product table styles
+.product-table {
+  td {
+    vertical-align: middle;
+    padding: 0.5rem;
+
+    .form-control {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+      min-width: 80px;
+      text-align: right;
+
+      // Description column
+      &.description-field {
+        text-align: left;
+      }
+    }
+  }
+
+  th {
+    padding: 0.5rem;
+    white-space: nowrap;
+    font-size: 0.875rem;
+  }
+}
+
+// Common table styles
+.table {
+  margin: 0;
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  
+  th, td {
+    padding: 0.625rem 1rem;
+    border-top: 1px solid #32383e;
+    white-space: nowrap;
+  }
+
+  th {
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+  
+  td {
+    font-weight: 400;
+    font-size: 0.9rem;
+  }
+  
+  tr:first-child {
+    th, td {
+      border-top: none;
+    }
+  }
+}
+
+// Common input group styles
+.input-group {
+  .form-control {
+    background-color: #1a1e21;
+    border-color: #32383e;
+    color: #f8f9fa;
+    font-size: 0.9rem;
+    padding: 0.25rem 0.5rem;
+    text-align: right;
+    
+    &:focus {
+      background-color: #1a1e21;
+      border-color: var(--cotalo-green);
+      box-shadow: 0 0 0 0.25rem rgba(66, 185, 131, 0.25);
+    }
+  }
+  
+  .input-group-text {
+    background-color: #1a1e21;
+    border-color: #32383e;
+    color: #adb5bd;
+    font-size: 0.9rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+// Form check input styles
+.form-check-input {
+  &:checked {
+    background-color: var(--cotalo-green);
+    border-color: var(--cotalo-green);
+  }
+
+  &:focus {
+    border-color: var(--cotalo-green);
+    box-shadow: 0 0 0 0.25rem rgba(66, 185, 131, 0.25);
+  }
 } 
