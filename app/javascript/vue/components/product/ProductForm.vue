@@ -21,9 +21,9 @@
         <button id="cancel-product-button" @click="handleCancel"></button>
       </div>
 
-      <div class="row g-0">
+      <div class="form-layout">
         <!-- Left Column - Main Tabs -->
-        <div class="col-md-9 pe-md-3">
+        <div class="main-content">
           <ul class="nav nav-tabs" id="product-tabs">
             <li class="nav-item">
               <a class="nav-link" :class="{ active: activeTab === 'general' }" 
@@ -119,7 +119,7 @@
         </div>
 
         <!-- Right Column - Pricing Panel -->
-        <div class="col-md-3 pt-tabs">
+        <div class="pricing-content">
           <div class="pricing-panel">
             <pricing-tab 
               :pricing="product.data.pricing || defaultPricing"
@@ -1382,9 +1382,21 @@ export default {
   width: 100%;
 }
 
-.row {
-  margin: 0;
+.form-layout {
+  display: flex;
   width: 100%;
+  gap: 1rem;
+}
+
+.main-content {
+  flex: 3;  /* 75% of space */
+  min-width: 0; /* Prevent flex item from overflowing */
+}
+
+.pricing-content {
+  flex: 1;  /* 25% of space */
+  min-width: 0; /* Prevent flex item from overflowing */
+  padding-top: 56px; /* Match the tabs height */
 }
 
 .nav-tabs {
@@ -1430,18 +1442,13 @@ export default {
   border: none !important;
 }
 
-/* Add padding to align pricing panel with tabs */
-.pt-tabs {
-  padding-top: 56px; /* Height of the nav-tabs + margin */
-}
-
 @media (max-width: 768px) {
-  .pt-tabs {
-    padding-top: 1rem;
+  .form-layout {
+    flex-direction: column;
   }
   
-  .col-md-9.pe-md-3 {
-    padding-right: 0 !important;
+  .pricing-content {
+    padding-top: 1rem;
   }
 }
 </style>
