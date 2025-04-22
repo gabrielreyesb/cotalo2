@@ -236,8 +236,8 @@ export default {
 }
 
 .card {
-  border: 1px solid #32383e;
   background-color: #1a1e21;
+  border: 1px solid #32383e;
 }
 
 .card-body {
