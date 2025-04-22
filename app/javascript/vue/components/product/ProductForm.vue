@@ -905,8 +905,11 @@ export default {
           data: this.product.data
         };
 
-        const response = await fetch(`/api/v1/products/${this.productId}`, {
-          method: 'PUT',
+        const url = this.isNew ? '/api/v1/products' : `/api/v1/products/${this.productId}`;
+        const method = this.isNew ? 'POST' : 'PUT';
+
+        const response = await fetch(url, {
+          method: method,
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -919,15 +922,15 @@ export default {
         });
 
         if (!response.ok) {
-          throw new Error('Failed to update product');
+          throw new Error(`Failed to ${this.isNew ? 'create' : 'update'} product`);
         }
 
-        // Redirect to products index after successful update
+        // Redirect to products index after successful save
         window.location.href = '/products';
 
       } catch (error) {
-        console.error('Error updating product:', error);
-        alert('Error al guardar el producto. Por favor, intenta de nuevo.');
+        console.error(`Error ${this.isNew ? 'creating' : 'updating'} product:`, error);
+        alert(`Error al ${this.isNew ? 'crear' : 'guardar'} el producto. Por favor, intenta de nuevo.`);
       } finally {
         this.saving = false;
       }
