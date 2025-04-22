@@ -119,26 +119,17 @@
         </div>
 
         <!-- Right Column - Pricing Panel -->
-        <div class="col-md-3">
+        <div class="col-md-3 pt-tabs">
           <div class="pricing-panel">
-            <div class="card">
-              <div class="card-header bg-dark text-white">
-                <h5 class="mb-0">
-                  <i class="fa fa-calculator me-2"></i>Precio
-                </h5>
-              </div>
-              <div class="card-body p-0">
-                <pricing-tab 
-                  :pricing="product.data.pricing || defaultPricing"
-                  :is-new="isNew"
-                  :suggested-margin="suggestedMargin"
-                  @save:product="savePricingProduct"
-                  @recalculate:pricing="ensurePricingUpdated"
-                  @update:pricing="handlePricingUpdate"
-                  @cancel="handleCancel"
-                />
-              </div>
-            </div>
+            <pricing-tab 
+              :pricing="product.data.pricing || defaultPricing"
+              :is-new="isNew"
+              :suggested-margin="suggestedMargin"
+              @save:product="savePricingProduct"
+              @recalculate:pricing="ensurePricingUpdated"
+              @update:pricing="handlePricingUpdate"
+              @cancel="handleCancel"
+            />
           </div>
         </div>
       </div>
@@ -1295,5 +1286,10 @@ export default {
 /* Remove the red border that was used for debugging */
 .tab-pane {
   border: none !important;
+}
+
+/* Add padding to align pricing panel with tabs */
+.pt-tabs {
+  padding-top: 56px; /* Increased from 41px to 48px to match the tabs + margin height */
 }
 </style>
