@@ -1192,80 +1192,108 @@ export default {
 
       // Log environment info
       console.log('=== Layout Debug Info ===');
-      console.log('Window dimensions:', {
+      console.log('Window dimensions:', JSON.stringify({
         width: window.innerWidth,
         height: window.innerHeight
-      });
+      }));
 
       // Log container dimensions
       if (formContainer) {
         const formContainerStyle = window.getComputedStyle(formContainer);
-        console.log('Form container:', {
+        console.log('Form container:', JSON.stringify({
           width: formContainer.offsetWidth,
           height: formContainer.offsetHeight,
           display: formContainerStyle.display,
           position: formContainerStyle.position,
           margin: formContainerStyle.margin,
-          padding: formContainerStyle.padding
-        });
+          padding: formContainerStyle.padding,
+          maxWidth: formContainerStyle.maxWidth,
+          boxSizing: formContainerStyle.boxSizing
+        }));
       }
 
       // Log main panel dimensions
       if (mainPanel) {
         const mainPanelStyle = window.getComputedStyle(mainPanel);
-        console.log('Main panel:', {
+        console.log('Main panel:', JSON.stringify({
           width: mainPanel.offsetWidth,
           height: mainPanel.offsetHeight,
           display: mainPanelStyle.display,
           position: mainPanelStyle.position,
           margin: mainPanelStyle.margin,
-          padding: mainPanelStyle.padding
-        });
+          padding: mainPanelStyle.padding,
+          flex: mainPanelStyle.flex,
+          boxSizing: mainPanelStyle.boxSizing
+        }));
       }
 
       // Log pricing panel dimensions
       if (pricingPanel) {
         const pricingPanelStyle = window.getComputedStyle(pricingPanel);
-        console.log('Pricing panel:', {
+        console.log('Pricing panel:', JSON.stringify({
           width: pricingPanel.offsetWidth,
           height: pricingPanel.offsetHeight,
           display: pricingPanelStyle.display,
           position: pricingPanelStyle.position,
           margin: pricingPanelStyle.margin,
-          padding: pricingPanelStyle.padding
-        });
+          padding: pricingPanelStyle.padding,
+          flex: pricingPanelStyle.flex,
+          boxSizing: pricingPanelStyle.boxSizing
+        }));
       }
 
       // Log pricing card dimensions
       if (pricingCard) {
         const pricingCardStyle = window.getComputedStyle(pricingCard);
-        console.log('Pricing card:', {
+        console.log('Pricing card:', JSON.stringify({
           width: pricingCard.offsetWidth,
           height: pricingCard.offsetHeight,
           display: pricingCardStyle.display,
           position: pricingCardStyle.position,
           margin: pricingCardStyle.margin,
-          padding: pricingCardStyle.padding
-        });
+          padding: pricingCardStyle.padding,
+          maxWidth: pricingCardStyle.maxWidth,
+          boxSizing: pricingCardStyle.boxSizing
+        }));
       }
 
       // Log pricing table dimensions
       if (pricingTable) {
         const pricingTableStyle = window.getComputedStyle(pricingTable);
-        console.log('Pricing table:', {
+        console.log('Pricing table:', JSON.stringify({
           width: pricingTable.offsetWidth,
           height: pricingTable.offsetHeight,
           display: pricingTableStyle.display,
           tableLayout: pricingTableStyle.tableLayout,
           margin: pricingTableStyle.margin,
-          padding: pricingTableStyle.padding
-        });
+          padding: pricingTableStyle.padding,
+          boxSizing: pricingTableStyle.boxSizing
+        }));
 
-        // Log column widths
+        // Log column widths with more detail
         const columns = pricingTable.querySelectorAll('th');
         columns.forEach((col, index) => {
-          console.log(`Column ${index + 1} width:`, col.offsetWidth);
+          const colStyle = window.getComputedStyle(col);
+          console.log(`Column ${index + 1} details:`, JSON.stringify({
+            offsetWidth: col.offsetWidth,
+            computedWidth: colStyle.width,
+            boxSizing: colStyle.boxSizing,
+            padding: colStyle.padding,
+            margin: colStyle.margin
+          }));
         });
+      }
+
+      // Log parent container info
+      const parentContainer = document.querySelector('.container-fluid') || document.querySelector('.container');
+      if (parentContainer) {
+        const parentStyle = window.getComputedStyle(parentContainer);
+        console.log('Parent container:', JSON.stringify({
+          width: parentContainer.offsetWidth,
+          maxWidth: parentStyle.maxWidth,
+          margin: parentStyle.margin,
+          padding: parentStyle.padding
+        }));
       }
 
       console.log('=== End Layout Debug Info ===');
