@@ -152,16 +152,19 @@ export default {
     overflow: hidden;
     background-color: #1a1e21;
     border-left: 2px solid #42b983;
+    width: 100%;
     
     .card-header {
       background-color: #23272b;
       border-bottom: none;
       padding: 0.75rem 1rem;
+      width: 100%;
       
       h5 {
         font-size: 1rem;
         font-weight: 600;
         color: #f8f9fa;
+        margin: 0;
         
         i {
           color: #42b983;
@@ -193,55 +196,52 @@ export default {
         }
       }
     }
-  }
 
-  .table {
-    margin-bottom: 0;
-    width: 100%;
-    background-color: transparent;
-    
-    th {
-      font-weight: 500;
-      font-size: 0.9rem;
-      padding: 0.625rem 0.75rem;
-      white-space: nowrap;
-      border-top: 1px solid #32383e;
-    }
-    
-    td {
-      font-weight: 400;
-      font-size: 0.9rem;
-      padding: 0.625rem 0.75rem;
-      min-width: 180px;
-      border-top: 1px solid #32383e;
-    }
-    
-    tr:first-child {
+    .table {
+      margin-bottom: 0;
+      width: 100%;
+      table-layout: fixed;
+      background-color: transparent;
+      
       th, td {
-        border-top: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        padding: 0.625rem 0.75rem;
+        border-top: 1px solid #32383e;
+        width: 50%;
       }
-    }
-    
-    .subtotal-row, .subtotal-with-waste-row {
-      th, td {
-        border-top: 2px solid #42b983;
-        font-weight: 600;
+      
+      td {
+        font-weight: 400;
       }
-    }
-    
-    .total-row {
-      th, td {
-        border-top: 2px solid #42b983;
-        font-weight: 700;
-        font-size: 1rem;
+      
+      tr:first-child {
+        th, td {
+          border-top: none;
+        }
       }
-    }
-    
-    .final-price-row {
-      th, td {
-        font-weight: 700;
-        color: #42b983;
-        font-size: 1rem;
+      
+      .subtotal-row, .subtotal-with-waste-row {
+        th, td {
+          border-top: 2px solid #42b983;
+          font-weight: 600;
+        }
+      }
+      
+      .total-row {
+        th, td {
+          border-top: 2px solid #42b983;
+          font-weight: 700;
+          font-size: 1rem;
+        }
+      }
+      
+      .final-price-row {
+        th, td {
+          font-weight: 700;
+          color: #42b983;
+          font-size: 1rem;
+        }
       }
     }
   }
