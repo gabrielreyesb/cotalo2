@@ -176,31 +176,6 @@ export default {
       }
     }
 
-    .btn {
-      font-size: 0.9rem;
-      padding: 0.5rem 1rem;
-      
-      &.btn-primary {
-        background-color: #42b983;
-        border-color: #42b983;
-        
-        &:hover {
-          background-color: #3aa876;
-          border-color: #3aa876;
-        }
-      }
-      
-      &.btn-secondary {
-        background-color: #2c3136;
-        border-color: #2c3136;
-        
-        &:hover {
-          background-color: #23272b;
-          border-color: #23272b;
-        }
-      }
-    }
-
     .card-body {
       padding: 0;
       width: 100%;
@@ -208,36 +183,31 @@ export default {
 
     .table {
       margin: 0;
-      width: 100% !important;
-      max-width: none !important;
+      width: 100%;
       table-layout: fixed;
       border-collapse: collapse;
-
-      tbody {
-        width: 100%;
-      }
       
       th, td {
-        padding: 0.625rem 0.75rem;
+        padding: 0.625rem 1rem;
         border-top: 1px solid #32383e;
         white-space: nowrap;
       }
 
       th {
-        width: 60%;
+        width: 50%;
         font-weight: 500;
         font-size: 0.9rem;
       }
       
       td {
-        width: 40%;
+        width: 50%;
         font-weight: 400;
         font-size: 0.9rem;
-        padding-left: 0;
 
         .d-flex {
-          width: 100%;
-          min-width: 0;
+          justify-content: flex-end;
+          align-items: center;
+          gap: 0.5rem;
           
           .input-group {
             width: 80px;
@@ -246,9 +216,7 @@ export default {
           }
           
           .value-display {
-            flex: 1;
             text-align: right;
-            padding-left: 0.5rem;
             min-width: 0;
             white-space: nowrap;
           }
