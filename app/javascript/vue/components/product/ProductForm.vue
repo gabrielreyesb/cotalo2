@@ -21,9 +21,9 @@
         <button id="cancel-product-button" @click="handleCancel"></button>
       </div>
 
-      <div class="form-layout">
+      <div class="row g-0 w-100">
         <!-- Left Column - Main Tabs -->
-        <div class="main-content">
+        <div class="col-md-9 pe-md-3 d-flex flex-column">
           <ul class="nav nav-tabs" id="product-tabs">
             <li class="nav-item">
               <a class="nav-link" :class="{ active: activeTab === 'general' }" 
@@ -51,7 +51,7 @@
             </li>
           </ul>
           
-          <div class="tab-content">
+          <div class="tab-content flex-grow-1">
             <!-- General Tab -->
             <div v-if="activeTab === 'general' && product" class="tab-pane active">
               <general-tab 
@@ -119,8 +119,8 @@
         </div>
 
         <!-- Right Column - Pricing Panel -->
-        <div class="pricing-content">
-          <div class="pricing-panel">
+        <div class="col-md-3 pt-tabs d-flex flex-column">
+          <div class="pricing-panel flex-grow-1">
             <pricing-tab 
               :pricing="product.data.pricing || defaultPricing"
               :is-new="isNew"
@@ -1382,21 +1382,10 @@ export default {
   width: 100%;
 }
 
-.form-layout {
-  display: flex;
+.row {
+  margin: 0;
   width: 100%;
-  gap: 1rem;
-}
-
-.main-content {
-  flex: 3;  /* 75% of space */
-  min-width: 0; /* Prevent flex item from overflowing */
-}
-
-.pricing-content {
-  flex: 1;  /* 25% of space */
-  min-width: 0; /* Prevent flex item from overflowing */
-  padding-top: 56px; /* Match the tabs height */
+  min-height: 0; /* Prevent row from growing unnecessarily */
 }
 
 .nav-tabs {
@@ -1442,13 +1431,18 @@ export default {
   border: none !important;
 }
 
+/* Add padding to align pricing panel with tabs */
+.pt-tabs {
+  padding-top: 56px; /* Height of the nav-tabs + margin */
+}
+
 @media (max-width: 768px) {
-  .form-layout {
-    flex-direction: column;
+  .pt-tabs {
+    padding-top: 1rem;
   }
   
-  .pricing-content {
-    padding-top: 1rem;
+  .col-md-9.pe-md-3 {
+    padding-right: 0 !important;
   }
 }
 </style>
