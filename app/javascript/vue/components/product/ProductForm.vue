@@ -1,5 +1,5 @@
 <template>
-  <div class="product-form h-100 overflow-auto">
+  <div class="product-form overflow-auto">
     <div v-if="loading" class="text-center my-5">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Loading...</span>
@@ -24,7 +24,7 @@
       <div class="row g-0">
         <!-- Left Column - Main Tabs -->
         <div class="col-md-9 pe-md-3">
-          <ul class="nav nav-tabs mb-4" id="product-tabs">
+          <ul class="nav nav-tabs" id="product-tabs">
             <li class="nav-item">
               <a class="nav-link" :class="{ active: activeTab === 'general' }" 
                  href="#" @click.prevent="setActiveTab('general')">
@@ -1246,30 +1246,45 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .product-form-container {
   display: flex;
   flex-direction: column;
+  width: 100%;
+}
+
+.row {
+  margin: 0;
+  width: 100%;
 }
 
 .nav-tabs {
   flex-shrink: 0;
   margin-bottom: 1rem !important;
+  width: 100%;
 }
 
 .tab-content {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .tab-pane {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .tab-pane > div {
   margin-bottom: 0;
+  width: 100%;
+}
+
+.pricing-panel {
+  width: 100%;
 }
 
 /* Remove any bottom margin from the last card in each tab */
@@ -1290,6 +1305,16 @@ export default {
 
 /* Add padding to align pricing panel with tabs */
 .pt-tabs {
-  padding-top: 56px; /* Increased from 41px to 48px to match the tabs + margin height */
+  padding-top: 56px; /* Height of the nav-tabs + margin */
+}
+
+@media (max-width: 768px) {
+  .pt-tabs {
+    padding-top: 1rem;
+  }
+  
+  .col-md-9.pe-md-3 {
+    padding-right: 0 !important;
+  }
 }
 </style>
