@@ -1181,6 +1181,94 @@ export default {
           console.error('Error updating include extras in subtotal preference:', error);
         }
       }
+    },
+    debugLayout() {
+      // Get key elements
+      const formContainer = document.querySelector('.product-form-container');
+      const mainPanel = document.querySelector('.col-md-9');
+      const pricingPanel = document.querySelector('.col-md-3');
+      const pricingCard = pricingPanel?.querySelector('.card');
+      const pricingTable = pricingPanel?.querySelector('.table');
+
+      // Log environment info
+      console.log('=== Layout Debug Info ===');
+      console.log('Window dimensions:', {
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+
+      // Log container dimensions
+      if (formContainer) {
+        const formContainerStyle = window.getComputedStyle(formContainer);
+        console.log('Form container:', {
+          width: formContainer.offsetWidth,
+          height: formContainer.offsetHeight,
+          display: formContainerStyle.display,
+          position: formContainerStyle.position,
+          margin: formContainerStyle.margin,
+          padding: formContainerStyle.padding
+        });
+      }
+
+      // Log main panel dimensions
+      if (mainPanel) {
+        const mainPanelStyle = window.getComputedStyle(mainPanel);
+        console.log('Main panel:', {
+          width: mainPanel.offsetWidth,
+          height: mainPanel.offsetHeight,
+          display: mainPanelStyle.display,
+          position: mainPanelStyle.position,
+          margin: mainPanelStyle.margin,
+          padding: mainPanelStyle.padding
+        });
+      }
+
+      // Log pricing panel dimensions
+      if (pricingPanel) {
+        const pricingPanelStyle = window.getComputedStyle(pricingPanel);
+        console.log('Pricing panel:', {
+          width: pricingPanel.offsetWidth,
+          height: pricingPanel.offsetHeight,
+          display: pricingPanelStyle.display,
+          position: pricingPanelStyle.position,
+          margin: pricingPanelStyle.margin,
+          padding: pricingPanelStyle.padding
+        });
+      }
+
+      // Log pricing card dimensions
+      if (pricingCard) {
+        const pricingCardStyle = window.getComputedStyle(pricingCard);
+        console.log('Pricing card:', {
+          width: pricingCard.offsetWidth,
+          height: pricingCard.offsetHeight,
+          display: pricingCardStyle.display,
+          position: pricingCardStyle.position,
+          margin: pricingCardStyle.margin,
+          padding: pricingCardStyle.padding
+        });
+      }
+
+      // Log pricing table dimensions
+      if (pricingTable) {
+        const pricingTableStyle = window.getComputedStyle(pricingTable);
+        console.log('Pricing table:', {
+          width: pricingTable.offsetWidth,
+          height: pricingTable.offsetHeight,
+          display: pricingTableStyle.display,
+          tableLayout: pricingTableStyle.tableLayout,
+          margin: pricingTableStyle.margin,
+          padding: pricingTableStyle.padding
+        });
+
+        // Log column widths
+        const columns = pricingTable.querySelectorAll('th');
+        columns.forEach((col, index) => {
+          console.log(`Column ${index + 1} width:`, col.offsetWidth);
+        });
+      }
+
+      console.log('=== End Layout Debug Info ===');
     }
   },
   // Add the created hook to initialize the component
@@ -1222,11 +1310,22 @@ export default {
         this.handleCancel();
       });
     }
+
+    // Add layout debugging
+    this.$nextTick(() => {
+      this.debugLayout();
+      
+      // Also debug on window resize
+      window.addEventListener('resize', () => {
+        this.debugLayout();
+      });
+    });
   },
   beforeDestroy() {
     // Clean up event listeners
     const topNavSaveButton = document.getElementById('save-product-button');
     const topNavCancelButton = document.querySelector('a[href="/products"]');
+    window.removeEventListener('resize', this.debugLayout);
 
     if (topNavSaveButton) {
       topNavSaveButton.removeEventListener('click', () => this.savePricingProduct());
