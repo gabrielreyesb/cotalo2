@@ -146,6 +146,9 @@ export default {
 
 <style scoped>
 .pricing-tab {
+  width: 100%;
+  display: block;
+
   .card {
     border: none;
     border-radius: 4px;
@@ -153,6 +156,7 @@ export default {
     background-color: #1a1e21;
     border-left: 2px solid #42b983;
     width: 100%;
+    max-width: none;
     
     .card-header {
       background-color: #23272b;
@@ -197,14 +201,26 @@ export default {
       }
     }
 
-    .table {
-      margin-bottom: 0;
+    .card-body {
+      padding: 0;
       width: 100%;
+    }
+
+    .table {
+      margin: 0;
+      width: 100% !important;
+      max-width: none !important;
       table-layout: fixed;
+      border-collapse: collapse;
+
+      tbody {
+        width: 100%;
+      }
       
       th, td {
         padding: 0.625rem 0.75rem;
         border-top: 1px solid #32383e;
+        white-space: nowrap;
       }
 
       th {
@@ -221,16 +237,20 @@ export default {
 
         .d-flex {
           width: 100%;
+          min-width: 0;
           
           .input-group {
             width: 80px;
-            flex-shrink: 0;
+            min-width: 80px;
+            flex: 0 0 80px;
           }
           
           .value-display {
-            flex-grow: 1;
+            flex: 1;
             text-align: right;
             padding-left: 0.5rem;
+            min-width: 0;
+            white-space: nowrap;
           }
         }
       }
