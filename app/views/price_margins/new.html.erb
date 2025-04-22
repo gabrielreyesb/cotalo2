@@ -1,21 +1,20 @@
-<div class="row">
-  <div class="col-12 mb-4">
-    <div class="d-flex justify-content-between align-items-center">
-      <h1>Nuevo margen de precio</h1>
-      <%= link_to price_margins_path, class: "btn btn-outline-secondary" do %>
-        <i class="fa fa-arrow-left me-1"></i> Volver
-      <% end %>
-    </div>
-  </div>
-</div>
+<% content_for :page_title do %>
+  Nuevo margen de precio
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to price_margins_path, class: "btn btn-outline-light me-2" do %>
+    Cancelar
+  <% end %>
+  <%= button_tag class: "btn btn-outline-light", form: "price-margin-form" do %>
+    Guardar
+  <% end %>
+<% end %>
 
 <div class="row">
   <div class="col-12">
     <div class="card">
-      <div class="card-header">
-        <h5>Detalles del margen</h5>
-      </div>
-      <div class="card-body">
+      <div class="card-body p-3">
         <%= render 'form', price_margin: @price_margin %>
       </div>
     </div>

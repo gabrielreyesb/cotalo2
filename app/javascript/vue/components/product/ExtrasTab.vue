@@ -2,7 +2,7 @@
   <div class="extras-tab">
     <div class="green-accent-panel">
       <div class="card">
-        <div class="card-body">
+
           <div class="row align-items-end">
             <div class="col-md-6 mb-3 mb-md-0 me-md-2">
               <label for="extra-select" class="form-label">Seleccionar extra</label>
@@ -45,7 +45,7 @@
               </button>
             </div>
           </div>
-        </div>
+      
       </div>
 
       <div v-if="!productExtras.length" class="text-center my-5">
@@ -53,143 +53,160 @@
       </div>
 
       <!-- Table view for medium and large screens -->
-      <div v-if="productExtras.length" class="d-none d-md-block">
-        <div class="form-check mb-3">
-          <input 
-            class="form-check-input" 
-            type="checkbox" 
-            id="include-extras-subtotal" 
-            v-model="includeInSubtotal"
-            @change="updateIncludeInSubtotal"
-          >
-          <label class="form-check-label" for="include-extras-subtotal">
-            Incluir extras al valor del producto
-          </label>
-        </div>
-        <table class="table table-dark table-striped">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Descripción</th>
-              <th class="text-end" style="width: 150px;">Precio unitario</th>
-              <th class="text-center" style="width: 150px;">Cantidad</th>
-              <th class="text-end" style="width: 180px;">Total</th>
-              <th class="text-center" style="width: 80px;">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(extra, index) in productExtras" :key="index">
-              <td>{{ extra.name }}</td>
-              <td>{{ extra.description }}</td>
-              <td class="text-end" style="width: 150px;">
-                <input
-                  type="number"
-                  class="form-control form-control-sm text-end"
-                  v-model.number="extra.unit_price"
-                  @change="updateExtraPrice(index)"
-                  min="0"
-                  step="0.01"
-                  title="Editar precio del extra"
-                  data-toggle="tooltip"
-                  style="width: 100px;"
-                >
-              </td>
-              <td class="text-center" style="width: 150px;">
-                <div class="input-group input-group-sm">
-                  <input 
-                    type="number" 
-                    class="form-control form-control-sm text-center"
-                    v-model.number="extra.quantity"
-                    min="1"
-                    @change="updateExtraQuantity(index)"
-                    title="Editar cantidad"
-                    data-toggle="tooltip"
-                    style="width: 80px;"
-                  >
-                  <span class="input-group-text">{{ extra.unit }}</span>
+      <div class="card mt-4" v-if="productExtras.length">
+        <div class="card-body p-0">
+          <div class="form-check px-4 py-3 border-bottom border-secondary">
+            <input 
+              class="form-check-input" 
+              type="checkbox" 
+              id="include-extras-subtotal" 
+              v-model="includeInSubtotal"
+              @change="updateIncludeInSubtotal"
+            >
+            <label class="form-check-label ms-2" for="include-extras-subtotal">
+              Incluir extras al valor del producto
+            </label>
+          </div>
+
+          <!-- Desktop Table -->
+          <div class="d-none d-md-block">
+            <table class="table table-dark table-striped mb-0">
+              <thead>
+                <tr>
+                  <th style="width: 20%">Nombre</th>
+                  <th style="width: 35%">Descripción</th>
+                  <th class="text-end" style="width: 15%">Precio unitario</th>
+                  <th class="text-center" style="width: 15%">Cantidad</th>
+                  <th class="text-end" style="width: 15%">Total</th>
+                  <th class="text-center" style="width: 8%">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(extra, index) in productExtras" :key="index">
+                  <td>{{ extra.name }}</td>
+                  <td>{{ extra.description }}</td>
+                  <td class="text-end">
+                    <input
+                      type="number"
+                      class="form-control form-control-sm text-end"
+                      v-model.number="extra.unit_price"
+                      @change="updateExtraPrice(index)"
+                      min="0"
+                      step="0.01"
+                      title="Editar precio del extra"
+                      data-toggle="tooltip"
+                    >
+                  </td>
+                  <td class="text-center">
+                    <div class="input-group input-group-sm">
+                      <input 
+                        type="number" 
+                        class="form-control form-control-sm text-center"
+                        v-model.number="extra.quantity"
+                        min="1"
+                        @change="updateExtraQuantity(index)"
+                        title="Editar cantidad"
+                        data-toggle="tooltip"
+                      >
+                      <span class="input-group-text">{{ extra.unit }}</span>
+                    </div>
+                  </td>
+                  <td class="text-end">{{ formatCurrency(calculateExtraTotal(extra)) }}</td>
+                  <td class="text-center">
+                    <div class="btn-group">
+                      <button 
+                        class="btn btn-sm btn-outline-danger" 
+                        @click="removeExtra(index)"
+                        title="Eliminar extra"
+                      >
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th colspan="4" class="text-end">Total:</th>
+                  <th class="text-end">{{ formatCurrency(totalCost) }}</th>
+                  <th></th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <!-- Mobile Cards -->
+          <div class="d-md-none">
+            <div class="form-check px-4 py-3 border-bottom border-secondary">
+              <input 
+                class="form-check-input" 
+                type="checkbox" 
+                id="include-extras-subtotal-mobile" 
+                v-model="includeInSubtotal"
+                @change="updateIncludeInSubtotal"
+              >
+              <label class="form-check-label ms-2" for="include-extras-subtotal-mobile">
+                Incluir extras en el subtotal del producto
+              </label>
+            </div>
+            <div v-for="(extra, index) in productExtras" :key="index" class="card mb-3 shadow-sm mx-2 mt-3">
+              <div class="card-body p-2">
+                <!-- First row: Extra name and description -->
+                <h6 class="card-title mb-2">{{ extra.name }}</h6>
+                <p class="text-muted small mb-2">{{ extra.description }}</p>
+                
+                <!-- Second row: Price and quantity -->
+                <div class="row g-2 mb-2">
+                  <div class="col-6">
+                    <div class="input-group input-group-sm">
+                      <input 
+                        type="number" 
+                        class="form-control form-control-sm text-end"
+                        v-model.number="extra.unit_price"
+                        @change="updateExtraPrice(index)"
+                        min="0"
+                        step="0.01"
+                        title="Editar precio"
+                      />
+                      <span class="input-group-text">$</span>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="input-group input-group-sm">
+                      <input 
+                        type="number" 
+                        class="form-control form-control-sm text-center"
+                        v-model.number="extra.quantity"
+                        min="1"
+                        @change="updateExtraQuantity(index)"
+                        title="Editar cantidad"
+                      />
+                      <span class="input-group-text">{{ extra.unit }}</span>
+                    </div>
+                  </div>
                 </div>
-              </td>
-              <td class="text-end" style="width: 180px;">{{ formatCurrency(calculateExtraTotal(extra)) }}</td>
-              <td class="text-center" style="width: 80px;">
-                <div class="btn-group">
+                
+                <!-- Third row: Total price and delete button -->
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="badge bg-success fs-5">{{ formatCurrency(calculateExtraTotal(extra)) }}</span>
                   <button 
-                    class="btn btn-sm btn-outline-danger" 
+                    class="btn btn-sm btn-outline-danger px-2 py-1" 
                     @click="removeExtra(index)"
-                    title="Eliminar extra"
                   >
-                    <i class="fa fa-trash"></i>
+                    <i class="fa fa-trash fa-sm"></i>
                   </button>
                 </div>
-              </td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <th colspan="4" class="text-end">Total:</th>
-              <th class="text-end">{{ formatCurrency(totalCost) }}</th>
-              <th></th>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-
-      <!-- Card view for small screens -->
-      <div v-if="productExtras.length" class="d-md-none">
-        <div class="form-check mb-3">
-          <input 
-            class="form-check-input" 
-            type="checkbox" 
-            id="include-extras-subtotal-mobile" 
-            v-model="includeInSubtotal"
-            @change="updateIncludeInSubtotal"
-          >
-          <label class="form-check-label" for="include-extras-subtotal-mobile">
-            Incluir extras en el subtotal del producto
-          </label>
-        </div>
-        <div v-for="(extra, index) in productExtras" :key="index" class="card mb-3 shadow-sm">
-          <div class="card-body p-2">
-            <!-- First row: Extra description only -->
-            <h6 class="card-title mb-2">{{ extra.name }}</h6>
+              </div>
+            </div>
             
-            <!-- Second row: Material price and quantity -->
-            <div class="row g-2 mb-2">
-              <div class="col-6">
-                <div class="badge bg-dark d-block text-center p-2 w-100 material-badge">
-                  {{ formatCurrency(extra.unit_price) }}
+            <!-- Total cost for small screens -->
+            <div class="card bg-dark text-white mx-2 mb-3">
+              <div class="card-body py-2">
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="fw-bold">Total extras:</span>
+                  <span class="fs-5">{{ formatCurrency(totalCost) }}</span>
                 </div>
               </div>
-              <div class="col-6">
-                <input 
-                  type="number" 
-                  class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge bg-dark text-white"
-                  v-model.number="extra.quantity" 
-                  min="1"
-                  @change="updateExtraQuantity(index)"
-                  title="Haz clic para editar la cantidad"
-                />
-              </div>
-            </div>
-            
-            <!-- Third row: Total price and delete button -->
-            <div class="d-flex justify-content-between align-items-center">
-              <span class="badge bg-success fs-5">{{ formatCurrency(extra.unit_price * extra.quantity) }}</span>
-              <button 
-                class="btn btn-sm btn-outline-danger px-2 py-1" 
-                @click="removeExtra(index)"
-              >
-                <i class="fa fa-trash fa-sm"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Total cost for small screens -->
-        <div class="card bg-dark text-white">
-          <div class="card-body py-2">
-            <div class="d-flex justify-content-end align-items-center">
-              <span class="fw-bold me-3">Total:</span>
-              <span class="fs-5">{{ formatCurrency(totalCost) }}</span>
             </div>
           </div>
         </div>

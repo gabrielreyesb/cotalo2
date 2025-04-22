@@ -63,202 +63,200 @@
       </div>
 
       <!-- Materials Table/Cards -->
-      <div v-if="productMaterials.length" class="mt-4">
-        <!-- Desktop Table -->
-        <div class="d-none d-md-block">
-          <div class="card">
-            <div class="card-body p-0">
-              <table class="table table-dark table-striped product-table mb-0">
-                <thead>
-                  <tr>
-                    <th style="width: 40%">Descripción</th>
-                    <th style="width: 12%">Ancho (cm)</th>
-                    <th style="width: 12%">Largo (cm)</th>
-                    <th style="width: 12%">Precio</th>
-                    <th style="width: 12%">Piezas por material</th>
-                    <th style="width: 12%">Total pliegos</th>
-                    <th style="width: 12%">Total m²</th>
-                    <th style="width: 12%">Precio total</th>
-                    <th style="width: 8%">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(material, index) in productMaterials" :key="index">
-                    <td>{{ material.description }}</td>
-                    <td>
-                      <input 
-                        type="number" 
-                        class="form-control form-control-sm" 
-                        v-model.number="material.ancho" 
-                        min="0"
-                        step="0.1"
-                        @change="updateMaterialCalculations(index, true)"
-                        title="Editar ancho del material"
-                        data-toggle="tooltip"
+      <div class="card mt-4" v-if="productMaterials.length">
+        <div class="card-body p-0">
+          <!-- Desktop Table -->
+          <div class="d-none d-md-block">
+            <table class="table table-dark table-striped product-table mb-0">
+              <thead>
+                <tr>
+                  <th style="width: 40%">Descripción</th>
+                  <th style="width: 12%">Ancho (cm)</th>
+                  <th style="width: 12%">Largo (cm)</th>
+                  <th style="width: 12%">Precio</th>
+                  <th style="width: 12%">Piezas por material</th>
+                  <th style="width: 12%">Total pliegos</th>
+                  <th style="width: 12%">Total m²</th>
+                  <th style="width: 12%">Precio total</th>
+                  <th style="width: 8%">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(material, index) in productMaterials" :key="index">
+                  <td>{{ material.description }}</td>
+                  <td>
+                    <input 
+                      type="number" 
+                      class="form-control form-control-sm" 
+                      v-model.number="material.ancho" 
+                      min="0"
+                      step="0.1"
+                      @change="updateMaterialCalculations(index, true)"
+                      title="Editar ancho del material"
+                      data-toggle="tooltip"
+                    />
+                  </td>
+                  <td>
+                    <input 
+                      type="number" 
+                      class="form-control form-control-sm" 
+                      v-model.number="material.largo" 
+                      min="0"
+                      step="0.1"
+                      @change="updateMaterialCalculations(index, true)"
+                      title="Editar largo del material"
+                      data-toggle="tooltip"
+                    />
+                  </td>
+                  <td>
+                    <input 
+                      type="number" 
+                      class="form-control form-control-sm text-end" 
+                      v-model.number="material.price" 
+                      min="0"
+                      step="0.01"
+                      @change="updateMaterialCalculations(index)"
+                      title="Editar precio del material"
+                      data-toggle="tooltip"
+                    />
+                  </td>
+                  <td class="text-center">
+                    <input 
+                      type="number" 
+                      class="form-control form-control-sm" 
+                      v-model.number="material.piecesPerMaterial" 
+                      min="1"
+                      @change="updateMaterialCalculations(index, false)"
+                      title="Puedes editar este valor manualmente para ajustar la cantidad de piezas por material"
+                      data-toggle="tooltip"
+                    />
+                  </td>
+                  <td class="text-center">{{ material.totalSheets }}</td>
+                  <td class="text-center">{{ material.totalSquareMeters.toFixed(2) }}</td>
+                  <td class="text-end">{{ formatCurrency(material.totalPrice) }}</td>
+                  <td>
+                    <div class="btn-group">
+                      <input
+                        type="radio"
+                        :id="'material-radio-' + index"
+                        :value="material.id"
+                        v-model="selectedMaterial"
+                        class="form-check-input me-2"
                       />
-                    </td>
-                    <td>
-                      <input 
-                        type="number" 
-                        class="form-control form-control-sm" 
-                        v-model.number="material.largo" 
-                        min="0"
-                        step="0.1"
-                        @change="updateMaterialCalculations(index, true)"
-                        title="Editar largo del material"
-                        data-toggle="tooltip"
-                      />
-                    </td>
-                    <td>
-                      <input 
-                        type="number" 
-                        class="form-control form-control-sm text-end" 
-                        v-model.number="material.price" 
-                        min="0"
-                        step="0.01"
-                        @change="updateMaterialCalculations(index)"
-                        title="Editar precio del material"
-                        data-toggle="tooltip"
-                      />
-                    </td>
-                    <td class="text-center">
-                      <input 
-                        type="number" 
-                        class="form-control form-control-sm" 
-                        v-model.number="material.piecesPerMaterial" 
-                        min="1"
-                        @change="updateMaterialCalculations(index, false)"
-                        title="Puedes editar este valor manualmente para ajustar la cantidad de piezas por material"
-                        data-toggle="tooltip"
-                      />
-                    </td>
-                    <td class="text-center">{{ material.totalSheets }}</td>
-                    <td class="text-center">{{ material.totalSquareMeters.toFixed(2) }}</td>
-                    <td class="text-end">{{ formatCurrency(material.totalPrice) }}</td>
-                    <td>
-                      <div class="btn-group">
-                        <input
-                          type="radio"
-                          :id="'material-radio-' + index"
-                          :value="material.id"
-                          v-model="selectedMaterial"
-                          class="form-check-input me-2"
-                        />
-                        <button 
-                          class="btn btn-sm btn-outline-danger" 
-                          @click="removeMaterial(index)"
-                          title="Eliminar material"
-                        >
-                          <i class="fa fa-trash"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <th colspan="7" class="text-end">Total:</th>
-                    <th class="text-end">{{ formatCurrency(totalCost) }}</th>
-                    <th></th>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
+                      <button 
+                        class="btn btn-sm btn-outline-danger" 
+                        @click="removeMaterial(index)"
+                        title="Eliminar material"
+                      >
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th colspan="7" class="text-end">Total:</th>
+                  <th class="text-end">{{ formatCurrency(totalCost) }}</th>
+                  <th></th>
+                </tr>
+              </tfoot>
+            </table>
           </div>
-        </div>
-        
-        <!-- Mobile Cards -->
-        <div class="d-md-none">
-          <div v-for="(material, index) in productMaterials" :key="index" class="card mb-3 shadow-sm">
-            <div class="card-body p-2">
-              <!-- First row: Material description only -->
-              <h6 class="card-title mb-2">{{ material.description }}</h6>
-              <!-- Second row: Width, length, price -->
-              <div class="row g-2 mb-2">
-                <div class="col-4">
-                  <input 
-                    type="number" 
-                    class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge"
-                    v-model.number="material.ancho" 
-                    min="0"
-                    step="0.1"
-                    @change="updateMaterialCalculations(index, true)"
-                    placeholder="Ancho"
-                  />
-                </div>
-                <div class="col-4">
-                  <input 
-                    type="number" 
-                    class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge"
-                    v-model.number="material.largo" 
-                    min="0"
-                    step="0.1"
-                    @change="updateMaterialCalculations(index, true)"
-                    placeholder="Largo"
-                  />
-                </div>
-                <div class="col-4">
-                  <input 
-                    type="number" 
-                    class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge"
-                    v-model.number="material.price" 
-                    min="0"
-                    step="0.01"
-                    @change="updateMaterialCalculations(index)"
-                    placeholder="Precio"
-                  />
-                </div>
-              </div>
-              <!-- Rest of mobile card remains the same -->
-              <div class="row g-2 mb-2">
-                <div class="col-4">
-                  <input 
-                    type="number" 
-                    class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge"
-                    v-model.number="material.piecesPerMaterial" 
-                    min="1"
-                    @change="updateMaterialCalculations(index, false)"
-                    title="Puedes editar este valor manualmente para ajustar la cantidad de piezas por material"
-                  />
-                </div>
-                <div class="col-4">
-                  <div class="badge bg-dark d-block text-center p-2 w-100 material-badge">
-                    {{ material.totalSheets }} pgs
+          
+          <!-- Mobile Cards -->
+          <div class="d-md-none">
+            <div v-for="(material, index) in productMaterials" :key="index" class="card mb-3 shadow-sm">
+              <div class="card-body p-2">
+                <!-- First row: Material description only -->
+                <h6 class="card-title mb-2">{{ material.description }}</h6>
+                <!-- Second row: Width, length, price -->
+                <div class="row g-2 mb-2">
+                  <div class="col-4">
+                    <input 
+                      type="number" 
+                      class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge"
+                      v-model.number="material.ancho" 
+                      min="0"
+                      step="0.1"
+                      @change="updateMaterialCalculations(index, true)"
+                      placeholder="Ancho"
+                    />
+                  </div>
+                  <div class="col-4">
+                    <input 
+                      type="number" 
+                      class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge"
+                      v-model.number="material.largo" 
+                      min="0"
+                      step="0.1"
+                      @change="updateMaterialCalculations(index, true)"
+                      placeholder="Largo"
+                    />
+                  </div>
+                  <div class="col-4">
+                    <input 
+                      type="number" 
+                      class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge"
+                      v-model.number="material.price" 
+                      min="0"
+                      step="0.01"
+                      @change="updateMaterialCalculations(index)"
+                      placeholder="Precio"
+                    />
                   </div>
                 </div>
-                <div class="col-4">
-                  <div class="badge bg-dark d-block text-center p-2 w-100 material-badge">
-                    {{ material.totalSquareMeters.toFixed(1) }}
+                <!-- Rest of mobile card remains the same -->
+                <div class="row g-2 mb-2">
+                  <div class="col-4">
+                    <input 
+                      type="number" 
+                      class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge"
+                      v-model.number="material.piecesPerMaterial" 
+                      min="1"
+                      @change="updateMaterialCalculations(index, false)"
+                      title="Puedes editar este valor manualmente para ajustar la cantidad de piezas por material"
+                    />
+                  </div>
+                  <div class="col-4">
+                    <div class="badge bg-dark d-block text-center p-2 w-100 material-badge">
+                      {{ material.totalSheets }} pgs
+                    </div>
+                  </div>
+                  <div class="col-4">
+                    <div class="badge bg-dark d-block text-center p-2 w-100 material-badge">
+                      {{ material.totalSquareMeters.toFixed(1) }}
+                    </div>
                   </div>
                 </div>
-              </div>
-              <!-- Fourth row: Total price and action buttons -->
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="badge bg-success fs-5">{{ formatCurrency(material.totalPrice) }}</span>
-                <div class="d-flex align-items-center">
-                  <input
-                    type="radio"
-                    :id="'material-radio-mobile-' + index"
-                    :value="material.id"
-                    v-model="selectedMaterial"
-                    class="form-check-input me-2"
-                  />
-                  <button 
-                    class="btn btn-sm btn-outline-danger px-2 py-1" 
-                    @click="removeMaterial(index)"
-                  >
-                    <i class="fa fa-trash fa-sm"></i>
-                  </button>
+                <!-- Fourth row: Total price and action buttons -->
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="badge bg-success fs-5">{{ formatCurrency(material.totalPrice) }}</span>
+                  <div class="d-flex align-items-center">
+                    <input
+                      type="radio"
+                      :id="'material-radio-mobile-' + index"
+                      :value="material.id"
+                      v-model="selectedMaterial"
+                      class="form-check-input me-2"
+                    />
+                    <button 
+                      class="btn btn-sm btn-outline-danger px-2 py-1" 
+                      @click="removeMaterial(index)"
+                    >
+                      <i class="fa fa-trash fa-sm"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <!-- Total cost for small screens -->
-          <div class="card bg-dark text-white">
-            <div class="card-body py-2">
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="fw-bold">Total materiales:</span>
-                <span class="fs-5">{{ formatCurrency(totalCost) }}</span>
+            <!-- Total cost for small screens -->
+            <div class="card bg-dark text-white">
+              <div class="card-body py-2">
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="fw-bold">Total materiales:</span>
+                  <span class="fs-5">{{ formatCurrency(totalCost) }}</span>
+                </div>
               </div>
             </div>
           </div>

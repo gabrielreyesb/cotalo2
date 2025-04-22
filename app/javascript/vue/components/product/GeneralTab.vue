@@ -7,37 +7,37 @@
             <div class="row">
               <!-- Left column with form fields -->
               <div class="col-md-8">
-                <!-- Product Description -->
-                <div class="mb-3">
-                  <label for="product-description" class="form-label">Descripción del producto</label>
-                  <input 
-                    type="text" 
-                    id="product-description" 
-                    class="form-control" 
-                    v-model="form.description" 
-                    @input="debouncedEmitFormChanges"
-                    required
-                  />
-                </div>
+                <div class="form-fields-container">
+                  <!-- Product Description -->
+                  <div class="mb-3">
+                    <label for="product-description" class="form-label">Descripción del producto</label>
+                    <input 
+                      type="text" 
+                      id="product-description" 
+                      class="form-control" 
+                      v-model="form.description" 
+                      @input="debouncedEmitFormChanges"
+                      required
+                    />
+                  </div>
 
-                <!-- Quantity -->
-                <div class="mb-3">
-                  <label for="product-quantity" class="form-label">Cantidad de piezas</label>
-                  <input 
-                    type="number" 
-                    id="product-quantity" 
-                    class="form-control" 
-                    :value="form.data.general_info.quantity" 
-                    @input="handleQuantityInput"
-                    min="1" 
-                    required
-                  />
-                </div>
+                  <!-- Quantity -->
+                  <div class="mb-3">
+                    <label for="product-quantity" class="form-label">Cantidad de piezas</label>
+                    <input 
+                      type="number" 
+                      id="product-quantity" 
+                      class="form-control" 
+                      :value="form.data.general_info.quantity" 
+                      @input="handleQuantityInput"
+                      min="1" 
+                      required
+                    />
+                  </div>
 
-                <!-- Width and Length -->
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="mb-3">
+                  <!-- Width and Length -->
+                  <div class="mb-3 d-flex gap-3">
+                    <div class="flex-grow-1">
                       <label for="product-width" class="form-label">Ancho (cm)</label>
                       <input 
                         type="number" 
@@ -50,9 +50,7 @@
                         required
                       />
                     </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="mb-3">
+                    <div class="flex-grow-1">
                       <label for="product-length" class="form-label">Largo (cm)</label>
                       <input 
                         type="number" 
@@ -66,18 +64,18 @@
                       />
                     </div>
                   </div>
-                </div>
 
-                <!-- Internal Measurements -->
-                <div class="mb-3">
-                  <label for="product-inner-measurements" class="form-label">Medidas internas</label>
-                  <input 
-                    type="text" 
-                    id="product-inner-measurements" 
-                    class="form-control" 
-                    v-model="form.data.general_info.inner_measurements" 
-                    @input="debouncedEmitFormChanges"
-                  />
+                  <!-- Internal Measurements -->
+                  <div class="mb-3">
+                    <label for="product-inner-measurements" class="form-label">Medidas internas</label>
+                    <input 
+                      type="text" 
+                      id="product-inner-measurements" 
+                      class="form-control" 
+                      v-model="form.data.general_info.inner_measurements" 
+                      @input="debouncedEmitFormChanges"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -88,7 +86,6 @@
                   <textarea 
                     id="product-comments" 
                     class="form-control"
-                    style="min-height: 295px; height: calc(100% - 24px); resize: none;"
                     v-model="form.data.general_info.comments" 
                     @input="debouncedEmitFormChanges"
                   ></textarea>
@@ -226,21 +223,113 @@ export default {
         this.saving = false;
       }
     }
+  },
+  mounted() {
+    // Get elements
+    const greenAccentPanel = this.$el.querySelector('.green-accent-panel');
+    const card = this.$el.querySelector('.card');
+    const formFields = this.$el.querySelector('.form-fields-container');
+
+    // Get computed styles
+    const greenAccentPanelStyles = window.getComputedStyle(greenAccentPanel);
+    const cardStyles = window.getComputedStyle(card);
+    const formFieldsStyles = window.getComputedStyle(formFields);
+
+    console.log('GeneralTab Style Debug:', {
+      greenAccentPanel: {
+        borderLeft: greenAccentPanelStyles.borderLeft,
+        paddingLeft: greenAccentPanelStyles.paddingLeft,
+        marginLeft: greenAccentPanelStyles.marginLeft,
+        display: greenAccentPanelStyles.display,
+        position: greenAccentPanelStyles.position
+      },
+      card: {
+        borderLeft: cardStyles.borderLeft,
+        backgroundColor: cardStyles.backgroundColor,
+        border: cardStyles.border,
+        borderColor: cardStyles.borderColor,
+        padding: cardStyles.padding
+      },
+      formFields: {
+        backgroundColor: formFieldsStyles.backgroundColor,
+        padding: formFieldsStyles.padding,
+        margin: formFieldsStyles.margin
+      }
+    });
+
+    // Log the CSS rules that apply to .green-accent-panel
+    const rules = Array.from(document.styleSheets)
+      .flatMap(sheet => {
+        try {
+          return Array.from(sheet.cssRules);
+        } catch (e) {
+          return [];
+        }
+      })
+      .filter(rule => {
+        try {
+          return rule.selectorText && rule.selectorText.includes('green-accent-panel');
+        } catch (e) {
+          return false;
+        }
+      });
+
+    console.log('CSS rules affecting .green-accent-panel:', rules.map(rule => ({
+      selector: rule.selectorText,
+      styles: rule.style.cssText
+    })));
+
+    // Original DOM structure logging
+    const logDOMStructure = (element, depth = 0) => {
+      const indent = ' '.repeat(depth * 2);
+      const styles = window.getComputedStyle(element);
+      console.log(`${indent}${element.tagName.toLowerCase()}${element.id ? `#${element.id}` : ''}${element.className ? `.${element.className.split(' ').join('.')}` : ''} {
+        border-left: ${styles.borderLeft},
+        padding-left: ${styles.paddingLeft},
+        margin-left: ${styles.marginLeft}
+      }`);
+      Array.from(element.children).forEach(child => logDOMStructure(child, depth + 1));
+    };
+    console.log('GeneralTab Detailed DOM structure with styles:');
+    logDOMStructure(this.$el);
+  },
+  updated() {
+    console.log('GeneralTab updated:', {
+      hasGreenAccentPanel: !!this.$el.querySelector('.green-accent-panel'),
+      greenAccentPanelStyles: window.getComputedStyle(this.$el.querySelector('.green-accent-panel')),
+      cardBorderLeft: window.getComputedStyle(this.$el.querySelector('.card')).borderLeft
+    });
   }
 };
 </script>
 
-<style scoped>
-.h-100 {
-  height: 100%;
-}
+<style scoped lang="scss">
+.general-tab {
+  .green-accent-panel {
+    > .card {
+      border-left: 2px solid var(--cotalo-green);
+      padding-left: 0.75rem;
+      margin-left: 0.5rem;
 
-.card {
-  background-color: #1a1e21;
-  border: 1px solid #32383e;
-}
+      .card-body {
+        padding: 0;
 
-.card-body {
-  padding: 1rem;
+        form {
+          .row {
+            margin: 0;
+            
+            .col-md-8 {
+              padding: 1.5rem;
+            }
+
+            .col-md-4 {
+              padding: 1.5rem;
+              border-left: 1px solid #32383e;
+            }
+          }
+        }
+      }
+    }
+  }
 }
 </style>

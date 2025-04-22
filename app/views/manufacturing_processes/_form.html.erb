@@ -1,7 +1,7 @@
-<%= form_with(model: manufacturing_process, class: "needs-validation") do |form| %>
+<%= form_with(model: manufacturing_process, id: "manufacturing-process-form") do |form| %>
   <% if manufacturing_process.errors.any? %>
-    <div class="alert alert-danger">
-      <h2><%= pluralize(manufacturing_process.errors.count, "error") %> impidieron que este proceso se guardara:</h2>
+    <div class="alert alert-danger mb-3">
+      <h5><%= pluralize(manufacturing_process.errors.count, "error") %> prohibited this manufacturing_process from being saved:</h5>
       <ul>
         <% manufacturing_process.errors.each do |error| %>
           <li><%= error.full_message %></li>
@@ -10,13 +10,21 @@
     </div>
   <% end %>
 
-  <div class="row">
-    <div class="col-md-6 mb-3">
-      <%= form.label :name, "Nombre", class: "form-label" %>
-      <%= form.text_field :name, class: "form-control" %>
+  <div class="mb-3">
+    <%= form.label :name, "Nombre", class: "form-label" %>
+    <%= form.text_field :name, class: "form-control" %>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <%= form.label :unit_id, "Unidad", class: "form-label" %>
+      <%= form.collection_select :unit_id, Unit.all, :id, :name, {}, class: "form-select" %>
+      <div class="form-text">
+        La unidad determina cómo se medirá el proceso durante la cotización.
+      </div>
     </div>
-    
-    <div class="col-md-6 mb-3">
+
+    <div class="col-md-6">
       <%= form.label :cost, "Precio", class: "form-label" %>
       <div class="input-group">
         <span class="input-group-text">$</span>
@@ -25,48 +33,8 @@
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-md-6 mb-3">
-      <%= form.label :unit_id, "Unidad", class: "form-label" do %>
-        Unidad
-        <i class="fa fa-question-circle ms-1 text-success" 
-           data-bs-toggle="tooltip" 
-           data-bs-placement="right"
-           data-bs-html="true"
-           title="<strong>El seleccionar una unidad determina como se calculan los costos del proceso. Así se calculan los costos:</strong><br>
-           • <u>Unidad pieza</u>: Precio de proceso × cantidad de piezas de producto<br>
-           • <u>Unidad pliego</u>: Precio de proceso × total de pliegos de material<br>
-           • <u>Unidad metro cuadrado</u>: Precio de proceso × total de metros cuadrados de material"></i>
-      <% end %>
-      <%= form.collection_select :unit_id, Unit.all.order(:name), :id, :name, { prompt: "Seleccionar unidad" }, { class: "form-select" } %>
-      <div class="form-text">
-        <small class="text-muted">
-          <i class="fa fa-lightbulb me-1"></i>
-          <strong>Tipos de unidades:</strong>
-          <ul class="mb-0 mt-1">
-            <li><strong>Pieza (pcs):</strong> Costo por cada pieza del producto</li>
-            <li><strong>Metro lineal (lm):</strong> Costo por metro de material</li>
-            <li><strong>Metro cuadrado (m²):</strong> Costo por área de material</li>
-            <li><strong>Hora (hr):</strong> Costo por hora de trabajo</li>
-          </ul>
-        </small>
-      </div>
-      <% if Rails.env.development? %>
-        <div class="text-muted mt-2 small">
-          ID de unidad actual: <%= manufacturing_process.unit_id %> 
-          (<%= manufacturing_process.unit&.name || "Ninguna" %>)
-        </div>
-      <% end %>
-    </div>
-  </div>
-
   <div class="mb-3">
     <%= form.label :description, "Descripción", class: "form-label" %>
     <%= form.text_area :description, rows: 3, class: "form-control" %>
-  </div>
-
-  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-    <%= link_to "Cancelar", manufacturing_processes_path, class: "btn btn-secondary me-md-2" %>
-    <%= form.submit "Guardar", class: "btn btn-primary" %>
   </div>
 <% end %> 

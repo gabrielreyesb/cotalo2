@@ -19,22 +19,28 @@
                 <h5 class="mb-0">Configuraciones generales</h5>
               </div>
               <div class="card-body">
-                <div class="mb-3">
-                  <%= form.label :waste_percentage, "Porcentaje de desperdicio", class: "form-label" %>
-                  <div class="input-group">
-                    <%= form.number_field :waste_percentage, value: @general_settings[:waste_percentage], class: "form-control", min: 0, max: 100, step: 1 %>
-                    <span class="input-group-text">%</span>
+                <div class="row">
+                  <div class="col-md-4">
+                    <%= form.label :waste_percentage, "Porcentaje de desperdicio", class: "form-label" %>
+                    <div class="input-group">
+                      <%= form.number_field :waste_percentage, value: @general_settings[:waste_percentage], class: "form-control bg-dark text-light border-secondary", min: 0, max: 100, step: 1 %>
+                      <span class="input-group-text bg-dark text-light border-secondary">%</span>
+                    </div>
                   </div>
-                </div>
-                
-                <div class="mb-3">
-                  <%= form.label :width_margin, "Margen de ancho", class: "form-label" %>
-                  <%= form.number_field :width_margin, value: @general_settings[:width_margin], step: '0.01', class: "form-control" %>
-                </div>
-                
-                <div class="mb-3">
-                  <%= form.label :length_margin, "Margen de largo", class: "form-label" %>
-                  <%= form.number_field :length_margin, value: @general_settings[:length_margin], step: '0.01', class: "form-control" %>
+                  
+                  <div class="col-md-4">
+                    <%= form.label :width_margin, "Margen de ancho", class: "form-label" %>
+                    <div class="input-group">
+                      <%= form.number_field :width_margin, value: @general_settings[:width_margin], step: '0.01', class: "form-control bg-dark text-light border-secondary" %>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <%= form.label :length_margin, "Margen de largo", class: "form-label" %>
+                    <div class="input-group">
+                      <%= form.number_field :length_margin, value: @general_settings[:length_margin], step: '0.01', class: "form-control bg-dark text-light border-secondary" %>
+                    </div>
+                  </div>
                 </div>
 
                 <hr class="border-secondary my-4">
@@ -58,7 +64,7 @@
                   </div>
                   <div class="input-group">
                     <input type="file" class="form-control" id="logo-input" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
-                    <button class="btn btn-primary" type="button" id="upload-logo-btn" disabled>
+                    <button class="btn btn-dark border-secondary" type="button" id="upload-logo-btn" disabled>
                       <i class="fa fa-upload"></i> Subir
                     </button>
                   </div>
@@ -138,13 +144,6 @@
         </div>
       </div>
     </div>
-
-    <div class="row">
-      <div class="col-12 d-flex gap-2 justify-content-end mb-4">
-        <%= link_to "Cancelar", :back, class: "btn btn-outline-secondary" %>
-        <%= form.submit "Guardar", class: "btn btn-primary" %>
-      </div>
-    </div>
   </div>
 
   <!-- API Configuration section -->
@@ -198,18 +197,6 @@
                     <button type="button" class="btn btn-info me-2" id="test_facturama_api">
                       <i class="fas fa-vial"></i> Test Facturama API Connection
                     </button>
-                    <button type="button" class="btn btn-success me-2" id="test_create_product">
-                      <i class="fas fa-plus"></i> Create Product
-                    </button>
-                  </div>
-
-                  <div id="results" class="d-none">
-                    <h6 class="mb-2">API Test Results</h6>
-                    <div id="content"></div>
-                  </div>
-                <% else %>
-                  <div class="alert alert-warning">
-                    <i class="fas fa-exclamation-triangle"></i> Please configure your Facturama API key above to enable API testing
                   </div>
                 <% end %>
               </div>

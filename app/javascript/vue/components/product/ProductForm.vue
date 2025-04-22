@@ -23,7 +23,7 @@
 
       <div class="row g-0">
         <!-- Left Column - Main Tabs -->
-        <div class="col-9">
+        <div class="col-12 col-lg-9">
           <div class="green-accent-panel">
             <div class="card">
               <div class="card-body p-0">
@@ -125,7 +125,7 @@
         </div>
 
         <!-- Right Column - Pricing Panel -->
-        <div class="col-3 pt-tabs">
+        <div class="col-12 col-lg-3 mt-3 mt-lg-0">
           <div class="green-accent-panel">
             <div class="card">
               <div class="card-header bg-dark text-white">
