@@ -5,38 +5,35 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  overflow: auto;
 }
 
 // Product form layout
 .product-form {
   display: flex;
   flex-direction: column;
-  min-height: auto;
-  position: static;
+  height: 100%;
 }
 
 .product-form-container {
   display: flex;
   flex-direction: column;
-  min-height: auto;
-  position: static;
+  height: 100%;
 }
 
 // Two-column layout styles
 .row.g-0 {
   margin: 0;
   padding: 0;
-  min-height: calc(100vh - 60px); // Adjust based on your header height
 }
 
-.col-md-8 {
-  padding-right: 1.25rem;
-  border-right: 1px solid #32383e;
+// Main content column
+.col-md-8, .col-9 {
+  padding-right: 1.5rem;
 }
 
-.col-md-4 {
-  padding-left: 1.25rem;
+// Pricing panel column
+.col-md-4, .col-3 {
+  padding-left: 1.5rem;
 }
 
 // Pricing panel styles

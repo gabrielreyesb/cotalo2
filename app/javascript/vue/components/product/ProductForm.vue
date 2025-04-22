@@ -24,112 +24,127 @@
       <div class="row g-0">
         <!-- Left Column - Main Tabs -->
         <div class="col-9">
-          <ul class="nav nav-tabs" id="product-tabs">
-            <li class="nav-item">
-              <a class="nav-link" :class="{ active: activeTab === 'general' }" 
-                 href="#" @click.prevent="setActiveTab('general')">
-                <i class="fa fa-info-circle me-1"></i> Información general
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" :class="{ active: activeTab === 'materials' }" 
-                 href="#" @click.prevent="setActiveTab('materials')">
-                <i class="fa fa-cubes me-1"></i> Materiales
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" :class="{ active: activeTab === 'processes' }" 
-                 href="#" @click.prevent="setActiveTab('processes')">
-                <i class="fa fa-cogs me-1"></i> Procesos
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" :class="{ active: activeTab === 'extras' }" 
-                 href="#" @click.prevent="setActiveTab('extras')">
-                <i class="fa fa-plus-circle me-1"></i> Extras
-              </a>
-            </li>
-          </ul>
-          
-          <div class="tab-content">
-            <!-- General Tab -->
-            <div v-if="activeTab === 'general' && product" class="tab-pane active">
-              <general-tab 
-                :product="product" 
-                :is-new="isNew"
-                @update:product="updateProduct"
-                @create:product="createProduct"
-              />
-            </div>
-            
-            <!-- Materials Tab -->
-            <div v-if="activeTab === 'materials' && product" class="tab-pane active">
-              <materials-tab 
-                :product-materials="product && product.data && product.data.materials ? product.data.materials : []"
-                :available-materials="availableMaterials"
-                :comments="product && product.data && product.data.materials_comments ? product.data.materials_comments : ''"
-                :product-width="product && product.data && product.data.general_info ? product.data.general_info.width : 0"
-                :product-length="product && product.data && product.data.general_info ? product.data.general_info.length : 0"
-                :product-quantity="product && product.data && product.data.general_info ? product.data.general_info.quantity : 1"
-                :selected-material-id="product && product.data && product.data.selected_material_id ? product.data.selected_material_id : null"
-                :width-margin="userConfig.width_margin"
-                :length-margin="userConfig.length_margin"
-                @update:product-materials="updateMaterials"
-                @update:comments="updateMaterialsComments"
-                @update:materials-cost="updateMaterialsCost"
-                @material-selected-for-products="handleMaterialSelectedForProducts"
-                @material-calculation-changed="handleMaterialCalculationChanged"
-              />
-            </div>
-            
-            <!-- Processes Tab -->
-            <div v-if="activeTab === 'processes' && product" class="tab-pane active">
-              <processes-tab 
-                :product-processes="product && product.data && product.data.processes ? product.data.processes : []"
-                :available-processes="availableProcesses"
-                :comments="product && product.data && product.data.processes_comments ? product.data.processes_comments : ''"
-                :product-quantity="product && product.data && product.data.general_info ? product.data.general_info.quantity : 1"
-                :product-width="product && product.data && product.data.general_info ? product.data.general_info.width : 0"
-                :product-length="product && product.data && product.data.general_info ? product.data.general_info.length : 0"
-                :total-sheets="calculateTotalSheets()"
-                :total-square-meters="calculateTotalSquareMeters()"
-                :selected-material-id="product && product.data ? product.data.selected_material_id : null"
-                :selected-material-data="getSelectedMaterial()"
-                :product-materials="product && product.data && product.data.materials ? product.data.materials : []"
-                @update:product-processes="updateProcesses"
-                @update:comments="updateProcessesComments"
-                @update:processes-cost="updateProcessesCost"
-              />
-            </div>
-            
-            <!-- Extras Tab -->
-            <div v-if="activeTab === 'extras' && product" class="tab-pane active">
-              <extras-tab 
-                :product-extras="product && product.data && product.data.extras ? product.data.extras : []"
-                :available-extras="availableExtras"
-                :comments="product && product.data && product.data.extras_comments ? product.data.extras_comments : ''"
-                :product-quantity="product && product.data && product.data.general_info ? product.data.general_info.quantity : 1"
-                :include-extras-in-subtotal="product && product.data && product.data.include_extras_in_subtotal !== undefined ? product.data.include_extras_in_subtotal : true"
-                @update:product-extras="updateExtras"
-                @update:comments="updateExtrasComments"
-                @update:include-extras-in-subtotal="updateIncludeExtrasInSubtotal"
-              />
+          <div class="green-accent-panel">
+            <div class="card">
+              <div class="card-body p-0">
+                <ul class="nav nav-tabs" id="product-tabs">
+                  <li class="nav-item">
+                    <a class="nav-link" :class="{ active: activeTab === 'general' }" 
+                       href="#" @click.prevent="setActiveTab('general')">
+                      <i class="fa fa-info-circle me-1"></i> Información general
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" :class="{ active: activeTab === 'materials' }" 
+                       href="#" @click.prevent="setActiveTab('materials')">
+                      <i class="fa fa-cubes me-1"></i> Materiales
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" :class="{ active: activeTab === 'processes' }" 
+                       href="#" @click.prevent="setActiveTab('processes')">
+                      <i class="fa fa-cogs me-1"></i> Procesos
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" :class="{ active: activeTab === 'extras' }" 
+                       href="#" @click.prevent="setActiveTab('extras')">
+                      <i class="fa fa-plus-circle me-1"></i> Extras
+                    </a>
+                  </li>
+                </ul>
+                
+                <div class="tab-content">
+                  <!-- General Tab -->
+                  <div v-if="activeTab === 'general' && product" class="tab-pane active">
+                    <general-tab 
+                      :product="product" 
+                      :is-new="isNew"
+                      @update:product="updateProduct"
+                      @create:product="createProduct"
+                    />
+                  </div>
+                  
+                  <!-- Materials Tab -->
+                  <div v-if="activeTab === 'materials' && product" class="tab-pane active">
+                    <materials-tab 
+                      :product-materials="product && product.data && product.data.materials ? product.data.materials : []"
+                      :available-materials="availableMaterials"
+                      :comments="product && product.data && product.data.materials_comments ? product.data.materials_comments : ''"
+                      :product-width="product && product.data && product.data.general_info ? product.data.general_info.width : 0"
+                      :product-length="product && product.data && product.data.general_info ? product.data.general_info.length : 0"
+                      :product-quantity="product && product.data && product.data.general_info ? product.data.general_info.quantity : 1"
+                      :selected-material-id="product && product.data && product.data.selected_material_id ? product.data.selected_material_id : null"
+                      :width-margin="userConfig.width_margin"
+                      :length-margin="userConfig.length_margin"
+                      @update:product-materials="updateMaterials"
+                      @update:comments="updateMaterialsComments"
+                      @update:materials-cost="updateMaterialsCost"
+                      @material-selected-for-products="handleMaterialSelectedForProducts"
+                      @material-calculation-changed="handleMaterialCalculationChanged"
+                    />
+                  </div>
+                  
+                  <!-- Processes Tab -->
+                  <div v-if="activeTab === 'processes' && product" class="tab-pane active">
+                    <processes-tab 
+                      :product-processes="product && product.data && product.data.processes ? product.data.processes : []"
+                      :available-processes="availableProcesses"
+                      :comments="product && product.data && product.data.processes_comments ? product.data.processes_comments : ''"
+                      :product-quantity="product && product.data && product.data.general_info ? product.data.general_info.quantity : 1"
+                      :product-width="product && product.data && product.data.general_info ? product.data.general_info.width : 0"
+                      :product-length="product && product.data && product.data.general_info ? product.data.general_info.length : 0"
+                      :total-sheets="calculateTotalSheets()"
+                      :total-square-meters="calculateTotalSquareMeters()"
+                      :selected-material-id="product && product.data ? product.data.selected_material_id : null"
+                      :selected-material-data="getSelectedMaterial()"
+                      :product-materials="product && product.data && product.data.materials ? product.data.materials : []"
+                      @update:product-processes="updateProcesses"
+                      @update:comments="updateProcessesComments"
+                      @update:processes-cost="updateProcessesCost"
+                    />
+                  </div>
+                  
+                  <!-- Extras Tab -->
+                  <div v-if="activeTab === 'extras' && product" class="tab-pane active">
+                    <extras-tab 
+                      :product-extras="product && product.data && product.data.extras ? product.data.extras : []"
+                      :available-extras="availableExtras"
+                      :comments="product && product.data && product.data.extras_comments ? product.data.extras_comments : ''"
+                      :product-quantity="product && product.data && product.data.general_info ? product.data.general_info.quantity : 1"
+                      :include-extras-in-subtotal="product && product.data && product.data.include_extras_in_subtotal !== undefined ? product.data.include_extras_in_subtotal : true"
+                      @update:product-extras="updateExtras"
+                      @update:comments="updateExtrasComments"
+                      @update:include-extras-in-subtotal="updateIncludeExtrasInSubtotal"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- Right Column - Pricing Panel -->
         <div class="col-3 pt-tabs">
-          <div class="pricing-panel">
-            <pricing-tab 
-              :pricing="product.data.pricing || defaultPricing"
-              :is-new="isNew"
-              :suggested-margin="suggestedMargin"
-              @save:product="savePricingProduct"
-              @recalculate:pricing="ensurePricingUpdated"
-              @update:pricing="handlePricingUpdate"
-              @cancel="handleCancel"
-            />
+          <div class="green-accent-panel">
+            <div class="card">
+              <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">
+                  <i class="fa fa-calculator me-2"></i>Precio
+                </h5>
+              </div>
+              <div class="card-body p-0">
+                <pricing-tab 
+                  :pricing="product.data.pricing || defaultPricing"
+                  :is-new="isNew"
+                  :suggested-margin="suggestedMargin"
+                  @save:product="savePricingProduct"
+                  @recalculate:pricing="ensurePricingUpdated"
+                  @update:pricing="handlePricingUpdate"
+                  @cancel="handleCancel"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1379,7 +1394,26 @@ export default {
 }
 
 .nav-tabs {
-  margin-bottom: 1rem !important;
+  margin: 0 !important;
+  border-bottom: 1px solid #32383e;
+  background-color: #1a1e21;
+}
+
+.card {
+  border: 1px solid #32383e;
+  border-left: none;
+  border-radius: 4px;
+  background-color: #1a1e21;
+}
+
+.tab-content {
+  background-color: #1a1e21;
+  border: none;
+}
+
+.tab-pane {
+  border: none;
+  padding: 1rem;
 }
 
 .pricing-panel {
@@ -1388,7 +1422,7 @@ export default {
 
 /* Add padding to align pricing panel with tabs */
 .pt-tabs {
-  padding-top: 56px; /* Height of the nav-tabs + margin */
+  padding-top: 0;
 }
 
 @media (max-width: 768px) {

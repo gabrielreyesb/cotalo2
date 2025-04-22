@@ -234,4 +234,13 @@ export default {
 .h-100 {
   height: 100%;
 }
+
+.card {
+  border: 1px solid #32383e;
+  background-color: #1a1e21;
+}
+
+.card-body {
+  padding: 1rem;
+}
 </style>

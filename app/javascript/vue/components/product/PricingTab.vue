@@ -1,84 +1,75 @@
 <template>
   <div class="pricing-tab">
-    <div class="card">
-      <div class="card-header bg-dark text-white">
-        <h5 class="mb-0">
-          <i class="fa fa-calculator me-2"></i>Precio
-        </h5>
-      </div>
-      <div class="card-body p-0">
-        <table class="table table-dark mb-0">
-          <tbody>
-            <tr>
-              <th style="width: 50%">Costo de materiales:</th>
-              <td class="text-end">{{ formatCurrency(pricing.materials_cost) }}</td>
-            </tr>
-            <tr>
-              <th>Costo de procesos:</th>
-              <td class="text-end">{{ formatCurrency(pricing.processes_cost) }}</td>
-            </tr>
-            <tr :class="{ 'bg-danger bg-opacity-10': pricing.extras_cost > 0 && pricing.include_extras_in_subtotal === false }">
-              <th>Costo de extras:</th>
-              <td class="text-end">{{ formatCurrency(pricing.extras_cost) }}</td>
-            </tr>
-            <tr class="subtotal-row">
-              <th>Subtotal:</th>
-              <td class="text-end">{{ formatCurrency(pricing.subtotal) }}</td>
-            </tr>
-            <tr>
-              <th class="align-middle">Desperdicio:</th>
-              <td>
-                <div class="d-flex justify-content-end align-items-center gap-2">
-                  <div class="input-group input-group-sm" style="width: 100px;">
-                    <input 
-                      type="number" 
-                      class="form-control form-control-sm text-end" 
-                      v-model.number="localWastePercentage" 
-                      min="0"
-                      step="0.1"
-                      @change="handleWastePercentageChange"
-                    />
-                    <span class="input-group-text">%</span>
-                  </div>
-                  <span class="value-display">{{ formatCurrency(pricing.waste_value) }}</span>
-                </div>
-              </td>
-            </tr>
-            <tr class="subtotal-with-waste-row">
-              <th>Subtotal con desperdicio:</th>
-              <td class="text-end">{{ formatCurrency(pricing.subtotal + pricing.waste_value) }}</td>
-            </tr>
-            <tr>
-              <th class="align-middle">Margen:</th>
-              <td>
-                <div class="d-flex justify-content-end align-items-center gap-2">
-                  <div class="input-group input-group-sm" style="width: 100px;">
-                    <input 
-                      type="number" 
-                      class="form-control form-control-sm text-end" 
-                      v-model.number="localMarginPercentage" 
-                      min="0"
-                      step="0.1"
-                      @change="handleMarginPercentageChange"
-                    />
-                    <span class="input-group-text">%</span>
-                  </div>
-                  <span class="value-display">{{ formatCurrency(pricing.margin_value) }}</span>
-                </div>
-              </td>
-            </tr>
-            <tr class="total-row">
-              <th>Precio total:</th>
-              <td class="text-end">{{ formatCurrency(pricing.total_price) }}</td>
-            </tr>
-            <tr class="final-price-row">
-              <th>Precio por pieza:</th>
-              <td class="text-end">{{ formatCurrency(pricing.final_price_per_piece) }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <table class="table table-dark mb-0">
+      <tbody>
+        <tr>
+          <th style="width: 50%">Costo de materiales:</th>
+          <td class="text-end">{{ formatCurrency(pricing.materials_cost) }}</td>
+        </tr>
+        <tr>
+          <th>Costo de procesos:</th>
+          <td class="text-end">{{ formatCurrency(pricing.processes_cost) }}</td>
+        </tr>
+        <tr :class="{ 'bg-danger bg-opacity-10': pricing.extras_cost > 0 && pricing.include_extras_in_subtotal === false }">
+          <th>Costo de extras:</th>
+          <td class="text-end">{{ formatCurrency(pricing.extras_cost) }}</td>
+        </tr>
+        <tr class="subtotal-row">
+          <th>Subtotal:</th>
+          <td class="text-end">{{ formatCurrency(pricing.subtotal) }}</td>
+        </tr>
+        <tr>
+          <th class="align-middle">Desperdicio:</th>
+          <td>
+            <div class="d-flex justify-content-end align-items-center gap-2">
+              <div class="input-group input-group-sm" style="width: 100px;">
+                <input 
+                  type="number" 
+                  class="form-control form-control-sm text-end" 
+                  v-model.number="localWastePercentage" 
+                  min="0"
+                  step="0.1"
+                  @change="handleWastePercentageChange"
+                />
+                <span class="input-group-text">%</span>
+              </div>
+              <span class="value-display">{{ formatCurrency(pricing.waste_value) }}</span>
+            </div>
+          </td>
+        </tr>
+        <tr class="subtotal-with-waste-row">
+          <th>Subtotal con desperdicio:</th>
+          <td class="text-end">{{ formatCurrency(pricing.subtotal + pricing.waste_value) }}</td>
+        </tr>
+        <tr>
+          <th class="align-middle">Margen:</th>
+          <td>
+            <div class="d-flex justify-content-end align-items-center gap-2">
+              <div class="input-group input-group-sm" style="width: 100px;">
+                <input 
+                  type="number" 
+                  class="form-control form-control-sm text-end" 
+                  v-model.number="localMarginPercentage" 
+                  min="0"
+                  step="0.1"
+                  @change="handleMarginPercentageChange"
+                />
+                <span class="input-group-text">%</span>
+              </div>
+              <span class="value-display">{{ formatCurrency(pricing.margin_value) }}</span>
+            </div>
+          </td>
+        </tr>
+        <tr class="total-row">
+          <th>Precio total:</th>
+          <td class="text-end">{{ formatCurrency(pricing.total_price) }}</td>
+        </tr>
+        <tr class="final-price-row">
+          <th>Precio por pieza:</th>
+          <td class="text-end">{{ formatCurrency(pricing.final_price_per_piece) }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
@@ -149,107 +140,74 @@ export default {
   width: 100%;
   display: block;
 
-  .card {
-    border: none;
-    border-radius: 4px;
-    overflow: hidden;
-    background-color: #1a1e21;
-    border-left: 2px solid #42b983;
+  .table {
+    margin: 0;
     width: 100%;
-    max-width: none;
+    table-layout: fixed;
+    border-collapse: collapse;
     
-    .card-header {
-      background-color: #23272b;
-      border-bottom: none;
-      padding: 0.75rem 1rem;
-      width: 100%;
-      
-      h5 {
-        font-size: 1rem;
-        font-weight: 600;
-        color: #f8f9fa;
-        margin: 0;
+    th, td {
+      padding: 0.625rem 1rem;
+      border-top: 1px solid #32383e;
+      white-space: nowrap;
+    }
+
+    th {
+      width: 50%;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+    
+    td {
+      width: 50%;
+      font-weight: 400;
+      font-size: 0.9rem;
+
+      .d-flex {
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.5rem;
         
-        i {
-          color: #42b983;
+        .input-group {
+          width: 80px;
+          min-width: 80px;
+          flex: 0 0 80px;
+        }
+        
+        .value-display {
+          text-align: right;
+          min-width: 0;
+          white-space: nowrap;
         }
       }
     }
-
-    .card-body {
-      padding: 0;
-      width: 100%;
-    }
-
-    .table {
-      margin: 0;
-      width: 100%;
-      table-layout: fixed;
-      border-collapse: collapse;
-      
+    
+    tr:first-child {
       th, td {
-        padding: 0.625rem 1rem;
-        border-top: 1px solid #32383e;
-        white-space: nowrap;
+        border-top: none;
       }
-
-      th {
-        width: 50%;
-        font-weight: 500;
-        font-size: 0.9rem;
+    }
+    
+    .subtotal-row, .subtotal-with-waste-row {
+      th, td {
+        border-top: 2px solid #42b983;
+        font-weight: 600;
       }
-      
-      td {
-        width: 50%;
-        font-weight: 400;
-        font-size: 0.9rem;
-
-        .d-flex {
-          justify-content: flex-end;
-          align-items: center;
-          gap: 0.5rem;
-          
-          .input-group {
-            width: 80px;
-            min-width: 80px;
-            flex: 0 0 80px;
-          }
-          
-          .value-display {
-            text-align: right;
-            min-width: 0;
-            white-space: nowrap;
-          }
-        }
+    }
+    
+    .total-row {
+      th, td {
+        border-top: 2px solid #42b983;
+        font-weight: 700;
+        font-size: 1rem;
       }
-      
-      tr:first-child {
-        th, td {
-          border-top: none;
-        }
-      }
-      
-      .subtotal-row, .subtotal-with-waste-row {
-        th, td {
-          border-top: 2px solid #42b983;
-          font-weight: 600;
-        }
-      }
-      
-      .total-row {
-        th, td {
-          border-top: 2px solid #42b983;
-          font-weight: 700;
-          font-size: 1rem;
-        }
-      }
-      
-      .final-price-row {
-        th, td {
-          font-weight: 700;
-          color: #42b983;
-          font-size: 1rem;
-        }
+    }
+    
+    .final-price-row {
+      th, td {
+        font-weight: 700;
+        color: #42b983;
+        font-size: 1rem;
       }
     }
   }
