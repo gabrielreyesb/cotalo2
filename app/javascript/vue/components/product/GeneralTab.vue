@@ -320,14 +320,15 @@ export default {
 
 <style lang="scss">
 /* Target all green accent panels within the general tab */
-.general-tab.general-info-panel {
-  .green-accent-panel > .card,
-  .green-accent-panel > .general-info-card {
+body .general-tab.general-info-panel {
+  .green-accent-panel > .card {
     /* Reset any existing borders first */
     border: none !important;
     
     /* Set explicit borders */
-    border: 1px solid rgb(50, 56, 62) !important;
+    border-top: 1px solid rgb(50, 56, 62) !important;
+    border-right: 1px solid rgb(50, 56, 62) !important;
+    border-bottom: 1px solid rgb(50, 56, 62) !important;
     border-left: 2px solid rgb(66, 185, 131) !important;
     
     /* Other styles */
@@ -357,8 +358,11 @@ export default {
 }
 
 /* Additional override for other green accent panels */
-.green-accent-panel > .card {
-  border: 1px solid rgb(50, 56, 62) !important;
+body .green-accent-panel > .card {
+  border: none !important;
+  border-top: 1px solid rgb(50, 56, 62) !important;
+  border-right: 1px solid rgb(50, 56, 62) !important;
+  border-bottom: 1px solid rgb(50, 56, 62) !important;
   border-left: 2px solid rgb(66, 185, 131) !important;
   background-color: rgb(26, 30, 33) !important;
 }
