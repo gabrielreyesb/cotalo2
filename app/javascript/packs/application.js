@@ -6,6 +6,7 @@
 //
 // To reference this file, add <%= javascript_pack_tag 'application' %> to the appropriate
 // layout file, like app/views/layouts/application.html.erb
+// Force recompile timestamp: <%= Time.current.to_i %>
 
 
 // Uncomment to copy all static images under ../images to the output folder and reference
