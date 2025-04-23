@@ -228,56 +228,76 @@ export default {
     }
   },
   mounted() {
+    // Get the CSS variable value
+    const rootStyles = getComputedStyle(document.documentElement);
+    const cotaloGreen = rootStyles.getPropertyValue('--cotalo-green').trim();
+
     console.log('[GeneralTab] Component mounted', {
       version: '2024-04-23-v1',
       hasGreenAccent: !!document.querySelector('.green-accent-panel'),
       componentId: this.$el.id,
       cssVariables: {
-        cotaloGreen: getComputedStyle(document.documentElement).getPropertyValue('--cotalo-green')
-      },
-      styles: {
-        greenAccentPanel: document.querySelector('.green-accent-panel')?.getAttribute('style'),
-        componentStyles: window.getComputedStyle(this.$el)
+        cotaloGreen: cotaloGreen || 'not defined'
       }
     });
 
     // Log all elements with green-accent-panel class
     document.querySelectorAll('.green-accent-panel').forEach((el, index) => {
       const cardElement = el.querySelector('.card');
+      if (!cardElement) {
+        console.log(`[GeneralTab] No card element found in panel ${index}`);
+        return;
+      }
+
       const computedStyles = window.getComputedStyle(cardElement);
-      console.log(`[GeneralTab] Green accent panel ${index} details:`, {
-        element: el,
-        card: {
-          borderLeft: computedStyles.borderLeft,
-          borderLeftWidth: computedStyles.borderLeftWidth,
-          borderLeftStyle: computedStyles.borderLeftStyle,
-          borderLeftColor: computedStyles.borderLeftColor,
-          padding: computedStyles.padding,
-          paddingLeft: computedStyles.paddingLeft,
-          margin: computedStyles.margin,
-          marginLeft: computedStyles.marginLeft
-        },
-        fullStyles: computedStyles,
-        parentElement: el.parentElement,
-        children: el.children
+      
+      // Extract specific style values
+      const styleValues = {
+        borderLeft: computedStyles.borderLeft,
+        borderLeftWidth: computedStyles.borderLeftWidth,
+        borderLeftStyle: computedStyles.borderLeftStyle,
+        borderLeftColor: computedStyles.borderLeftColor,
+        border: computedStyles.border,
+        borderTop: computedStyles.borderTop,
+        borderRight: computedStyles.borderRight,
+        borderBottom: computedStyles.borderBottom,
+        padding: computedStyles.padding,
+        paddingLeft: computedStyles.paddingLeft,
+        margin: computedStyles.margin,
+        marginLeft: computedStyles.marginLeft,
+        backgroundColor: computedStyles.backgroundColor
+      };
+
+      console.log(`[GeneralTab] Green accent panel ${index} styles:`, {
+        panelType: el.parentElement.className,
+        styles: styleValues
       });
     });
 
-    const cardStyles = window.getComputedStyle(this.$el.querySelector('.card'));
-    const formFieldsStyles = window.getComputedStyle(this.$el.querySelector('form'));
-
-    this.styles = reactive({
-      card: {
-        backgroundColor: cardStyles.backgroundColor,
-        padding: cardStyles.padding,
-        border: cardStyles.border,
-        borderLeft: cardStyles.borderLeft
-      },
-      formFields: {
-        backgroundColor: formFieldsStyles.backgroundColor,
-        padding: formFieldsStyles.padding,
-        margin: formFieldsStyles.margin
+    // Also log the scoped styles being applied
+    const styleSheets = document.styleSheets;
+    const scopedStyles = Array.from(styleSheets).filter(sheet => {
+      try {
+        return sheet.href === null || sheet.href.includes('GeneralTab');
+      } catch (e) {
+        return false;
       }
+    });
+
+    console.log('[GeneralTab] Applied style sheets:', {
+      total: styleSheets.length,
+      scoped: scopedStyles.map(sheet => {
+        try {
+          return Array.from(sheet.cssRules || [])
+            .filter(rule => rule.selectorText?.includes('.green-accent-panel'))
+            .map(rule => ({
+              selector: rule.selectorText,
+              css: rule.style.cssText
+            }));
+        } catch (e) {
+          return 'Cannot access rules';
+        }
+      })
     });
   },
   updated() {
