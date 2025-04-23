@@ -23,14 +23,29 @@ window.addEventListener('error', function(event) {
   `;
 });
 
+// Safely get stylesheet information
+function getStylesheetInfo(sheet) {
+  try {
+    return {
+      href: sheet.href || 'inline',
+      // Only try to access rules for same-origin stylesheets
+      rules: sheet.href && new URL(sheet.href).origin !== window.location.origin ? 
+        'cross-origin' : 
+        (sheet.cssRules ? sheet.cssRules.length : 'no rules')
+    };
+  } catch (e) {
+    return {
+      href: sheet.href || 'inline',
+      rules: 'inaccessible'
+    };
+  }
+}
+
 console.log('[product_form.js] Initializing', {
   version: '2024-04-23-v1',
   timestamp: new Date().toISOString(),
   environment: process.env.NODE_ENV,
-  stylesheets: Array.from(document.styleSheets).map(sheet => ({
-    href: sheet.href,
-    rules: sheet.cssRules ? sheet.cssRules.length : 'No access to rules'
-  }))
+  stylesheets: Array.from(document.styleSheets).map(getStylesheetInfo)
 });
 
 // Wait for DOM to be ready
