@@ -268,37 +268,49 @@ export default {
         backgroundColor: computedStyles.backgroundColor
       };
 
-      console.log(`[GeneralTab] Green accent panel ${index} styles:`, {
-        panelType: el.parentElement.className,
-        styles: styleValues
-      });
+      console.log(`[GeneralTab] Green accent panel ${index} styles:`, 
+        JSON.stringify({
+          panelType: el.parentElement.className,
+          styles: styleValues
+        }, null, 2)
+      );
     });
 
-    // Also log the scoped styles being applied
+    // Log stylesheet information
     const styleSheets = document.styleSheets;
-    const scopedStyles = Array.from(styleSheets).filter(sheet => {
-      try {
-        return sheet.href === null || sheet.href.includes('GeneralTab');
-      } catch (e) {
-        return false;
-      }
-    });
+    let greenAccentRules = [];
 
-    console.log('[GeneralTab] Applied style sheets:', {
-      total: styleSheets.length,
-      scoped: scopedStyles.map(sheet => {
-        try {
-          return Array.from(sheet.cssRules || [])
+    Array.from(styleSheets).forEach((sheet, index) => {
+      try {
+        if (sheet.href === null || sheet.href.includes('GeneralTab')) {
+          const rules = Array.from(sheet.cssRules || [])
             .filter(rule => rule.selectorText?.includes('.green-accent-panel'))
             .map(rule => ({
               selector: rule.selectorText,
-              css: rule.style.cssText
+              css: rule.style.cssText,
+              source: sheet.href || 'inline',
+              index: index
             }));
-        } catch (e) {
-          return 'Cannot access rules';
+          if (rules.length > 0) {
+            greenAccentRules.push(...rules);
+          }
         }
-      })
+      } catch (e) {
+        console.log(`[GeneralTab] Cannot access rules for stylesheet ${index}:`, sheet.href || 'inline');
+      }
     });
+
+    console.log('[GeneralTab] Style information:', JSON.stringify({
+      totalStylesheets: styleSheets.length,
+      stylesheetSources: Array.from(styleSheets).map(sheet => {
+        try {
+          return sheet.href || 'inline';
+        } catch (e) {
+          return 'inaccessible';
+        }
+      }),
+      greenAccentRules: greenAccentRules
+    }, null, 2));
   },
   updated() {
     // Component updated
