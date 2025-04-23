@@ -232,6 +232,9 @@ export default {
       version: '2024-04-23-v1',
       hasGreenAccent: !!document.querySelector('.green-accent-panel'),
       componentId: this.$el.id,
+      cssVariables: {
+        cotaloGreen: getComputedStyle(document.documentElement).getPropertyValue('--cotalo-green')
+      },
       styles: {
         greenAccentPanel: document.querySelector('.green-accent-panel')?.getAttribute('style'),
         componentStyles: window.getComputedStyle(this.$el)
@@ -240,9 +243,21 @@ export default {
 
     // Log all elements with green-accent-panel class
     document.querySelectorAll('.green-accent-panel').forEach((el, index) => {
-      console.log(`[GeneralTab] Green accent panel ${index}:`, {
+      const cardElement = el.querySelector('.card');
+      const computedStyles = window.getComputedStyle(cardElement);
+      console.log(`[GeneralTab] Green accent panel ${index} details:`, {
         element: el,
-        computedStyles: window.getComputedStyle(el),
+        card: {
+          borderLeft: computedStyles.borderLeft,
+          borderLeftWidth: computedStyles.borderLeftWidth,
+          borderLeftStyle: computedStyles.borderLeftStyle,
+          borderLeftColor: computedStyles.borderLeftColor,
+          padding: computedStyles.padding,
+          paddingLeft: computedStyles.paddingLeft,
+          margin: computedStyles.margin,
+          marginLeft: computedStyles.marginLeft
+        },
+        fullStyles: computedStyles,
         parentElement: el.parentElement,
         children: el.children
       });
@@ -254,7 +269,9 @@ export default {
     this.styles = reactive({
       card: {
         backgroundColor: cardStyles.backgroundColor,
-        padding: cardStyles.padding
+        padding: cardStyles.padding,
+        border: cardStyles.border,
+        borderLeft: cardStyles.borderLeft
       },
       formFields: {
         backgroundColor: formFieldsStyles.backgroundColor,
