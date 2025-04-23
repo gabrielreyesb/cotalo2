@@ -89,5 +89,5 @@ production:
   # Extract and emit a css file
   extract_css: true
 
-  # Cache manifest.json for performance
-  cache_manifest: true
+  # Cache manifest.json for performance - temporarily disabled to force recompilation
+  cache_manifest: false
