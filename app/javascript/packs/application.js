@@ -49,4 +49,4 @@ try {
   console.log("Stimulus not available, continuing without it");
 }
 
-console.log('Hello World from Webpacker')
+// Initialize Webpacker

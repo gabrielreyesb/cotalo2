@@ -6,6 +6,9 @@ class Product < ApplicationRecord
   validates :description, presence: true
   validates :user, presence: true
   
+  validate :validate_general_info
+  validate :validate_materials
+  
   # Scope to find products belonging to a specific user
   scope :for_user, ->(user) { where(user: user) }
   
@@ -361,6 +364,24 @@ class Product < ApplicationRecord
   end
   
   private
+  
+  def validate_general_info
+    if data.nil? || data["general_info"].nil?
+      errors.add(:base, "General information is required")
+      return
+    end
+    
+    general = data["general_info"]
+    errors.add(:base, "Product quantity is required") if general["quantity"].blank? || general["quantity"].to_i <= 0
+    errors.add(:base, "Product width is required") if general["width"].blank? || general["width"].to_f <= 0
+    errors.add(:base, "Product length is required") if general["length"].blank? || general["length"].to_f <= 0
+  end
+  
+  def validate_materials
+    if data.nil? || data["materials"].nil? || data["materials"].empty?
+      errors.add(:base, "At least one material is required")
+    end
+  end
   
   # Calculate cost for a material based on its properties and quantity
   def calculate_material_cost(material)

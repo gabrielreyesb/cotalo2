@@ -91,7 +91,7 @@
                       v-model.number="material.ancho" 
                       min="0"
                       step="0.1"
-                      @change="updateMaterialCalculations(index, true)"
+                      @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
                       title="Editar ancho del material"
                       data-toggle="tooltip"
                     />
@@ -103,7 +103,7 @@
                       v-model.number="material.largo" 
                       min="0"
                       step="0.1"
-                      @change="updateMaterialCalculations(index, true)"
+                      @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
                       title="Editar largo del material"
                       data-toggle="tooltip"
                     />
@@ -115,7 +115,7 @@
                       v-model.number="material.price" 
                       min="0"
                       step="0.01"
-                      @change="updateMaterialCalculations(index)"
+                      @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
                       title="Editar precio del material"
                       data-toggle="tooltip"
                     />
@@ -126,7 +126,7 @@
                       class="form-control form-control-sm" 
                       v-model.number="material.piecesPerMaterial" 
                       min="1"
-                      @change="updateMaterialCalculations(index, false)"
+                      @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
                       title="Puedes editar este valor manualmente para ajustar la cantidad de piezas por material"
                       data-toggle="tooltip"
                     />
@@ -179,7 +179,7 @@
                       v-model.number="material.ancho" 
                       min="0"
                       step="0.1"
-                      @change="updateMaterialCalculations(index, true)"
+                      @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
                       placeholder="Ancho"
                     />
                   </div>
@@ -190,7 +190,7 @@
                       v-model.number="material.largo" 
                       min="0"
                       step="0.1"
-                      @change="updateMaterialCalculations(index, true)"
+                      @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
                       placeholder="Largo"
                     />
                   </div>
@@ -201,7 +201,7 @@
                       v-model.number="material.price" 
                       min="0"
                       step="0.01"
-                      @change="updateMaterialCalculations(index)"
+                      @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
                       placeholder="Precio"
                     />
                   </div>
@@ -214,7 +214,7 @@
                       class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge"
                       v-model.number="material.piecesPerMaterial" 
                       min="1"
-                      @change="updateMaterialCalculations(index, false)"
+                      @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
                       title="Puedes editar este valor manualmente para ajustar la cantidad de piezas por material"
                     />
                   </div>
@@ -418,7 +418,7 @@ export default {
       this.productMaterials.push(material);
       
       // Calculate initial values
-      this.updateMaterialCalculations(this.productMaterials.length - 1);
+      this.updateMaterialCalculations({ index: this.productMaterials.length - 1, updatePiecesPerMaterial: true, material });
       
       // Reset selection
       this.materialIdForAdd = '';
@@ -433,70 +433,74 @@ export default {
       this.$emit('update:product-materials', this.productMaterials);
       this.$emit('material-selected-for-products', material.id);
     },
-    updateMaterialCalculations(index, updatePiecesPerMaterial = false) {
-      console.log('Starting updateMaterialCalculations:', {
-        index,
-        updatePiecesPerMaterial,
-        material: this.productMaterials[index]
-      });
+    updateMaterialCalculations({ index, updatePiecesPerMaterial = false, material }) {
+      if (!material) return;
 
-      const material = this.productMaterials[index];
-      
-      // Calculate pieces that fit in one sheet
-      const piecesPerSheet = this.calculatePiecesPerSheet(
-        material.ancho,
-        material.largo,
-        this.productWidth,
-        this.productLength,
-        this.widthMargin,
-        this.lengthMargin
-      );
+      const productQuantity = this.productQuantity || 1;
+      const productWidth = parseFloat(this.productWidth) || 0;
+      const productLength = parseFloat(this.productLength) || 0;
 
-      console.log('Calculated piecesPerSheet:', piecesPerSheet);
+      // Add margins to product dimensions
+      const effectiveProductWidth = productWidth + this.widthMargin;
+      const effectiveProductLength = productLength + this.lengthMargin;
 
-      // Update pieces per material only when dimensions change
-      if (updatePiecesPerMaterial) {
-        material.piecesPerMaterial = piecesPerSheet || 1;
+      let piecesPerMaterial = material.piecesPerMaterial || 1;
+
+      if (updatePiecesPerMaterial && effectiveProductWidth > 0 && effectiveProductLength > 0) {
+        const materialWidth = parseFloat(material.ancho) || 0;
+        const materialLength = parseFloat(material.largo) || 0;
+
+        if (materialWidth > 0 && materialLength > 0) {
+          // Calculate how many pieces fit horizontally and vertically
+          const horizontalPieces = Math.floor(materialWidth / effectiveProductWidth);
+          const verticalPieces = Math.floor(materialLength / effectiveProductLength);
+
+          // Try the other orientation as well
+          const horizontalPiecesAlt = Math.floor(materialWidth / effectiveProductLength);
+          const verticalPiecesAlt = Math.floor(materialLength / effectiveProductWidth);
+
+          // Use the orientation that fits more pieces
+          piecesPerMaterial = Math.max(
+            horizontalPieces * verticalPieces,
+            horizontalPiecesAlt * verticalPiecesAlt
+          );
+        }
       }
 
-      console.log('Current piecesPerMaterial:', material.piecesPerMaterial);
+      // Calculate total sheets needed
+      const totalSheets = piecesPerMaterial > 0 ? Math.ceil(productQuantity / piecesPerMaterial) : 0;
 
-      // Calculate total sheets needed (product quantity / pieces per material)
-      material.totalSheets = Math.ceil(this.productQuantity / material.piecesPerMaterial);
-      
       // Calculate total square meters
-      material.totalSquareMeters = (material.ancho * material.largo * material.totalSheets) / 10000; // Convert to m²
-      
-      // Calculate total price (price per m² * total m²)
-      material.totalPrice = material.price * material.totalSquareMeters;
+      const materialWidth = parseFloat(material.ancho) || 0;
+      const materialLength = parseFloat(material.largo) || 0;
+      const totalSquareMeters = totalSheets * (materialWidth * materialLength) / 10000; // convert cm² to m²
 
-      console.log('After calculations:', {
-        totalSheets: material.totalSheets,
-        totalSquareMeters: material.totalSquareMeters,
-        totalPrice: material.totalPrice
-      });
+      // Calculate total price
+      const totalPrice = totalSquareMeters * (material.price || 0);
 
-      // Mark all processes for recalculation
-      material._needsProcessRecalculation = true;
+      // Update the material with new calculations
+      const updatedMaterial = {
+        ...material,
+        piecesPerMaterial,
+        totalSheets,
+        totalSquareMeters,
+        totalPrice
+      };
 
-      // Emit updates in the correct order
-      // 1. Update the materials array first
-      this.$emit('update:product-materials', [...this.productMaterials]);
-      
-      // 2. Emit the total cost for pricing tab
-      this.$emit('update:materials-cost', this.totalCost);
-      
-      // 3. Emit detailed changes for process and pricing recalculation
-      const eventData = {
+      // Emit the calculation change event
+      this.$emit('material-calculation-changed', {
         materialId: material.id,
-        totalSheets: material.totalSheets,
-        totalSquareMeters: material.totalSquareMeters,
-        totalPrice: material.totalPrice,
+        totalSheets,
+        totalSquareMeters,
+        totalPrice,
         needsProcessRecalculation: true,
         needsPricingRecalculation: true
-      };
-      console.log('Emitting material-calculation-changed with:', eventData);
-      this.$emit('material-calculation-changed', eventData);
+      });
+
+      // Update the materials array
+      const updatedMaterials = [...this.productMaterials];
+      updatedMaterials[index] = updatedMaterial;
+      this.$emit('update:product-materials', updatedMaterials);
     },
     calculatePiecesPerSheet(materialWidth, materialLength, productWidth, productLength, widthMargin, lengthMargin) {
       if (!materialWidth || !materialLength || !productWidth || !productLength) return 0;
@@ -549,13 +553,13 @@ export default {
     productWidth() {
       // Recalculate all materials when product width changes
       this.productMaterials.forEach((_, index) => {
-        this.updateMaterialCalculations(index, true);
+        this.updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material: this.productMaterials[index] });
       });
     },
     productLength() {
       // Recalculate all materials when product length changes
       this.productMaterials.forEach((_, index) => {
-        this.updateMaterialCalculations(index, true);
+        this.updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material: this.productMaterials[index] });
       });
     }
   },

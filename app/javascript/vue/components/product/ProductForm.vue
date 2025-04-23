@@ -217,39 +217,24 @@ export default {
   },
   methods: {
     async setActiveTab(tab) {
-      // Only prevent default if the click is within the product form
       if (event.target.closest('.product-form-container')) {
         event.preventDefault();
       }
       
-      // Allow switching between general, extras, processes and pricing tabs even for new products
-      // Only restrict other tabs if product doesn't exist (has no ID)
       if (['general', 'extras', 'processes', 'materials', 'pricing'].includes(tab)) {
-        // These tabs are always accessible
         this.activeTab = tab;
         
-        // If switching to pricing tab, ensure pricing is calculated
         if (tab === 'pricing') {
-          
-          // First ensure all pricing values are up to date
           await this.ensurePricingUpdated();
-          
-          // Then recalculate to make sure everything is consistent
           this.recalculatePricing();
-          
-          // Calculate suggested margin
           this.suggestedMargin = await this.calculateSuggestedMargin();
-          
-          // Give components time to update before final calculations
           this.$nextTick(() => {
-            // Force a final update to ensure everything is rendered correctly
             this.$forceUpdate();
           });
         }
       } else if (!this.productId) {
         return;
       } else {
-        // Other tabs require a product ID
         this.activeTab = tab;
       }
     },
@@ -390,10 +375,7 @@ export default {
     },
     async updateProduct(updatePayload) {
       try {
-        // Remove saving flag logic - no saving happens here
-        // this.saving = true; 
-
-        // --- Calculate dimension changes BEFORE merge --- 
+        // Calculate dimension changes BEFORE merge
         const oldQuantity = this.product.data.general_info?.quantity;
         const oldWidth = this.product.data.general_info?.width;
         const oldLength = this.product.data.general_info?.length;
@@ -407,24 +389,12 @@ export default {
         const quantityChanged = newQuantity !== undefined && oldQuantity !== newQuantity;
         const widthChanged = newWidth !== undefined && oldWidth !== newWidth;
         const lengthChanged = newLength !== undefined && oldLength !== newLength;
-        // --- End dimension check ---
 
-        // Remove cleanData and related logic
-        // const shouldRedirect = data.data?.shouldRedirect;
-        // const cleanData = { ... };
-        // delete cleanData.data.shouldRedirect;
-
-        console.log('[ProductForm] Received update:', JSON.parse(JSON.stringify(updatePayload)));
-        console.log('[ProductForm] State BEFORE merge:', JSON.parse(JSON.stringify(this.product)));
-
-        // --- Simplified State Merge --- 
+        // Simplified State Merge
         if (updatePayload.description !== undefined) {
           this.product.description = updatePayload.description;
         }
         if (updatePayload.data && updatePayload.data.general_info) {
-          // Use Vue.set or spread operator for reactivity on nested objects
-          // Remove the $set block - general_info is initialized in initializeNewProduct
-          // Merge changes into general_info
           this.product.data.general_info = {
             ...this.product.data.general_info, 
             ...updatePayload.data.general_info
@@ -435,18 +405,9 @@ export default {
             this.product.data.quantity = updatePayload.data.general_info.quantity;
           }
         }
-        // --- End Simplified State Merge --- 
         
-        console.log('[ProductForm] State AFTER merge:', JSON.parse(JSON.stringify(this.product)));
-
         // If quantity, width, or length changed, trigger recalculations
         if (quantityChanged || widthChanged || lengthChanged) {
-          console.log('[ProductForm] Dimensions changed, starting recalculations...');
-          console.log('[ProductForm] Materials before recalc:', JSON.parse(JSON.stringify(this.product.data.materials)));
-          console.log('[ProductForm] Processes before recalc:', JSON.parse(JSON.stringify(this.product.data.processes)));
-          console.log('[ProductForm] Extras before recalc:', JSON.parse(JSON.stringify(this.product.data.extras)));
-          
-          // --- Keep Recalculation Logic --- 
           if (this.product.data.materials && this.product.data.materials.length > 0) {
             const updatedMaterials = this.product.data.materials.map(material => ({
               ...material,
@@ -469,18 +430,11 @@ export default {
             this.updateExtras(updatedExtras);
           }
           this.ensurePricingUpdated();
-          // --- End Recalculation Logic --- 
-          console.log('[ProductForm] State AFTER recalculations:', JSON.parse(JSON.stringify(this.product.data)));
         }
         
       } catch (error) {
-        // Keep error logging
-        console.error('[ProductForm] Error in updateProduct:', error);
+        console.error('Error in updateProduct:', error);
       } 
-      // Remove finally block
-      // finally {
-      //   this.saving = false;
-      // }
     },
     async updateExtras(extras) {
       if (!this.product || !this.product.data) return;
@@ -636,11 +590,16 @@ export default {
     async updateMaterials(materials) {
       if (!this.product || !this.product.data) return;
       
+      // Ensure each material has a quantity field
+      materials = materials.map(material => ({
+        ...material,
+        quantity: material.totalSheets || material.piecesPerMaterial || material.total_quantity || 1
+      }));
+      
       // Check if there's any material with the needsRecalculation flag
       const needsRecalculation = materials.some(material => material._needsRecalculation);
       
       if (needsRecalculation) {
-        
         // Get the current dimensions and quantity from the product
         const productWidth = this.product.data.general_info?.width || 0;
         const productLength = this.product.data.general_info?.length || 0;
@@ -655,7 +614,7 @@ export default {
           // Skip materials that don't need recalculation
           if (!material._needsRecalculation) return material;
           
-          // Calculate pieces per material (copied from MaterialsTab.calculateMaterialValues)
+          // Calculate pieces per material
           const materialWidth = parseFloat(material.ancho) || 0;
           const materialLength = parseFloat(material.largo) || 0;
           
@@ -683,15 +642,16 @@ export default {
           const totalSquareMeters = totalSheets * (materialWidth * materialLength) / 10000; // convert cm² to m²
           
           // Calculate total price - based on square meters, not sheets
-          const totalPrice = totalSquareMeters * material.price;
+          const totalPrice = totalSquareMeters * (material.price || 0);
           
           return {
             ...material,
+            quantity: totalSheets,
             piecesPerMaterial,
             totalSheets,
             totalSquareMeters,
             totalPrice,
-            _needsRecalculation: undefined // Remove the flag
+            _needsRecalculation: undefined
           };
         });
       }
@@ -891,14 +851,17 @@ export default {
       }
     },
     async savePricingProduct() {
-      // *** Add validation check here ***
-      if (!this.product || !this.product.description || this.product.description.trim() === '') {
-        alert('Por favor, ingresa una descripción para el producto antes de guardar.');
-        return; // Abort save
-      }
-
       try {
         this.saving = true;
+        
+        // Validate product data before submission
+        const validationErrors = this.validateProduct();
+        if (validationErrors.length > 0) {
+          // Show all validation errors using alert for now
+          const errorMessage = validationErrors.join('\n');
+          alert(errorMessage);
+          return;
+        }
         
         const productData = {
           description: this.product.description,
@@ -921,8 +884,32 @@ export default {
           })
         });
 
+        let responseData;
+        try {
+          responseData = await response.json();
+        } catch (e) {
+          // If JSON parsing fails, create a basic error object
+          responseData = {
+            error: response.statusText || 'Error de servidor'
+          };
+        }
+
         if (!response.ok) {
-          throw new Error(`Failed to ${this.isNew ? 'create' : 'update'} product`);
+          // Handle validation errors from the server
+          if (response.status === 422 && responseData.errors) {
+            const validationErrors = Array.isArray(responseData.errors) ? 
+              responseData.errors : 
+              Object.values(responseData.errors || {}).flat();
+            
+            throw new Error(validationErrors.join('\n'));
+          }
+          
+          // Handle other types of errors
+          throw new Error(
+            responseData.error || 
+            responseData.message || 
+            `Error al ${this.isNew ? 'crear' : 'actualizar'} el producto`
+          );
         }
 
         // Redirect to products index after successful save
@@ -930,10 +917,68 @@ export default {
 
       } catch (error) {
         console.error(`Error ${this.isNew ? 'creating' : 'updating'} product:`, error);
-        alert(`Error al ${this.isNew ? 'crear' : 'guardar'} el producto. Por favor, intenta de nuevo.`);
+        
+        // Show error message using alert
+        const errorMessage = error.message || 
+          `Error al ${this.isNew ? 'crear' : 'guardar'} el producto. Por favor, intente de nuevo.`;
+        alert(errorMessage);
       } finally {
         this.saving = false;
       }
+    },
+    validateProduct() {
+      const errors = [];
+      
+      if (!this.product?.description?.trim()) {
+        errors.push('La descripción es requerida');
+        return errors;
+      }
+      
+      const generalInfo = this.product?.data?.general_info;
+      if (!generalInfo) {
+        errors.push('La información general es requerida');
+        return errors;
+      }
+
+      const quantity = parseFloat(generalInfo.quantity);
+      if (!quantity || quantity <= 0) {
+        errors.push('La cantidad debe ser mayor a 0');
+      }
+
+      const width = parseFloat(generalInfo.width);
+      if (!width || width <= 0) {
+        errors.push('El ancho debe ser mayor a 0');
+      }
+
+      const length = parseFloat(generalInfo.length);
+      if (!length || length <= 0) {
+        errors.push('El largo debe ser mayor a 0');
+      }
+      
+      const materials = this.product?.data?.materials;
+      if (!materials || materials.length === 0) {
+        errors.push('Se requiere al menos un material');
+      } else {
+        materials.forEach((material, index) => {
+          const materialId = material.material_id || material.id;
+          if (!materialId) {
+            errors.push(`Material ${index + 1}: Se debe seleccionar un material`);
+          }
+
+          const materialQuantity = 
+            parseFloat(material.quantity) ||
+            parseFloat(material.totalSheets) ||
+            parseFloat(material.piecesPerMaterial) ||
+            parseFloat(material.total_quantity) ||
+            0;
+          
+          if (!materialQuantity || materialQuantity <= 0) {
+            errors.push(`Material ${index + 1}: La cantidad debe ser mayor a 0`);
+          }
+        });
+      }
+      
+      return errors;
     },
     async updateProcesses(processes) {
       if (!this.product || !this.product.data) return;
@@ -1051,21 +1096,10 @@ export default {
     },
     
     handleMaterialCalculationChanged(eventData) {
-      console.log('[ProductForm] Received material-calculation-changed event:', eventData);
-      
       if (!this.product || !this.product.data) return;
       
-      // Update the material in the product data
       const materialIndex = this.product.data.materials.findIndex(m => m.id === eventData.materialId);
       if (materialIndex !== -1) {
-        console.log('[ProductForm] Updating material data:', {
-          materialId: eventData.materialId,
-          totalSheets: eventData.totalSheets,
-          totalSquareMeters: eventData.totalSquareMeters,
-          totalPrice: eventData.totalPrice
-        });
-        
-        // Update the material data
         this.product.data.materials[materialIndex] = {
           ...this.product.data.materials[materialIndex],
           totalSheets: eventData.totalSheets,
@@ -1074,11 +1108,7 @@ export default {
         };
       }
       
-      // Check if this is the selected material for processes
       if (eventData.materialId === this.product.data.selected_material_id && this.product.data.processes && this.product.data.processes.length > 0) {
-        console.log('[ProductForm] Selected material changed, recalculating processes');
-        
-        // Force recalculation of all processes by marking them with the recalculation flag
         const processesNeedingRecalculation = this.product.data.processes.map(process => {
           return {
             ...process,
@@ -1086,13 +1116,10 @@ export default {
           };
         });
         
-        // This will trigger the recalculation in updateProcesses
         this.updateProcesses(processesNeedingRecalculation);
       }
       
-      // If pricing needs recalculation, update it
       if (eventData.needsPricingRecalculation) {
-        console.log('[ProductForm] Recalculating pricing');
         this.recalculatePricing();
       }
     },
@@ -1200,126 +1227,9 @@ export default {
         }
       }
     },
-    debugLayout() {
-      // Get key elements
-      const formContainer = document.querySelector('.product-form-container');
-      const mainPanel = document.querySelector('.col-9');
-      const pricingPanel = document.querySelector('.col-3');
-      const pricingCard = pricingPanel?.querySelector('.card');
-      const pricingTable = pricingPanel?.querySelector('.table');
-
-      // Log environment info
-      console.log('=== Layout Debug Info ===');
-      console.log('Window dimensions:', JSON.stringify({
-        width: window.innerWidth,
-        height: window.innerHeight
-      }));
-
-      // Log container dimensions
-      if (formContainer) {
-        const formContainerStyle = window.getComputedStyle(formContainer);
-        console.log('Form container:', JSON.stringify({
-          width: formContainer.offsetWidth,
-          height: formContainer.offsetHeight,
-          display: formContainerStyle.display,
-          position: formContainerStyle.position,
-          margin: formContainerStyle.margin,
-          padding: formContainerStyle.padding,
-          maxWidth: formContainerStyle.maxWidth,
-          boxSizing: formContainerStyle.boxSizing
-        }));
-      }
-
-      // Log main panel dimensions
-      if (mainPanel) {
-        const mainPanelStyle = window.getComputedStyle(mainPanel);
-        console.log('Main panel:', JSON.stringify({
-          width: mainPanel.offsetWidth,
-          height: mainPanel.offsetHeight,
-          display: mainPanelStyle.display,
-          position: mainPanelStyle.position,
-          margin: mainPanelStyle.margin,
-          padding: mainPanelStyle.padding,
-          flex: mainPanelStyle.flex,
-          boxSizing: mainPanelStyle.boxSizing
-        }));
-      }
-
-      // Log pricing panel dimensions
-      if (pricingPanel) {
-        const pricingPanelStyle = window.getComputedStyle(pricingPanel);
-        console.log('Pricing panel:', JSON.stringify({
-          width: pricingPanel.offsetWidth,
-          height: pricingPanel.offsetHeight,
-          display: pricingPanelStyle.display,
-          position: pricingPanelStyle.position,
-          margin: pricingPanelStyle.margin,
-          padding: pricingPanelStyle.padding,
-          flex: pricingPanelStyle.flex,
-          boxSizing: pricingPanelStyle.boxSizing
-        }));
-      }
-
-      // Log pricing card dimensions
-      if (pricingCard) {
-        const pricingCardStyle = window.getComputedStyle(pricingCard);
-        console.log('Pricing card:', JSON.stringify({
-          width: pricingCard.offsetWidth,
-          height: pricingCard.offsetHeight,
-          display: pricingCardStyle.display,
-          position: pricingCardStyle.position,
-          margin: pricingCardStyle.margin,
-          padding: pricingCardStyle.padding,
-          maxWidth: pricingCardStyle.maxWidth,
-          boxSizing: pricingCardStyle.boxSizing
-        }));
-      }
-
-      // Log pricing table dimensions
-      if (pricingTable) {
-        const pricingTableStyle = window.getComputedStyle(pricingTable);
-        console.log('Pricing table:', JSON.stringify({
-          width: pricingTable.offsetWidth,
-          height: pricingTable.offsetHeight,
-          display: pricingTableStyle.display,
-          tableLayout: pricingTableStyle.tableLayout,
-          margin: pricingTableStyle.margin,
-          padding: pricingTableStyle.padding,
-          boxSizing: pricingTableStyle.boxSizing
-        }));
-
-        // Log column widths with more detail
-        const columns = pricingTable.querySelectorAll('th');
-        columns.forEach((col, index) => {
-          const colStyle = window.getComputedStyle(col);
-          console.log(`Column ${index + 1} details:`, JSON.stringify({
-            offsetWidth: col.offsetWidth,
-            computedWidth: colStyle.width,
-            boxSizing: colStyle.boxSizing,
-            padding: colStyle.padding,
-            margin: colStyle.margin
-          }));
-        });
-      }
-
-      // Log parent container info
-      const parentContainer = document.querySelector('.container-fluid') || document.querySelector('.container');
-      if (parentContainer) {
-        const parentStyle = window.getComputedStyle(parentContainer);
-        console.log('Parent container:', JSON.stringify({
-          width: parentContainer.offsetWidth,
-          maxWidth: parentStyle.maxWidth,
-          margin: parentStyle.margin,
-          padding: parentStyle.padding
-        }));
-      }
-
-      console.log('=== End Layout Debug Info ===');
-    }
   },
   // Add the created hook to initialize the component
   async created() {
-    
     try {
       // Load user configuration first
       await this.fetchUserConfig();
@@ -1356,22 +1266,11 @@ export default {
         this.handleCancel();
       });
     }
-
-    // Add layout debugging
-    this.$nextTick(() => {
-      this.debugLayout();
-      
-      // Also debug on window resize
-      window.addEventListener('resize', () => {
-        this.debugLayout();
-      });
-    });
   },
   beforeDestroy() {
     // Clean up event listeners
     const topNavSaveButton = document.getElementById('save-product-button');
     const topNavCancelButton = document.querySelector('a[href="/products"]');
-    window.removeEventListener('resize', this.debugLayout);
 
     if (topNavSaveButton) {
       topNavSaveButton.removeEventListener('click', () => this.savePricingProduct());

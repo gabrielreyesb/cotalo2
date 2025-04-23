@@ -100,6 +100,8 @@
 </template>
 
 <script>
+import { reactive } from 'vue';
+
 export default {
   name: 'GeneralTab',
   props: {
@@ -127,7 +129,8 @@ export default {
         }
       },
       saving: false,
-      debouncedEmitFormChanges: null
+      debouncedEmitFormChanges: null,
+      styles: null
     };
   },
   created() {
@@ -225,29 +228,12 @@ export default {
     }
   },
   mounted() {
-    // Get elements
-    const greenAccentPanel = this.$el.querySelector('.green-accent-panel');
-    const card = this.$el.querySelector('.card');
-    const formFields = this.$el.querySelector('.form-fields-container');
+    const cardStyles = window.getComputedStyle(this.$el.querySelector('.card'));
+    const formFieldsStyles = window.getComputedStyle(this.$el.querySelector('form'));
 
-    // Get computed styles
-    const greenAccentPanelStyles = window.getComputedStyle(greenAccentPanel);
-    const cardStyles = window.getComputedStyle(card);
-    const formFieldsStyles = window.getComputedStyle(formFields);
-
-    console.log('GeneralTab Style Debug:', {
-      greenAccentPanel: {
-        borderLeft: greenAccentPanelStyles.borderLeft,
-        paddingLeft: greenAccentPanelStyles.paddingLeft,
-        marginLeft: greenAccentPanelStyles.marginLeft,
-        display: greenAccentPanelStyles.display,
-        position: greenAccentPanelStyles.position
-      },
+    this.styles = reactive({
       card: {
-        borderLeft: cardStyles.borderLeft,
         backgroundColor: cardStyles.backgroundColor,
-        border: cardStyles.border,
-        borderColor: cardStyles.borderColor,
         padding: cardStyles.padding
       },
       formFields: {
@@ -256,49 +242,9 @@ export default {
         margin: formFieldsStyles.margin
       }
     });
-
-    // Log the CSS rules that apply to .green-accent-panel
-    const rules = Array.from(document.styleSheets)
-      .flatMap(sheet => {
-        try {
-          return Array.from(sheet.cssRules);
-        } catch (e) {
-          return [];
-        }
-      })
-      .filter(rule => {
-        try {
-          return rule.selectorText && rule.selectorText.includes('green-accent-panel');
-        } catch (e) {
-          return false;
-        }
-      });
-
-    console.log('CSS rules affecting .green-accent-panel:', rules.map(rule => ({
-      selector: rule.selectorText,
-      styles: rule.style.cssText
-    })));
-
-    // Original DOM structure logging
-    const logDOMStructure = (element, depth = 0) => {
-      const indent = ' '.repeat(depth * 2);
-      const styles = window.getComputedStyle(element);
-      console.log(`${indent}${element.tagName.toLowerCase()}${element.id ? `#${element.id}` : ''}${element.className ? `.${element.className.split(' ').join('.')}` : ''} {
-        border-left: ${styles.borderLeft},
-        padding-left: ${styles.paddingLeft},
-        margin-left: ${styles.marginLeft}
-      }`);
-      Array.from(element.children).forEach(child => logDOMStructure(child, depth + 1));
-    };
-    console.log('GeneralTab Detailed DOM structure with styles:');
-    logDOMStructure(this.$el);
   },
   updated() {
-    console.log('GeneralTab updated:', {
-      hasGreenAccentPanel: !!this.$el.querySelector('.green-accent-panel'),
-      greenAccentPanelStyles: window.getComputedStyle(this.$el.querySelector('.green-accent-panel')),
-      cardBorderLeft: window.getComputedStyle(this.$el.querySelector('.card')).borderLeft
-    });
+    // Component updated
   }
 };
 </script>

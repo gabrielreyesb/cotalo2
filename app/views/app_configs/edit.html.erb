@@ -114,6 +114,7 @@
       </div>
     </div>
 
+    <!-- Sales Conditions Section -->
     <div class="row">
       <div class="col-12 mb-4">
         <div class="settings-tab">
@@ -144,61 +145,61 @@
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- API Configuration section -->
-  <div class="row">
-    <div class="col-12 mb-4">
-      <div class="settings-tab">
-        <div class="green-accent-panel">
-          <div class="card">
-            <div class="card-header">
-              <h5 class="mb-0">API Configuration</h5>
-              <span class="badge <%= AppConfig.get_pipedrive_api_key.present? ? 'bg-success' : 'bg-danger' %>">
-                <%= AppConfig.get_pipedrive_api_key.present? ? 'Configured' : 'Not Configured' %>
-              </span>
-            </div>
-            <div class="card-body">
-              <p class="text-muted mb-3">
-                Configure external API connections. API keys are stored in the database and available immediately.
-              </p>
-              
-              <%= form_with(url: update_api_key_app_configs_path, method: :put, class: "mb-0", id: "api_key_form", local: true) do |api_form| %>
-                <div class="mb-3">
-                  <%= api_form.label :pipedrive_api_key, "Pipedrive API Key", class: "form-label" %>
-                  <div class="input-group">
-                    <%= api_form.password_field :pipedrive_api_key, placeholder: "Enter new API key", class: "form-control", autocomplete: "off", id: "pipedrive_api_key_input" %>
-                    <%= api_form.hidden_field :authenticity_token, value: form_authenticity_token, id: "authenticity_token_main" %>
-                    <button type="submit" class="btn btn-primary">Update API Key</button>
-                  </div>
-                  <small class="form-text text-muted">The API key will be stored in the database and will be used immediately.</small>
-                </div>
-              <% end %>
-
-              <%= form_with(url: update_api_key_app_configs_path, method: :put, class: "mb-0", id: "facturama_api_key_form", local: true) do |api_form| %>
-                <div class="mb-3">
-                  <%= api_form.label :facturama_api_key, "Facturama API Key", class: "form-label" %>
-                  <div class="input-group">
-                    <%= api_form.password_field :facturama_api_key, placeholder: "Enter new API key", class: "form-control", autocomplete: "off", id: "facturama_api_key_input" %>
-                    <%= api_form.hidden_field :authenticity_token, value: form_authenticity_token, id: "authenticity_token_facturama" %>
-                    <button type="submit" class="btn btn-primary">Update API Key</button>
-                  </div>
-                  <small class="form-text text-muted">The API key will be stored in the database and will be used immediately.</small>
-                </div>
-              <% end %>
-
-              <div class="mt-4">
-                <% if @facturama_api_configured %>
-                  <div class="alert alert-success mb-3">
-                    <i class="fas fa-check-circle"></i> Facturama API key is configured
-                  </div>
-                  
+    <!-- API Configuration section -->
+    <div class="row">
+      <div class="col-12 mb-4">
+        <div class="settings-tab">
+          <div class="green-accent-panel">
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">API Configuration</h5>
+                <span class="badge <%= AppConfig.get_pipedrive_api_key.present? ? 'bg-success' : 'bg-danger' %>">
+                  <%= AppConfig.get_pipedrive_api_key.present? ? 'Configured' : 'Not Configured' %>
+                </span>
+              </div>
+              <div class="card-body">
+                <p class="text-muted mb-3">
+                  Configure external API connections. API keys are stored in the database and available immediately.
+                </p>
+                
+                <%= form_with(url: update_api_key_app_configs_path, method: :put, class: "mb-3", id: "api_key_form", local: true) do |api_form| %>
                   <div class="mb-3">
-                    <button type="button" class="btn btn-info me-2" id="test_facturama_api">
-                      <i class="fas fa-vial"></i> Test Facturama API Connection
-                    </button>
+                    <%= api_form.label :pipedrive_api_key, "Pipedrive API Key", class: "form-label" %>
+                    <div class="input-group">
+                      <%= api_form.password_field :pipedrive_api_key, placeholder: "Enter new API key", class: "form-control", autocomplete: "off", id: "pipedrive_api_key_input" %>
+                      <%= api_form.hidden_field :authenticity_token, value: form_authenticity_token, id: "authenticity_token_main" %>
+                      <button type="submit" class="btn btn-primary">Update API Key</button>
+                    </div>
+                    <small class="form-text text-muted">The API key will be stored in the database and will be used immediately.</small>
                   </div>
                 <% end %>
+
+                <%= form_with(url: update_api_key_app_configs_path, method: :put, class: "mb-3", id: "facturama_api_key_form", local: true) do |api_form| %>
+                  <div class="mb-3">
+                    <%= api_form.label :facturama_api_key, "Facturama API Key", class: "form-label" %>
+                    <div class="input-group">
+                      <%= api_form.password_field :facturama_api_key, placeholder: "Enter new API key", class: "form-control", autocomplete: "off", id: "facturama_api_key_input" %>
+                      <%= api_form.hidden_field :authenticity_token, value: form_authenticity_token, id: "authenticity_token_facturama" %>
+                      <button type="submit" class="btn btn-primary">Update API Key</button>
+                    </div>
+                    <small class="form-text text-muted">The API key will be stored in the database and will be used immediately.</small>
+                  </div>
+                <% end %>
+
+                <div class="mt-4">
+                  <% if @facturama_api_configured %>
+                    <div class="alert alert-success mb-3">
+                      <i class="fas fa-check-circle"></i> Facturama API key is configured
+                    </div>
+                    
+                    <div class="mb-3">
+                      <button type="button" class="btn btn-info me-2" id="test_facturama_api">
+                        <i class="fas fa-vial"></i> Test Facturama API Connection
+                      </button>
+                    </div>
+                  <% end %>
+                </div>
               </div>
             </div>
           </div>
@@ -211,8 +212,6 @@
 <% content_for :styles do %>
 <style>
   .app-settings-container {
-    height: calc(100vh - 200px); /* Adjust for header and footer */
-    overflow-y: auto;
     padding: 1rem;
   }
 
