@@ -1,7 +1,7 @@
 <template>
-  <div class="general-tab">
+  <div class="general-tab general-info-panel">
     <div class="green-accent-panel">
-      <div class="card">
+      <div class="card general-info-card">
         <div class="card-body">
           <form @submit.prevent="saveProduct">
             <div class="row">
@@ -318,14 +318,17 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-.general-tab {
+<style lang="scss">
+.general-info-panel {
   .green-accent-panel {
-    > .card {
-      border: 1px solid rgb(50, 56, 62);
-      border-left: 2px solid var(--cotalo-green);
+    .general-info-card {
+      border-top: 1px solid rgb(50, 56, 62) !important;
+      border-right: 1px solid rgb(50, 56, 62) !important;
+      border-bottom: 1px solid rgb(50, 56, 62) !important;
+      border-left: 2px solid var(--cotalo-green, #42b983) !important;
       padding-left: 0.75rem;
       margin-left: 0.5rem;
+      background-color: rgb(26, 30, 33);
 
       .card-body {
         padding: 0;
