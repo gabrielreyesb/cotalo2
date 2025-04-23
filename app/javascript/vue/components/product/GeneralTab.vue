@@ -319,36 +319,47 @@ export default {
 </script>
 
 <style lang="scss">
-.general-info-panel {
-  .green-accent-panel {
-    .general-info-card {
-      border-top: 1px solid rgb(50, 56, 62) !important;
-      border-right: 1px solid rgb(50, 56, 62) !important;
-      border-bottom: 1px solid rgb(50, 56, 62) !important;
-      border-left: 2px solid var(--cotalo-green, #42b983) !important;
-      padding-left: 0.75rem;
-      margin-left: 0.5rem;
-      background-color: rgb(26, 30, 33);
+/* Target all green accent panels within the general tab */
+.general-tab.general-info-panel {
+  .green-accent-panel > .card,
+  .green-accent-panel > .general-info-card {
+    /* Reset any existing borders first */
+    border: none !important;
+    
+    /* Set explicit borders */
+    border: 1px solid rgb(50, 56, 62) !important;
+    border-left: 2px solid rgb(66, 185, 131) !important;
+    
+    /* Other styles */
+    padding-left: 0.75rem !important;
+    margin-left: 0.5rem !important;
+    background-color: rgb(26, 30, 33) !important;
 
-      .card-body {
-        padding: 0;
+    .card-body {
+      padding: 0 !important;
 
-        form {
-          .row {
-            margin: 0;
+      form {
+        .row {
+          margin: 0 !important;
             
-            .col-md-8 {
-              padding: 1.5rem;
-            }
+          .col-md-8 {
+            padding: 1.5rem !important;
+          }
 
-            .col-md-4 {
-              padding: 1.5rem;
-              border-left: 1px solid rgb(50, 56, 62);
-            }
+          .col-md-4 {
+            padding: 1.5rem !important;
+            border-left: 1px solid rgb(50, 56, 62) !important;
           }
         }
       }
     }
   }
+}
+
+/* Additional override for other green accent panels */
+.green-accent-panel > .card {
+  border: 1px solid rgb(50, 56, 62) !important;
+  border-left: 2px solid rgb(66, 185, 131) !important;
+  background-color: rgb(26, 30, 33) !important;
 }
 </style>
