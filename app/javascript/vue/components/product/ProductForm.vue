@@ -1253,6 +1253,27 @@ export default {
     }
   },
   mounted() {
+    console.log('[ProductForm] Component mounted', {
+      version: '2024-04-23-v1',
+      currentTab: this.activeTab,
+      hasGeneralTab: !!this.$refs.generalTab,
+      formElements: {
+        greenAccentPanels: document.querySelectorAll('.green-accent-panel').length,
+        cards: document.querySelectorAll('.card').length
+      },
+      environment: process.env.NODE_ENV
+    });
+
+    // Monitor tab changes
+    this.$watch('activeTab', (newTab, oldTab) => {
+      console.log('[ProductForm] Tab changed', {
+        from: oldTab,
+        to: newTab,
+        greenAccentPanelsCount: document.querySelectorAll('.green-accent-panel').length,
+        timestamp: new Date().toISOString()
+      });
+    });
+
     // Connect to the top navigation bar buttons
     const topNavSaveButton = document.getElementById('save-product-button');
     const topNavCancelButton = document.querySelector('a[href="/products"]');

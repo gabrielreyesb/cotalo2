@@ -228,6 +228,26 @@ export default {
     }
   },
   mounted() {
+    console.log('[GeneralTab] Component mounted', {
+      version: '2024-04-23-v1',
+      hasGreenAccent: !!document.querySelector('.green-accent-panel'),
+      componentId: this.$el.id,
+      styles: {
+        greenAccentPanel: document.querySelector('.green-accent-panel')?.getAttribute('style'),
+        componentStyles: window.getComputedStyle(this.$el)
+      }
+    });
+
+    // Log all elements with green-accent-panel class
+    document.querySelectorAll('.green-accent-panel').forEach((el, index) => {
+      console.log(`[GeneralTab] Green accent panel ${index}:`, {
+        element: el,
+        computedStyles: window.getComputedStyle(el),
+        parentElement: el.parentElement,
+        children: el.children
+      });
+    });
+
     const cardStyles = window.getComputedStyle(this.$el.querySelector('.card'));
     const formFieldsStyles = window.getComputedStyle(this.$el.querySelector('form'));
 
