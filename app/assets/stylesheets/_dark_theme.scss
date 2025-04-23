@@ -18,6 +18,7 @@
   --border-color: rgba(255, 255, 255, 0.2);
   --text-primary: #ffffff;
   --text-secondary: #d1d1d1;
+  --border-gray: rgb(50, 56, 62);
 }
 
 // Base styles
@@ -438,5 +439,46 @@ h2.card-text {
     margin: 0 auto;
     padding: 1rem 15px;
     overflow: visible;
+  }
+}
+
+// Green accent panel styles
+.green-accent-panel {
+  > .card {
+    border: 1px solid var(--border-gray) !important;
+    border-left: 2px solid var(--cotalo-green) !important;
+    background-color: var(--card-bg) !important;
+    padding-left: 0.75rem;
+    margin-left: 0.5rem;
+  }
+}
+
+// More specific styles for the general tab
+.general-tab.general-info-panel {
+  .green-accent-panel > .card {
+    border: 1px solid var(--border-gray) !important;
+    border-left: 2px solid var(--cotalo-green) !important;
+    background-color: var(--card-bg) !important;
+    padding-left: 0.75rem;
+    margin-left: 0.5rem;
+
+    .card-body {
+      padding: 0;
+
+      form {
+        .row {
+          margin: 0;
+            
+          .col-md-8,
+          .col-md-4 {
+            padding: 1.5rem;
+          }
+
+          .col-md-4 {
+            border-left: 1px solid var(--border-gray);
+          }
+        }
+      }
+    }
   }
 } 
