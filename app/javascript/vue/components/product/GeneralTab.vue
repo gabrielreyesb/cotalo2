@@ -322,6 +322,7 @@ export default {
 .general-tab {
   .green-accent-panel {
     > .card {
+      border: 1px solid rgb(50, 56, 62);
       border-left: 2px solid var(--cotalo-green);
       padding-left: 0.75rem;
       margin-left: 0.5rem;
@@ -339,7 +340,7 @@ export default {
 
             .col-md-4 {
               padding: 1.5rem;
-              border-left: 1px solid #32383e;
+              border-left: 1px solid rgb(50, 56, 62);
             }
           }
         }
