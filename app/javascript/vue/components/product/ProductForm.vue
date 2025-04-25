@@ -24,7 +24,7 @@
       <div class="row g-0">
         <!-- Left Column - Main Tabs -->
         <div class="col-12 col-lg-9">
-          <div class="green-accent-panel">
+          <div class="green-accent-panel main-content-panel">
             <div class="card">
               <div class="card-body p-0">
                 <ul class="nav nav-tabs" id="product-tabs">
@@ -126,7 +126,7 @@
 
         <!-- Right Column - Pricing Panel -->
         <div class="col-12 col-lg-3 mt-3 mt-lg-0">
-          <div class="green-accent-panel">
+          <div class="green-accent-panel pricing-panel">
             <div class="card">
               <div class="card-header bg-dark text-white">
                 <h5 class="mb-0">
