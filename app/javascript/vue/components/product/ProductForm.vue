@@ -1315,14 +1315,25 @@ export default {
 
 .card {
   border: 1px solid #32383e;
-  border-left: none;
   border-radius: 4px;
   background-color: #1a1e21;
 }
 
+/* Remove green border from tab content */
 .tab-content {
   background-color: #1a1e21;
   border: none;
+  
+  .green-accent-panel {
+    border: none !important;
+    
+    > .card {
+      border: 1px solid #32383e !important;
+      border-left: none !important;
+      margin-left: 0 !important;
+      padding-left: 0 !important;
+    }
+  }
 }
 
 .tab-pane {
