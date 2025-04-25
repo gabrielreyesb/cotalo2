@@ -31,8 +31,8 @@
     "webpack-dev-server": "^3"
   },
   "scripts": {
-    "webpack": "NODE_OPTIONS='--openssl-legacy-provider' webpack --config ./config/webpack/production.js",
-    "build": "NODE_OPTIONS='--openssl-legacy-provider --max_old_space_size=460' webpack --config ./config/webpack/heroku.js --mode production",
+    "webpack": "webpack --config ./config/webpack/production.js",
+    "build": "NODE_OPTIONS=--max_old_space_size=460 webpack --config ./config/webpack/heroku.js --mode production",
     "heroku-postbuild": "yarn build",
     "assets:precompile": "NODE_OPTIONS='--openssl-legacy-provider' rake assets:precompile"
   },
