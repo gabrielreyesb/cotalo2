@@ -1,4 +1,4 @@
-// Green accent panel styles - v2024-04-23-v8
+// Green accent panel styles - v2024-04-23-v9
 
 // CSS Custom Properties
 :root {
@@ -6,75 +6,51 @@
   --border-color-green: rgb(66, 185, 131);
 }
 
-// Default styles for all green accent panels
-.green-accent-panel {
-  > .card {
-    position: relative;
-    border: 1px solid var(--border-color-default);
-    border-left: 2px solid var(--border-color-green);
-    padding-left: 0.75rem;
-    margin-left: 0.5rem;
-  }
-}
-
-// Main content panel styles
-.green-accent-panel.main-content-panel {
-  > .card {
-    border: 1px solid var(--border-color-default) !important;
-    border-left: 2px solid var(--border-color-green) !important;
-    padding-left: 0.75rem !important;
-    margin-left: 0.5rem !important;
-  }
-}
-
-// Pricing panel styles
-.green-accent-panel.pricing-panel {
-  > .card {
-    border: 1px solid var(--border-color-default) !important;
-    border-left: 2px solid var(--border-color-green) !important;
-    padding-left: 0.75rem !important;
-    margin-left: 0.5rem !important;
-  }
-}
-
-// Default card styles
+// Base card styles without green accents
 .card {
+  border: 1px solid var(--border-color-default);
   background-color: rgb(26, 30, 33);
   
   .card-body {
     padding: 0;
-
-    form {
-      .row {
-        margin: 0;
-        
-        .col-md-8 {
-          padding: 1.5rem;
-        }
-
-        .col-md-4 {
-          padding: 1.5rem;
-          border-left: 1px solid var(--border-color-default);
-        }
-      }
-    }
   }
 }
 
-// Ensure internal panels in tabs keep their green border
-.tab-content,
-.tab-pane {
-  .general-info-panel,
-  .materials-panel,
-  .processes-panel,
-  .extras-panel {
-    .green-accent-panel {
+// Only apply green accent to the main form container and direct tab content panels
+.product-form {
+  > .product-form-container {
+    > .row > .col-lg-9 > .green-accent-panel,
+    > .row > .col-lg-3 > .green-accent-panel {
       > .card {
+        position: relative;
         border: 1px solid var(--border-color-default);
         border-left: 2px solid var(--border-color-green);
         padding-left: 0.75rem;
         margin-left: 0.5rem;
       }
     }
+  }
+}
+
+// Tab content panels should have green accent
+.tab-pane.active {
+  > .green-accent-panel {
+    > .card {
+      position: relative;
+      border: 1px solid var(--border-color-default);
+      border-left: 2px solid var(--border-color-green);
+      padding-left: 0.75rem;
+      margin-left: 0.5rem;
+    }
+  }
+}
+
+// Remove any green borders from nested panels
+.green-accent-panel .green-accent-panel {
+  > .card {
+    border: 1px solid var(--border-color-default);
+    border-left: 1px solid var(--border-color-default);
+    padding-left: 0;
+    margin-left: 0;
   }
 } 
