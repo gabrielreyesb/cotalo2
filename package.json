@@ -33,11 +33,11 @@
   "scripts": {
     "webpack": "webpack --config ./config/webpack/production.js",
     "build": "NODE_OPTIONS=--max_old_space_size=460 webpack --config ./config/webpack/heroku.js --mode production",
-    "heroku-postbuild": "yarn build"
+    "heroku-postbuild": "export NODE_OPTIONS='--openssl-legacy-provider' && yarn build"
   },
   "license": "MIT",
   "engines": {
-    "node": ">=18.0.0",
+    "node": "18.x",
     "yarn": "1.x"
   }
 }
