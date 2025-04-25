@@ -19,7 +19,11 @@ environment.plugins.prepend(
 
 // Disable compression during asset precompilation
 if (process.env.RAILS_ENV === 'production' && process.env.NODE_ENV === 'production') {
-  environment.plugins.delete('CompressionPlugin')
+  try {
+    environment.plugins.delete('CompressionPlugin')
+  } catch (e) {
+    // Ignore if plugin doesn't exist
+  }
 }
 
 module.exports = environment
