@@ -21,19 +21,23 @@
         <tr>
           <th class="align-middle">Desperdicio:</th>
           <td>
-            <div class="d-flex justify-content-end align-items-center gap-2">
-              <div class="input-group input-group-sm" style="width: 100px;">
-                <input 
-                  type="number" 
-                  class="form-control form-control-sm text-end" 
-                  v-model.number="localWastePercentage" 
-                  min="0"
-                  step="0.1"
-                  @change="handleWastePercentageChange"
-                />
-                <span class="input-group-text">%</span>
+            <div class="d-flex justify-content-end align-items-center">
+              <div class="percentage-group">
+                <div class="input-group input-group-sm">
+                  <input 
+                    type="number" 
+                    class="form-control form-control-sm text-end" 
+                    v-model.number="localWastePercentage" 
+                    min="0"
+                    step="0.1"
+                    @change="handleWastePercentageChange"
+                  />
+                  <span class="input-group-text">%</span>
+                </div>
               </div>
-              <span class="value-display">{{ formatCurrency(pricing.waste_value) }}</span>
+              <div class="calculated-value">
+                {{ formatCurrency(pricing.waste_value) }}
+              </div>
             </div>
           </td>
         </tr>
@@ -41,22 +45,30 @@
           <th>Subtotal con desperdicio:</th>
           <td class="text-end">{{ formatCurrency(pricing.subtotal + pricing.waste_value) }}</td>
         </tr>
+        <tr class="price-before-margin-row">
+          <th>Precio por pieza antes de margen:</th>
+          <td class="text-end">{{ formatCurrency(pricing.price_per_piece_before_margin) }}</td>
+        </tr>
         <tr>
           <th class="align-middle">Margen:</th>
           <td>
-            <div class="d-flex justify-content-end align-items-center gap-2">
-              <div class="input-group input-group-sm" style="width: 100px;">
-                <input 
-                  type="number" 
-                  class="form-control form-control-sm text-end" 
-                  v-model.number="localMarginPercentage" 
-                  min="0"
-                  step="0.1"
-                  @change="handleMarginPercentageChange"
-                />
-                <span class="input-group-text">%</span>
+            <div class="d-flex justify-content-end align-items-center">
+              <div class="percentage-group">
+                <div class="input-group input-group-sm">
+                  <input 
+                    type="number" 
+                    class="form-control form-control-sm text-end" 
+                    v-model.number="localMarginPercentage" 
+                    min="0"
+                    step="0.1"
+                    @change="handleMarginPercentageChange"
+                  />
+                  <span class="input-group-text">%</span>
+                </div>
               </div>
-              <span class="value-display">{{ formatCurrency(pricing.margin_value) }}</span>
+              <div class="calculated-value">
+                {{ formatCurrency(pricing.margin_value) }}
+              </div>
             </div>
           </td>
         </tr>
@@ -98,10 +110,10 @@ export default {
   },
   methods: {
     formatCurrency(value) {
-      return new Intl.NumberFormat('es-MX', {
+      return new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: 'MXN'
-      }).format(value);
+        currency: 'USD'
+      }).format(value || 0);
     },
     handleWastePercentageChange() {
       this.$emit('update:pricing', {
@@ -130,6 +142,15 @@ export default {
         this.localMarginPercentage = newVal;
       },
       immediate: true
+    },
+    'suggestedMargin': {
+      handler(newVal) {
+        if (newVal !== this.localMarginPercentage) {
+          this.localMarginPercentage = newVal;
+          this.handleMarginPercentageChange();
+        }
+      },
+      immediate: true
     }
   }
 };
@@ -149,23 +170,25 @@ export default {
       .d-flex {
         justify-content: flex-end;
         align-items: center;
-        gap: 0.5rem;
         
-        .input-group {
-          width: 80px;
-          min-width: 80px;
-          flex: 0 0 80px;
+        .percentage-group {
+          width: 140px;
+          margin-right: 10px;
+          
+          .input-group {
+            width: 100%;
+          }
         }
         
-        .value-display {
+        .calculated-value {
+          width: 120px;
           text-align: right;
-          min-width: 0;
           white-space: nowrap;
         }
       }
     }
     
-    .subtotal-row, .subtotal-with-waste-row {
+    .subtotal-row, .subtotal-with-waste-row, .price-before-margin-row {
       th, td {
         border-top: 2px solid #42b983;
         font-weight: 600;
@@ -187,12 +210,6 @@ export default {
         font-size: 1rem;
       }
     }
-  }
-
-  .value-display {
-    min-width: 100px;
-    text-align: right;
-    font-size: 0.9rem;
   }
 }
 </style>

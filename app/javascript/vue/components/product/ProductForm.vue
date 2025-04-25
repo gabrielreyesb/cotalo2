@@ -436,6 +436,146 @@ export default {
         console.error('Error in updateProduct:', error);
       } 
     },
+    async updateMaterials(materials) {
+      if (!this.product || !this.product.data) return;
+      
+      // Ensure each material has a quantity field
+      materials = materials.map(material => ({
+        ...material,
+        quantity: material.totalSheets || material.piecesPerMaterial || material.total_quantity || 1
+      }));
+      
+      // Check if there's any material with the needsRecalculation flag
+      const needsRecalculation = materials.some(material => material._needsRecalculation);
+      
+      if (needsRecalculation) {
+        // Get the current dimensions and quantity from the product
+        const productWidth = this.product.data.general_info?.width || 0;
+        const productLength = this.product.data.general_info?.length || 0;
+        const productQuantity = this.product.data.general_info?.quantity || 1;
+        
+        // Add width and length margins to the product dimensions
+        const effectiveProductWidth = productWidth + this.userConfig.width_margin;
+        const effectiveProductLength = productLength + this.userConfig.length_margin;
+        
+        // Manually calculate each material's values based on current dimensions and quantity
+        materials = materials.map(material => {
+          // Skip materials that don't need recalculation
+          if (!material._needsRecalculation) return material;
+          
+          // Calculate pieces per material
+          const materialWidth = parseFloat(material.ancho) || 0;
+          const materialLength = parseFloat(material.largo) || 0;
+          
+          let piecesPerMaterial = 0;
+          if (materialWidth > 0 && materialLength > 0 && effectiveProductWidth > 0 && effectiveProductLength > 0) {
+            // Calculate how many pieces fit horizontally and vertically
+            const horizontalPieces = Math.floor(materialWidth / effectiveProductWidth);
+            const verticalPieces = Math.floor(materialLength / effectiveProductLength);
+            
+            // Try the other orientation as well
+            const horizontalPiecesAlt = Math.floor(materialWidth / effectiveProductLength);
+            const verticalPiecesAlt = Math.floor(materialLength / effectiveProductWidth);
+            
+            // Use the orientation that fits more pieces
+            piecesPerMaterial = Math.max(
+              horizontalPieces * verticalPieces, 
+              horizontalPiecesAlt * verticalPiecesAlt
+            );
+          }
+          
+          // Calculate total sheets needed
+          const totalSheets = piecesPerMaterial > 0 ? Math.ceil(productQuantity / piecesPerMaterial) : 0;
+          
+          // Calculate total square meters
+          const totalSquareMeters = totalSheets * (materialWidth * materialLength) / 10000; // convert cm² to m²
+          
+          // Calculate total price - based on square meters, not sheets
+          const totalPrice = totalSquareMeters * (material.price || 0);
+          
+          return {
+            ...material,
+            quantity: totalSheets,
+            piecesPerMaterial,
+            totalSheets,
+            totalSquareMeters,
+            totalPrice,
+            _needsRecalculation: undefined
+          };
+        });
+      }
+      
+      // Update local materials data
+      this.product.data.materials = materials;
+      
+      // Calculate the total cost of materials
+      const materialsCost = materials.reduce((sum, material) => sum + (parseFloat(material.totalPrice) || 0), 0);
+      
+      // Update pricing data
+      if (!this.product.data.pricing) {
+        this.product.data.pricing = { ...this.defaultPricing };
+      }
+      
+      // Update materials cost in pricing
+      this.product.data.pricing.materials_cost = materialsCost;
+      
+      // Update pricing with new calculations
+      await this.ensurePricingUpdated();
+    },
+    async updateProcesses(processes) {
+      if (!this.product || !this.product.data) return;
+      
+      // Check if there's any process with the needsRecalculation flag
+      const needsRecalculation = processes.some(process => process._needsRecalculation);
+      
+      if (needsRecalculation) {
+        // Get the current quantity and calculate sheets/square meters
+        const productQuantity = this.product.data.general_info?.quantity || 1;
+        const totalSheets = this.calculateTotalSheets();
+        const totalSquareMeters = this.calculateTotalSquareMeters();
+                
+        // Manually calculate each process's price based on current values
+        processes = processes.map(process => {
+          // Skip processes that don't need recalculation
+          if (!process._needsRecalculation) return process;
+          
+          const basePrice = parseFloat(process.unitPrice) || 0;
+          let calculatedPrice = basePrice;
+          
+          // Recalculate price based on unit type
+          if (process.unit === 'pieza') {
+            calculatedPrice = basePrice * productQuantity;
+          } else if (process.unit === 'pliego') {
+            calculatedPrice = basePrice * totalSheets;
+          } else if (process.unit === 'mt2') {
+            calculatedPrice = basePrice * totalSquareMeters;
+          }
+          
+          return {
+            ...process,
+            price: calculatedPrice,
+            _needsRecalculation: undefined // Remove the flag
+          };
+        });
+      }
+      
+      // Update local processes data
+      this.product.data.processes = processes;
+      
+      // Calculate the total cost of processes
+      const processesCost = processes.reduce((sum, process) => sum + (parseFloat(process.price) || 0), 0);
+      
+      // Update pricing data
+      if (!this.product.data.pricing) {
+        this.product.data.pricing = { ...this.defaultPricing };
+      }
+      
+      // Update processes cost in pricing
+      this.product.data.pricing.processes_cost = processesCost;
+      
+      // Update pricing with new calculations
+      await this.ensurePricingUpdated();
+    },
     async updateExtras(extras) {
       if (!this.product || !this.product.data) return;
       
@@ -457,8 +597,8 @@ export default {
       // Update extras cost in pricing
       this.product.data.pricing.extras_cost = extrasCost;
       
-      // Recalculate pricing
-      this.recalculatePricing();
+      // Update pricing with new calculations
+      await this.ensurePricingUpdated();
     },
     async fetchAvailableExtras() {
       try {
@@ -587,92 +727,6 @@ export default {
       const selectedMaterialId = this.product.data.selected_material_id;
       return this.product.data.materials.find(material => material.id === selectedMaterialId);
     },
-    async updateMaterials(materials) {
-      if (!this.product || !this.product.data) return;
-      
-      // Ensure each material has a quantity field
-      materials = materials.map(material => ({
-        ...material,
-        quantity: material.totalSheets || material.piecesPerMaterial || material.total_quantity || 1
-      }));
-      
-      // Check if there's any material with the needsRecalculation flag
-      const needsRecalculation = materials.some(material => material._needsRecalculation);
-      
-      if (needsRecalculation) {
-        // Get the current dimensions and quantity from the product
-        const productWidth = this.product.data.general_info?.width || 0;
-        const productLength = this.product.data.general_info?.length || 0;
-        const productQuantity = this.product.data.general_info?.quantity || 1;
-        
-        // Add width and length margins to the product dimensions
-        const effectiveProductWidth = productWidth + this.userConfig.width_margin;
-        const effectiveProductLength = productLength + this.userConfig.length_margin;
-        
-        // Manually calculate each material's values based on current dimensions and quantity
-        materials = materials.map(material => {
-          // Skip materials that don't need recalculation
-          if (!material._needsRecalculation) return material;
-          
-          // Calculate pieces per material
-          const materialWidth = parseFloat(material.ancho) || 0;
-          const materialLength = parseFloat(material.largo) || 0;
-          
-          let piecesPerMaterial = 0;
-          if (materialWidth > 0 && materialLength > 0 && effectiveProductWidth > 0 && effectiveProductLength > 0) {
-            // Calculate how many pieces fit horizontally and vertically
-            const horizontalPieces = Math.floor(materialWidth / effectiveProductWidth);
-            const verticalPieces = Math.floor(materialLength / effectiveProductLength);
-            
-            // Try the other orientation as well
-            const horizontalPiecesAlt = Math.floor(materialWidth / effectiveProductLength);
-            const verticalPiecesAlt = Math.floor(materialLength / effectiveProductWidth);
-            
-            // Use the orientation that fits more pieces
-            piecesPerMaterial = Math.max(
-              horizontalPieces * verticalPieces, 
-              horizontalPiecesAlt * verticalPiecesAlt
-            );
-          }
-          
-          // Calculate total sheets needed
-          const totalSheets = piecesPerMaterial > 0 ? Math.ceil(productQuantity / piecesPerMaterial) : 0;
-          
-          // Calculate total square meters
-          const totalSquareMeters = totalSheets * (materialWidth * materialLength) / 10000; // convert cm² to m²
-          
-          // Calculate total price - based on square meters, not sheets
-          const totalPrice = totalSquareMeters * (material.price || 0);
-          
-          return {
-            ...material,
-            quantity: totalSheets,
-            piecesPerMaterial,
-            totalSheets,
-            totalSquareMeters,
-            totalPrice,
-            _needsRecalculation: undefined
-          };
-        });
-      }
-      
-      // Update local materials data
-      this.product.data.materials = materials;
-      
-      // Calculate the total cost of materials
-      const materialsCost = materials.reduce((sum, material) => sum + (parseFloat(material.totalPrice) || 0), 0);
-      
-      // Update pricing data
-      if (!this.product.data.pricing) {
-        this.product.data.pricing = { ...this.defaultPricing };
-      }
-      
-      // Update materials cost in pricing
-      this.product.data.pricing.materials_cost = materialsCost;
-      
-      // Recalculate pricing
-      this.recalculatePricing();
-    },
     async updateMaterialsComments(comments) {
       if (!this.product || !this.product.data) return;
       
@@ -733,7 +787,7 @@ export default {
         }
       }
     },
-    recalculatePricing() {
+    async recalculatePricing() {
       if (!this.product || !this.product.data || !this.product.data.pricing) {
         return;
       }
@@ -754,14 +808,25 @@ export default {
       const includeExtrasInSubtotal = this.product.data.include_extras_in_subtotal !== undefined ? 
         this.product.data.include_extras_in_subtotal : true;
       
-      pricing.subtotal = pricing.materials_cost + pricing.processes_cost + 
+      const newSubtotal = pricing.materials_cost + pricing.processes_cost + 
         (includeExtrasInSubtotal ? pricing.extras_cost : 0);
       
-      // Add the include_extras_in_subtotal property to the pricing object
-      pricing.include_extras_in_subtotal = includeExtrasInSubtotal;
-      
-      // Calculate waste
-      pricing.waste_value = pricing.subtotal * (pricing.waste_percentage / 100);
+      // If subtotal has changed significantly, recalculate margin
+      if (Math.abs(pricing.subtotal - newSubtotal) > 0.01) {
+        pricing.subtotal = newSubtotal;
+        
+        // Calculate waste
+        pricing.waste_value = pricing.subtotal * (pricing.waste_percentage / 100);
+        
+        // Calculate new suggested margin
+        const newSuggestedMargin = await this.calculateSuggestedMargin();
+        this.suggestedMargin = newSuggestedMargin;
+        pricing.margin_percentage = newSuggestedMargin;
+      } else {
+        pricing.subtotal = newSubtotal;
+        // Calculate waste
+        pricing.waste_value = pricing.subtotal * (pricing.waste_percentage / 100);
+      }
       
       // Calculate subtotal with waste
       const subtotalWithWaste = pricing.subtotal + pricing.waste_value;
@@ -805,50 +870,48 @@ export default {
       // Update pricing with the calculated values
       const pricing = this.product.data.pricing;
       
-      // Check if any costs have changed
-      const materialsChanged = Math.abs(pricing.materials_cost - materialsCost) > 0.01;
-      const processesChanged = Math.abs(pricing.processes_cost - processesCost) > 0.01;
-      const extrasChanged = Math.abs(pricing.extras_cost - extrasCost) > 0.01;
+      // Update costs
+      pricing.materials_cost = materialsCost;
+      pricing.processes_cost = processesCost;
+      pricing.extras_cost = extrasCost;
       
-      if (materialsChanged || processesChanged || extrasChanged) {
-        console.log('Costs have changed, updating pricing:', {
-          materialsChanged,
-          processesChanged,
-          extrasChanged,
-          oldMaterialsCost: pricing.materials_cost,
-          newMaterialsCost: materialsCost,
-          oldProcessesCost: pricing.processes_cost,
-          newProcessesCost: processesCost,
-          oldExtrasCost: pricing.extras_cost,
-          newExtrasCost: extrasCost
-        });
-        
-        pricing.materials_cost = materialsCost;
-        pricing.processes_cost = processesCost;
-        pricing.extras_cost = extrasCost;
-        
-        // Calculate new subtotal
-        const newSubtotal = materialsCost + processesCost + extrasCost;
-        
-        // If subtotal has changed, update it and recalculate margin
-        if (Math.abs(pricing.subtotal - newSubtotal) > 0.01) {
-          pricing.subtotal = newSubtotal;
-          
-          // Calculate suggested margin based on the new subtotal
-          const newSuggestedMargin = await this.calculateSuggestedMargin();
-          
-          // Update both the component's suggestedMargin and the pricing's margin_percentage
-          this.suggestedMargin = newSuggestedMargin;
-          pricing.margin_percentage = newSuggestedMargin;
-          
-          // Recalculate pricing to update all values
-          this.recalculatePricing();
-        } else {
-          // Just update the costs and recalculate
-          pricing.subtotal = newSubtotal;
-          this.recalculatePricing();
-        }
-      }
+      // Calculate new subtotal
+      const includeExtrasInSubtotal = this.product.data.include_extras_in_subtotal !== undefined ? 
+        this.product.data.include_extras_in_subtotal : true;
+      
+      const newSubtotal = materialsCost + processesCost + 
+        (includeExtrasInSubtotal ? extrasCost : 0);
+      
+      pricing.subtotal = newSubtotal;
+      
+      // Calculate waste
+      pricing.waste_value = pricing.subtotal * (pricing.waste_percentage / 100);
+      
+      // Calculate subtotal with waste
+      const subtotalWithWaste = pricing.subtotal + pricing.waste_value;
+      
+      // Get quantity from general_info if available, otherwise use product quantity or default to 1
+      const quantity = 
+        (this.product.data.general_info && this.product.data.general_info.quantity) || 
+        this.product.data.quantity || 
+        1;
+      
+      // Calculate price per piece before margin
+      pricing.price_per_piece_before_margin = subtotalWithWaste / quantity;
+      
+      // Calculate suggested margin based on the new subtotal with waste
+      const newSuggestedMargin = await this.calculateSuggestedMargin();
+      this.suggestedMargin = newSuggestedMargin;
+      pricing.margin_percentage = newSuggestedMargin;
+      
+      // Calculate margin value
+      pricing.margin_value = subtotalWithWaste * (pricing.margin_percentage / 100);
+      
+      // Calculate total price
+      pricing.total_price = subtotalWithWaste + pricing.margin_value;
+      
+      // Calculate final price per piece
+      pricing.final_price_per_piece = pricing.total_price / quantity;
     },
     async savePricingProduct() {
       try {
@@ -980,61 +1043,6 @@ export default {
       
       return errors;
     },
-    async updateProcesses(processes) {
-      if (!this.product || !this.product.data) return;
-      
-      // Check if there's any process with the needsRecalculation flag
-      const needsRecalculation = processes.some(process => process._needsRecalculation);
-      
-      if (needsRecalculation) {
-        // Get the current quantity and calculate sheets/square meters
-        const productQuantity = this.product.data.general_info?.quantity || 1;
-        const totalSheets = this.calculateTotalSheets();
-        const totalSquareMeters = this.calculateTotalSquareMeters();
-                
-        // Manually calculate each process's price based on current values
-        processes = processes.map(process => {
-          // Skip processes that don't need recalculation
-          if (!process._needsRecalculation) return process;
-          
-          const basePrice = parseFloat(process.unitPrice) || 0;
-          let calculatedPrice = basePrice;
-          
-          // Recalculate price based on unit type
-          if (process.unit === 'pieza') {
-            calculatedPrice = basePrice * productQuantity;
-          } else if (process.unit === 'pliego') {
-            calculatedPrice = basePrice * totalSheets;
-          } else if (process.unit === 'mt2') {
-            calculatedPrice = basePrice * totalSquareMeters;
-          }
-          
-          return {
-            ...process,
-            price: calculatedPrice,
-            _needsRecalculation: undefined // Remove the flag
-          };
-        });
-      }
-      
-      // Update local processes data
-      this.product.data.processes = processes;
-      
-      // Calculate the total cost of processes
-      const processesCost = processes.reduce((sum, process) => sum + (parseFloat(process.price) || 0), 0);
-      
-      // Update pricing data
-      if (!this.product.data.pricing) {
-        this.product.data.pricing = { ...this.defaultPricing };
-      }
-      
-      // Update processes cost in pricing
-      this.product.data.pricing.processes_cost = processesCost;
-      
-      // Recalculate pricing
-      this.recalculatePricing();
-    },
-    
     async updateProcessesComments(comments) {
       if (!this.product || !this.product.data) return;
       
@@ -1154,8 +1162,8 @@ export default {
       const totalBeforeMargin = pricing.subtotal + pricing.waste_value;
             
       try {
-        // Fetch price margins from the API
-        const response = await fetch('/api/v1/price_margins', {
+        // Fetch suggested margin from the API's calculate endpoint
+        const response = await fetch(`/api/v1/price_margins/calculate?price=${totalBeforeMargin}`, {
           headers: {
             'Accept': 'application/json',
             'X-Requested-With': 'XMLHttpRequest'
@@ -1163,31 +1171,14 @@ export default {
         });
         
         if (!response.ok) {
-          throw new Error(`Failed to load price margins: ${response.status} ${response.statusText}`);
+          throw new Error(`Failed to calculate margin: ${response.status} ${response.statusText}`);
         }
         
-        const priceMargins = await response.json();
+        const data = await response.json();
+        return data.margin_percentage || 0;
         
-        // Sort price margins by min_price to ensure we find the highest range
-        const sortedMargins = [...priceMargins].sort((a, b) => parseFloat(a.min_price) - parseFloat(b.min_price));
-        
-        // Find the appropriate price margin based on the total before margin
-        const priceMargin = sortedMargins.find(margin => {
-          const minPrice = parseFloat(margin.min_price) || 0;
-          const maxPrice = parseFloat(margin.max_price) || Infinity;
-          const isInRange = totalBeforeMargin >= minPrice && totalBeforeMargin <= maxPrice;
-          
-          return isInRange;
-        });
-        
-        // If no range matches, use the margin from the highest range
-        const suggestedMargin = priceMargin ? 
-          parseFloat(priceMargin.margin_percentage) || 0 : 
-          parseFloat(sortedMargins[sortedMargins.length - 1]?.margin_percentage) || 0;
-        
-        return suggestedMargin;
       } catch (error) {
-        console.warn('Price margins API not available, using default margin:', error);
+        console.warn('Margin calculation API not available, using default margin:', error);
         // Use a default margin based on the total price
         if (totalBeforeMargin <= 1000) return 30; // 30% for small orders
         if (totalBeforeMargin <= 5000) return 25; // 25% for medium orders

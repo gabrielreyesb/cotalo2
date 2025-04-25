@@ -104,6 +104,7 @@ Rails.application.routes.draw do
       get 'materials', to: 'products#available_materials'
       get 'user_config', to: 'app_configs#user_config'
       get 'price_margins', to: 'price_margins#index'
+      get 'price_margins/calculate', to: 'price_margins#calculate'
       post 'search_customer', to: 'customers#search'
       get 'verify_pipedrive', to: 'customers#verify_pipedrive_account'
     end
