@@ -1,31 +1,38 @@
 // Green accent panel styles
 .green-accent-panel {
-  > .card {
-    position: relative;
-    border: 1px solid rgb(50, 56, 62);
-    border-left: 2px solid #42b983; // Fallback color
-    border-left: 2px solid var(--cotalo-green, #42b983);
-    padding-left: 0.75rem;
-    margin-left: 0.5rem;
-    background-color: rgb(26, 30, 33);
+  &:not(.tab-content) { // Exclude tab-content from getting the green border
+    > .card {
+      position: relative;
+      border: 1px solid rgb(50, 56, 62);
+      border-left: 2px solid #42b983; // Fallback color
+      border-left: 2px solid var(--cotalo-green, #42b983);
+      padding-left: 0.75rem;
+      margin-left: 0.5rem;
+      background-color: rgb(26, 30, 33);
 
-    .card-body {
-      padding: 0;
+      .card-body {
+        padding: 0;
 
-      form {
-        .row {
-          margin: 0;
-          
-          .col-md-8 {
-            padding: 1.5rem;
-          }
+        form {
+          .row {
+            margin: 0;
+            
+            .col-md-8 {
+              padding: 1.5rem;
+            }
 
-          .col-md-4 {
-            padding: 1.5rem;
-            border-left: 1px solid rgb(50, 56, 62);
+            .col-md-4 {
+              padding: 1.5rem;
+              border-left: 1px solid rgb(50, 56, 62);
+            }
           }
         }
       }
     }
   }
+}
+
+// Ensure tab panels don't get the green border
+.tab-content > .tab-pane {
+  border: none !important;
 } 
