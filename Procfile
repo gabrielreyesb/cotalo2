@@ -1,2 +1,2 @@
 web: bundle exec puma -C config/puma.rb
-release: yarn assets:precompile 
+release: bundle exec rake assets:precompile_with_legacy_ssl 
