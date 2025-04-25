@@ -1244,27 +1244,90 @@ export default {
     }
   },
   mounted() {
-    // Log initial component state
-    console.log('[ProductForm] Component mounted', {
-      version: '2024-04-23-v2',
-      currentTab: this.activeTab,
-      hasGeneralTab: !!this.$refs.generalTab,
-      formElements: {
-        greenAccentPanels: document.querySelectorAll('.green-accent-panel').length,
-        cards: document.querySelectorAll('.card').length,
-        tabContent: document.querySelector('.tab-content')?.className,
-        tabPanes: document.querySelectorAll('.tab-pane').length
-      },
+    // Log DOM structure and hierarchy
+    const logElementHierarchy = (element, depth = 0) => {
+      const styles = window.getComputedStyle(element);
+      return {
+        tag: element.tagName.toLowerCase(),
+        className: element.className,
+        id: element.id,
+        children: Array.from(element.children).map(child => logElementHierarchy(child, depth + 1)),
+        borders: {
+          border: styles.border,
+          borderLeft: styles.borderLeft,
+          borderColor: styles.borderColor
+        },
+        computedStyles: {
+          position: styles.position,
+          display: styles.display,
+          margin: styles.margin,
+          padding: styles.padding
+        }
+      };
+    };
+
+    // Log initial component state with hierarchy
+    console.log('[ProductForm] Component structure analysis', {
+      version: '2024-04-23-v3',
+      timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV,
-      styles: {
-        tabContentComputed: window.getComputedStyle(document.querySelector('.tab-content') || {}),
-        greenPanelStyles: Array.from(document.querySelectorAll('.green-accent-panel')).map(panel => ({
-          className: panel.className,
-          parentClassName: panel.parentElement?.className,
-          computedBorder: window.getComputedStyle(panel).border,
-          computedBorderLeft: window.getComputedStyle(panel).borderLeft
-        }))
-      }
+      formStructure: logElementHierarchy(this.$el),
+      greenAccentPanels: Array.from(document.querySelectorAll('.green-accent-panel')).map(panel => ({
+        hierarchy: {
+          self: panel.className,
+          parent: panel.parentElement?.className,
+          grandparent: panel.parentElement?.parentElement?.className,
+          siblings: Array.from(panel.parentElement?.children || []).map(el => el.className)
+        },
+        position: {
+          offsetTop: panel.offsetTop,
+          offsetLeft: panel.offsetLeft,
+          clientRect: panel.getBoundingClientRect()
+        },
+        styles: {
+          computed: window.getComputedStyle(panel),
+          inline: panel.style.cssText,
+          classes: panel.classList
+        }
+      }))
+    });
+
+    // Monitor structural changes
+    const structureObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'childList') {
+          console.log('[ProductForm] Structure change detected:', {
+            target: mutation.target.className,
+            addedNodes: Array.from(mutation.addedNodes).map(node => ({
+              className: node.className,
+              parentClass: node.parentElement?.className
+            })),
+            removedNodes: Array.from(mutation.removedNodes).map(node => ({
+              className: node.className,
+              parentClass: node.parentElement?.className
+            })),
+            timestamp: new Date().toISOString()
+          });
+        }
+      });
+    });
+
+    // Observe the form structure
+    structureObserver.observe(this.$el, {
+      childList: true,
+      subtree: true
+    });
+
+    // Monitor tab changes with structural logging
+    this.$watch('activeTab', (newTab, oldTab) => {
+      console.log('[ProductForm] Tab structure analysis', {
+        from: oldTab,
+        to: newTab,
+        timestamp: new Date().toISOString(),
+        formStructure: logElementHierarchy(this.$el),
+        activeTabContent: document.querySelector('.tab-content') ? 
+          logElementHierarchy(document.querySelector('.tab-content')) : null
+      });
     });
 
     // Monitor DOM changes for debugging
