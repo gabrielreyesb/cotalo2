@@ -1244,25 +1244,89 @@ export default {
     }
   },
   mounted() {
+    // Log initial component state
     console.log('[ProductForm] Component mounted', {
-      version: '2024-04-23-v1',
+      version: '2024-04-23-v2',
       currentTab: this.activeTab,
       hasGeneralTab: !!this.$refs.generalTab,
       formElements: {
         greenAccentPanels: document.querySelectorAll('.green-accent-panel').length,
-        cards: document.querySelectorAll('.card').length
+        cards: document.querySelectorAll('.card').length,
+        tabContent: document.querySelector('.tab-content')?.className,
+        tabPanes: document.querySelectorAll('.tab-pane').length
       },
-      environment: process.env.NODE_ENV
+      environment: process.env.NODE_ENV,
+      styles: {
+        tabContentComputed: window.getComputedStyle(document.querySelector('.tab-content') || {}),
+        greenPanelStyles: Array.from(document.querySelectorAll('.green-accent-panel')).map(panel => ({
+          className: panel.className,
+          parentClassName: panel.parentElement?.className,
+          computedBorder: window.getComputedStyle(panel).border,
+          computedBorderLeft: window.getComputedStyle(panel).borderLeft
+        }))
+      }
     });
 
-    // Monitor tab changes
+    // Monitor DOM changes for debugging
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          const target = mutation.target;
+          console.log('[ProductForm] Class change detected:', {
+            element: target.tagName,
+            className: target.className,
+            parentClassName: target.parentElement?.className,
+            timestamp: new Date().toISOString(),
+            computedStyles: {
+              border: window.getComputedStyle(target).border,
+              borderLeft: window.getComputedStyle(target).borderLeft
+            }
+          });
+        }
+      });
+    });
+
+    // Observe the entire form for class changes
+    observer.observe(this.$el, {
+      attributes: true,
+      subtree: true,
+      attributeFilter: ['class']
+    });
+
+    // Monitor tab changes with enhanced logging
     this.$watch('activeTab', (newTab, oldTab) => {
       console.log('[ProductForm] Tab changed', {
         from: oldTab,
         to: newTab,
-        greenAccentPanelsCount: document.querySelectorAll('.green-accent-panel').length,
+        elements: {
+          greenAccentPanels: document.querySelectorAll('.green-accent-panel').length,
+          activeTabPane: document.querySelector('.tab-pane.active')?.className,
+          tabContent: document.querySelector('.tab-content')?.className
+        },
+        styles: {
+          tabContentBorder: window.getComputedStyle(document.querySelector('.tab-content') || {}).border,
+          activePaneBorder: window.getComputedStyle(document.querySelector('.tab-pane.active') || {}).border,
+          greenPanelStyles: Array.from(document.querySelectorAll('.green-accent-panel')).map(panel => ({
+            className: panel.className,
+            parentClassName: panel.parentElement?.className,
+            computedBorder: window.getComputedStyle(panel).border,
+            computedBorderLeft: window.getComputedStyle(panel).borderLeft
+          }))
+        },
         timestamp: new Date().toISOString()
       });
+
+      // Log the CSS cascade for debugging
+      const activePane = document.querySelector('.tab-pane.active');
+      if (activePane) {
+        console.log('[ProductForm] Active tab pane styles:', {
+          tab: newTab,
+          matchedCSSRules: Array.from(window.getMatchedCSSRules(activePane) || []).map(rule => ({
+            selectorText: rule.selectorText,
+            cssText: rule.cssText
+          }))
+        });
+      }
     });
 
     // Connect to the top navigation bar buttons
@@ -1278,9 +1342,24 @@ export default {
         this.handleCancel();
       });
     }
+
+    // Log initial styles
+    this.$nextTick(() => {
+      console.log('[ProductForm] Initial styles after render:', {
+        tabContent: {
+          element: document.querySelector('.tab-content'),
+          styles: window.getComputedStyle(document.querySelector('.tab-content') || {})
+        },
+        greenAccentPanels: Array.from(document.querySelectorAll('.green-accent-panel')).map(panel => ({
+          className: panel.className,
+          parentClassName: panel.parentElement?.className,
+          computedStyles: window.getComputedStyle(panel)
+        }))
+      });
+    });
   },
   beforeDestroy() {
-    // Clean up event listeners
+    // Clean up event listeners and observer
     const topNavSaveButton = document.getElementById('save-product-button');
     const topNavCancelButton = document.querySelector('a[href="/products"]');
 

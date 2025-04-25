@@ -1,8 +1,8 @@
-// Green accent panel styles
+// Green accent panel styles - v2024-04-23
 .green-accent-panel {
   // Only apply green border to panels that are direct children of the product form
   // and not within tab content
-  .product-form > &:not(.tab-content):not(.tab-pane) {
+  &:not(.tab-content):not(.tab-pane):not([class*="tab-"]) {
     > .card {
       position: relative;
       border: 1px solid rgb(50, 56, 62);
@@ -34,16 +34,29 @@
   }
 }
 
-// Ensure tab panels and their content never get the green border
+// Debug: Force remove green border from tab content
 .tab-content,
 .tab-pane,
-.tab-content .green-accent-panel {
+.tab-content .green-accent-panel,
+[class*="tab-"] .green-accent-panel,
+.green-accent-panel.tab-content,
+.green-accent-panel.tab-pane {
   border: none !important;
+  border-left: none !important;
   
   > .card {
     border: 1px solid rgb(50, 56, 62) !important;
     border-left: none !important;
     margin-left: 0 !important;
     padding-left: 0 !important;
+  }
+}
+
+// Debug: Ensure pricing panel keeps its green border
+.col-lg-3 .green-accent-panel {
+  > .card {
+    border-left: 2px solid var(--cotalo-green, #42b983) !important;
+    padding-left: 0.75rem !important;
+    margin-left: 0.5rem !important;
   }
 } 
