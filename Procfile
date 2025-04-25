@@ -1,2 +1,2 @@
-web: bundle exec rails server -p $PORT
-release: bundle exec rake db:migrate 
+web: bundle exec puma -C config/puma.rb
+release: yarn assets:precompile 
