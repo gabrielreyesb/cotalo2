@@ -1246,6 +1246,8 @@ export default {
   mounted() {
     // Log DOM structure and hierarchy
     const logElementHierarchy = (element, depth = 0) => {
+      if (!element || !(element instanceof Element)) return null;
+      
       const styles = window.getComputedStyle(element);
       return {
         tag: element.tagName.toLowerCase(),
@@ -1268,28 +1270,39 @@ export default {
 
     // Log initial component state with hierarchy
     console.log('[ProductForm] Component structure analysis', {
-      version: '2024-04-23-v3',
+      version: '2024-04-23-v4',
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV,
       formStructure: logElementHierarchy(this.$el),
-      greenAccentPanels: Array.from(document.querySelectorAll('.green-accent-panel')).map(panel => ({
-        hierarchy: {
-          self: panel.className,
-          parent: panel.parentElement?.className,
-          grandparent: panel.parentElement?.parentElement?.className,
-          siblings: Array.from(panel.parentElement?.children || []).map(el => el.className)
-        },
-        position: {
-          offsetTop: panel.offsetTop,
-          offsetLeft: panel.offsetLeft,
-          clientRect: panel.getBoundingClientRect()
-        },
-        styles: {
-          computed: window.getComputedStyle(panel),
-          inline: panel.style.cssText,
-          classes: panel.classList
-        }
-      }))
+      greenAccentPanels: Array.from(document.querySelectorAll('.green-accent-panel')).map(panel => {
+        if (!panel || !(panel instanceof Element)) return null;
+        const styles = window.getComputedStyle(panel);
+        return {
+          hierarchy: {
+            self: panel.className,
+            parent: panel.parentElement?.className || 'no-parent',
+            grandparent: panel.parentElement?.parentElement?.className || 'no-grandparent',
+            siblings: Array.from(panel.parentElement?.children || [])
+              .map(el => el instanceof Element ? el.className : 'invalid-element')
+          },
+          position: {
+            offsetTop: panel.offsetTop,
+            offsetLeft: panel.offsetLeft,
+            clientRect: panel.getBoundingClientRect()
+          },
+          styles: {
+            computed: {
+              border: styles.border,
+              borderLeft: styles.borderLeft,
+              borderColor: styles.borderColor,
+              padding: styles.padding,
+              margin: styles.margin
+            },
+            inline: panel.style.cssText,
+            classes: Array.from(panel.classList)
+          }
+        };
+      }).filter(Boolean)
     });
 
     // Monitor structural changes
@@ -1297,15 +1310,19 @@ export default {
       mutations.forEach((mutation) => {
         if (mutation.type === 'childList') {
           console.log('[ProductForm] Structure change detected:', {
-            target: mutation.target.className,
-            addedNodes: Array.from(mutation.addedNodes).map(node => ({
-              className: node.className,
-              parentClass: node.parentElement?.className
-            })),
-            removedNodes: Array.from(mutation.removedNodes).map(node => ({
-              className: node.className,
-              parentClass: node.parentElement?.className
-            })),
+            target: mutation.target instanceof Element ? mutation.target.className : 'invalid-target',
+            addedNodes: Array.from(mutation.addedNodes)
+              .filter(node => node instanceof Element)
+              .map(node => ({
+                className: node.className,
+                parentClass: node.parentElement?.className || 'no-parent'
+              })),
+            removedNodes: Array.from(mutation.removedNodes)
+              .filter(node => node instanceof Element)
+              .map(node => ({
+                className: node.className,
+                parentClass: node.parentElement?.className || 'no-parent'
+              })),
             timestamp: new Date().toISOString()
           });
         }
@@ -1320,13 +1337,19 @@ export default {
 
     // Monitor tab changes with structural logging
     this.$watch('activeTab', (newTab, oldTab) => {
+      const tabContent = document.querySelector('.tab-content');
       console.log('[ProductForm] Tab structure analysis', {
         from: oldTab,
         to: newTab,
         timestamp: new Date().toISOString(),
         formStructure: logElementHierarchy(this.$el),
-        activeTabContent: document.querySelector('.tab-content') ? 
-          logElementHierarchy(document.querySelector('.tab-content')) : null
+        activeTabContent: tabContent ? logElementHierarchy(tabContent) : null,
+        greenPanelCount: document.querySelectorAll('.green-accent-panel').length,
+        greenPanelLocations: Array.from(document.querySelectorAll('.green-accent-panel')).map(panel => ({
+          className: panel.className,
+          parentClass: panel.parentElement?.className || 'no-parent',
+          isInTabContent: panel.closest('.tab-content') !== null
+        }))
       });
     });
 
@@ -1335,16 +1358,19 @@ export default {
       mutations.forEach((mutation) => {
         if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
           const target = mutation.target;
-          console.log('[ProductForm] Class change detected:', {
-            element: target.tagName,
-            className: target.className,
-            parentClassName: target.parentElement?.className,
-            timestamp: new Date().toISOString(),
-            computedStyles: {
-              border: window.getComputedStyle(target).border,
-              borderLeft: window.getComputedStyle(target).borderLeft
-            }
-          });
+          if (target instanceof Element) {
+            const styles = window.getComputedStyle(target);
+            console.log('[ProductForm] Class change detected:', {
+              element: target.tagName,
+              className: target.className,
+              parentClassName: target.parentElement?.className,
+              timestamp: new Date().toISOString(),
+              computedStyles: {
+                border: styles.border,
+                borderLeft: styles.borderLeft
+              }
+            });
+          }
         }
       });
     });
@@ -1358,36 +1384,42 @@ export default {
 
     // Monitor tab changes with enhanced logging
     this.$watch('activeTab', (newTab, oldTab) => {
+      const tabContent = document.querySelector('.tab-content');
+      const activePane = document.querySelector('.tab-pane.active');
+      
       console.log('[ProductForm] Tab changed', {
         from: oldTab,
         to: newTab,
         elements: {
           greenAccentPanels: document.querySelectorAll('.green-accent-panel').length,
-          activeTabPane: document.querySelector('.tab-pane.active')?.className,
-          tabContent: document.querySelector('.tab-content')?.className
+          activeTabPane: activePane?.className,
+          tabContent: tabContent?.className
         },
         styles: {
-          tabContentBorder: window.getComputedStyle(document.querySelector('.tab-content') || {}).border,
-          activePaneBorder: window.getComputedStyle(document.querySelector('.tab-pane.active') || {}).border,
-          greenPanelStyles: Array.from(document.querySelectorAll('.green-accent-panel')).map(panel => ({
-            className: panel.className,
-            parentClassName: panel.parentElement?.className,
-            computedBorder: window.getComputedStyle(panel).border,
-            computedBorderLeft: window.getComputedStyle(panel).borderLeft
-          }))
+          tabContentBorder: tabContent ? window.getComputedStyle(tabContent).border : null,
+          activePaneBorder: activePane ? window.getComputedStyle(activePane).border : null,
+          greenPanelStyles: Array.from(document.querySelectorAll('.green-accent-panel')).map(panel => {
+            const styles = window.getComputedStyle(panel);
+            return {
+              className: panel.className,
+              parentClassName: panel.parentElement?.className,
+              computedBorder: styles.border,
+              computedBorderLeft: styles.borderLeft
+            };
+          })
         },
         timestamp: new Date().toISOString()
       });
 
       // Log the CSS cascade for debugging
-      const activePane = document.querySelector('.tab-pane.active');
       if (activePane) {
+        const matchedRules = window.getMatchedCSSRules?.(activePane);
         console.log('[ProductForm] Active tab pane styles:', {
           tab: newTab,
-          matchedCSSRules: Array.from(window.getMatchedCSSRules(activePane) || []).map(rule => ({
+          matchedCSSRules: matchedRules ? Array.from(matchedRules).map(rule => ({
             selectorText: rule.selectorText,
             cssText: rule.cssText
-          }))
+          })) : []
         });
       }
     });
@@ -1408,16 +1440,22 @@ export default {
 
     // Log initial styles
     this.$nextTick(() => {
+      const tabContent = document.querySelector('.tab-content');
+      const greenAccentPanels = document.querySelectorAll('.green-accent-panel');
+      
       console.log('[ProductForm] Initial styles after render:', {
-        tabContent: {
-          element: document.querySelector('.tab-content'),
-          styles: window.getComputedStyle(document.querySelector('.tab-content') || {})
-        },
-        greenAccentPanels: Array.from(document.querySelectorAll('.green-accent-panel')).map(panel => ({
-          className: panel.className,
-          parentClassName: panel.parentElement?.className,
-          computedStyles: window.getComputedStyle(panel)
-        }))
+        tabContent: tabContent ? {
+          element: tabContent,
+          styles: window.getComputedStyle(tabContent)
+        } : null,
+        greenAccentPanels: Array.from(greenAccentPanels).map(panel => {
+          const styles = window.getComputedStyle(panel);
+          return {
+            className: panel.className,
+            parentClassName: panel.parentElement?.className,
+            computedStyles: styles
+          };
+        })
       });
     });
   },
