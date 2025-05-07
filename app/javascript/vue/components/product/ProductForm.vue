@@ -1323,6 +1323,7 @@ export default {
   border-bottom: none !important;
 }
 
+.product-form .tab-content,
 .tab-content {
   border-left: none !important;
   border-bottom: none !important;
