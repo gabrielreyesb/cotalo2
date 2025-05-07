@@ -2,7 +2,7 @@
   <div class="extras-tab">
     <div class="green-accent-panel">
       <div class="card">
-
+        <div class="card-body">
           <div class="row align-items-end">
             <div class="col-md-6 mb-3 mb-md-0 me-md-2">
               <label for="extra-select" class="form-label">Seleccionar extra</label>
@@ -45,7 +45,7 @@
               </button>
             </div>
           </div>
-      
+        </div>
       </div>
 
       <div v-if="!productExtras.length" class="text-center my-5">

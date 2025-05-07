@@ -23,7 +23,7 @@
       <div class="row g-0">
         <!-- Left Column - Main Tabs -->
         <div class="col-12 col-lg-9">
-          <div class="green-accent-panel main-content-panel">
+          <div class="green-accent-panel">
             <div class="card">
               <div class="card-body p-0">
                 <ul class="nav nav-tabs" id="product-tabs">
@@ -1243,185 +1243,6 @@ export default {
     }
   },
   mounted() {
-    // Log DOM structure and hierarchy
-    const logElementHierarchy = (element, depth = 0) => {
-      if (!element || !(element instanceof Element)) return null;
-      
-      const styles = window.getComputedStyle(element);
-      return {
-        tag: element.tagName.toLowerCase(),
-        className: element.className,
-        id: element.id,
-        children: Array.from(element.children).map(child => logElementHierarchy(child, depth + 1)),
-        borders: {
-          border: styles.border,
-          borderLeft: styles.borderLeft,
-          borderColor: styles.borderColor
-        },
-        computedStyles: {
-          position: styles.position,
-          display: styles.display,
-          margin: styles.margin,
-          padding: styles.padding
-        }
-      };
-    };
-
-    // Log initial component state with hierarchy
-    console.log('[ProductForm] Component structure analysis', {
-      version: '2024-04-23-v4',
-      timestamp: new Date().toISOString(),
-      environment: process.env.NODE_ENV,
-      formStructure: logElementHierarchy(this.$el),
-      greenAccentPanels: Array.from(document.querySelectorAll('.green-accent-panel')).map(panel => {
-        if (!panel || !(panel instanceof Element)) return null;
-        const styles = window.getComputedStyle(panel);
-        return {
-          hierarchy: {
-            self: panel.className,
-            parent: panel.parentElement?.className || 'no-parent',
-            grandparent: panel.parentElement?.parentElement?.className || 'no-grandparent',
-            siblings: Array.from(panel.parentElement?.children || [])
-              .map(el => el instanceof Element ? el.className : 'invalid-element')
-          },
-          position: {
-            offsetTop: panel.offsetTop,
-            offsetLeft: panel.offsetLeft,
-            clientRect: panel.getBoundingClientRect()
-          },
-          styles: {
-            computed: {
-              border: styles.border,
-              borderLeft: styles.borderLeft,
-              borderColor: styles.borderColor,
-              padding: styles.padding,
-              margin: styles.margin
-            },
-            inline: panel.style.cssText,
-            classes: Array.from(panel.classList)
-          }
-        };
-      }).filter(Boolean)
-    });
-
-    // Monitor structural changes
-    const structureObserver = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.type === 'childList') {
-          console.log('[ProductForm] Structure change detected:', {
-            target: mutation.target instanceof Element ? mutation.target.className : 'invalid-target',
-            addedNodes: Array.from(mutation.addedNodes)
-              .filter(node => node instanceof Element)
-              .map(node => ({
-                className: node.className,
-                parentClass: node.parentElement?.className || 'no-parent'
-              })),
-            removedNodes: Array.from(mutation.removedNodes)
-              .filter(node => node instanceof Element)
-              .map(node => ({
-                className: node.className,
-                parentClass: node.parentElement?.className || 'no-parent'
-              })),
-            timestamp: new Date().toISOString()
-          });
-        }
-      });
-    });
-
-    // Observe the form structure
-    structureObserver.observe(this.$el, {
-      childList: true,
-      subtree: true
-    });
-
-    // Monitor tab changes with structural logging
-    this.$watch('activeTab', (newTab, oldTab) => {
-      const tabContent = document.querySelector('.tab-content');
-      console.log('[ProductForm] Tab structure analysis', {
-        from: oldTab,
-        to: newTab,
-        timestamp: new Date().toISOString(),
-        formStructure: logElementHierarchy(this.$el),
-        activeTabContent: tabContent ? logElementHierarchy(tabContent) : null,
-        greenPanelCount: document.querySelectorAll('.green-accent-panel').length,
-        greenPanelLocations: Array.from(document.querySelectorAll('.green-accent-panel')).map(panel => ({
-          className: panel.className,
-          parentClass: panel.parentElement?.className || 'no-parent',
-          isInTabContent: panel.closest('.tab-content') !== null
-        }))
-      });
-    });
-
-    // Monitor DOM changes for debugging
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-          const target = mutation.target;
-          if (target instanceof Element) {
-            const styles = window.getComputedStyle(target);
-            console.log('[ProductForm] Class change detected:', {
-              element: target.tagName,
-              className: target.className,
-              parentClassName: target.parentElement?.className,
-              timestamp: new Date().toISOString(),
-              computedStyles: {
-                border: styles.border,
-                borderLeft: styles.borderLeft
-              }
-            });
-          }
-        }
-      });
-    });
-
-    // Observe the entire form for class changes
-    observer.observe(this.$el, {
-      attributes: true,
-      subtree: true,
-      attributeFilter: ['class']
-    });
-
-    // Monitor tab changes with enhanced logging
-    this.$watch('activeTab', (newTab, oldTab) => {
-      const tabContent = document.querySelector('.tab-content');
-      const activePane = document.querySelector('.tab-pane.active');
-      
-      console.log('[ProductForm] Tab changed', {
-        from: oldTab,
-        to: newTab,
-        elements: {
-          greenAccentPanels: document.querySelectorAll('.green-accent-panel').length,
-          activeTabPane: activePane?.className,
-          tabContent: tabContent?.className
-        },
-        styles: {
-          tabContentBorder: tabContent ? window.getComputedStyle(tabContent).border : null,
-          activePaneBorder: activePane ? window.getComputedStyle(activePane).border : null,
-          greenPanelStyles: Array.from(document.querySelectorAll('.green-accent-panel')).map(panel => {
-            const styles = window.getComputedStyle(panel);
-            return {
-              className: panel.className,
-              parentClassName: panel.parentElement?.className,
-              computedBorder: styles.border,
-              computedBorderLeft: styles.borderLeft
-            };
-          })
-        },
-        timestamp: new Date().toISOString()
-      });
-
-      // Log the CSS cascade for debugging
-      if (activePane) {
-        const matchedRules = window.getMatchedCSSRules?.(activePane);
-        console.log('[ProductForm] Active tab pane styles:', {
-          tab: newTab,
-          matchedCSSRules: matchedRules ? Array.from(matchedRules).map(rule => ({
-            selectorText: rule.selectorText,
-            cssText: rule.cssText
-          })) : []
-        });
-      }
-    });
 
     // Connect to the top navigation bar buttons
     const topNavSaveButton = document.getElementById('save-product-button');
@@ -1436,27 +1257,6 @@ export default {
         this.handleCancel();
       });
     }
-
-    // Log initial styles
-    this.$nextTick(() => {
-      const tabContent = document.querySelector('.tab-content');
-      const greenAccentPanels = document.querySelectorAll('.green-accent-panel');
-      
-      console.log('[ProductForm] Initial styles after render:', {
-        tabContent: tabContent ? {
-          element: tabContent,
-          styles: window.getComputedStyle(tabContent)
-        } : null,
-        greenAccentPanels: Array.from(greenAccentPanels).map(panel => {
-          const styles = window.getComputedStyle(panel);
-          return {
-            className: panel.className,
-            parentClassName: panel.parentElement?.className,
-            computedStyles: styles
-          };
-        })
-      });
-    });
   },
   beforeDestroy() {
     // Clean up event listeners and observer
@@ -1498,23 +1298,6 @@ export default {
   background-color: #1a1e21;
 }
 
-/* Remove green border from tab content */
-.tab-content {
-  background-color: #1a1e21;
-  border: none;
-  
-  .green-accent-panel {
-    border: none !important;
-    
-    > .card {
-      border: 1px solid #32383e !important;
-      border-left: none !important;
-      margin-left: 0 !important;
-      padding-left: 0 !important;
-    }
-  }
-}
-
 .tab-pane {
   border: none;
   padding: 1rem;
@@ -1533,5 +1316,15 @@ export default {
   .pt-tabs {
     padding-top: 1rem;
   }
+}
+
+.product-form .tab-pane.active {
+  border-left: none !important;
+  border-bottom: none !important;
+}
+
+.tab-content {
+  border-left: none !important;
+  border-bottom: none !important;
 }
 </style>

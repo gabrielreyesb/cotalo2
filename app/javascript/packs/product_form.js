@@ -41,12 +41,6 @@ function getStylesheetInfo(sheet) {
   }
 }
 
-console.log('[product_form.js] Initializing', {
-  version: '2024-04-23-v1',
-  timestamp: new Date().toISOString(),
-  environment: process.env.NODE_ENV,
-  stylesheets: Array.from(document.styleSheets).map(getStylesheetInfo)
-});
 
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', () => {

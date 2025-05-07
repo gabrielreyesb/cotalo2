@@ -228,99 +228,14 @@ export default {
     }
   },
   mounted() {
-    // Get the CSS variable value
-    const rootStyles = getComputedStyle(document.documentElement);
-    const cotaloGreen = rootStyles.getPropertyValue('--cotalo-green').trim();
-
-    console.log('[GeneralTab] Component mounted', {
-      version: '2024-04-23-v1',
-      hasGreenAccent: !!document.querySelector('.green-accent-panel'),
-      componentId: this.$el.id,
-      cssVariables: {
-        cotaloGreen: cotaloGreen || 'not defined'
-      }
-    });
-
-    // Log all elements with green-accent-panel class
-    document.querySelectorAll('.green-accent-panel').forEach((el, index) => {
-      const cardElement = el.querySelector('.card');
-      if (!cardElement) {
-        console.log(`[GeneralTab] No card element found in panel ${index}`);
-        return;
-      }
-
-      const computedStyles = window.getComputedStyle(cardElement);
-      
-      // Extract specific style values
-      const styleValues = {
-        borderLeft: computedStyles.borderLeft,
-        borderLeftWidth: computedStyles.borderLeftWidth,
-        borderLeftStyle: computedStyles.borderLeftStyle,
-        borderLeftColor: computedStyles.borderLeftColor,
-        border: computedStyles.border,
-        borderTop: computedStyles.borderTop,
-        borderRight: computedStyles.borderRight,
-        borderBottom: computedStyles.borderBottom,
-        padding: computedStyles.padding,
-        paddingLeft: computedStyles.paddingLeft,
-        margin: computedStyles.margin,
-        marginLeft: computedStyles.marginLeft,
-        backgroundColor: computedStyles.backgroundColor
-      };
-
-      console.log(`[GeneralTab] Green accent panel ${index} styles:`, 
-        JSON.stringify({
-          panelType: el.parentElement.className,
-          styles: styleValues
-        }, null, 2)
-      );
-    });
-
-    // Log stylesheet information
-    const styleSheets = document.styleSheets;
-    let greenAccentRules = [];
-
-    Array.from(styleSheets).forEach((sheet, index) => {
-      try {
-        if (sheet.href === null || sheet.href.includes('GeneralTab')) {
-          const rules = Array.from(sheet.cssRules || [])
-            .filter(rule => rule.selectorText?.includes('.green-accent-panel'))
-            .map(rule => ({
-              selector: rule.selectorText,
-              css: rule.style.cssText,
-              source: sheet.href || 'inline',
-              index: index
-            }));
-          if (rules.length > 0) {
-            greenAccentRules.push(...rules);
-          }
-        }
-      } catch (e) {
-        console.log(`[GeneralTab] Cannot access rules for stylesheet ${index}:`, sheet.href || 'inline');
-      }
-    });
-
-    console.log('[GeneralTab] Style information:', JSON.stringify({
-      totalStylesheets: styleSheets.length,
-      stylesheetSources: Array.from(styleSheets).map(sheet => {
-        try {
-          return sheet.href || 'inline';
-        } catch (e) {
-          return 'inaccessible';
-        }
-      }),
-      greenAccentRules: greenAccentRules
-    }, null, 2));
-  },
-  updated() {
     // Component updated
   }
 };
 </script>
 
 <style lang="scss">
-/* Component-specific styles only */
-.general-tab {
-  /* Add any component-specific styles here if needed */
-}
+</style>
+
+
+<style lang="scss">
 </style>
