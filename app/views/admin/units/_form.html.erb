@@ -1,4 +1,4 @@
-<%= form_with(model: [:admin, unit], local: true) do |f| %>
+<%= form_with(model: [:admin, unit], local: true, html: { id: "unit-form" }) do |f| %>
   <% if unit.errors.any? %>
     <div class="alert alert-danger">
       <h4><%= pluralize(unit.errors.count, "error") %> impidieron guardar esta unidad:</h4>
@@ -18,10 +18,5 @@
   <div class="mb-3">
     <%= f.label :abbreviation, "Abreviatura", class: "form-label" %>
     <%= f.text_field :abbreviation, class: "form-control", placeholder: "Ej: m" %>
-  </div>
-
-  <div class="d-flex justify-content-between">
-    <%= link_to "Cancelar", admin_units_path, class: "btn btn-secondary" %>
-    <%= f.submit unit.new_record? ? "Crear Unidad" : "Actualizar Unidad", class: "btn btn-primary" %>
   </div>
 <% end %> 

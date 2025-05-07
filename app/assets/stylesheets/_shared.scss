@@ -6,3 +6,12 @@
   padding-left: 0;
   margin-left: 0;
 } 
+
+// Global class for index table headers (used in all index views, not just Vue)
+th.index-table-header {
+  font-size: 1.3rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em;
+  color: var(--text-primary, #222) !important;
+  background: none !important;
+} 

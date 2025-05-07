@@ -12,29 +12,29 @@
   <div class="col-12">
     <% if @products.any? %>
       <!-- Table view for medium and large screens -->
-      <div class="card d-none d-md-block shadow-sm mb-4">
+      <div class="card green-accent-panel d-none d-md-block shadow-sm mb-4">
         <div class="card-body p-4">
           <div class="table-responsive">
             <table class="table table-striped table-hover">
               <thead>
                 <tr>
-                  <th style="width: 25%;">Descripción</th>
-                  <th style="width: 10%;" class="text-center">
+                  <th class="index-table-header" style="width: 25%;">Descripción</th>
+                  <th class="index-table-header" style="width: 10%;" class="text-center">
                     <span class="nowrap">Materiales</span>
                   </th>
-                  <th style="width: 10%;" class="text-center">
+                  <th class="index-table-header" style="width: 10%;" class="text-center">
                     <span class="nowrap">Procesos</span>
                   </th>
-                  <th style="width: 8%;" class="text-center">
+                  <th class="index-table-header" style="width: 8%;" class="text-center">
                     <span class="nowrap">Extras</span>
                   </th>
-                  <th style="width: 15%;" class="text-end">
+                  <th class="index-table-header" style="width: 15%;" class="text-end">
                     <span class="nowrap">Precio total</span>
                   </th>
-                  <th style="width: 15%;" class="text-end">
+                  <th class="index-table-header" style="width: 15%;" class="text-end">
                     <span class="nowrap">Precio por pieza</span>
                   </th>
-                  <th style="width: 17%;" class="text-center">
+                  <th class="index-table-header" style="width: 17%;" class="text-center">
                     <span class="nowrap">Acciones</span>
                   </th>
                 </tr>
@@ -79,7 +79,7 @@
       <!-- Card view for small screens and mobile -->
       <div class="d-md-none px-1">
         <% @products.each do |product| %>
-          <div class="card mb-4 border-0 shadow-lg" style="border-bottom: 3px solid #28a745 !important;">
+          <div class="card green-accent-panel mb-4 border-0 shadow-lg" style="border-bottom: 3px solid #28a745 !important;">
             <div class="card-body p-2">
               <!-- Product description - first row -->
               <div class="mb-1">

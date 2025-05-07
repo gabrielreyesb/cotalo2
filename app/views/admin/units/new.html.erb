@@ -1,14 +1,22 @@
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Nueva Unidad</h1>
-    <%= link_to admin_units_path, class: 'btn btn-secondary' do %>
-      <i class="fas fa-arrow-left me-1"></i> Volver
-    <% end %>
-  </div>
+<% content_for :page_title do %>
+  Nueva unidad
+<% end %>
 
-  <div class="card bg-dark text-white">
-    <div class="card-body">
-      <%= render 'form', unit: @unit %>
+<% content_for :page_actions do %>
+  <%= link_to admin_units_path, class: "btn btn-outline-light me-2" do %>
+    Cancelar
+  <% end %>
+  <%= button_tag class: "btn btn-outline-light", form: "unit-form" do %>
+    Guardar
+  <% end %>
+<% end %>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card green-accent-panel">
+      <div class="card-body">
+        <%= render 'form', unit: @unit %>
+      </div>
     </div>
-  </div>
+  </div>  
 </div> 

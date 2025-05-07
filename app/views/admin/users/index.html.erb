@@ -29,10 +29,16 @@
                 <td>
                   <div class="btn-group">
                     <% unless user == current_user %>
-                      <%= button_to admin_impersonations_path(user_id: user.id), 
+                      <%= link_to admin_impersonations_path(user_id: user.id), 
                                   method: :post, 
                                   class: "btn btn-sm btn-success me-2" do %>
                         <i class="fas fa-user-secret"></i> Impersonate
+                      <% end %>
+                      <%= link_to admin_user_path(user), 
+                          method: :delete, 
+                          data: { confirm: "Are you sure you want to delete this user?" },
+                          class: "btn btn-sm btn-danger me-2" do %>
+                        <i class="fas fa-trash"></i> Delete
                       <% end %>
                     <% end %>
                     <%= link_to edit_admin_user_path(user), class: "btn btn-sm btn-secondary" do %>
