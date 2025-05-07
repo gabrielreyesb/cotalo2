@@ -3,79 +3,83 @@
     <div class="row">
       <div class="col-lg-7">
         <form @submit.prevent="saveQuote">
-          <div class="card mb-4">
-            <div class="card-header">
-              <h5 class="mb-0">Información de la cotización</h5>
-            </div>
-            <div class="card-body">
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <label for="project_name" class="form-label">Nombre del proyecto</label>
-                    <input type="text" class="form-control" id="project_name" v-model="form.project_name" required>
+          <div class="green-accent-panel">
+            <div class="card mb-4">
+              <div class="card-header">
+                <h5 class="mb-0">Información de la cotización</h5>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="project_name" class="form-label">Nombre del proyecto</label>
+                      <input type="text" class="form-control" id="project_name" v-model="form.project_name" required>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="card mb-4">
-            <div class="card-header">
-              <h5 class="mb-0">Información del cliente</h5>
-            </div>
-            <div class="card-body">
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <label for="customer_name" class="form-label">Nombre del cliente</label>
-                    <div class="input-group">
-                      <input type="text" class="form-control" id="customer_name" v-model="form.customer_name" required>
-                      <button type="button" class="btn btn-outline-secondary" @click="searchCustomersInline">
-                        <i class="fas fa-search"></i>
-                      </button>
+          <div class="green-accent-panel">
+            <div class="card mb-4">
+              <div class="card-header">
+                <h5 class="mb-0">Información del cliente</h5>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="customer_name" class="form-label">Nombre del cliente</label>
+                      <div class="input-group">
+                        <input type="text" class="form-control" id="customer_name" v-model="form.customer_name" required>
+                        <button type="button" class="btn btn-outline-secondary" @click="searchCustomersInline">
+                          <i class="fas fa-search"></i>
+                        </button>
+                      </div>
+                      <small v-if="customerSearch.error" class="text-danger">{{ customerSearch.error }}</small>
+                      <small v-if="customerSearch.loading" class="text-info">Buscando clientes...</small>
                     </div>
-                    <small v-if="customerSearch.error" class="text-danger">{{ customerSearch.error }}</small>
-                    <small v-if="customerSearch.loading" class="text-info">Buscando clientes...</small>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="organization" class="form-label">Organización</label>
+                      <select v-if="customerSearch.results.length > 0" 
+                              class="form-select" 
+                              id="organization" 
+                              v-model="selectedCustomerId"
+                              @change="handleCustomerSelection">
+                        <option value="">Seleccionar organización...</option>
+                        <option v-for="customer in customerSearch.results" 
+                                :key="customer.id" 
+                                :value="customer.id">
+                          {{ customer.org_name || 'Sin organización' }} ({{ customer.name }})
+                        </option>
+                      </select>
+                      <input v-else type="text" class="form-control" id="organization" v-model="form.organization" required>
+                    </div>
                   </div>
                 </div>
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <label for="organization" class="form-label">Organización</label>
-                    <select v-if="customerSearch.results.length > 0" 
-                            class="form-select" 
-                            id="organization" 
-                            v-model="selectedCustomerId"
-                            @change="handleCustomerSelection">
-                      <option value="">Seleccionar organización...</option>
-                      <option v-for="customer in customerSearch.results" 
-                              :key="customer.id" 
-                              :value="customer.id">
-                        {{ customer.org_name || 'Sin organización' }} ({{ customer.name }})
-                      </option>
-                    </select>
-                    <input v-else type="text" class="form-control" id="organization" v-model="form.organization" required>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="email" class="form-label">Correo electrónico</label>
+                      <input type="email" class="form-control" id="email" v-model="form.email">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="telephone" class="form-label">Teléfono</label>
+                      <input type="text" class="form-control" id="telephone" v-model="form.telephone">
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <label for="email" class="form-label">Correo electrónico</label>
-                    <input type="email" class="form-control" id="email" v-model="form.email">
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <label for="telephone" class="form-label">Teléfono</label>
-                    <input type="text" class="form-control" id="telephone" v-model="form.telephone">
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-12">
-                  <div class="mb-3">
-                    <label for="comments" class="form-label">Comentarios</label>
-                    <textarea rows="3" class="form-control" id="comments" v-model="form.comments"></textarea>
+                <div class="row">
+                  <div class="col-12">
+                    <div class="mb-3">
+                      <label for="comments" class="form-label">Comentarios</label>
+                      <textarea rows="3" class="form-control" id="comments" v-model="form.comments"></textarea>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -85,85 +89,88 @@
       </div>
 
       <div class="col-lg-5">
-        <!-- Inline Product Selector - Now at the top -->
-        <div class="card mb-4">
-          <div class="card-header">
-            <h5 class="mb-0">Agregar producto</h5>
-          </div>
-          <div class="card-body">
-            <div class="mb-3">
-              <label for="product-search" class="form-label">Buscar producto</label>
-              <input 
-                type="text" 
-                id="product-search" 
-                class="form-control" 
-                v-model="productSearch" 
-                placeholder="Buscar por descripción..."
-              />
+        <div class="green-accent-panel">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Agregar producto</h5>
             </div>
-            
-            <div class="mb-3">
-              <label for="product-select" class="form-label">Seleccionar producto</label>
-              <select 
-                id="product-select" 
-                class="form-select" 
-                v-model="selectedProductId"
-              >
-                <option value="">-- Seleccionar producto --</option>
-                <option 
-                  v-for="product in filteredProducts" 
-                  :key="product.id" 
-                  :value="product.id"
+            <div class="card-body">
+              <div class="mb-3">
+                <label for="product-search" class="form-label">Buscar producto</label>
+                <input 
+                  type="text" 
+                  id="product-search" 
+                  class="form-control" 
+                  v-model="productSearch" 
+                  placeholder="Buscar por descripción..."
+                />
+              </div>
+              
+              <div class="mb-3">
+                <label for="product-select" class="form-label">Seleccionar producto</label>
+                <select 
+                  id="product-select" 
+                  class="form-select" 
+                  v-model="selectedProductId"
                 >
-                  {{ product.description }} - {{ formatCurrency(product.data && product.data.pricing && product.data.pricing.total_price || 0) }}
-                </option>
-              </select>
-            </div>
-            
-            <div class="d-grid">
-              <button 
-                type="button" 
-                class="btn btn-primary" 
-                @click="addSelectedProduct()" 
-                :disabled="!selectedProductId"
-              >
-                <i class="fas fa-plus"></i> Agregar a la cotización
-              </button>
+                  <option value="">-- Seleccionar producto --</option>
+                  <option 
+                    v-for="product in filteredProducts" 
+                    :key="product.id" 
+                    :value="product.id"
+                  >
+                    {{ product.description }} - {{ formatCurrency(product.data && product.data.pricing && product.data.pricing.total_price || 0) }}
+                  </option>
+                </select>
+              </div>
+              
+              <div class="d-grid">
+                <button 
+                  type="button" 
+                  class="btn btn-primary" 
+                  @click="addSelectedProduct()" 
+                  :disabled="!selectedProductId"
+                >
+                  <i class="fas fa-plus"></i> Agregar a la cotización
+                </button>
+              </div>
             </div>
           </div>
         </div>
         
+        <div class="green-accent-panel">
         <!-- Selected Products Card - Now in the middle -->
-        <div class="card mb-4">
-          <div class="card-header">
-            <h5 class="mb-0">Productos seleccionados</h5>
-          </div>
-          <div class="card-body">
-            <div v-if="selectedProducts.length === 0" class="alert alert-info">
-              No hay productos seleccionados. Selecciona un producto arriba para agregarlo a la cotización.
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Productos seleccionados</h5>
             </div>
-            <div v-else>
-              <div class="table-responsive">
-                <table class="table table-sm">
-                  <thead>
-                    <tr>
-                      <th style="width: 70%">Producto</th>
-                      <th>Precio</th>
-                      <th style="width: 40px"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="(product, index) in selectedProducts" :key="product.id">
-                      <td class="text-wrap">{{ product.name }}</td>
-                      <td>{{ formatCurrency(product.price) }}</td>
-                      <td>
-                        <button type="button" class="btn btn-sm btn-danger" @click="removeProduct(index)">
-                          <i class="fas fa-trash"></i>
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+            <div class="card-body">
+              <div v-if="selectedProducts.length === 0" class="alert alert-info">
+                No hay productos seleccionados. Selecciona un producto arriba para agregarlo a la cotización.
+              </div>
+              <div v-else>
+                <div class="table-responsive">
+                  <table class="table table-sm">
+                    <thead>
+                      <tr>
+                        <th style="width: 70%">Producto</th>
+                        <th>Precio</th>
+                        <th style="width: 40px"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(product, index) in selectedProducts" :key="product.id">
+                        <td class="text-wrap">{{ product.name }}</td>
+                        <td>{{ formatCurrency(product.price) }}</td>
+                        <td>
+                          <button type="button" class="btn btn-sm btn-danger" @click="removeProduct(index)">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
@@ -694,5 +701,14 @@ export default {
 /* Table hover styles */
 .table-hover tbody tr:hover {
   background-color: rgba(66, 185, 131, 0.1) !important;
+}
+
+.quote-form {
+  padding: 2rem;
+}
+.quote-form .card {
+  border-left: none !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 </style> 

@@ -15,7 +15,6 @@
     </div>
     
     <div v-else class="product-form-container">
-      <!-- Add event listeners for the top navigation bar buttons -->
       <div class="d-none">
         <button id="save-product-button" @click="savePricingProduct"></button>
         <button id="cancel-product-button" @click="handleCancel"></button>
@@ -125,7 +124,7 @@
         </div>
 
         <!-- Right Column - Pricing Panel -->
-        <div class="col-12 col-lg-3 mt-3 mt-lg-0">
+        <div class="col-12 col-lg-3 mt-3 mt-lg-0 ps-lg-4">
           <div class="green-accent-panel pricing-panel">
             <div class="card">
               <div class="card-header bg-dark text-white">

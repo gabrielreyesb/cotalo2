@@ -17,29 +17,8 @@ main.main-content:has(.product-form-container) {
   }
 }
 
-// --- End :has() Scoped Layout ---
-
-// Styles specifically for the product form and its components
-
 .product-form-container {
-  // --- REMOVE Height/Overflow Styling --- 
-  // height: calc(100vh - 200px); 
-  // overflow-y: auto; 
-  // overflow-x: hidden; 
-  // padding-bottom: 1rem; 
-  // --- End REMOVE Height/Overflow Styling ---
-
-  // This establishes the primary scope
-
-  // Tab Component Styling - Target the common inner panel
-  .green-accent-panel {
-    margin-bottom: 1.5rem; // Keep spacing below the panel
-  }
   
-  // Add specific tab adjustments if needed later, e.g.:
-  // .general-tab .green-accent-panel { ... }
-  // .materials-tab .green-accent-panel { ... }
-
   // Form Control Styling (Scoped)
   .form-control,
   .form-select {
