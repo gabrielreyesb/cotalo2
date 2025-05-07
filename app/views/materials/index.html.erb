@@ -8,10 +8,6 @@
   <% end %>
 <% end %>
 
-<!-- TEST CHANGE: <%= Time.now %> -->
-
-<!-- Container with fixed height and scrolling -->
-<div class="scrollable-view-container">
   <div class="row">
     <div class="col-12">
       <% if @materials.any? %>
@@ -21,7 +17,7 @@
             <table class="table table-striped table-hover">
               <thead>
                 <tr>
-                  <th>Descripción</th>
+                  <th>Nombre</th>
                   <th>Descripción para cliente</th>
                   <th>Precio</th>
                   <th>Unidad</th>
@@ -32,7 +28,7 @@
               <tbody>
                 <% @materials.each do |material| %>
                   <tr>
-                    <td><%= material.description %></td>
+                    <td><%= link_to material.description, material_path(material) %></td>
                     <td><%= material.client_description %></td>
                     <td><%= number_to_currency(material.price) %></td>
                     <td><%= material.unit.abbreviation %></td>
@@ -129,7 +125,6 @@
       <% end %>
     </div>
   </div>
-</div>
 
 <!-- Include Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">

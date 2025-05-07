@@ -8,70 +8,6 @@
   <% end %>
 <% end %>
 
-<style>
-  .description-column {
-    max-width: 300px;
-    width: 30%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  /* Product description link */
-  .product-link {
-    color: var(--cotalo-green) !important;
-    text-decoration: none;
-    display: block;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
-  .product-link:hover {
-    text-decoration: underline;
-  }
-  
-  /* Ensure buttons remain on a single row */
-  .action-buttons {
-    white-space: nowrap;
-    min-width: 120px;
-  }
-  
-  /* Fix table layout to prevent wrapping */
-  .table {
-    table-layout: fixed;
-  }
-  
-  .table th, .table td {
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  /* Light gray text that is visible in dark mode */
-  .text-light-gray {
-    color: #adb5bd !important;
-  }
-  
-  /* Ensure action buttons stay on one line in mobile view */
-  .action-buttons {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 2px;
-    justify-content: center;
-  }
-  
-  .action-buttons .btn {
-    padding: 0.25rem 0.5rem;
-    min-width: 32px;
-  }
-  
-  /* Prevent text wrapping in table headers */
-  .nowrap {
-    white-space: nowrap;
-  }
-</style>
-
 <div class="row">
   <div class="col-12">
     <% if @products.any? %>
@@ -210,3 +146,67 @@
     <% end %>
   </div>
 </div>
+
+<style>
+  .description-column {
+    max-width: 300px;
+    width: 30%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Product description link */
+  .product-link {
+    color: var(--cotalo-green) !important;
+    text-decoration: none;
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .product-link:hover {
+    text-decoration: underline;
+  }
+  
+  /* Ensure buttons remain on a single row */
+  .action-buttons {
+    white-space: nowrap;
+    min-width: 120px;
+  }
+  
+  /* Fix table layout to prevent wrapping */
+  .table {
+    table-layout: fixed;
+  }
+  
+  .table th, .table td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Light gray text that is visible in dark mode */
+  .text-light-gray {
+    color: #adb5bd !important;
+  }
+  
+  /* Ensure action buttons stay on one line in mobile view */
+  .action-buttons {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 2px;
+    justify-content: center;
+  }
+  
+  .action-buttons .btn {
+    padding: 0.25rem 0.5rem;
+    min-width: 32px;
+  }
+  
+  /* Prevent text wrapping in table headers */
+  .nowrap {
+    white-space: nowrap;
+  }
+</style>

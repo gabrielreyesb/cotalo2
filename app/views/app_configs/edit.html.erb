@@ -8,70 +8,67 @@
     <%= form.submit "Guardar", class: "btn btn-outline-light" %>
   <% end %>
 
-  <!-- Scrollable container for settings -->
-  <div class="app-settings-container">
-    <div class="row">
-      <div class="col-12 mb-4">
-        <div class="settings-tab">
-          <div class="green-accent-panel">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="mb-0">Configuraciones generales</h5>
-              </div>
-              <div class="card-body">
-                <div class="row">
-                  <div class="col-md-4">
-                    <%= form.label :waste_percentage, "Porcentaje de desperdicio", class: "form-label" %>
-                    <div class="input-group">
-                      <%= form.number_field :waste_percentage, value: @general_settings[:waste_percentage], class: "form-control bg-dark text-light border-secondary", min: 0, max: 100, step: 1 %>
-                      <span class="input-group-text bg-dark text-light border-secondary">%</span>
-                    </div>
-                  </div>
-                  
-                  <div class="col-md-4">
-                    <%= form.label :width_margin, "Margen de ancho", class: "form-label" %>
-                    <div class="input-group">
-                      <%= form.number_field :width_margin, value: @general_settings[:width_margin], step: '0.01', class: "form-control bg-dark text-light border-secondary" %>
-                    </div>
-                  </div>
-                  
-                  <div class="col-md-4">
-                    <%= form.label :length_margin, "Margen de largo", class: "form-label" %>
-                    <div class="input-group">
-                      <%= form.number_field :length_margin, value: @general_settings[:length_margin], step: '0.01', class: "form-control bg-dark text-light border-secondary" %>
-                    </div>
-                  </div>
-                </div>
-
-                <hr class="border-secondary my-4">
-
-                <div class="mb-3">
-                  <label class="form-label">Logo de la empresa</label>
-                  <div class="text-center mb-3">
-                    <div id="logo-preview-container" class="border border-secondary rounded p-3 mb-3" style="min-height: 150px; display: flex; align-items: center; justify-content: center; flex-direction: column;">
-                      <div id="logo-display-area" style="min-height: 120px; display: flex; align-items: center; justify-content: center;">
-                        <% if @general_settings[:company_logo].present? %>
-                          <%= image_tag @general_settings[:company_logo], class: "img-fluid", style: "max-height: 120px;", id: "current-logo" %>
-                        <% else %>
-                          <div class="text-muted" id="logo-placeholder">
-                            <i class="fas fa-image fa-3x mb-2"></i>
-                            <p class="mb-0">No hay logo seleccionado</p>
-                          </div>
-                        <% end %>
-                        <img id="logo-preview" class="img-fluid" style="max-height: 120px; display: none;">
-                      </div>
-                    </div>
-                  </div>
+  <div class="row">
+    <div class="col-12 mb-4">
+      <div class="settings-tab">
+        <div class="green-accent-panel">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">Configuraciones generales</h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-4">
+                  <%= form.label :waste_percentage, "Porcentaje de desperdicio", class: "form-label" %>
                   <div class="input-group">
-                    <input type="file" class="form-control" id="logo-input" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
-                    <button class="btn btn-dark border-secondary" type="button" id="upload-logo-btn" disabled>
-                      <i class="fa fa-upload"></i> Subir
-                    </button>
+                    <%= form.number_field :waste_percentage, value: @general_settings[:waste_percentage], class: "form-control bg-dark text-light border-secondary", min: 0, max: 100, step: 1 %>
+                    <span class="input-group-text bg-dark text-light border-secondary">%</span>
                   </div>
-                  <small class="form-text text-muted">
-                    Formatos aceptados: JPG, PNG o GIF. Tamaño máximo: 2MB
-                  </small>
                 </div>
+                
+                <div class="col-md-4">
+                  <%= form.label :width_margin, "Margen de ancho", class: "form-label" %>
+                  <div class="input-group">
+                    <%= form.number_field :width_margin, value: @general_settings[:width_margin], step: '0.01', class: "form-control bg-dark text-light border-secondary" %>
+                  </div>
+                </div>
+                
+                <div class="col-md-4">
+                  <%= form.label :length_margin, "Margen de largo", class: "form-label" %>
+                  <div class="input-group">
+                    <%= form.number_field :length_margin, value: @general_settings[:length_margin], step: '0.01', class: "form-control bg-dark text-light border-secondary" %>
+                  </div>
+                </div>
+              </div>
+
+              <hr class="border-secondary my-4">
+
+              <div class="mb-3">
+                <label class="form-label">Logo de la empresa</label>
+                <div class="text-center mb-3">
+                  <div id="logo-preview-container" class="border border-secondary rounded p-3 mb-3" style="min-height: 150px; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                    <div id="logo-display-area" style="min-height: 120px; display: flex; align-items: center; justify-content: center;">
+                      <% if @general_settings[:company_logo].present? %>
+                        <%= image_tag @general_settings[:company_logo], class: "img-fluid", style: "max-height: 120px;", id: "current-logo" %>
+                      <% else %>
+                        <div class="text-muted" id="logo-placeholder">
+                          <i class="fas fa-image fa-3x mb-2"></i>
+                          <p class="mb-0">No hay logo seleccionado</p>
+                        </div>
+                      <% end %>
+                      <img id="logo-preview" class="img-fluid" style="max-height: 120px; display: none;">
+                    </div>
+                  </div>
+                </div>
+                <div class="input-group">
+                  <input type="file" class="form-control" id="logo-input" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
+                  <button class="btn btn-dark border-secondary" type="button" id="upload-logo-btn" disabled>
+                    <i class="fa fa-upload"></i> Subir
+                  </button>
+                </div>
+                <small class="form-text text-muted">
+                  Formatos aceptados: JPG, PNG o GIF. Tamaño máximo: 2MB
+                </small>
               </div>
             </div>
           </div>
