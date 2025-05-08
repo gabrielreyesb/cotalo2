@@ -1,10 +1,10 @@
+<%# Only show subnavbar when user is logged in and not on home page %>
+<% if user_signed_in? && !(controller_name == 'home' && action_name == 'index') %>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark subnavbar">
   <div class="container-fluid py-0">
     <h1 class="navbar-brand mb-0">
       <% if content_for?(:page_title) %>
         <%= yield :page_title %>
-      <% elsif controller_name == 'home' && action_name == 'index' %>
-        Página principal
       <% else %>
         <%= controller_name.humanize.titleize %>
       <% end %>
@@ -13,4 +13,5 @@
       <%= yield :page_actions %>
     </div>
   </div>
-</nav> 
+</nav>
+<% end %> 

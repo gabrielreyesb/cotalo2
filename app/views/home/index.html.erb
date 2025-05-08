@@ -1,158 +1,244 @@
-<%# Main container with fixed height and scrolling handled by _scrollable_view.scss %>
-<div class="scrollable-view-container">
-  <div class="row">
-    <div class="col-md-12 col-lg-10 offset-lg-1 text-center my-5">
-      <h2 class="mb-4">Bienvenido a Cotalo</h2>
-      <p class="lead mb-5 px-4 px-md-5 mx-2">
-        Gestiona tus materiales, crea productos y genera cotizaciones con facilidad.
-        Cotalo te ayuda a organizar tu catálogo y a simplificar tu proceso de precios.
-      </p>
-      
-      <% if user_signed_in? %>
-        <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
-          <%= link_to products_path, class: "btn btn-success w-100 w-md-auto", style: "min-width: 150px; max-width: 200px;" do %>
-            <i class="fas fa-box me-2"></i> Ver productos
+<%# Hero Section %>
+<div class="hero-section py-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <h1 class="display-4 fw-bold mb-4">Calcula el costo de fabricación de cajas personalizadas en minutos</h1>
+        <p class="lead mb-4">
+          Cotalo te permite diseñar y cotizar cajas personalizadas de manera rápida y precisa. 
+          Optimiza tus costos de producción con nuestra herramienta intuitiva.
+        </p>
+        <div class="d-flex gap-3">
+          <% if user_signed_in? %>
+            <%= link_to dashboard_path, class: "btn btn-success btn-lg" do %>
+              <i class="fas fa-tachometer-alt me-2"></i>Ir al Tablero
+            <% end %>
+          <% else %>
+            <%= link_to new_user_registration_path, class: "btn btn-success btn-lg" do %>
+              <i class="fas fa-rocket me-2"></i>Regístrate gratis
+            <% end %>
+            <%= link_to new_user_session_path, class: "btn btn-outline-success btn-lg" do %>
+              <i class="fas fa-sign-in-alt me-2"></i>Iniciar sesión
+            <% end %>
           <% end %>
-          <%= link_to quotes_path, class: "btn btn-success w-100 w-md-auto", style: "min-width: 150px; max-width: 200px;" do %>
-            <i class="fas fa-file-invoice-dollar me-2"></i> Cotizaciones
-          <% end %>
-          <%= link_to news_index_path, class: "btn btn-success w-100 w-md-auto", style: "min-width: 150px; max-width: 200px;" do %>
-            <i class="fas fa-newspaper me-2"></i> Novedades
-          <% end %>
-        </div>
-      <% else %>
-        <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
-          <%= link_to new_user_session_path, class: "btn btn-success w-100 w-md-auto", style: "min-width: 150px; max-width: 200px;" do %>
-            <i class="fas fa-sign-in-alt me-2"></i> Iniciar sesión
-          <% end %>
-          <%= link_to new_user_registration_path, class: "btn btn-outline-success w-100 w-md-auto", style: "min-width: 150px; max-width: 200px;" do %>
-            <i class="fas fa-user-plus me-2"></i> Registrarse
-          <% end %>
-        </div>
-      <% end %>
-    </div>
-  </div>
-
-  <div class="row mt-5">
-    <div class="col-md-4 mb-4">
-      <div class="card h-100">
-        <div class="card-body text-center p-4">
-          <i class="fa fa-cubes fa-2x mb-3" style="color: var(--cotalo-green);"></i>
-          <h5 class="card-title mb-3">Gestionar materiales</h5>
-          <p class="card-text px-2">
-            Mantén un seguimiento de todos tus materiales con información detallada.
-          </p>
         </div>
       </div>
-    </div>
-    
-    <div class="col-md-4 mb-4">
-      <div class="card h-100">
-        <div class="card-body text-center p-4">
-          <i class="fa fa-box fa-2x mb-3" style="color: var(--cotalo-green);"></i>
-          <h5 class="card-title mb-3">Crear productos</h5>
-          <p class="card-text px-2">
-            Define productos usando tu catálogo y calcula costos automáticamente.
-          </p>
-        </div>
-      </div>
-    </div>
-    
-    <div class="col-md-4 mb-4">
-      <div class="card h-100">
-        <div class="card-body text-center p-4">
-          <i class="fa fa-file-invoice-dollar fa-2x mb-3" style="color: var(--cotalo-green);"></i>
-          <h5 class="card-title mb-3">Generar cotizaciones</h5>
-          <p class="card-text px-2">
-            Crea cotizaciones profesionales para tus clientes.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row mt-4">
-    <div class="col-12 text-center mb-3">
-      <button class="btn btn-outline-success" type="button" data-bs-toggle="collapse" data-bs-target="#suggestionForm" aria-expanded="false" aria-controls="suggestionForm">
-        <i class="fas fa-lightbulb me-2"></i>Enviar sugerencia
-      </button>
-    </div>
-  </div>
-
-  <div class="collapse" id="suggestionForm">
-    <div class="row justify-content-center">
-      <div class="col-md-10 col-lg-8">
-        <div class="card bg-dark border-success mb-4">
-          <div class="card-header bg-dark border-bottom border-secondary">
-            <h5 class="mb-0">Enviar sugerencia</h5>
-          </div>
-          <%= form_tag suggestions_path, method: :post, class: "needs-validation", novalidate: true do %>
-            <div class="card-body">
-              <div class="mb-3">
-                <label for="suggestion" class="form-label">Tu sugerencia</label>
-                <textarea class="form-control bg-dark text-light border-secondary" 
-                          id="suggestion" 
-                          name="suggestion" 
-                          rows="4" 
-                          required
-                          placeholder="Escribe aquí tu sugerencia para mejorar Cotalo..."></textarea>
-                <div class="invalid-feedback">
-                  Por favor, escribe tu sugerencia.
-                </div>
-              </div>
-            </div>
-            <div class="card-footer bg-dark border-top border-secondary text-end">
-              <button type="button" class="btn btn-secondary me-2" id="cancelSuggestion">
-                Cancelar
-              </button>
-              <button type="submit" class="btn btn-success">
-                <i class="fas fa-paper-plane me-2"></i>Enviar
-              </button>
-            </div>
-          <% end %>
+      <div class="col-lg-6 d-none d-lg-block">
+        <div class="text-center">
+          <i class="fas fa-box-open fa-10x" style="color: var(--cotalo-green);"></i>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Form validation
-    const forms = document.querySelectorAll('.needs-validation');
-    const suggestionForm = document.getElementById('suggestionForm');
-    const collapse = new bootstrap.Collapse(suggestionForm, { toggle: false });
-    
-    Array.from(forms).forEach(form => {
-      form.addEventListener('submit', event => {
-        if (!form.checkValidity()) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-        
-        form.classList.add('was-validated');
-      }, false);
-    });
+<%# Features Section %>
+<div class="features-section py-5 bg-dark">
+  <div class="container">
+    <h2 class="text-center mb-5">Características principales</h2>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card h-100 border-0 bg-darker">
+          <div class="card-body text-center p-4">
+            <i class="fas fa-pencil-ruler fa-3x mb-3" style="color: var(--cotalo-green);"></i>
+            <h5 class="card-title mb-3">Diseño altamente personalizable</h5>
+            <p class="card-text">
+              Crea cajas con dimensiones, materiales y acabados personalizados según tus necesidades específicas.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 border-0 bg-darker">
+          <div class="card-body text-center p-4">
+            <i class="fas fa-calculator fa-3x mb-3" style="color: var(--cotalo-green);"></i>
+            <h5 class="card-title mb-3">Estimación instantánea</h5>
+            <p class="card-text">
+              Obtén el costo de fabricación en tiempo real mientras ajustas los parámetros de tu diseño.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 border-0 bg-darker">
+          <div class="card-body text-center p-4">
+            <i class="fas fa-file-invoice-dollar fa-3x mb-3" style="color: var(--cotalo-green);"></i>
+            <h5 class="card-title mb-3">Cotizaciones profesionales</h5>
+            <p class="card-text">
+              Genera cotizaciones detalladas y profesionales para tus clientes en segundos.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    // Auto-focus the textarea when the form is shown
-    suggestionForm.addEventListener('shown.bs.collapse', function () {
-      document.getElementById('suggestion').focus();
-    });
+<%# Benefits Section %>
+<div class="benefits-section py-5">
+  <div class="container">
+    <h2 class="text-center mb-5">¿Por qué elegir Cotalo?</h2>
+    <div class="row g-4">
+      <div class="col-md-3">
+        <div class="text-center">
+          <i class="fas fa-clock fa-3x mb-3" style="color: var(--cotalo-green);"></i>
+          <h5>Ahorra tiempo</h5>
+          <p>Reduce el tiempo de cotización de días a minutos</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="text-center">
+          <i class="fas fa-check-circle fa-3x mb-3" style="color: var(--cotalo-green);"></i>
+          <h5>Reduce errores</h5>
+          <p>Cálculos precisos y consistentes en cada cotización</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="text-center">
+          <i class="fas fa-chart-line fa-3x mb-3" style="color: var(--cotalo-green);"></i>
+          <h5>Optimiza costos</h5>
+          <p>Encuentra la mejor combinación de materiales y procesos</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="text-center">
+          <i class="fas fa-user-friends fa-3x mb-3" style="color: var(--cotalo-green);"></i>
+          <h5>Fácil de usar</h5>
+          <p>Interfaz intuitiva que no requiere capacitación especial</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    // Handle cancel button click
-    document.getElementById('cancelSuggestion').addEventListener('click', function() {
-      const form = suggestionForm.querySelector('form');
-      form.reset();
-      form.classList.remove('was-validated');
-      bootstrap.Collapse.getInstance(suggestionForm).hide();
-    });
+<%# How It Works Section %>
+<div class="how-it-works-section py-5 bg-dark">
+  <div class="container">
+    <h2 class="text-center mb-5">¿Cómo Funciona?</h2>
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-number">1</div>
+            <div class="timeline-content">
+              <h5>Define tus materiales, procesos y extras</h5>
+              <p>Configura tu catálogos de materiales, procesos y extras con sus costos y especificaciones</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-number">2</div>
+            <div class="timeline-content">
+              <h5>Diseña tu caja</h5>
+              <p>Especifica dimensiones, materiales, procesos y extras deseados</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-number">3</div>
+            <div class="timeline-content">
+              <h5>Obtén el costo</h5>
+              <p>Observa el cálculo instantáneo del costo de fabricación</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-number">4</div>
+            <div class="timeline-content">
+              <h5>Genera la cotización</h5>
+              <p>Crea una cotización profesional para tu cliente en un instante</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    // Handle successful form submission
-    suggestionForm.querySelector('form').addEventListener('submit', function() {
-      // The form will be collapsed after successful submission when the page reloads
-      // Reset the form state
-      this.reset();
-      this.classList.remove('was-validated');
-    });
-  });
-</script>
+<%# CTA Section %>
+<div class="cta-section py-5">
+  <div class="container text-center">
+    <h2 class="mb-4">¿Listo para optimizar tus cotizaciones?</h2>
+    <p class="lead mb-4">Comienza a usar Cotalo hoy mismo. Es completamente gratis.</p>
+    <% if user_signed_in? %>
+      <%= link_to dashboard_path, class: "btn btn-success btn-lg" do %>
+        <i class="fas fa-tachometer-alt me-2"></i>Ir al Tablero
+      <% end %>
+    <% else %>
+      <%= link_to new_user_registration_path, class: "btn btn-success btn-lg" do %>
+        <i class="fas fa-rocket me-2"></i>Regístrate gratis
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<%# Add custom styles %>
+<style>
+.hero-section {
+  background-color: var(--dark-bg);
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  padding-top: 2rem;
+}
+
+@media (max-width: 991px) {
+  .hero-section {
+    min-height: 40vh;
+    padding-top: 1rem;
+  }
+}
+
+.features-section, .benefits-section, .how-it-works-section, .cta-section {
+  background-color: var(--dark-bg);
+}
+
+.bg-darker {
+  background-color: var(--darker-bg);
+}
+
+.timeline {
+  position: relative;
+  padding: 2rem 0;
+}
+
+.timeline-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.timeline-number {
+  width: 40px;
+  height: 40px;
+  background-color: var(--cotalo-green);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.timeline-content {
+  flex-grow: 1;
+}
+
+.timeline-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 20px;
+  top: 50px;
+  bottom: -2rem;
+  width: 2px;
+  background-color: var(--cotalo-green);
+}
+
+.card {
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+</style>
