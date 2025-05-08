@@ -1174,7 +1174,7 @@ export default {
         }
         
         const data = await response.json();
-        return data.margin_percentage || 0;
+        return parseFloat(data.margin_percentage) || 0;
         
       } catch (error) {
         console.warn('Margin calculation API not available, using default margin:', error);

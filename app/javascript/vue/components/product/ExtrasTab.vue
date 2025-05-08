@@ -47,15 +47,17 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <div v-if="!productExtras.length" class="text-center my-5">
-        <p class="text-muted">No hay extras agregados. Selecciona un extra y agrégalo al producto.</p>
-      </div>
+    <div v-if="!productExtras.length" class="text-center my-5">
+      <p class="text-muted">No hay extras agregados. Selecciona un extra y agrégalo al producto.</p>
+    </div>
 
-      <!-- Table view for medium and large screens -->
-      <div class="card mt-4" v-if="productExtras.length">
+    <!-- Table view for medium and large screens -->
+    <div class="green-accent-panel mt-4" v-if="productExtras.length">
+      <div class="card">
         <div class="card-body p-0">
-          <div class="form-check px-4 py-3 border-bottom border-secondary">
+          <div class="form-check px-4 py-3 border-bottom border-secondary extras-checkbox-padding">
             <input 
               class="form-check-input" 
               type="checkbox" 
@@ -211,9 +213,11 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Global comments for all extras -->
-      <div class="card mt-3 mb-4">
+    <!-- Global comments for all extras -->
+    <div class="green-accent-panel mt-3 mb-4">
+      <div class="card">
         <div class="card-body">
           <div class="form-group">
             <label for="global-comments" class="form-label">Comentarios sobre los extras</label>
@@ -228,7 +232,6 @@
           </div>
         </div>
       </div>
-      
     </div>
   </div>
 </template>
@@ -371,3 +374,16 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.extras-checkbox-padding {
+  padding-top: 1.25rem !important;
+  padding-bottom: 1.25rem !important;
+  padding-left: 1.5rem !important;
+  padding-right: 1.5rem !important;
+}
+.extras-checkbox-padding .form-check-input {
+  margin-left: 0.5rem;
+  margin-right: 1rem;
+}
+</style>

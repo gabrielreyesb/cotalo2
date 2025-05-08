@@ -102,6 +102,7 @@
   position: static;
   border-left: none !important;
   border-bottom: none !important;
+  border-right: none !important;
 }
 
 // Common styles for all tab components
@@ -123,6 +124,8 @@
 // Single source of truth for .green-accent-panel styles. Used app-wide.
 .green-accent-panel {
   border-left: 4px solid #42b983;
+  border-right: none !important;
+  border-bottom: none !important;
   border-radius: 6px;
   padding-left: 0;
   margin-left: 0;
@@ -132,6 +135,7 @@
   > .card,
   > .table {
     border-left: none;
+    border-right: none;
     padding-left: 0;
     margin-left: 0;
     margin-bottom: 0;

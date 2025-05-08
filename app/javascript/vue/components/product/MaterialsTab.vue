@@ -56,29 +56,31 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- No Materials Message -->
-      <div v-if="!productMaterials.length" class="text-center my-5">
-        <p class="text-muted">No hay materiales agregados. Selecciona un material y agrégalo al producto.</p>
-      </div>
+    <!-- No Materials Message -->
+    <div v-if="!productMaterials.length" class="text-center my-5">
+      <p class="text-muted">No hay materiales agregados. Selecciona un material y agrégalo al producto.</p>
+    </div>
 
-      <!-- Materials Table/Cards -->
-      <div class="card mt-4" v-if="productMaterials.length">
+    <!-- Materials Table/Cards -->
+    <div class="green-accent-panel mt-4">
+      <div class="card" v-if="productMaterials.length">
         <div class="card-body p-0">
           <!-- Desktop Table -->
           <div class="d-none d-md-block">
             <table class="table table-dark table-striped product-table mb-0">
               <thead>
                 <tr>
-                  <th style="width: 40%">Descripción</th>
-                  <th style="width: 12%">Ancho (cm)</th>
-                  <th style="width: 12%">Largo (cm)</th>
+                  <th style="width: 32%">Descripción</th>
+                  <th style="width: 12%">Ancho</th>
+                  <th style="width: 12%">Largo</th>
                   <th style="width: 12%">Precio</th>
-                  <th style="width: 12%">Piezas por material</th>
-                  <th style="width: 12%">Total pliegos</th>
+                  <th style="width: 12%">Piezas x material</th>
+                  <th style="width: 12%">Pliegos</th>
                   <th style="width: 12%">Total m²</th>
                   <th style="width: 12%">Precio total</th>
-                  <th style="width: 8%">Acciones</th>
+                  <th style="width: 16%">Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -134,15 +136,22 @@
                   <td class="text-center">{{ material.totalSheets }}</td>
                   <td class="text-center">{{ material.totalSquareMeters.toFixed(2) }}</td>
                   <td class="text-end">{{ formatCurrency(material.totalPrice) }}</td>
-                  <td>
-                    <div class="btn-group">
+                  <td style="min-width: 140px;">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
                       <input
                         type="radio"
                         :id="'material-radio-' + index"
                         :value="material.id"
                         v-model="selectedMaterial"
-                        class="form-check-input me-2"
+                        class="form-check-input"
                       />
+                      <button 
+                        class="btn btn-sm btn-outline-info" 
+                        @click="openVisualization(material)"
+                        title="Ver información aislada"
+                      >
+                        <i class="fa fa-eye"></i>
+                      </button>
                       <button 
                         class="btn btn-sm btn-outline-danger" 
                         @click="removeMaterial(index)"
@@ -262,9 +271,11 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Comments Section -->
-      <div class="card mt-3 mb-4">
+    <!-- Comments Section -->
+    <div class="green-accent-panel mt-3 mb-4">
+      <div class="card">
         <div class="card-body">
           <div class="form-group">
             <label for="material-comments" class="form-label">Comentarios sobre los materiales</label>
@@ -280,12 +291,119 @@
         </div>
       </div>
     </div>
+
+    <!-- Custom Overlay -->
+    <div v-if="visualizationMaterial" class="custom-overlay">
+      <div class="custom-overlay-content">
+        <button class="btn-close float-end" @click="visualizationMaterial = null" aria-label="Cerrar" style="font-size: 1.5rem; opacity: 0.8;">×</button>
+        <h4>Visualización de material</h4>
+        <div v-if="visualizationMaterial">
+          <p><strong>{{ visualizationMaterial.description }}</strong> ({{ Number(visualizationMaterial.ancho).toFixed(1) }}cm x {{ Number(visualizationMaterial.largo).toFixed(1) }}cm)</p>
+          <svg
+            :width="550"
+            :height="400"
+            viewBox="0 0 600 400"
+            style="background: #23272b; border-radius: 8px; display: block; margin: 0 auto;"
+          >
+            <!-- Material rectangle -->
+            <rect :x="padding" :y="padding" :width="materialW" :height="materialH" fill="#333" stroke="#42b983" stroke-width="3" />
+            <!-- Material width label -->
+            <text
+              :x="padding + materialW / 2"
+              :y="padding - 12"
+              text-anchor="middle"
+              font-size="18"
+              fill="#42b983"
+              font-weight="bold"
+            >
+              {{ Number(visualizationMaterial.ancho).toFixed(1) }}cm
+            </text>
+            <!-- Material height label -->
+            <text
+              :x="padding - 18"
+              :y="padding + materialH / 2"
+              text-anchor="middle"
+              font-size="18"
+              fill="#42b983"
+              font-weight="bold"
+              :transform="`rotate(-90, ${padding - 18}, ${padding + materialH / 2})`"
+            >
+              {{ Number(visualizationMaterial.largo).toFixed(1) }}cm
+            </text>
+            <!-- Margin rectangle -->
+            <rect
+              :x="padding + marginW"
+              :y="padding + marginH"
+              :width="materialW - 2 * marginW"
+              :height="materialH - 2 * marginH"
+              fill="#23272b"
+              stroke="#888"
+              stroke-dasharray="4,2"
+              stroke-width="2"
+            />
+            <!-- Product rectangles -->
+            <g v-for="(rect, i) in productRects" :key="i">
+              <rect
+                :x="padding + marginW + rect.x"
+                :y="padding + marginH + rect.y"
+                :width="rect.w"
+                :height="rect.h"
+                fill="#42b983"
+                fill-opacity="0.7"
+                stroke="#fff"
+                stroke-width="1"
+              />
+              <!-- Only label the first product rectangle -->
+              <g v-if="i === 0">
+                <!-- Product width label (centered inside) -->
+                <text
+                  :x="padding + marginW + rect.x + rect.w / 2"
+                  :y="padding + marginH + rect.y + rect.h / 2 - 50"
+                  text-anchor="middle"
+                  font-size="16"
+                  fill="#fff"
+                  font-weight="bold"
+                  stroke="#23272b"
+                  stroke-width="0.5"
+                >
+                  {{ optimalOrientation.rotated ? Number(productLength).toFixed(1) : Number(productWidth).toFixed(1) }}cm
+                </text>
+                <!-- Product height label (centered inside, rotated) -->
+                <text
+                  :x="padding + marginW + rect.x + 25"
+                  :y="padding + marginH + rect.y + rect.h / 2 + 15"
+                  text-anchor="middle"
+                  font-size="16"
+                  fill="#fff"
+                  font-weight="bold"
+                  stroke="#23272b"
+                  stroke-width="0.5"
+                  :transform="`rotate(-90, ${padding + marginW + rect.x + 25}, ${padding + marginH + rect.y + rect.h / 2 + 15})`"
+                >
+                  {{ optimalOrientation.rotated ? Number(productWidth).toFixed(1) : Number(productLength).toFixed(1) }}cm
+                </text>
+              </g>
+            </g>
+          </svg>
+          <div class="mt-2 small text-muted">
+            <span>Verde: producto. Área gris: margen. Borde verde: material.</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: 'MaterialsTab',
+  emits: {
+    'update:product-materials': null,
+    'update:comments': null,
+    'update:materials-cost': null,
+    'material-selected-for-products': null,
+    'material-calculation-changed': null
+  },
   props: {
     productMaterials: {
       type: Array,
@@ -326,10 +444,11 @@ export default {
   },
   data() {
     return {
+      visualizationMaterial: null,
       materialIdForAdd: '',
       selectedMaterial: this.selectedMaterialId,
       globalComments: this.comments,
-      validationMessage: ''
+      validationMessage: '',
     };
   },
   computed: {
@@ -357,7 +476,115 @@ export default {
     },
     totalCost() {
       return this.productMaterials.reduce((sum, material) => sum + material.totalPrice, 0);
-    }
+    },
+    padding() {
+      return 40;
+    },
+    // SVG scaling factors
+    materialW() {
+      const maxW = 520;
+      const maxH = 320;
+      const ancho = Number(this.visualizationMaterial?.ancho) || 1;
+      const largo = Number(this.visualizationMaterial?.largo) || 1;
+      const scale = Math.min(maxW / ancho, maxH / largo);
+      return ancho * scale;
+    },
+    materialH() {
+      const maxW = 520;
+      const maxH = 320;
+      const ancho = Number(this.visualizationMaterial?.ancho) || 1;
+      const largo = Number(this.visualizationMaterial?.largo) || 1;
+      const scale = Math.min(maxW / ancho, maxH / largo);
+      return largo * scale;
+    },
+    marginW() {
+      const maxW = 520;
+      const maxH = 320;
+      const ancho = Number(this.visualizationMaterial?.ancho) || 1;
+      const largo = Number(this.visualizationMaterial?.largo) || 1;
+      const scale = Math.min(maxW / ancho, maxH / largo);
+      return (this.widthMargin || 0) * scale;
+    },
+    marginH() {
+      const maxW = 520;
+      const maxH = 320;
+      const ancho = Number(this.visualizationMaterial?.ancho) || 1;
+      const largo = Number(this.visualizationMaterial?.largo) || 1;
+      const scale = Math.min(maxW / ancho, maxH / largo);
+      return (this.lengthMargin || 0) * scale;
+    },
+    // Determine the optimal orientation for visualization
+    optimalOrientation() {
+      if (!this.visualizationMaterial) return { rotated: false };
+      const materialWidth = Number(this.visualizationMaterial.ancho) || 1;
+      const materialLength = Number(this.visualizationMaterial.largo) || 1;
+      const productWidth = this.productWidth || 1;
+      const productLength = this.productLength || 1;
+      const widthMargin = this.widthMargin || 0;
+      const lengthMargin = this.lengthMargin || 0;
+      // Add margins to product dimensions
+      const totalProductWidth = productWidth + widthMargin;
+      const totalProductLength = productLength + lengthMargin;
+      // Normal orientation
+      const piecesAcross = Math.floor(materialWidth / totalProductWidth);
+      const piecesDown = Math.floor(materialLength / totalProductLength);
+      const normalCount = piecesAcross * piecesDown;
+      // Rotated orientation
+      const piecesAcrossRot = Math.floor(materialWidth / totalProductLength);
+      const piecesDownRot = Math.floor(materialLength / totalProductWidth);
+      const rotatedCount = piecesAcrossRot * piecesDownRot;
+      return rotatedCount > normalCount
+        ? { rotated: true, cols: piecesAcrossRot, rows: piecesDownRot, productW: totalProductLength, productH: totalProductWidth }
+        : { rotated: false, cols: piecesAcross, rows: piecesDown, productW: totalProductWidth, productH: totalProductLength };
+    },
+    productW() {
+      // Use the optimal orientation for width
+      const maxW = 520;
+      const maxH = 320;
+      const ancho = Number(this.visualizationMaterial?.ancho) || 1;
+      const largo = Number(this.visualizationMaterial?.largo) || 1;
+      const scale = Math.min(maxW / ancho, maxH / largo);
+      return (this.optimalOrientation.productW || 1) * scale;
+    },
+    productH() {
+      // Use the optimal orientation for height
+      const maxW = 520;
+      const maxH = 320;
+      const ancho = Number(this.visualizationMaterial?.ancho) || 1;
+      const largo = Number(this.visualizationMaterial?.largo) || 1;
+      const scale = Math.min(maxW / ancho, maxH / largo);
+      return (this.optimalOrientation.productH || 1) * scale;
+    },
+    productRects() {
+      if (!this.visualizationMaterial) return [];
+      const areaW = this.materialW - 2 * this.marginW;
+      const areaH = this.materialH - 2 * this.marginH;
+      // Use the same logic as business calculation for cols/rows
+      const orientation = this.optimalOrientation;
+      const cols = orientation.cols;
+      const rows = orientation.rows;
+      // Calculate product size so all fit perfectly in the area
+      const productW = cols > 0 ? areaW / cols : 0;
+      const productH = rows > 0 ? areaH / rows : 0;
+      const rects = [];
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          rects.push({ x: x * productW, y: y * productH, w: productW, h: productH });
+        }
+      }
+      return rects;
+    },
+    // Override productW and productH for visualization to use the scaled values
+    visProductW() {
+      const areaW = this.materialW - 2 * this.marginW;
+      const cols = this.optimalOrientation.cols;
+      return cols > 0 ? areaW / cols : 0;
+    },
+    visProductH() {
+      const areaH = this.materialH - 2 * this.marginH;
+      const rows = this.optimalOrientation.rows;
+      return rows > 0 ? areaH / rows : 0;
+    },
   },
   methods: {
     formatCurrency(value) {
@@ -541,7 +768,10 @@ export default {
     },
     updateGlobalComments() {
       this.$emit('update:comments', this.globalComments);
-    }
+    },
+    openVisualization(material) {
+      this.visualizationMaterial = material;
+    },
   },
   watch: {
     selectedMaterial(newValue) {
@@ -601,5 +831,43 @@ export default {
       border-color: var(--cotalo-green);
     }
   }
+}
+
+.custom-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.custom-overlay-content {
+  background: #23272b;
+  color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  min-width: 600px;
+  max-width: 98vw;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  position: relative;
+}
+.btn-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: #fff;
+  background: transparent;
+  border: none;
+  font-size: 1.7rem;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  box-shadow: none;
+  outline: none;
+}
+.btn-close:hover, .btn-close:focus {
+  opacity: 1;
+  color: #fff;
+  background: #23272b;
 }
 </style>

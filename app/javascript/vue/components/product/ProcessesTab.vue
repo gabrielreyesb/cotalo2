@@ -54,119 +54,122 @@
           </div>
         </div>
       </div>
+    </div>
 
       <div v-if="!productProcesses.length" class="text-center my-5">
         <p class="text-muted">No hay procesos agregados. Selecciona un proceso y agrégalo al producto.</p>
       </div>
 
       <!-- Table view for medium and large screens -->
-      <div class="card mt-4" v-if="productProcesses.length">
-        <div class="card-body p-0">
-          <!-- Desktop Table -->
-          <div class="d-none d-md-block">
-            <table class="table table-dark table-striped mb-0">
-              <thead>
-                <tr>
-                  <th style="width: 45%">Descripción</th>
-                  <th style="width: 10%">Unidad</th>
-                  <th style="width: 15%">Aplicado a material</th>
-                  <th style="width: 10%">Precio por Unidad</th>
-                  <th style="width: 12%">Precio Total</th>
-                  <th style="width: 8%">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(process, index) in productProcesses" :key="index">
-                  <td>{{ process.description }}</td>
-                  <td>{{ process.unit }}</td>
-                  <td>{{ process.materialDescription || 'No especificado' }}</td>
-                  <td class="text-end">
-                    <input 
-                      type="number" 
-                      class="form-control form-control-sm" 
-                      v-model.number="process.unitPrice" 
-                      min="0"
-                      step="0.01"
-                      @change="updateProcessUnitPrice(index)"
-                      title="Puedes editar este valor manualmente para ajustar el precio por unidad"
-                      data-toggle="tooltip"
-                    />
-                  </td>
-                  <td class="text-end">{{ formatCurrency(process.price) }}</td>
-                  <td>
-                    <div class="btn-group">
-                      <button 
-                        class="btn btn-sm btn-outline-danger" 
-                        @click="removeProcess(index)"
-                        title="Eliminar proceso"
-                      >
-                        <i class="fa fa-trash"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-              <tfoot>
-                <tr>
-                  <th colspan="4" class="text-end">Total:</th>
-                  <th class="text-end">{{ formatCurrency(totalCost) }}</th>
-                  <th></th>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
+      <div class="green-accent-panel mt-4" v-if="productProcesses.length">
+        <div class="card">
+          <div class="card-body p-0">
+            <!-- Desktop Table -->
+            <div class="d-none d-md-block">
+              <table class="table table-dark table-striped mb-0">
+                <thead>
+                  <tr>
+                    <th style="width: 45%">Descripción</th>
+                    <th style="width: 10%">Unidad</th>
+                    <th style="width: 15%">Aplicado a material</th>
+                    <th style="width: 10%">Precio por Unidad</th>
+                    <th style="width: 12%">Precio Total</th>
+                    <th style="width: 8%">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(process, index) in productProcesses" :key="index">
+                    <td>{{ process.description }}</td>
+                    <td>{{ process.unit }}</td>
+                    <td>{{ process.materialDescription || 'No especificado' }}</td>
+                    <td class="text-end">
+                      <input 
+                        type="number" 
+                        class="form-control form-control-sm" 
+                        v-model.number="process.unitPrice" 
+                        min="0"
+                        step="0.01"
+                        @change="updateProcessUnitPrice(index)"
+                        title="Puedes editar este valor manualmente para ajustar el precio por unidad"
+                        data-toggle="tooltip"
+                      />
+                    </td>
+                    <td class="text-end">{{ formatCurrency(process.price) }}</td>
+                    <td>
+                      <div class="btn-group">
+                        <button 
+                          class="btn btn-sm btn-outline-danger" 
+                          @click="removeProcess(index)"
+                          title="Eliminar proceso"
+                        >
+                          <i class="fa fa-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th colspan="4" class="text-end">Total:</th>
+                    <th class="text-end">{{ formatCurrency(totalCost) }}</th>
+                    <th></th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
 
-          <!-- Mobile Cards -->
-          <div class="d-md-none">
-            <div v-for="(process, index) in productProcesses" :key="index" class="card mb-3 shadow-sm">
-              <div class="card-body p-2">
-                <!-- First row: Process description only -->
-                <h6 class="card-title mb-2">{{ process.description }}</h6>
-                
-                <!-- Second row: Unit, material, process price -->
-                <div class="row g-2 mb-2">
-                  <div class="col-4">
-                    <div class="badge bg-dark d-block text-center p-2 w-100 material-badge">
-                      {{ process.unit }}
+            <!-- Mobile Cards -->
+            <div class="d-md-none">
+              <div v-for="(process, index) in productProcesses" :key="index" class="card mb-3 shadow-sm">
+                <div class="card-body p-2">
+                  <!-- First row: Process description only -->
+                  <h6 class="card-title mb-2">{{ process.description }}</h6>
+                  
+                  <!-- Second row: Unit, material, process price -->
+                  <div class="row g-2 mb-2">
+                    <div class="col-4">
+                      <div class="badge bg-dark d-block text-center p-2 w-100 material-badge">
+                        {{ process.unit }}
+                      </div>
+                    </div>
+                    <div class="col-4">
+                      <div class="badge bg-dark d-block text-center p-2 w-100 material-badge text-truncate">
+                        {{ process.materialDescription || 'No especificado' }}
+                      </div>
+                    </div>
+                    <div class="col-4">
+                      <input 
+                        type="number" 
+                        class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge"
+                        v-model.number="process.unitPrice" 
+                        min="0"
+                        step="0.01"
+                        @change="updateProcessUnitPrice(index)"
+                        title="Haz clic para editar el precio unitario"
+                      />
                     </div>
                   </div>
-                  <div class="col-4">
-                    <div class="badge bg-dark d-block text-center p-2 w-100 material-badge text-truncate">
-                      {{ process.materialDescription || 'No especificado' }}
-                    </div>
+                  
+                  <!-- Third row: Total price and delete button -->
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span class="badge bg-success fs-5">{{ formatCurrency(process.price) }}</span>
+                    <button 
+                      class="btn btn-sm btn-outline-danger px-2 py-1" 
+                      @click="removeProcess(index)"
+                    >
+                      <i class="fa fa-trash fa-sm"></i>
+                    </button>
                   </div>
-                  <div class="col-4">
-                    <input 
-                      type="number" 
-                      class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge"
-                      v-model.number="process.unitPrice" 
-                      min="0"
-                      step="0.01"
-                      @change="updateProcessUnitPrice(index)"
-                      title="Haz clic para editar el precio unitario"
-                    />
-                  </div>
-                </div>
-                
-                <!-- Third row: Total price and delete button -->
-                <div class="d-flex justify-content-between align-items-center">
-                  <span class="badge bg-success fs-5">{{ formatCurrency(process.price) }}</span>
-                  <button 
-                    class="btn btn-sm btn-outline-danger px-2 py-1" 
-                    @click="removeProcess(index)"
-                  >
-                    <i class="fa fa-trash fa-sm"></i>
-                  </button>
                 </div>
               </div>
-            </div>
-            
-            <!-- Total cost for small screens -->
-            <div class="card bg-dark text-white">
-              <div class="card-body py-2">
-                <div class="d-flex justify-content-between align-items-center">
-                  <span class="fw-bold">Total procesos:</span>
-                  <span class="fs-5">{{ formatCurrency(totalCost) }}</span>
+              
+              <!-- Total cost for small screens -->
+              <div class="card bg-dark text-white">
+                <div class="card-body py-2">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span class="fw-bold">Total procesos:</span>
+                    <span class="fs-5">{{ formatCurrency(totalCost) }}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -175,23 +178,25 @@
       </div>
 
       <!-- Global comments for all processes -->
-      <div class="card mt-3 mb-4">
-        <div class="card-body">
-          <div class="form-group">
-            <label for="process-comments" class="form-label">Comentarios sobre los procesos</label>
-            <textarea 
-              id="process-comments" 
-              class="form-control" 
-              v-model="globalComments" 
-              rows="3"
-              placeholder="Agregar notas o comentarios generales sobre los procesos de este producto"
-              @change="updateGlobalComments"
-            ></textarea>
+      <div class="green-accent-panel mt-3 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <div class="form-group">
+              <label for="process-comments" class="form-label">Comentarios sobre los procesos</label>
+              <textarea 
+                id="process-comments" 
+                class="form-control" 
+                v-model="globalComments" 
+                rows="3"
+                placeholder="Agregar notas o comentarios generales sobre los procesos de este producto"
+                @change="updateGlobalComments"
+              ></textarea>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  
 </template>
 
 <script>
