@@ -1,13 +1,13 @@
 <% content_for :page_title do %>
-  Nuevo material
+  <%= t('materials.new.title') %>
 <% end %>
 
 <% content_for :page_actions do %>
   <%= link_to materials_path, class: "btn btn-outline-light me-2" do %>
-    Cancelar
+    <%= t('common.cancel') %>
   <% end %>
   <%= button_tag class: "btn btn-outline-light", form: "material-form" do %>
-    Guardar
+    <%= t('common.save') %>
   <% end %>
 <% end %>
 
@@ -15,7 +15,7 @@
   <div class="col-12">
     <div class="card green-accent-panel">
       <div class="card-header">
-        <h5>Detalles del material</h5>
+        <h5><%= t('materials.new.details') %></h5>
       </div>
       <div class="card-body">
         <%= render 'form', material: @material %>

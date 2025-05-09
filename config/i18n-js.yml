@@ -1,0 +1,5 @@
+translations:
+  - file: "app/javascript/i18n/translations.js"
+    only: ["en", "es"]
+    namespace: "translations"
+    pretty_print: true 

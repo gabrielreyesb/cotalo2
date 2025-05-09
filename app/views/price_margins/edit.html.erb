@@ -1,13 +1,13 @@
 <% content_for :page_title do %>
-  Editar margen de precio
+  <%= t('price_margins.edit.title') %>
 <% end %>
 
 <% content_for :page_actions do %>
   <%= link_to price_margins_path, class: "btn btn-outline-light me-2" do %>
-    Cancelar
+    <%= t('common.cancel') %>
   <% end %>
   <%= button_tag class: "btn btn-outline-light", form: "price-margin-form" do %>
-    Guardar
+    <%= t('common.save') %>
   <% end %>
 <% end %>
 

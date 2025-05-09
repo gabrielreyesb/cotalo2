@@ -1,9 +1,15 @@
 import { createApp } from 'vue'
 import ProductForm from './components/Product.vue'
 import SimpleModal from './components/SimpleModal.vue'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 
 // Create and mount the root instance
 document.addEventListener('DOMContentLoaded', () => {
+  // Create a global app for shared components
+  const globalApp = createApp({})
+  globalApp.component('language-switcher', LanguageSwitcher)
+  globalApp.mount('#language-switcher')
+
   const productEl = document.getElementById('product-app')
   const modalTestEl = document.getElementById('app')
   

@@ -1,10 +1,10 @@
 <% content_for :page_title do %>
-  Extras
+  <%= t('extras.index.title') %>
 <% end %>
 
 <% content_for :page_actions do %>
   <%= link_to new_extra_path, class: "btn btn-outline-light" do %>
-    <i class="fa fa-plus me-1"></i> Nuevo Extra
+    <i class="fa fa-plus me-1"></i> <%= t('extras.index.new_extra') %>
   <% end %>
 <% end %>
 
@@ -18,11 +18,11 @@
           <table class="table table-striped table-hover">
             <thead>
               <tr>
-                <th class="index-table-header">Nombre</th>
-                <th class="index-table-header">Descripción</th>
-                <th class="index-table-header">Costo</th>
-                <th class="index-table-header">Unidad</th>
-                <th class="index-table-header text-end">Acciones</th>
+                <th class="index-table-header"><%= t('extras.index.name') %></th>
+                <th class="index-table-header"><%= t('extras.index.description') %></th>
+                <th class="index-table-header"><%= t('extras.index.cost') %></th>
+                <th class="index-table-header"><%= t('extras.index.unit') %></th>
+                <th class="index-table-header text-end"><%= t('extras.index.actions') %></th>
               </tr>
             </thead>
             <tbody>
@@ -35,7 +35,7 @@
                     <% if extra.unit %>
                       <%= extra.unit.name %> (<%= extra.unit.abbreviation %>)
                     <% else %>
-                      <span class="text-muted">Sin unidad</span>
+                      <span class="text-muted"><%= t('extras.index.no_unit') %></span>
                     <% end %>
                   </td>
                   <td class="text-end">
@@ -48,7 +48,7 @@
                         form: { style: 'display: inline-block;' } do %>
                       <i class="fa fa-copy"></i>
                     <% end %>
-                    <%= button_to extra_path(extra), method: :delete, class: "btn btn-sm btn-outline-danger", form: { style: 'display: inline-block;', data: { turbo_confirm: '¿Estás seguro?' } } do %>
+                    <%= button_to extra_path(extra), method: :delete, class: "btn btn-sm btn-outline-danger", form: { style: 'display: inline-block;', data: { turbo_confirm: t('common.confirm') } } do %>
                       <i class="fa fa-trash"></i>
                     <% end %>
                   </td>
@@ -93,7 +93,7 @@
                   <% end %>
                   <%= button_to extra_path(extra), method: :delete, 
                       class: "btn btn-sm btn-outline-danger px-2 py-1", 
-                      form: { class: "d-inline", data: { turbo_confirm: "¿Estás seguro?" } } do %>
+                      form: { class: "d-inline", data: { turbo_confirm: t('common.confirm') } } do %>
                     <i class="fa fa-trash fa-sm"></i>
                   <% end %>
                 </div>
@@ -109,7 +109,7 @@
       <div class="card shadow-sm">
         <div class="card-body p-4">
           <div class="alert alert-info">
-            No hay extras. <%= link_to "Crea tu primer extra", new_extra_path %>.
+            <%= t('extras.index.no_extras_html', link: link_to(t('extras.index.create_first'), new_extra_path)).html_safe %>
           </div>
         </div>
       </div>

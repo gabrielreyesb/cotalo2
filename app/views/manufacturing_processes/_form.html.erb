@@ -1,7 +1,7 @@
 <%= form_with(model: manufacturing_process, id: "manufacturing-process-form") do |form| %>
   <% if manufacturing_process.errors.any? %>
     <div class="alert alert-danger mb-3">
-      <h5><%= pluralize(manufacturing_process.errors.count, "error") %> prohibited this manufacturing_process from being saved:</h5>
+      <h5><%= t('processes.form.errors', count: manufacturing_process.errors.count) %></h5>
       <ul>
         <% manufacturing_process.errors.each do |error| %>
           <li><%= error.full_message %></li>
@@ -11,21 +11,21 @@
   <% end %>
 
   <div class="mb-3">
-    <%= form.label :name, "Nombre", class: "form-label" %>
+    <%= form.label :name, t('processes.form.name'), class: "form-label" %>
     <%= form.text_field :name, class: "form-control" %>
   </div>
 
   <div class="row mb-3">
     <div class="col-md-6">
-      <%= form.label :unit_id, "Unidad", class: "form-label" %>
+      <%= form.label :unit_id, t('processes.form.unit'), class: "form-label" %>
       <%= form.collection_select :unit_id, Unit.all, :id, :name, {}, class: "form-select" %>
       <div class="form-text">
-        La unidad determina cómo se medirá el proceso durante la cotización.
+        <%= t('processes.form.unit_help') %>
       </div>
     </div>
 
     <div class="col-md-6">
-      <%= form.label :cost, "Precio", class: "form-label" %>
+      <%= form.label :cost, t('processes.form.cost'), class: "form-label" %>
       <div class="input-group">
         <span class="input-group-text">$</span>
         <%= form.number_field :cost, step: '0.01', class: "form-control" %>
@@ -34,7 +34,7 @@
   </div>
 
   <div class="mb-3">
-    <%= form.label :description, "Descripción", class: "form-label" %>
+    <%= form.label :description, t('processes.form.description'), class: "form-label" %>
     <%= form.text_area :description, rows: 3, class: "form-control" %>
   </div>
 <% end %> 

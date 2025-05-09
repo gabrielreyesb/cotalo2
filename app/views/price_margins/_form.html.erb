@@ -1,7 +1,7 @@
 <%= form_with(model: price_margin, id: "price-margin-form") do |form| %>
   <% if price_margin.errors.any? %>
     <div class="alert alert-danger">
-      <h4><%= pluralize(price_margin.errors.count, "error") %> impidieron que este margen se guardara:</h4>
+      <h4><%= t('price_margins.form.errors', count: price_margin.errors.count) %></h4>
       <ul>
         <% price_margin.errors.each do |error| %>
           <li><%= error.full_message %></li>
@@ -12,7 +12,7 @@
 
   <div class="row">
     <div class="col-md-4 mb-3">
-      <%= form.label :min_price, "Precio mínimo", class: "form-label" %>
+      <%= form.label :min_price, t('price_margins.form.min_price'), class: "form-label" %>
       <div class="input-group">
         <span class="input-group-text">$</span>
         <%= form.number_field :min_price, class: "form-control", step: "0.01", min: 0, required: true %>
@@ -20,7 +20,7 @@
     </div>
     
     <div class="col-md-4 mb-3">
-      <%= form.label :max_price, "Precio máximo", class: "form-label" %>
+      <%= form.label :max_price, t('price_margins.form.max_price'), class: "form-label" %>
       <div class="input-group">
         <span class="input-group-text">$</span>
         <%= form.number_field :max_price, class: "form-control", step: "0.01", min: 0, required: true %>
@@ -28,7 +28,7 @@
     </div>
     
     <div class="col-md-4 mb-3">
-      <%= form.label :margin_percentage, "Margen (%)", class: "form-label" %>
+      <%= form.label :margin_percentage, t('price_margins.form.margin_percentage'), class: "form-label" %>
       <div class="input-group">
         <%= form.number_field :margin_percentage, class: "form-control", step: "0.01", min: 0, max: 100, required: true %>
         <span class="input-group-text">%</span>

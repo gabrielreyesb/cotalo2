@@ -1,11 +1,11 @@
 <%= form_with(url: app_configs_path, method: :put, class: "needs-validation") do |form| %>
   <% content_for :page_title do %>
-    Configuraciones
+    <%= t('config.title') %>
   <% end %>
 
   <% content_for :page_actions do %>
-    <%= link_to "Cancelar", :back, class: "btn btn-outline-light me-2" %>
-    <%= form.submit "Guardar", class: "btn btn-outline-light" %>
+    <%= link_to t('common.cancel'), :back, class: "btn btn-outline-light me-2" %>
+    <%= form.submit t('common.save'), class: "btn btn-outline-light" %>
   <% end %>
 
   <div class="row">
@@ -14,37 +14,37 @@
         <div class="green-accent-panel">
           <div class="card">
             <div class="card-header">
-              <h5 class="mb-0">Configuraciones generales</h5>
+              <h5 class="mb-0"><%= t('config.general_settings') %></h5>
             </div>
             <div class="card-body">
               <div class="row">
-                <div class="col-md-4">
-                  <%= form.label :waste_percentage, "Porcentaje de desperdicio", class: "form-label" %>
+                <div class="col-md-3">
+                  <%= form.label :waste_percentage, t('config.waste_percentage'), class: "form-label" %>
                   <div class="input-group">
                     <%= form.number_field :waste_percentage, value: @general_settings[:waste_percentage], class: "form-control bg-dark text-light border-secondary", min: 0, max: 100, step: 1 %>
                     <span class="input-group-text bg-dark text-light border-secondary">%</span>
                   </div>
                 </div>
                 
-                <div class="col-md-4">
-                  <%= form.label :width_margin, "Margen de ancho", class: "form-label" %>
+                <div class="col-md-3">
+                  <%= form.label :width_margin, t('config.width_margin'), class: "form-label" %>
                   <div class="input-group">
                     <%= form.number_field :width_margin, value: @general_settings[:width_margin], step: '0.01', class: "form-control bg-dark text-light border-secondary" %>
                   </div>
                 </div>
                 
-                <div class="col-md-4">
-                  <%= form.label :length_margin, "Margen de largo", class: "form-label" %>
+                <div class="col-md-3">
+                  <%= form.label :length_margin, t('config.length_margin'), class: "form-label" %>
                   <div class="input-group">
                     <%= form.number_field :length_margin, value: @general_settings[:length_margin], step: '0.01', class: "form-control bg-dark text-light border-secondary" %>
                   </div>
                 </div>
               </div>
 
-              <hr class="border-secondary my-4">
+              <hr class="border-secondary my-3">
 
               <div class="mb-3">
-                <label class="form-label">Logo de la empresa</label>
+                <label class="form-label"><%= t('config.company_logo') %></label>
                 <div class="text-center mb-3">
                   <div id="logo-preview-container" class="border border-secondary rounded p-3 mb-3" style="min-height: 150px; display: flex; align-items: center; justify-content: center; flex-direction: column;">
                     <div id="logo-display-area" style="min-height: 120px; display: flex; align-items: center; justify-content: center;">
@@ -53,7 +53,7 @@
                       <% else %>
                         <div class="text-muted" id="logo-placeholder">
                           <i class="fas fa-image fa-3x mb-2"></i>
-                          <p class="mb-0">No hay logo seleccionado</p>
+                          <p class="mb-0"><%= t('config.no_logo_selected') %></p>
                         </div>
                       <% end %>
                       <img id="logo-preview" class="img-fluid" style="max-height: 120px; display: none;">
@@ -63,11 +63,11 @@
                 <div class="input-group">
                   <input type="file" class="form-control" id="logo-input" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
                   <button class="btn btn-dark border-secondary" type="button" id="upload-logo-btn" disabled>
-                    <i class="fa fa-upload"></i> Subir
+                    <i class="fa fa-upload"></i> <%= t('config.upload') %>
                   </button>
                 </div>
                 <small class="form-text text-muted">
-                  Formatos aceptados: JPG, PNG o GIF. Tamaño máximo: 2MB
+                  <%= t('config.accepted_formats') %>
                 </small>
               </div>
             </div>
@@ -82,26 +82,26 @@
           <div class="green-accent-panel">
             <div class="card">
               <div class="card-header">
-                <h5 class="mb-0">Información de firma</h5>
+                <h5 class="mb-0"><%= t('config.signature_info') %></h5>
               </div>
               <div class="card-body">
                 <div class="mb-3">
-                  <%= form.label :signature_name, "Nombre", class: "form-label" %>
+                  <%= form.label :signature_name, t('config.name'), class: "form-label" %>
                   <%= form.text_field :signature_name, value: @signature_info[:name], class: "form-control" %>
                 </div>
                 
                 <div class="mb-3">
-                  <%= form.label :signature_email, "Correo", class: "form-label" %>
+                  <%= form.label :signature_email, t('config.email'), class: "form-label" %>
                   <%= form.email_field :signature_email, value: @signature_info[:email], class: "form-control" %>
                 </div>
                 
                 <div class="mb-3">
-                  <%= form.label :signature_phone, "Teléfono", class: "form-label" %>
+                  <%= form.label :signature_phone, t('config.phone'), class: "form-label" %>
                   <%= form.telephone_field :signature_phone, value: @signature_info[:phone], class: "form-control" %>
                 </div>
                 
                 <div class="mb-3">
-                  <%= form.label :signature_whatsapp, "WhatsApp", class: "form-label" %>
+                  <%= form.label :signature_whatsapp, t('config.whatsapp'), class: "form-label" %>
                   <%= form.telephone_field :signature_whatsapp, value: @signature_info[:whatsapp], class: "form-control" %>
                 </div>
               </div>
@@ -118,7 +118,7 @@
           <div class="green-accent-panel">
             <div class="card">
               <div class="card-header">
-                <h5 class="mb-0">Condiciones de venta</h5>
+                <h5 class="mb-0"><%= t('config.sales_conditions') %></h5>
               </div>
               <div class="card-body">
                 <div class="mb-3">

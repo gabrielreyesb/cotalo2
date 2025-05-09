@@ -12,8 +12,8 @@
     <%= yield :styles %>
     
     <%# Load Bootstrap from CDN %>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <%# <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script> %>
+    <%# <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> %>
     
     <%# Load application JavaScript %>
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
@@ -80,44 +80,8 @@
 
     <script>
       document.addEventListener('DOMContentLoaded', function() {
-        // Very direct approach for the catalogs dropdown
-        const catalogsDropdown = document.getElementById('catalogsDropdown');
-        const userDropdown = document.getElementById('navbarDropdown');
-        
-        // Direct click handler for Catalogs dropdown
-        if (catalogsDropdown) {
-          catalogsDropdown.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Catálogos clicked');
-            
-            // Find the dropdown menu and toggle it directly
-            const dropdownMenu = this.nextElementSibling;
-            dropdownMenu.classList.toggle('show');
-          });
-        }
-        
-        // Direct click handler for User dropdown
-        if (userDropdown) {
-          userDropdown.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('User dropdown clicked');
-            
-            // Find the dropdown menu and toggle it directly
-            const dropdownMenu = this.nextElementSibling;
-            dropdownMenu.classList.toggle('show');
-          });
-        }
-        
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-          if (!e.target.closest('.dropdown')) {
-            document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
-              menu.classList.remove('show');
-            });
-          }
-        });
+        // Remove custom handler for catalogsDropdown
+        // (REMOVED: custom user dropdown handler and close-on-click-outside)
       });
     </script>
 

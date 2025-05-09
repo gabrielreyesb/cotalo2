@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  Panel de control
+  <%= t('dashboard.title') %>
 <% end %>
 
 <div class="row">
@@ -8,7 +8,7 @@
       <div class="card-body p-4">
         <div class="d-flex justify-content-between">
           <div>
-            <h5 class="card-title mb-3">Productos</h5>
+            <h5 class="card-title mb-3"><%= t('dashboard.products') %></h5>
             <h2 class="card-text"><%= current_user.products.count %></h2>
           </div>
           <div class="align-self-center">
@@ -16,8 +16,8 @@
           </div>
         </div>
         <div class="mt-4">
-          <%= link_to "Ver todos", products_path, class: "btn btn-sm btn-outline-primary me-2" %>
-          <%= link_to "Agregar nuevo", new_product_path, class: "btn btn-sm btn-primary" %>
+          <%= link_to t('dashboard.view_all'), products_path, class: "btn btn-sm btn-outline-primary me-2" %>
+          <%= link_to t('dashboard.add_new'), new_product_path, class: "btn btn-sm btn-primary" %>
         </div>
       </div>
     </div>
@@ -25,11 +25,11 @@
     <!-- Productos recientes header -->
     <div class="d-flex justify-content-between align-items-center mb-2 mt-4">
       <div>
-        <h3>Productos recientes</h3>
-        <p class="text-light-gray small mb-0">Mostrando los 5 productos más recientes</p>
+        <h3><%= t('dashboard.recent_products') %></h3>
+        <p class="text-light-gray small mb-0"><%= t('dashboard.showing_recent_products') %></p>
       </div>
       <%= link_to new_product_path, class: "btn btn-sm btn-primary" do %>
-        <i class="fa fa-plus me-1"></i> Nuevo producto
+        <i class="fa fa-plus me-1"></i> <%= t('dashboard.new_product') %>
       <% end %>
     </div>
 
@@ -42,10 +42,10 @@
               <thead>
                 <tr>
                   <th style="width: 70%;">
-                    <span class="nowrap">Descripción</span>
+                    <span class="nowrap"><%= t('dashboard.description') %></span>
                   </th>
                   <th style="width: 30%;" class="text-end">
-                    <span class="nowrap">Precio</span>
+                    <span class="nowrap"><%= t('dashboard.price') %></span>
                   </th>
                 </tr>
               </thead>
@@ -63,7 +63,7 @@
           </div>
           
           <div class="text-end mt-4">
-            <%= link_to "Ver todos los productos", products_path, class: "btn btn-outline-primary" %>
+            <%= link_to t('dashboard.view_all_products'), products_path, class: "btn btn-outline-primary" %>
           </div>
         </div>
       </div>
@@ -71,7 +71,7 @@
       <div class="card green-accent-panel shadow-lg border-0">
         <div class="card-body p-4">
           <div class="alert alert-info">
-            No hay productos. <%= link_to "Crea tu primer producto", new_product_path %>.
+            <%= t('dashboard.no_products_html', link: link_to(t('dashboard.create_first_product'), new_product_path)) %>.
           </div>
         </div>
       </div>
@@ -83,7 +83,7 @@
       <div class="card-body p-4">
         <div class="d-flex justify-content-between">
           <div>
-            <h5 class="card-title mb-3">Cotizaciones</h5>
+            <h5 class="card-title mb-3"><%= t('dashboard.quotes') %></h5>
             <h2 class="card-text"><%= current_user.quotes.count %></h2>
           </div>
           <div class="align-self-center">
@@ -91,8 +91,8 @@
           </div>
         </div>
         <div class="mt-4">
-          <%= link_to "Ver todas", quotes_path, class: "btn btn-sm btn-outline-primary me-2" %>
-          <%= link_to "Crear nueva", new_quote_path, class: "btn btn-sm btn-primary" %>
+          <%= link_to t('dashboard.view_all_quotes'), quotes_path, class: "btn btn-sm btn-outline-primary me-2" %>
+          <%= link_to t('dashboard.create_new'), new_quote_path, class: "btn btn-sm btn-primary" %>
         </div>
       </div>
     </div>
@@ -100,11 +100,11 @@
     <!-- Cotizaciones recientes header -->
     <div class="d-flex justify-content-between align-items-center mb-2 mt-4">
       <div>
-        <h3>Cotizaciones recientes</h3>
-        <p class="text-light-gray small mb-0">Mostrando las 5 cotizaciones más recientes</p>
+        <h3><%= t('dashboard.recent_quotes') %></h3>
+        <p class="text-light-gray small mb-0"><%= t('dashboard.showing_recent_quotes') %></p>
       </div>
       <%= link_to new_quote_path, class: "btn btn-sm btn-primary" do %>
-        <i class="fa fa-plus me-1"></i> Nueva cotización
+        <i class="fa fa-plus me-1"></i> <%= t('dashboard.new_quote') %>
       <% end %>
     </div>
 
@@ -117,13 +117,13 @@
               <thead>
                 <tr>
                   <th style="width: 20%;">
-                    <span class="nowrap">Número</span>
+                    <span class="nowrap"><%= t('dashboard.number') %></span>
                   </th>
                   <th style="width: 50%;">
-                    <span class="nowrap">Cliente</span>
+                    <span class="nowrap"><%= t('dashboard.customer') %></span>
                   </th>
                   <th style="width: 30%;" class="text-end">
-                    <span class="nowrap">Total</span>
+                    <span class="nowrap"><%= t('dashboard.total') %></span>
                   </th>
                 </tr>
               </thead>
@@ -140,7 +140,7 @@
           </div>
           
           <div class="text-end mt-4">
-            <%= link_to "Ver todas las cotizaciones", quotes_path, class: "btn btn-outline-primary" %>
+            <%= link_to t('dashboard.view_all_quotes_full'), quotes_path, class: "btn btn-outline-primary" %>
           </div>
         </div>
       </div>
@@ -148,7 +148,7 @@
       <div class="card green-accent-panel shadow-lg border-0">
         <div class="card-body p-4">
           <div class="alert alert-info">
-            No hay cotizaciones. <%= link_to "Crea tu primera cotización", new_quote_path %>.
+            <%= t('dashboard.no_quotes_html', link: link_to(t('dashboard.create_first_quote'), new_quote_path)) %>.
           </div>
         </div>
       </div>

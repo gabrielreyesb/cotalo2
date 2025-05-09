@@ -1,10 +1,10 @@
 <% content_for :page_title do %>
-  Materiales
+  <%= t('materials.index.title') %>
 <% end %>
 
 <% content_for :page_actions do %>
   <%= link_to new_material_path, class: "btn btn-outline-light" do %>
-    <i class="fa fa-plus me-1"></i> Nuevo material
+    <i class="fa fa-plus me-1"></i> <%= t('materials.index.new_material') %>
   <% end %>
 <% end %>
 
@@ -17,12 +17,12 @@
             <table class="table table-striped table-hover">
               <thead>
                 <tr>
-                  <th class="index-table-header">Nombre</th>
-                  <th class="index-table-header">Descripción cliente</th>
-                  <th class="index-table-header">Precio</th>
-                  <th class="index-table-header">Unidad</th>
-                  <th class="index-table-header">Dimensiones</th>
-                  <th class="index-table-header text-end">Acciones</th>
+                  <th class="index-table-header"><%= t('materials.index.name') %></th>
+                  <th class="index-table-header"><%= t('materials.index.client_description') %></th>
+                  <th class="index-table-header"><%= t('materials.index.price') %></th>
+                  <th class="index-table-header"><%= t('materials.index.unit') %></th>
+                  <th class="index-table-header"><%= t('materials.index.dimensions') %></th>
+                  <th class="index-table-header text-end"><%= t('materials.index.actions') %></th>
                 </tr>
               </thead>
               <tbody>
@@ -40,7 +40,7 @@
                       <% elsif material.largo.present? %>
                         <%= material.largo %>
                       <% else %>
-                        <span class="text-muted">No dimensions</span>
+                        <span class="text-muted"><%= t('materials.index.no_dimensions') %></span>
                       <% end %>
                     </td>
                     <td class="text-end">
@@ -56,7 +56,7 @@
                       <%= button_to material_path(material), 
                           method: :delete,
                           class: "btn btn-sm btn-outline-danger",
-                          form: { style: 'display: inline-block;', data: { turbo_confirm: "¿Estás seguro?" } } do %>
+                          form: { style: 'display: inline-block;', data: { turbo_confirm: t('common.confirm_delete') } } do %>
                         <i class="fa fa-trash"></i>
                       <% end %>
                     </td>
@@ -79,9 +79,9 @@
                       <% if material.ancho.present? && material.largo.present? %>
                         <%= material.ancho %> x <%= material.largo %>
                       <% elsif material.ancho.present? %>
-                        W: <%= material.ancho %>
+                        <%= t('materials.index.width') %>: <%= material.ancho %>
                       <% elsif material.largo.present? %>
-                        L: <%= material.largo %>
+                        <%= t('materials.index.length') %>: <%= material.largo %>
                       <% else %>
                         -
                       <% end %>
@@ -102,7 +102,7 @@
                     <% end %>
                     <%= button_to material_path(material), method: :delete, 
                         class: "btn btn-sm btn-outline-danger", 
-                        form: { style: 'display: inline-block;', data: { turbo_confirm: "¿Estás seguro?" } } do %>
+                        form: { style: 'display: inline-block;', data: { turbo_confirm: t('common.confirm_delete') } } do %>
                       <i class="fa fa-trash fa-sm"></i>
                     <% end %>
                   </div>
@@ -118,7 +118,7 @@
         <div class="card shadow-sm">
           <div class="card-body p-4">
             <div class="alert alert-info">
-              No hay materiales. <%= link_to "Crea tu primer material", new_material_path %>.
+              <%= t('materials.index.no_materials') %> <%= link_to t('materials.index.create_first'), new_material_path %>.
             </div>
           </div>
         </div>

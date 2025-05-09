@@ -148,6 +148,7 @@ GEM
     ffi (1.17.1-x86_64-darwin)
     ffi (1.17.1-x86_64-linux-gnu)
     ffi (1.17.1-x86_64-linux-musl)
+    glob (0.4.1)
     globalid (1.2.1)
       activesupport (>= 6.1)
     httparty (0.22.0)
@@ -156,6 +157,9 @@ GEM
       multi_xml (>= 0.5.2)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
+    i18n-js (4.2.3)
+      glob (>= 0.4.0)
+      i18n
     io-console (0.8.0)
     irb (1.15.1)
       pp (>= 0.6.0)
@@ -367,6 +371,7 @@ DEPENDENCIES
   dotenv-rails (~> 3.1)
   down (~> 5.4)
   httparty
+  i18n-js
   jbuilder
   jquery-rails
   pg (~> 1.5)

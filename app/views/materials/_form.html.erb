@@ -1,7 +1,7 @@
 <%= form_with(model: material, class: "material-form", id: "material-form") do |form| %>
   <% if material.errors.any? %>
     <div class="alert alert-danger">
-      <h4><%= pluralize(material.errors.count, "error") %> impidieron que este material se guardara:</h4>
+      <h4><%= t('materials.form.errors', count: material.errors.count) %></h4>
       <ul>
         <% material.errors.each do |error| %>
           <li><%= error.full_message %></li>
@@ -12,19 +12,19 @@
 
   <div class="row">
     <div class="col-md-6 mb-3">
-      <%= form.label :description, "Descripción", class: "form-label" %>
+      <%= form.label :description, t('materials.form.description'), class: "form-label" %>
       <%= form.text_field :description, class: "form-control", required: true %>
     </div>
     
     <div class="col-md-6 mb-3">
-      <%= form.label :client_description, "Descripción para cliente", class: "form-label" %>
+      <%= form.label :client_description, t('materials.form.client_description'), class: "form-label" %>
       <%= form.text_field :client_description, class: "form-control", required: true %>
     </div>
   </div>
   
   <div class="row">
     <div class="col-md-6 mb-3">
-      <%= form.label :price, "Precio", class: "form-label" %>
+      <%= form.label :price, t('materials.form.price'), class: "form-label" %>
       <div class="input-group">
         <span class="input-group-text">$</span>
         <%= form.number_field :price, class: "form-control", step: "0.01", min: 0, required: true %>
@@ -32,30 +32,30 @@
     </div>
     
     <div class="col-md-6 mb-3">
-      <%= form.label :unit_id, "Unidad", class: "form-label" %>
-      <%= form.collection_select :unit_id, Unit.all.order(:name), :id, :name, { prompt: "Seleccionar unidad" }, { class: "form-select", required: true } %>
+      <%= form.label :unit_id, t('materials.form.unit'), class: "form-label" %>
+      <%= form.collection_select :unit_id, Unit.all.order(:name), :id, :name, { prompt: t('materials.form.select_unit') }, { class: "form-select", required: true } %>
     </div>
   </div>
   
   <div class="row">
     <div class="col-md-6 mb-3">
-      <%= form.label :ancho, "Ancho", class: "form-label" %>
+      <%= form.label :ancho, t('materials.form.width'), class: "form-label" %>
       <%= form.number_field :ancho, class: "form-control", step: "0.01", min: 0 %>
     </div>
     
     <div class="col-md-6 mb-3">
-      <%= form.label :largo, "Largo", class: "form-label" %>
+      <%= form.label :largo, t('materials.form.length'), class: "form-label" %>
       <%= form.number_field :largo, class: "form-control", step: "0.01", min: 0 %>
     </div>
   </div>
   
   <div class="mb-3">
-    <%= form.label :resistance, "Resistencia", class: "form-label" %>
+    <%= form.label :resistance, t('materials.form.resistance'), class: "form-label" %>
     <%= form.text_field :resistance, class: "form-control" %>
   </div>
   
   <div class="mb-3">
-    <%= form.label :comments, "Comentarios", class: "form-label" %>
+    <%= form.label :comments, t('materials.form.comments'), class: "form-label" %>
     <%= form.text_area :comments, class: "form-control", rows: 3 %>
   </div>
 <% end %> 

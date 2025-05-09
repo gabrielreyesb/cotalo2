@@ -1,13 +1,13 @@
 <% content_for :page_title do %>
-  Nuevo extra
+  <%= t('extras.new.title') %>
 <% end %>
 
 <% content_for :page_actions do %>
   <%= link_to extras_path, class: "btn btn-outline-light me-2" do %>
-    Cancelar
+    <%= t('common.cancel') %>
   <% end %>
   <%= button_tag class: "btn btn-outline-light", form: "extra-form" do %>
-    Guardar
+    <%= t('common.save') %>
   <% end %>
 <% end %>
 
