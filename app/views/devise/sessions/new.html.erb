@@ -9,6 +9,7 @@
           </div>
 
           <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "login-form" }) do |f| %>
+            <%= hidden_field_tag :locale, I18n.locale %>
             <div class="form-group mb-4">
               <%= f.label :email, class: "form-label" %>
               <div class="input-group">
