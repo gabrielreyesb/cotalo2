@@ -10,7 +10,7 @@
                 <div class="form-fields-container">
                   <!-- Product Description -->
                   <div class="mb-3">
-                    <label for="product-description" class="form-label">Descripción del producto</label>
+                    <label for="product-description" class="form-label">{{ translations.general.description }}</label>
                     <input 
                       type="text" 
                       id="product-description" 
@@ -23,7 +23,7 @@
 
                   <!-- Quantity -->
                   <div class="mb-3">
-                    <label for="product-quantity" class="form-label">Cantidad de piezas</label>
+                    <label for="product-quantity" class="form-label">{{ translations.general.quantity }}</label>
                     <input 
                       type="number" 
                       id="product-quantity" 
@@ -38,7 +38,7 @@
                   <!-- Width and Length -->
                   <div class="mb-3 d-flex gap-3">
                     <div class="flex-grow-1">
-                      <label for="product-width" class="form-label">Ancho (cm)</label>
+                      <label for="product-width" class="form-label">{{ translations.general.width }}</label>
                       <input 
                         type="number" 
                         id="product-width" 
@@ -51,7 +51,7 @@
                       />
                     </div>
                     <div class="flex-grow-1">
-                      <label for="product-length" class="form-label">Largo (cm)</label>
+                      <label for="product-length" class="form-label">{{ translations.general.length }}</label>
                       <input 
                         type="number" 
                         id="product-length" 
@@ -67,7 +67,7 @@
 
                   <!-- Internal Measurements -->
                   <div class="mb-3">
-                    <label for="product-inner-measurements" class="form-label">Medidas internas</label>
+                    <label for="product-inner-measurements" class="form-label">{{ translations.general.inner_measurements }}</label>
                     <input 
                       type="text" 
                       id="product-inner-measurements" 
@@ -82,7 +82,7 @@
               <!-- Right column with comments -->
               <div class="col-md-4">
                 <div class="mb-3">
-                  <label for="product-comments" class="form-label">Comentarios</label>
+                  <label for="product-comments" class="form-label">{{ translations.general.comments }}</label>
                   <textarea 
                     id="product-comments" 
                     class="form-control"
@@ -112,6 +112,10 @@ export default {
     isNew: {
       type: Boolean,
       default: false
+    },
+    translations: {
+      type: Object,
+      required: true
     }
   },
   data() {

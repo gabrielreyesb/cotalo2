@@ -6,13 +6,13 @@
           <div class="green-accent-panel">
             <div class="card mb-4">
               <div class="card-header">
-                <h5 class="mb-0">Información de la cotización</h5>
+                <h5 class="mb-0">{{ translations.quote_info }}</h5>
               </div>
               <div class="card-body">
                 <div class="row">
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label for="project_name" class="form-label">Nombre del proyecto</label>
+                      <label for="project_name" class="form-label">{{ translations.project_name }}</label>
                       <input type="text" class="form-control" id="project_name" v-model="form.project_name" required>
                     </div>
                   </div>
@@ -24,36 +24,36 @@
           <div class="green-accent-panel">
             <div class="card mb-4">
               <div class="card-header">
-                <h5 class="mb-0">Información del cliente</h5>
+                <h5 class="mb-0">{{ translations.customer_info }}</h5>
               </div>
               <div class="card-body">
                 <div class="row">
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label for="customer_name" class="form-label">Nombre del cliente</label>
+                      <label for="customer_name" class="form-label">{{ translations.customer_name }}</label>
                       <div class="input-group">
-                        <input type="text" class="form-control" id="customer_name" v-model="form.customer_name" required>
+                        <input type="text" class="form-control text-start" id="customer_name" v-model="form.customer_name" required>
                         <button type="button" class="btn btn-outline-secondary" @click="searchCustomersInline">
                           <i class="fas fa-search"></i>
                         </button>
                       </div>
                       <small v-if="customerSearch.error" class="text-danger">{{ customerSearch.error }}</small>
-                      <small v-if="customerSearch.loading" class="text-info">Buscando clientes...</small>
+                      <small v-if="customerSearch.loading" class="text-info">{{ translations.searching_customers }}</small>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label for="organization" class="form-label">Organización</label>
+                      <label for="organization" class="form-label">{{ translations.organization }}</label>
                       <select v-if="customerSearch.results.length > 0" 
                               class="form-select" 
                               id="organization" 
                               v-model="selectedCustomerId"
                               @change="handleCustomerSelection">
-                        <option value="">Seleccionar organización...</option>
+                        <option value="">{{ translations.select_organization }}</option>
                         <option v-for="customer in customerSearch.results" 
                                 :key="customer.id" 
                                 :value="customer.id">
-                          {{ customer.org_name || 'Sin organización' }} ({{ customer.name }})
+                          {{ customer.org_name || translations.no_organization }} ({{ customer.name }})
                         </option>
                       </select>
                       <input v-else type="text" class="form-control" id="organization" v-model="form.organization" required>
@@ -63,13 +63,13 @@
                 <div class="row">
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label for="email" class="form-label">Correo electrónico</label>
+                      <label for="email" class="form-label">{{ translations.email }}</label>
                       <input type="email" class="form-control" id="email" v-model="form.email">
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label for="telephone" class="form-label">Teléfono</label>
+                      <label for="telephone" class="form-label">{{ translations.telephone }}</label>
                       <input type="text" class="form-control" id="telephone" v-model="form.telephone">
                     </div>
                   </div>
@@ -77,7 +77,7 @@
                 <div class="row">
                   <div class="col-12">
                     <div class="mb-3">
-                      <label for="comments" class="form-label">Comentarios</label>
+                      <label for="comments" class="form-label">{{ translations.comments }}</label>
                       <textarea rows="3" class="form-control" id="comments" v-model="form.comments"></textarea>
                     </div>
                   </div>
@@ -92,28 +92,28 @@
         <div class="green-accent-panel">
           <div class="card mb-4">
             <div class="card-header">
-              <h5 class="mb-0">Agregar producto</h5>
+              <h5 class="mb-0">{{ translations.add_product }}</h5>
             </div>
             <div class="card-body">
               <div class="mb-3">
-                <label for="product-search" class="form-label">Buscar producto</label>
+                <label for="product-search" class="form-label">{{ translations.search_product }}</label>
                 <input 
                   type="text" 
                   id="product-search" 
                   class="form-control" 
                   v-model="productSearch" 
-                  placeholder="Buscar por descripción..."
+                  :placeholder="translations.search_by_description"
                 />
               </div>
               
               <div class="mb-3">
-                <label for="product-select" class="form-label">Seleccionar producto</label>
+                <label for="product-select" class="form-label">{{ translations.select_product }}</label>
                 <select 
                   id="product-select" 
                   class="form-select" 
                   v-model="selectedProductId"
                 >
-                  <option value="">-- Seleccionar producto --</option>
+                  <option value="">-- {{ translations.select_product }} --</option>
                   <option 
                     v-for="product in filteredProducts" 
                     :key="product.id" 
@@ -131,7 +131,7 @@
                   @click="addSelectedProduct()" 
                   :disabled="!selectedProductId"
                 >
-                  <i class="fas fa-plus"></i> Agregar a la cotización
+                  <i class="fas fa-plus"></i> {{ translations.add_to_quote }}
                 </button>
               </div>
             </div>
@@ -142,19 +142,19 @@
         <!-- Selected Products Card - Now in the middle -->
           <div class="card mb-4">
             <div class="card-header">
-              <h5 class="mb-0">Productos seleccionados</h5>
+              <h5 class="mb-0">{{ translations.selected_products }}</h5>
             </div>
             <div class="card-body">
               <div v-if="selectedProducts.length === 0" class="alert alert-info">
-                No hay productos seleccionados. Selecciona un producto arriba para agregarlo a la cotización.
+                {{ translations.no_selected_products }}
               </div>
               <div v-else>
                 <div class="table-responsive">
                   <table class="table table-sm">
                     <thead>
                       <tr>
-                        <th style="width: 70%">Producto</th>
-                        <th>Precio</th>
+                        <th style="width: 70%">{{ translations.product }}</th>
+                        <th>{{ translations.price }}</th>
                         <th style="width: 40px"></th>
                       </tr>
                     </thead>
@@ -177,27 +177,29 @@
         </div>
         
         <!-- Totals Card - Still at the bottom -->
-        <div class="card mb-4" v-if="selectedProducts.length > 0">
-          <div class="card-header">
-            <h5 class="mb-0">Resumen de precios</h5>
-          </div>
-          <div class="card-body">
-            <table class="table table-sm">
-              <tbody>
-                <tr>
-                  <th>Subtotal:</th>
-                  <td class="text-end">{{ formatCurrency(totals.subtotal) }}</td>
-                </tr>
-                <tr>
-                  <th>IVA ({{ totals.taxPercentage }}%):</th>
-                  <td class="text-end">{{ formatCurrency(totals.tax) }}</td>
-                </tr>
-                <tr class="fw-bold">
-                  <th>Total:</th>
-                  <td class="text-end">{{ formatCurrency(totals.total) }}</td>
-                </tr>
-              </tbody>
-            </table>
+        <div class="green-accent-panel" v-if="selectedProducts.length > 0">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">{{ translations.price_summary }}</h5>
+            </div>
+            <div class="card-body">
+              <table class="table table-sm">
+                <tbody>
+                  <tr>
+                    <th>{{ translations.subtotal }}</th>
+                    <td class="text-end">{{ formatCurrency(totals.subtotal) }}</td>
+                  </tr>
+                  <tr>
+                    <th>{{ translations.tax }} ({{ totals.taxPercentage }}%):</th>
+                    <td class="text-end">{{ formatCurrency(totals.tax) }}</td>
+                  </tr>
+                  <tr class="fw-bold">
+                    <th>{{ translations.total }}</th>
+                    <td class="text-end">{{ formatCurrency(totals.total) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -208,22 +210,22 @@
       <div class="modal-dialog modal-lg">
         <div class="modal-content bg-dark text-light">
           <div class="modal-header border-secondary">
-            <h5 class="modal-title">Buscar cliente</h5>
+            <h5 class="modal-title">{{ translations.search_customer }}</h5>
             <button type="button" class="btn-close btn-close-white" @click="showCustomerSearchModal = false"></button>
           </div>
           <div class="modal-body">
             <div class="mb-3">
-              <label for="customerSearchQuery" class="form-label">Nombre del cliente</label>
+              <label for="customerSearchQuery" class="form-label">{{ translations.customer_name }}</label>
               <div class="input-group">
-                <input type="text" class="form-control bg-dark text-light border-secondary" id="customerSearchQuery" v-model="customerSearch.query" placeholder="Ingrese al menos 3 caracteres...">
-                <button class="btn btn-primary" @click="searchCustomers" :disabled="customerSearch.loading || customerSearch.query.length < 3">Buscar</button>
+                <input type="text" class="form-control bg-dark text-light border-secondary" id="customerSearchQuery" v-model="customerSearch.query" :placeholder="translations.enter_at_least_3_chars">
+                <button class="btn btn-primary" @click="searchCustomers" :disabled="customerSearch.loading || customerSearch.query.length < 3">{{ translations.search }}</button>
               </div>
-              <small class="form-text text-muted">Ingrese al menos 3 caracteres para buscar.</small>
+              <small class="form-text text-muted">{{ translations.enter_at_least_3_chars }}</small>
             </div>
             
             <div v-if="customerSearch.loading" class="d-flex justify-content-center my-3">
               <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Cargando...</span>
+                <span class="visually-hidden">{{ translations.loading }}</span>
               </div>
             </div>
             
@@ -232,17 +234,17 @@
             </div>
             
             <div v-if="customerSearch.noResults" class="alert alert-info bg-dark text-light border-secondary">
-              No se encontraron clientes con ese nombre.
+              {{ translations.no_customers_found }}
             </div>
             
             <div v-if="customerSearch.results.length > 0" class="table-responsive">
               <table class="table table-hover table-dark">
                 <thead>
                   <tr>
-                    <th>Nombre</th>
-                    <th>Organización</th>
-                    <th>Email</th>
-                    <th>Teléfono</th>
+                    <th>{{ translations.name }}</th>
+                    <th>{{ translations.organization }}</th>
+                    <th>{{ translations.email }}</th>
+                    <th>{{ translations.telephone }}</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -254,7 +256,7 @@
                     <td>{{ customer.phone || 'N/A' }}</td>
                     <td>
                       <button type="button" class="btn btn-sm btn-primary" @click="selectCustomer(customer)">
-                        Seleccionar
+                        {{ translations.select }}
                       </button>
                     </td>
                   </tr>
@@ -263,7 +265,7 @@
             </div>
           </div>
           <div class="modal-footer border-secondary">
-            <button type="button" class="btn btn-secondary" @click="showCustomerSearchModal = false">Cerrar</button>
+            <button type="button" class="btn btn-secondary" @click="showCustomerSearchModal = false">{{ translations.close }}</button>
           </div>
         </div>
       </div>
@@ -295,6 +297,10 @@ export default {
     onCancel: {
       type: Function,
       default: () => {}
+    },
+    translations: {
+      type: Object,
+      required: true
     }
   },
   

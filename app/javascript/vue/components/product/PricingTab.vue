@@ -3,23 +3,23 @@
     <table class="table table-dark mb-0">
       <tbody>
         <tr>
-          <th style="width: 50%">Costo de materiales:</th>
+          <th style="width: 50%">{{ translations.pricing.materials_cost }}</th>
           <td class="text-end">{{ formatCurrency(pricing.materials_cost) }}</td>
         </tr>
         <tr>
-          <th>Costo de procesos:</th>
+          <th>{{ translations.pricing.processes_cost }}</th>
           <td class="text-end">{{ formatCurrency(pricing.processes_cost) }}</td>
         </tr>
         <tr :class="{ 'bg-danger bg-opacity-10': pricing.extras_cost > 0 && pricing.include_extras_in_subtotal === false }">
-          <th>Costo de extras:</th>
+          <th>{{ translations.pricing.extras_cost }}</th>
           <td class="text-end">{{ formatCurrency(pricing.extras_cost) }}</td>
         </tr>
         <tr class="subtotal-row">
-          <th>Subtotal:</th>
+          <th>{{ translations.pricing.subtotal }}</th>
           <td class="text-end">{{ formatCurrency(pricing.subtotal) }}</td>
         </tr>
         <tr>
-          <th class="align-middle">Desperdicio:</th>
+          <th class="align-middle">{{ translations.pricing.waste }}</th>
           <td>
             <div class="d-flex justify-content-end align-items-center">
               <div class="percentage-group">
@@ -42,15 +42,15 @@
           </td>
         </tr>
         <tr class="subtotal-with-waste-row">
-          <th>Subtotal con desperdicio:</th>
+          <th>{{ translations.pricing.subtotal_with_waste }}</th>
           <td class="text-end">{{ formatCurrency(pricing.subtotal + pricing.waste_value) }}</td>
         </tr>
         <tr class="price-before-margin-row">
-          <th>Precio por pieza antes de margen:</th>
+          <th>{{ translations.pricing.price_per_piece_before_margin }}</th>
           <td class="text-end">{{ formatCurrency(pricing.price_per_piece_before_margin) }}</td>
         </tr>
         <tr>
-          <th class="align-middle">Margen:</th>
+          <th class="align-middle">{{ translations.pricing.margin }}</th>
           <td>
             <div class="d-flex justify-content-end align-items-center">
               <div class="percentage-group">
@@ -73,11 +73,11 @@
           </td>
         </tr>
         <tr class="total-row">
-          <th>Precio total:</th>
+          <th>{{ translations.pricing.total_price }}</th>
           <td class="text-end">{{ formatCurrency(pricing.total_price) }}</td>
         </tr>
         <tr class="final-price-row">
-          <th>Precio por pieza:</th>
+          <th>{{ translations.pricing.final_price_per_piece }}</th>
           <td class="text-end">{{ formatCurrency(pricing.final_price_per_piece) }}</td>
         </tr>
       </tbody>
@@ -100,6 +100,10 @@ export default {
     suggestedMargin: {
       type: Number,
       default: 0
+    },
+    translations: {
+      type: Object,
+      required: true
     }
   },
   data() {

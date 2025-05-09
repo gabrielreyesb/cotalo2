@@ -18,6 +18,7 @@
 
 import * as bootstrap from 'bootstrap'
 import '@popperjs/core'
+window.bootstrap = bootstrap
 
 // Initialize all Bootstrap dropdowns
 document.addEventListener('DOMContentLoaded', function() {

@@ -6,17 +6,14 @@
           <div class="row align-items-end">
             <div class="col-md-9 mb-3 mb-md-0">
               <div class="d-flex align-items-center">
-                <label for="process-select" class="form-label mb-0 me-2">Seleccionar proceso</label>
+                <label for="process-select" class="form-label mb-0 me-2">{{ translations.processes.select_process }}</label>
                 <button 
                   type="button" 
                   class="btn btn-outline-success btn-sm"
                   data-bs-toggle="tooltip"
                   data-bs-placement="right"
                   data-bs-html="true"
-                  title="<strong>Cómo se calculan los costos:</strong><br>
-                  • <u>Pieza</u>: precio de proceso × cantidad de piezas de producto<br>
-                  • <u>Pliego</u>: precio de proceso × total de pliegos de material<br>
-                  • <u>Metro cuadrado</u>: precio de proceso × total de metros cuadrados de material"
+                  :title="translations.processes_calculation_tooltip"
                 >
                   <i class="fa fa-question-circle"></i>
                 </button>
@@ -27,7 +24,7 @@
                 class="form-select"
                 :disabled="!availableProcesses.length"
               >
-                <option value="" disabled>Seleccionar un proceso para agregar</option>
+                <option value="" disabled>{{ translations.processes.select_process }}</option>
                 <option 
                   v-for="process in availableProcesses" 
                   :key="process.id" 
@@ -48,7 +45,7 @@
                 :disabled="!canAdd"
                 :title="validationMessage"
               >
-                <i class="fa fa-plus me-1"></i> Agregar Proceso
+                <i class="fa fa-plus me-1"></i> {{ translations.processes.add_process }}
               </button>
             </div>
           </div>
@@ -57,7 +54,7 @@
     </div>
 
       <div v-if="!productProcesses.length" class="text-center my-5">
-        <p class="text-muted">No hay procesos agregados. Selecciona un proceso y agrégalo al producto.</p>
+        <p class="text-muted">{{ translations.processes.no_processes }}</p>
       </div>
 
       <!-- Table view for medium and large screens -->
@@ -69,12 +66,12 @@
               <table class="table table-dark table-striped mb-0">
                 <thead>
                   <tr>
-                    <th style="width: 45%">Descripción</th>
-                    <th style="width: 10%">Unidad</th>
-                    <th style="width: 15%">Aplicado a material</th>
-                    <th style="width: 10%">Precio por Unidad</th>
-                    <th style="width: 12%">Precio Total</th>
-                    <th style="width: 8%">Acciones</th>
+                    <th style="width: 45%">{{ translations.processes.description }}</th>
+                    <th style="width: 10%">{{ translations.processes.unit }}</th>
+                    <th style="width: 15%">{{ translations.processes.applied_to }}</th>
+                    <th style="width: 10%">{{ translations.processes.unit_price }}</th>
+                    <th style="width: 12%">{{ translations.processes.total_price }}</th>
+                    <th style="width: 8%">{{ translations.processes.actions }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -90,7 +87,7 @@
                         min="0"
                         step="0.01"
                         @change="updateProcessUnitPrice(index)"
-                        title="Puedes editar este valor manualmente para ajustar el precio por unidad"
+                        :title="translations.processes.unit_price"
                         data-toggle="tooltip"
                       />
                     </td>
@@ -100,7 +97,7 @@
                         <button 
                           class="btn btn-sm btn-outline-danger" 
                           @click="removeProcess(index)"
-                          title="Eliminar proceso"
+                          :title="translations.processes.remove"
                         >
                           <i class="fa fa-trash"></i>
                         </button>
@@ -110,7 +107,7 @@
                 </tbody>
                 <tfoot>
                   <tr>
-                    <th colspan="4" class="text-end">Total:</th>
+                    <th colspan="4" class="text-end">{{ translations.processes.total }}:</th>
                     <th class="text-end">{{ formatCurrency(totalCost) }}</th>
                     <th></th>
                   </tr>
@@ -145,7 +142,7 @@
                         min="0"
                         step="0.01"
                         @change="updateProcessUnitPrice(index)"
-                        title="Haz clic para editar el precio unitario"
+                        :title="translations.processes.unit_price"
                       />
                     </div>
                   </div>
@@ -182,13 +179,13 @@
         <div class="card">
           <div class="card-body">
             <div class="form-group">
-              <label for="process-comments" class="form-label">Comentarios sobre los procesos</label>
+              <label for="process-comments" class="form-label">{{ translations.processes.comments }}</label>
               <textarea 
                 id="process-comments" 
                 class="form-control" 
                 v-model="globalComments" 
                 rows="3"
-                placeholder="Agregar notas o comentarios generales sobre los procesos de este producto"
+                :placeholder="translations.processes.comments_placeholder"
                 @change="updateGlobalComments"
               ></textarea>
             </div>
@@ -246,6 +243,10 @@ export default {
     productMaterials: {
       type: Array,
       default: () => []
+    },
+    translations: {
+      type: Object,
+      required: true
     }
   },
   data() {

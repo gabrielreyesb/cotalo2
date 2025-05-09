@@ -5,14 +5,14 @@
         <div class="card-body">
           <div class="row align-items-end">
             <div class="col-md-6 mb-3 mb-md-0 me-md-2">
-              <label for="extra-select" class="form-label">Seleccionar extra</label>
+              <label for="extra-select" class="form-label">{{ translations.extras_tab.select_extra }}</label>
               <select 
                 id="extra-select" 
                 v-model="selectedExtraId" 
                 class="form-select"
                 :disabled="!availableExtras.length"
               >
-                <option value="" disabled>Seleccionar un extra para agregar</option>
+                <option value="" disabled>{{ translations.extras_tab.select_extra_placeholder }}</option>
                 <option 
                   v-for="extra in availableExtras" 
                   :key="extra.id" 
@@ -23,7 +23,7 @@
               </select>
             </div>
             <div class="col-md-3 mb-3 mb-md-0 me-md-2">
-              <label for="extra-quantity" class="form-label">Cantidad</label>
+              <label for="extra-quantity" class="form-label">{{ translations.extras_tab.quantity }}</label>
               <input 
                 id="extra-quantity" 
                 type="number" 
@@ -41,7 +41,7 @@
                 @click="addExtra" 
                 :disabled="!canAdd"
               >
-                <i class="fa fa-plus me-1"></i> Agregar Extra
+                <i class="fa fa-plus me-1"></i> {{ translations.extras_tab.add_extra }}
               </button>
             </div>
           </div>
@@ -50,7 +50,7 @@
     </div>
 
     <div v-if="!productExtras.length" class="text-center my-5">
-      <p class="text-muted">No hay extras agregados. Selecciona un extra y agrégalo al producto.</p>
+      <p class="text-muted">{{ translations.extras_tab.no_extras }}</p>
     </div>
 
     <!-- Table view for medium and large screens -->
@@ -66,7 +66,7 @@
               @change="updateIncludeInSubtotal"
             >
             <label class="form-check-label ms-2" for="include-extras-subtotal">
-              Incluir extras al valor del producto
+              {{ translations.extras_tab.include_in_subtotal }}
             </label>
           </div>
 
@@ -75,12 +75,12 @@
             <table class="table table-dark table-striped mb-0">
               <thead>
                 <tr>
-                  <th style="width: 20%">Nombre</th>
-                  <th style="width: 35%">Descripción</th>
-                  <th class="text-end" style="width: 15%">Precio unitario</th>
-                  <th class="text-center" style="width: 15%">Cantidad</th>
-                  <th class="text-end" style="width: 15%">Total</th>
-                  <th class="text-center" style="width: 8%">Acciones</th>
+                  <th style="width: 20%">{{ translations.extras_tab.table.name }}</th>
+                  <th style="width: 35%">{{ translations.extras_tab.table.description }}</th>
+                  <th class="text-end" style="width: 15%">{{ translations.extras_tab.table.unit_price }}</th>
+                  <th class="text-center" style="width: 15%">{{ translations.extras_tab.table.quantity }}</th>
+                  <th class="text-end" style="width: 15%">{{ translations.extras_tab.table.total }}</th>
+                  <th class="text-center" style="width: 8%">{{ translations.extras_tab.table.actions }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -95,7 +95,7 @@
                       @change="updateExtraPrice(index)"
                       min="0"
                       step="0.01"
-                      title="Editar precio del extra"
+                      :title="translations.extras_tab.tooltips.edit_price"
                       data-toggle="tooltip"
                     >
                   </td>
@@ -107,7 +107,7 @@
                         v-model.number="extra.quantity"
                         min="1"
                         @change="updateExtraQuantity(index)"
-                        title="Editar cantidad"
+                        :title="translations.extras_tab.tooltips.edit_quantity"
                         data-toggle="tooltip"
                       >
                       <span class="input-group-text">{{ extra.unit }}</span>
@@ -119,7 +119,7 @@
                       <button 
                         class="btn btn-sm btn-outline-danger" 
                         @click="removeExtra(index)"
-                        title="Eliminar extra"
+                        :title="translations.extras_tab.tooltips.remove_extra"
                       >
                         <i class="fa fa-trash"></i>
                       </button>
@@ -129,7 +129,7 @@
               </tbody>
               <tfoot>
                 <tr>
-                  <th colspan="4" class="text-end">Total:</th>
+                  <th colspan="4" class="text-end">{{ translations.extras_tab.total_extras }}</th>
                   <th class="text-end">{{ formatCurrency(totalCost) }}</th>
                   <th></th>
                 </tr>
@@ -148,7 +148,7 @@
                 @change="updateIncludeInSubtotal"
               >
               <label class="form-check-label ms-2" for="include-extras-subtotal-mobile">
-                Incluir extras en el subtotal del producto
+                {{ translations.extras_tab.include_in_subtotal_mobile }}
               </label>
             </div>
             <div v-for="(extra, index) in productExtras" :key="index" class="card mb-3 shadow-sm mx-2 mt-3">
@@ -168,7 +168,7 @@
                         @change="updateExtraPrice(index)"
                         min="0"
                         step="0.01"
-                        title="Editar precio"
+                        :title="translations.extras_tab.tooltips.edit_price"
                       />
                       <span class="input-group-text">$</span>
                     </div>
@@ -181,7 +181,7 @@
                         v-model.number="extra.quantity"
                         min="1"
                         @change="updateExtraQuantity(index)"
-                        title="Editar cantidad"
+                        :title="translations.extras_tab.tooltips.edit_quantity"
                       />
                       <span class="input-group-text">{{ extra.unit }}</span>
                     </div>
@@ -194,6 +194,7 @@
                   <button 
                     class="btn btn-sm btn-outline-danger px-2 py-1" 
                     @click="removeExtra(index)"
+                    :title="translations.extras_tab.tooltips.remove_extra"
                   >
                     <i class="fa fa-trash fa-sm"></i>
                   </button>
@@ -205,7 +206,7 @@
             <div class="card bg-dark text-white mx-2 mb-3">
               <div class="card-body py-2">
                 <div class="d-flex justify-content-between align-items-center">
-                  <span class="fw-bold">Total extras:</span>
+                  <span class="fw-bold">{{ translations.extras_tab.total_extras }}</span>
                   <span class="fs-5">{{ formatCurrency(totalCost) }}</span>
                 </div>
               </div>
@@ -220,13 +221,13 @@
       <div class="card">
         <div class="card-body">
           <div class="form-group">
-            <label for="global-comments" class="form-label">Comentarios sobre los extras</label>
+            <label for="global-comments" class="form-label">{{ translations.extras_tab.comments_label }}</label>
             <textarea 
               id="global-comments" 
               class="form-control" 
               v-model="globalComments" 
               rows="3"
-              placeholder="Agregar notas o comentarios generales sobre los extras de este producto"
+              :placeholder="translations.extras_tab.comments_placeholder"
               @change="updateGlobalComments"
             ></textarea>
           </div>
@@ -261,6 +262,10 @@ export default {
     includeExtrasInSubtotal: {
       type: Boolean,
       default: true
+    },
+    translations: {
+      type: Object,
+      required: true
     }
   },
   data() {

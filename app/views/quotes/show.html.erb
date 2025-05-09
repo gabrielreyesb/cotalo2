@@ -1,176 +1,151 @@
-<div class="container-fluid">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Cotización #<%= @quote.id %></h2>
-    <div class="btn-group">
-      <%= link_to pdf_quote_path(@quote, format: :pdf), class: "btn btn-primary", target: "_blank" do %>
-        <i class="fas fa-file-pdf me-1"></i> Ver PDF
-      <% end %>
-      <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#sendEmailModal">
-        <i class="fas fa-envelope me-1"></i> Enviar por correo
-      </button>
-      <%= link_to duplicate_quote_path(@quote), class: "btn btn-info", data: { turbo_method: :get } do %>
-        <i class="fas fa-copy me-1"></i> Duplicar
-      <% end %>
-      <%= link_to edit_quote_path(@quote), class: "btn btn-warning" do %>
-        <i class="fas fa-edit me-1"></i> Editar
-      <% end %>
-      <%= link_to quote_path(@quote), 
-          class: "btn btn-danger",
-          data: { turbo_method: :delete, turbo_confirm: "¿Estás seguro?" } do %>
-        <i class="fas fa-trash me-1"></i> Eliminar
-      <% end %>
+<% content_for :page_title do %>
+  <%= t('quotes.show.title', id: @quote.id) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to pdf_quote_path(@quote, format: :pdf), class: "btn btn-primary me-2", target: "_blank" do %>
+    <i class="fas fa-file-pdf me-1"></i> <%= t('quotes.show.view_pdf') %>
+  <% end %>
+  <button type="button" class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#sendEmailModal">
+    <i class="fas fa-envelope me-1"></i> <%= t('quotes.show.send_email') %>
+  </button>
+  <%= link_to duplicate_quote_path(@quote), class: "btn btn-info me-2", data: { turbo_method: :get } do %>
+    <i class="fas fa-copy me-1"></i> <%= t('quotes.show.duplicate') %>
+  <% end %>
+  <%= link_to edit_quote_path(@quote), class: "btn btn-warning me-2" do %>
+    <i class="fas fa-edit me-1"></i> <%= t('common.edit') %>
+  <% end %>
+  <%= link_to quote_path(@quote), 
+      class: "btn btn-danger me-2",
+      data: { turbo_method: :delete, turbo_confirm: t('common.confirm_delete') } do %>
+    <i class="fas fa-trash me-1"></i> <%= t('common.delete') %>
+  <% end %>
+  <button class="btn btn-success me-2" onclick="window.print()">
+    <i class="fas fa-print"></i> <%= t('quotes.show.print') %>
+  </button>
+  <%= link_to quotes_path, class: "btn btn-secondary" do %>
+    <i class="fas fa-arrow-left"></i> <%= t('quotes.show.back') %>
+  <% end %>
+<% end %>
+
+<div class="container-fluid pt-0 mt-0">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="green-accent-panel">
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="mb-0"><%= t('quotes.form.quote_info') %></h5>
+          </div>
+          <div class="card-body">
+            <table class="table table-borderless">
+              <tr>
+                <th style="width: 30%"><%= t('quotes.form.number') %>:</th>
+                <td><%= @quote.quote_number %></td>
+              </tr>
+              <tr>
+                <th><%= t('quotes.form.project_name') %>:</th>
+                <td><%= @quote.project_name %></td>
+              </tr>
+              <tr>
+                <th><%= t('quotes.form.date') %>:</th>
+                <td><%= @quote.created_at.strftime('%d/%m/%Y') %></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="green-accent-panel">
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="mb-0"><%= t('quotes.form.customer_info') %></h5>
+          </div>
+          <div class="card-body">
+            <table class="table table-borderless">
+              <tr>
+                <th style="width: 30%"><%= t('quotes.form.customer_name') %>:</th>
+                <td><%= @quote.customer_name %></td>
+              </tr>
+              <tr>
+                <th><%= t('quotes.form.organization') %>:</th>
+                <td><%= @quote.organization %></td>
+              </tr>
+              <tr>
+                <th><%= t('quotes.form.email') %>:</th>
+                <td><%= @quote.email.present? ? @quote.email : t('quotes.show.not_specified') %></td>
+              </tr>
+              <tr>
+                <th><%= t('quotes.form.telephone') %>:</th>
+                <td><%= @quote.telephone.present? ? @quote.telephone : t('quotes.show.not_specified') %></td>
+              </tr>
+              <% if @quote.comments.present? %>
+                <tr>
+                  <th><%= t('quotes.form.comments') %>:</th>
+                  <td><%= @quote.comments %></td>
+                </tr>
+              <% end %>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Email Modal -->
-  <div class="modal fade" id="sendEmailModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content bg-dark text-white">
-        <div class="modal-header">
-          <h5 class="modal-title">Enviar Cotización por Correo</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <%= form_with(url: send_email_quote_path(@quote), local: true) do |f| %>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label class="form-label">Correo del cliente</label>
-              <input type="email" class="form-control" value="<%= @quote.email %>" readonly>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Mensaje adicional (opcional)</label>
-              <%= f.text_area :message, class: "form-control", rows: 4, 
-                  placeholder: "Escribe un mensaje personalizado para el cliente..." %>
-            </div>
+  <div class="green-accent-panel">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0"><%= t('quotes.show.products') %></h5>
+      </div>
+      <div class="card-body">
+        <% if @products.any? %>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th><%= t('quotes.form.product') %></th>
+                  <th class="text-center"><%= t('quotes.show.quantity') %></th>
+                  <th class="text-end"><%= t('quotes.show.unit_price') %></th>
+                  <th class="text-end"><%= t('quotes.show.subtotal') %></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @products.each_with_index do |quote_product, index| %>
+                  <tr>
+                    <td><%= index + 1 %></td>
+                    <td><%= quote_product.product.description %></td>
+                    <td class="text-center"><%= quote_product.quantity %></td>
+                    <td class="text-end"><%= number_to_currency(quote_product.product.pricing["total_price"]) %></td>
+                    <td class="text-end"><%= number_to_currency(quote_product.product.pricing["total_price"].to_f * quote_product.quantity) %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th colspan="4" class="text-end"><%= t('quotes.show.subtotal') %>:</th>
+                  <td class="text-end"><%= number_to_currency(@quote.data["totals"]["subtotal"]) %></td>
+                </tr>
+                <tr>
+                  <th colspan="4" class="text-end"><%= t('quotes.show.tax', percentage: @quote.data["totals"]["tax_percentage"]) %>:</th>
+                  <td class="text-end"><%= number_to_currency(@quote.data["totals"]["tax_amount"]) %></td>
+                </tr>
+                <tr>
+                  <th colspan="4" class="text-end"><%= t('quotes.show.total') %>:</th>
+                  <td class="text-end fw-bold"><%= number_to_currency(@quote.data["totals"]["total"]) %></td>
+                </tr>
+              </tfoot>
+            </table>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <%= f.submit "Enviar", class: "btn btn-success" %>
+        <% else %>
+          <div class="alert alert-info">
+            <%= t('quotes.show.no_products') %>
+            <%= link_to t('quotes.show.edit_quote'), edit_quote_path(@quote), class: "alert-link" %> <%= t('quotes.show.to_add_products') %>
           </div>
         <% end %>
       </div>
     </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-6">
-      <div class="card mb-4">
-        <div class="card-header">
-          <h5 class="mb-0">Información de la Cotización</h5>
-        </div>
-        <div class="card-body">
-          <table class="table table-borderless">
-            <tr>
-              <th style="width: 30%">Número de Cotización:</th>
-              <td><%= @quote.quote_number %></td>
-            </tr>
-            <tr>
-              <th>Proyecto:</th>
-              <td><%= @quote.project_name %></td>
-            </tr>
-            <tr>
-              <th>Fecha:</th>
-              <td><%= @quote.created_at.strftime("%d/%m/%Y") %></td>
-            </tr>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-6">
-      <div class="card mb-4">
-        <div class="card-header">
-          <h5 class="mb-0">Información del Cliente</h5>
-        </div>
-        <div class="card-body">
-          <table class="table table-borderless">
-            <tr>
-              <th style="width: 30%">Cliente:</th>
-              <td><%= @quote.customer_name %></td>
-            </tr>
-            <tr>
-              <th>Organización:</th>
-              <td><%= @quote.organization %></td>
-            </tr>
-            <tr>
-              <th>Email:</th>
-              <td><%= @quote.email.present? ? @quote.email : "No especificado" %></td>
-            </tr>
-            <tr>
-              <th>Teléfono:</th>
-              <td><%= @quote.telephone.present? ? @quote.telephone : "No especificado" %></td>
-            </tr>
-            <% if @quote.comments.present? %>
-              <tr>
-                <th>Comentarios:</th>
-                <td><%= @quote.comments %></td>
-              </tr>
-            <% end %>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card mb-4">
-    <div class="card-header">
-      <h5 class="mb-0">Productos</h5>
-    </div>
-    <div class="card-body">
-      <% if @products.any? %>
-        <div class="table-responsive">
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Producto</th>
-                <th class="text-center">Cantidad</th>
-                <th class="text-end">Precio Unitario</th>
-                <th class="text-end">Subtotal</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% @products.each_with_index do |quote_product, index| %>
-                <tr>
-                  <td><%= index + 1 %></td>
-                  <td><%= quote_product.product.description %></td>
-                  <td class="text-center"><%= quote_product.quantity %></td>
-                  <td class="text-end"><%= number_to_currency(quote_product.product.pricing["total_price"]) %></td>
-                  <td class="text-end"><%= number_to_currency(quote_product.product.pricing["total_price"].to_f * quote_product.quantity) %></td>
-                </tr>
-              <% end %>
-            </tbody>
-            <tfoot>
-              <tr>
-                <th colspan="4" class="text-end">Subtotal:</th>
-                <td class="text-end"><%= number_to_currency(@quote.data["totals"]["subtotal"]) %></td>
-              </tr>
-              <tr>
-                <th colspan="4" class="text-end">IVA (<%= @quote.data["totals"]["tax_percentage"] %>%):</th>
-                <td class="text-end"><%= number_to_currency(@quote.data["totals"]["tax_amount"]) %></td>
-              </tr>
-              <tr>
-                <th colspan="4" class="text-end">Total:</th>
-                <td class="text-end fw-bold"><%= number_to_currency(@quote.data["totals"]["total"]) %></td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      <% else %>
-        <div class="alert alert-info">
-          Esta cotización no tiene productos agregados.
-          <%= link_to "Editar cotización", edit_quote_path(@quote), class: "alert-link" %> para agregar productos.
-        </div>
-      <% end %>
-    </div>
-  </div>
-
-  <div class="d-flex justify-content-end mb-4">
-    <button class="btn btn-success me-2" onclick="window.print()">
-      <i class="fas fa-print"></i> Imprimir
-    </button>
-    <%= link_to quotes_path, class: "btn btn-secondary" do %>
-      <i class="fas fa-arrow-left"></i> Volver
-    <% end %>
   </div>
 </div>
 
@@ -193,4 +168,33 @@
       box-shadow: none !important;
     }
   }
-</style> 
+</style>
+
+<!-- Email Modal (moved outside container-fluid to prevent layout issues) -->
+<div class="modal fade" id="sendEmailModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header">
+        <h5 class="modal-title"><%= t('quotes.show.send_email_title') %></h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <%= form_with(url: send_email_quote_path(@quote), local: true) do |f| %>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label"><%= t('quotes.show.customer_email') %></label>
+            <input type="email" class="form-control" value="<%= @quote.email %>" readonly>
+          </div>
+          <div class="mb-3">
+            <label class="form-label"><%= t('quotes.show.additional_message') %></label>
+            <%= f.text_area :message, class: "form-control", rows: 4, 
+                placeholder: t('quotes.show.additional_message_placeholder') %>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('common.cancel') %></button>
+          <%= f.submit t('quotes.show.send'), class: "btn btn-success" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div> 

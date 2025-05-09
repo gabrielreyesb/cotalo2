@@ -20,9 +20,9 @@
                 <thead>
                   <tr>
                     <th class="index-table-header" style="width: 30%;"><%= t('quotes.index.project') %></th>
+                    <th class="index-table-header" style="width: 15%;"><%= t('quotes.index.customer') %></th>
                     <th class="index-table-header" style="width: 10%;"><%= t('quotes.index.date') %></th>
                     <th class="index-table-header" style="width: 15%;"><%= t('quotes.index.number') %></th>
-                    <th class="index-table-header" style="width: 15%;"><%= t('quotes.index.customer') %></th>
                     <th class="index-table-header text-end" style="width: 10%;"><%= t('quotes.index.total') %></th>
                     <th class="index-table-header text-end" style="width: 20%;"><%= t('quotes.index.actions') %></th>
                   </tr>
@@ -33,9 +33,9 @@
                       <td class="project-column">
                         <%= link_to quote.project_name, quote_path(quote), class: "project-link", title: quote.project_name %>
                       </td>
+                      <td><%= quote.customer_name %></td>
                       <td><%= quote.created_at.strftime("%d/%m/%Y") %></td>
                       <td><%= quote.quote_number %></td>
-                      <td><%= quote.customer_name %></td>
                       <td class="text-end"><%= number_to_currency(quote.quote_data["totals"]["total"]) %></td>
                       <td class="text-end action-buttons">
                         <div class="btn-group">
@@ -69,6 +69,7 @@
                               method: :delete,
                               class: "btn btn-sm btn-outline-danger",
                               form: { class: "d-inline-block m-0" },
+                              data: { bs_toggle: "tooltip" },
                               title: t('common.delete') do %>
                             <i class="fas fa-trash"></i>
                           <% end %>
@@ -148,6 +149,7 @@
                       method: :delete,
                       class: "btn btn-sm btn-outline-danger",
                       form: { class: "d-inline-block m-0" },
+                      data: { bs_toggle: "tooltip" },
                       title: t('common.delete') do %>
                     <i class="fas fa-trash fa-sm"></i>
                   <% end %>

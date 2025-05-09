@@ -30,25 +30,25 @@
                   <li class="nav-item">
                     <a class="nav-link" :class="{ active: activeTab === 'general' }" 
                        href="#" @click.prevent="setActiveTab('general')">
-                      <i class="fa fa-info-circle me-1"></i> Información general
+                      <i class="fa fa-info-circle me-1"></i> {{ translations.tabs.general }}
                     </a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" :class="{ active: activeTab === 'materials' }" 
                        href="#" @click.prevent="setActiveTab('materials')">
-                      <i class="fa fa-cubes me-1"></i> Materiales
+                      <i class="fa fa-cubes me-1"></i> {{ translations.tabs.materials }}
                     </a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" :class="{ active: activeTab === 'processes' }" 
                        href="#" @click.prevent="setActiveTab('processes')">
-                      <i class="fa fa-cogs me-1"></i> Procesos
+                      <i class="fa fa-cogs me-1"></i> {{ translations.tabs.processes }}
                     </a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" :class="{ active: activeTab === 'extras' }" 
                        href="#" @click.prevent="setActiveTab('extras')">
-                      <i class="fa fa-plus-circle me-1"></i> Extras
+                      <i class="fa fa-plus-circle me-1"></i> {{ translations.tabs.extras }}
                     </a>
                   </li>
                 </ul>
@@ -59,6 +59,7 @@
                     <general-tab 
                       :product="product" 
                       :is-new="isNew"
+                      :translations="translations"
                       @update:product="updateProduct"
                       @create:product="createProduct"
                     />
@@ -76,6 +77,7 @@
                       :selected-material-id="product && product.data && product.data.selected_material_id ? product.data.selected_material_id : null"
                       :width-margin="userConfig.width_margin"
                       :length-margin="userConfig.length_margin"
+                      :translations="translations"
                       @update:product-materials="updateMaterials"
                       @update:comments="updateMaterialsComments"
                       @update:materials-cost="updateMaterialsCost"
@@ -98,6 +100,7 @@
                       :selected-material-id="product && product.data ? product.data.selected_material_id : null"
                       :selected-material-data="getSelectedMaterial()"
                       :product-materials="product && product.data && product.data.materials ? product.data.materials : []"
+                      :translations="translations"
                       @update:product-processes="updateProcesses"
                       @update:comments="updateProcessesComments"
                       @update:processes-cost="updateProcessesCost"
@@ -112,6 +115,7 @@
                       :comments="product && product.data && product.data.extras_comments ? product.data.extras_comments : ''"
                       :product-quantity="product && product.data && product.data.general_info ? product.data.general_info.quantity : 1"
                       :include-extras-in-subtotal="product && product.data && product.data.include_extras_in_subtotal !== undefined ? product.data.include_extras_in_subtotal : true"
+                      :translations="translations"
                       @update:product-extras="updateExtras"
                       @update:comments="updateExtrasComments"
                       @update:include-extras-in-subtotal="updateIncludeExtrasInSubtotal"
@@ -129,7 +133,7 @@
             <div class="card">
               <div class="card-header bg-dark text-white">
                 <h5 class="mb-0">
-                  <i class="fa fa-calculator me-2"></i>Precio
+                  <i class="fa fa-calculator me-2"></i>{{ translations.pricing.total_price }}
                 </h5>
               </div>
               <div class="card-body p-0">
@@ -137,6 +141,7 @@
                   :pricing="product.data.pricing || defaultPricing"
                   :is-new="isNew"
                   :suggested-margin="suggestedMargin"
+                  :translations="translations"
                   @save:product="savePricingProduct"
                   @recalculate:pricing="ensurePricingUpdated"
                   @update:pricing="handlePricingUpdate"
@@ -205,7 +210,8 @@ export default {
         margin_value: 0,
         total_price: 0,
         final_price_per_piece: 0
-      }
+      },
+      translations: JSON.parse(document.getElementById('product-form-app').dataset.translations)
     };
   },
   computed: {

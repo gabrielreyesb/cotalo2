@@ -1,13 +1,13 @@
 <% content_for :page_title do %>
-  Editar Cotización #<%= @quote.id %>
+  <%= t('quotes.edit.title', id: @quote.id) %>
 <% end %>
 
 <% content_for :page_actions do %>
   <%= link_to quotes_path, class: "btn btn-outline-light me-2" do %>
-    <i class="fa fa-arrow-left me-1"></i> Cancelar
+    <i class="fa fa-arrow-left me-1"></i> <%= t('common.cancel') %>
   <% end %>
   <button type="button" class="btn btn-primary" id="save-quote-button">
-    <i class="fa fa-save me-1"></i> Guardar cotización
+    <i class="fa fa-save me-1"></i> <%= t('common.save') %>
   </button>
 <% end %>
 
@@ -25,7 +25,41 @@
            }
          }
        }) %>"
-       data-edit-mode="true">
+       data-edit-mode="true"
+       data-translations='<%= {
+         quote_info: t("quotes.form.quote_info"),
+         project_name: t("quotes.form.project_name"),
+         customer_info: t("quotes.form.customer_info"),
+         customer_name: t("quotes.form.customer_name"),
+         searching_customers: t("quotes.form.searching_customers"),
+         organization: t("quotes.form.organization"),
+         select_organization: t("quotes.form.select_organization"),
+         no_organization: t("quotes.form.no_organization"),
+         email: t("quotes.form.email"),
+         telephone: t("quotes.form.telephone"),
+         comments: t("quotes.form.comments"),
+         add_product: t("quotes.form.add_product"),
+         search_product: t("quotes.form.search_product"),
+         search_by_description: t("quotes.form.search_by_description"),
+         select_product: t("quotes.form.select_product"),
+         add_to_quote: t("quotes.form.add_to_quote"),
+         selected_products: t("quotes.form.selected_products"),
+         no_selected_products: t("quotes.form.no_selected_products"),
+         product: t("quotes.form.product"),
+         price: t("quotes.form.price"),
+         price_summary: t("quotes.form.price_summary"),
+         subtotal: t("quotes.form.subtotal"),
+         tax: t("quotes.form.tax"),
+         total: t("quotes.form.total"),
+         search_customer: t("quotes.form.search_customer"),
+         enter_at_least_3_chars: t("quotes.form.enter_at_least_3_chars"),
+         search: t("quotes.form.search"),
+         loading: t("quotes.form.loading"),
+         no_customers_found: t("quotes.form.no_customers_found"),
+         name: t("quotes.form.name"),
+         select: t("quotes.form.select"),
+         close: t("quotes.form.close")
+       }.to_json.html_safe %>'>
   </div>
 </div>
 

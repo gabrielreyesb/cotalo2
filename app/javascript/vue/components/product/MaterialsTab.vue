@@ -6,18 +6,14 @@
           <div class="row align-items-end">
             <div class="col-md-9 mb-3 mb-md-0">
               <div class="d-flex align-items-center">
-                <label for="material-select" class="form-label mb-0 me-2">Seleccionar material</label>
+                <label for="material-select" class="form-label mb-0 me-2">{{ translations.materials.select_material }}</label>
                 <button 
                   type="button" 
                   class="btn btn-outline-success btn-sm"
                   data-bs-toggle="tooltip"
                   data-bs-placement="right"
                   data-bs-html="true"
-                  title="<strong>Cómo se calculan los costos:</strong><br>
-                  • <u>Piezas por material</u>: Cantidad de piezas que se pueden obtener de un pliego de material<br>
-                  • <u>Total pliegos</u>: Cantidad de pliegos de material necesarios para crear el producto<br>
-                  • <u>Total m²</u>: Cantidad de metros cuadrados de material necesarios para crear el producto<br>
-                  • <u>Precio total</u>: Precio total del material para crear el producto"
+                  :title="translations.materials_calculation_tooltip"
                 >
                   <i class="fa fa-question-circle"></i>
                 </button>
@@ -29,7 +25,7 @@
                 :disabled="!availableMaterials.length"
                 @change="onMaterialSelect"
               >
-                <option value="" disabled>Seleccionar un material para agregar</option>
+                <option value="" disabled>{{ translations.materials.select_material }}</option>
                 <option 
                   v-for="material in availableMaterials" 
                   :key="material.id" 
@@ -50,7 +46,7 @@
                 :disabled="!canAdd"
                 :title="validationMessage"
               >
-                <i class="fa fa-plus me-1"></i> Agregar material
+                <i class="fa fa-plus me-1"></i> {{ translations.materials.add_material }}
               </button>
             </div>
           </div>
@@ -60,7 +56,7 @@
 
     <!-- No Materials Message -->
     <div v-if="!productMaterials.length" class="text-center my-5">
-      <p class="text-muted">No hay materiales agregados. Selecciona un material y agrégalo al producto.</p>
+      <p class="text-muted">{{ translations.materials.no_materials }}</p>
     </div>
 
     <!-- Materials Table/Cards -->
@@ -72,15 +68,15 @@
             <table class="table table-dark table-striped product-table mb-0">
               <thead>
                 <tr>
-                  <th style="width: 32%">Descripción</th>
-                  <th style="width: 12%">Ancho</th>
-                  <th style="width: 12%">Largo</th>
-                  <th style="width: 12%">Precio</th>
-                  <th style="width: 12%">Piezas x material</th>
-                  <th style="width: 12%">Pliegos</th>
-                  <th style="width: 12%">Total m²</th>
-                  <th style="width: 12%">Precio total</th>
-                  <th style="width: 16%">Acciones</th>
+                  <th style="width: 32%">{{ translations.materials.description }}</th>
+                  <th style="width: 12%">{{ translations.materials.width }}</th>
+                  <th style="width: 12%">{{ translations.materials.length }}</th>
+                  <th style="width: 12%">{{ translations.materials.price }}</th>
+                  <th style="width: 12%">{{ translations.materials.pieces_per_material }}</th>
+                  <th style="width: 12%">{{ translations.materials.total_sheets }}</th>
+                  <th style="width: 12%">{{ translations.materials.total_square_meters }}</th>
+                  <th style="width: 12%">{{ translations.materials.total_price }}</th>
+                  <th style="width: 16%">{{ translations.materials.actions }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -94,7 +90,7 @@
                       min="0"
                       step="0.1"
                       @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
-                      title="Editar ancho del material"
+                      :title="translations.materials.width"
                       data-toggle="tooltip"
                     />
                   </td>
@@ -106,7 +102,7 @@
                       min="0"
                       step="0.1"
                       @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
-                      title="Editar largo del material"
+                      :title="translations.materials.length"
                       data-toggle="tooltip"
                     />
                   </td>
@@ -118,7 +114,7 @@
                       min="0"
                       step="0.01"
                       @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
-                      title="Editar precio del material"
+                      :title="translations.materials.price"
                       data-toggle="tooltip"
                     />
                   </td>
@@ -129,7 +125,7 @@
                       v-model.number="material.piecesPerMaterial" 
                       min="1"
                       @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
-                      title="Puedes editar este valor manualmente para ajustar la cantidad de piezas por material"
+                      :title="translations.materials.pieces_per_material"
                       data-toggle="tooltip"
                     />
                   </td>
@@ -148,14 +144,14 @@
                       <button 
                         class="btn btn-sm btn-outline-info" 
                         @click="openVisualization(material)"
-                        title="Ver información aislada"
+                        :title="translations.materials.visualize"
                       >
                         <i class="fa fa-eye"></i>
                       </button>
                       <button 
                         class="btn btn-sm btn-outline-danger" 
                         @click="removeMaterial(index)"
-                        title="Eliminar material"
+                        :title="translations.materials.remove"
                       >
                         <i class="fa fa-trash"></i>
                       </button>
@@ -165,7 +161,7 @@
               </tbody>
               <tfoot>
                 <tr>
-                  <th colspan="7" class="text-end">Total:</th>
+                  <th colspan="7" class="text-end">{{ translations.materials.total }}:</th>
                   <th class="text-end">{{ formatCurrency(totalCost) }}</th>
                   <th></th>
                 </tr>
@@ -278,13 +274,13 @@
       <div class="card">
         <div class="card-body">
           <div class="form-group">
-            <label for="material-comments" class="form-label">Comentarios sobre los materiales</label>
+            <label for="material-comments" class="form-label">{{ translations.materials.comments }}</label>
             <textarea 
               id="material-comments" 
               class="form-control" 
               v-model="globalComments" 
               rows="3"
-              placeholder="Agregar notas o comentarios generales sobre los materiales de este producto"
+              :placeholder="translations.materials.comments_placeholder"
               @change="updateGlobalComments"
             ></textarea>
           </div>
@@ -296,7 +292,7 @@
     <div v-if="visualizationMaterial" class="custom-overlay">
       <div class="custom-overlay-content">
         <button class="btn-close float-end" @click="visualizationMaterial = null" aria-label="Cerrar" style="font-size: 1.5rem; opacity: 0.8;">×</button>
-        <h4>Visualización de material</h4>
+        <h4>{{ translations.materials.visualization_title }}</h4>
         <div v-if="visualizationMaterial">
           <p><strong>{{ visualizationMaterial.description }}</strong> ({{ Number(visualizationMaterial.ancho).toFixed(1) }}cm x {{ Number(visualizationMaterial.largo).toFixed(1) }}cm)</p>
           <svg
@@ -386,7 +382,7 @@
             </g>
           </svg>
           <div class="mt-2 small text-muted">
-            <span>Verde: producto. Área gris: margen. Borde verde: material.</span>
+            <span>{{ translations.materials.visualization_legend }}</span>
           </div>
         </div>
       </div>
@@ -440,6 +436,10 @@ export default {
     lengthMargin: {
       type: Number,
       default: 0
+    },
+    translations: {
+      type: Object,
+      required: true
     }
   },
   data() {

@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  Editar producto
+  <%= t('products.edit.title') %>
 <% end %>
 
 <% content_for :page_actions do %>
@@ -12,7 +12,78 @@
 <% end %>
 
 <!-- Vue app mount point -->
-<div id="product-form-app" data-product-id="<%= @product.id %>"></div>
+<div id="product-form-app" data-product-id="<%= @product.id %>" data-translations='<%= {
+  tabs: {
+    general: t("products.form.tabs.general"),
+    materials: t("products.form.tabs.materials"),
+    processes: t("products.form.tabs.processes"),
+    extras: t("products.form.tabs.extras")
+  },
+  general: {
+    description: t("products.form.description"),
+    quantity: t("products.form.quantity"),
+    width: t("products.form.width"),
+    length: t("products.form.length"),
+    inner_measurements: t("products.form.inner_measurements"),
+    comments: t("products.form.comments")
+  },
+  materials: {
+    select_material: t("products.form.select_material"),
+    add_material: t("products.form.add_material"),
+    no_materials: t("products.form.no_materials"),
+    description: t("products.form.material_description"),
+    width: t("products.form.material_width"),
+    length: t("products.form.material_length"),
+    price: t("products.form.material_price"),
+    pieces_per_material: t("products.form.pieces_per_material"),
+    total_sheets: t("products.form.total_sheets"),
+    total_square_meters: t("products.form.total_square_meters"),
+    total_price: t("products.form.material_total_price"),
+    actions: t("products.form.actions"),
+    total: t("products.form.total"),
+    remove: t("products.form.remove")
+  },
+  processes: {
+    select_process: t("products.form.select_process"),
+    add_process: t("products.form.add_process"),
+    no_processes: t("products.form.no_processes"),
+    description: t("products.form.process_description"),
+    unit: t("products.form.unit"),
+    applied_to: t("products.form.applied_to"),
+    unit_price: t("products.form.unit_price"),
+    total_price: t("products.form.process_total_price"),
+    actions: t("products.form.actions"),
+    total: t("products.form.total"),
+    remove: t("products.form.remove"),
+    comments: t("products.form.process_comments")
+  },
+  extras: {
+    select_extra: t("products.form.select_extra"),
+    add_extra: t("products.form.add_extra"),
+    no_extras: t("products.form.no_extras"),
+    name: t("products.form.extra_name"),
+    description: t("products.form.extra_description"),
+    unit_price: t("products.form.extra_unit_price"),
+    quantity: t("products.form.extra_quantity"),
+    total: t("products.form.total"),
+    actions: t("products.form.actions"),
+    remove: t("products.form.remove"),
+    include_in_subtotal: t("products.form.include_in_subtotal")
+  },
+  pricing: {
+    materials_cost: t("products.form.materials_cost"),
+    processes_cost: t("products.form.processes_cost"),
+    extras_cost: t("products.form.extras_cost"),
+    subtotal: t("products.form.subtotal"),
+    waste: t("products.form.waste"),
+    subtotal_with_waste: t("products.form.subtotal_with_waste"),
+    price_per_piece_before_margin: t("products.form.price_per_piece_before_margin"),
+    margin: t("products.form.margin"),
+    total_price: t("products.form.total_price"),
+    final_price_per_piece: t("products.form.final_price_per_piece")
+  },
+  materials_calculation_tooltip: t("products.form.materials_calculation_tooltip")
+}.to_json.html_safe %>'></div>
 
 <!-- API token for authentication -->
 <%= tag.meta name: "csrf-token", content: form_authenticity_token %>

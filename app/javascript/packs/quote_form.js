@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let availableProducts = [];
     let quote = {};
     let editMode = false;
+    let translations = {};
     
     try {
       availableProducts = JSON.parse(el.dataset.availableProducts || '[]');
@@ -59,12 +60,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     editMode = el.dataset.editMode === 'true';
+    
+    try {
+      translations = JSON.parse(el.dataset.translations || '{}');
+    } catch (e) {
+      console.error('Error parsing translations:', e);
+      translations = {};
+    }
 
     // Create and mount the Vue app with the component directly
     const app = createApp(QuoteForm, {
       availableProducts,
       quote,
       editMode,
+      translations,
       onSave: (formData) => {
         try {
           // Create a data object with the form data and selected products
