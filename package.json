@@ -34,7 +34,7 @@
   },
   "scripts": {
     "webpack": "webpack --config ./config/webpack/production.js",
-    "build": "NODE_OPTIONS=--max_old_space_size=460 webpack --config ./config/webpack/heroku.js --mode production",
+    "build": "webpack --config ./config/webpack/heroku.js --mode production",
     "heroku-postbuild": "yarn build",
     "assets:precompile": "rake assets:precompile"
   },

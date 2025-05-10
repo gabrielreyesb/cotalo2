@@ -1,11 +1,6 @@
 namespace :assets do
-  desc "Precompile assets with legacy OpenSSL provider"
-  task :precompile_with_legacy_ssl => :environment do
-    ENV['NODE_OPTIONS'] = '--openssl-legacy-provider'
+  desc "Precompile assets"
+  task :precompile => :environment do
     Rake::Task['assets:precompile'].invoke
-  end
-
-  task :precompile do
-    Rake::Task["assets:precompile"].invoke
   end
 end 
