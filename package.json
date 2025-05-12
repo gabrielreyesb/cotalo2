@@ -50,7 +50,7 @@
     "webpack": "webpack --config ./config/webpack/production.js",
     "build": "webpack --config ./config/webpack/heroku.js --mode production",
     "heroku-postbuild": "NODE_OPTIONS=--openssl-legacy-provider yarn build",
-    "assets:precompile": "rake assets:precompile"
+    "assets:precompile": "NODE_OPTIONS=--openssl-legacy-provider rake assets:precompile"
   },
   "license": "MIT",
   "engines": {
