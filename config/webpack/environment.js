@@ -17,7 +17,7 @@ environment.plugins.prepend(
   })
 )
 
-// Disable compression during asset precompilation
+// Disable compression and optimize for Heroku
 if (process.env.RAILS_ENV === 'production' && process.env.NODE_ENV === 'production') {
   // Remove all compression-related plugins
   const pluginsToRemove = ['CompressionPlugin', 'compression-webpack-plugin']
@@ -29,9 +29,29 @@ if (process.env.RAILS_ENV === 'production' && process.env.NODE_ENV === 'producti
     }
   })
   
-  // Disable compression in webpack config
+  // Disable compression and optimize for Heroku
   environment.config.optimization = environment.config.optimization || {}
   environment.config.optimization.minimize = false
+  environment.config.optimization.runtimeChunk = false
+  environment.config.optimization.splitChunks = {
+    chunks: 'all',
+    maxInitialRequests: 1,
+    cacheGroups: {
+      vendor: {
+        test: /[\\/]node_modules[\\/]/,
+        name: 'vendors',
+        chunks: 'all',
+        enforce: true,
+      },
+    },
+  }
+  
+  // Reduce memory usage
+  environment.config.cache = false
+  environment.config.parallelism = 1
+  environment.config.performance = { hints: false }
+  environment.config.stats = 'minimal'
+  environment.config.devtool = false
 }
 
 module.exports = environment
