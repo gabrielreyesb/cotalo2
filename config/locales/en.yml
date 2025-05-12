@@ -361,8 +361,8 @@ en:
       edit_product: "Edit product"
       delete_product: "Delete product"
       duplicate_product: "Duplicate product"
-      no_products_html: "No products. %{link}."
-      create_first_product: "Create your first product"
+      no_products: "No products created yet."
+      create_new: "Create new product"
     form:
       tabs:
         general: "General Information"

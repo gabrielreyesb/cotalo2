@@ -17,18 +17,18 @@
           <table class="table table-striped table-hover">
             <thead>
               <tr>
-                <th class="index-table-header"><%= t('price_margins.index.min_price') %></th>
-                <th class="index-table-header"><%= t('price_margins.index.max_price') %></th>
-                <th class="index-table-header"><%= t('price_margins.index.margin') %></th>
+                <th class="index-table-header text-end"><%= t('price_margins.index.min_price') %></th>
+                <th class="index-table-header text-end"><%= t('price_margins.index.max_price') %></th>
+                <th class="index-table-header text-end"><%= t('price_margins.index.margin') %></th>
                 <th class="index-table-header text-end"><%= t('price_margins.index.actions') %></th>
               </tr>
             </thead>
             <tbody>
               <% @price_margins.each do |margin| %>
                 <tr>
-                  <td><%= number_to_currency(margin.min_price) %></td>
-                  <td><%= number_to_currency(margin.max_price) %></td>
-                  <td><%= number_with_precision(margin.margin_percentage, precision: 2) %>%</td>
+                  <td class="text-end"><%= number_to_currency(margin.min_price) %></td>
+                  <td class="text-end"><%= number_to_currency(margin.max_price) %></td>
+                  <td class="text-end"><%= number_with_precision(margin.margin_percentage, precision: 2) %>%</td>
                   <td class="text-end">
                     <%= link_to edit_price_margin_path(margin), class: "btn btn-sm btn-outline-primary me-1" do %>
                       <i class="fa fa-edit"></i>

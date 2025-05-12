@@ -20,8 +20,8 @@
               <tr>
                 <th class="index-table-header"><%= t('extras.index.name') %></th>
                 <th class="index-table-header"><%= t('extras.index.description') %></th>
-                <th class="index-table-header"><%= t('extras.index.cost') %></th>
-                <th class="index-table-header"><%= t('extras.index.unit') %></th>
+                <th class="index-table-header text-end"><%= t('extras.index.cost') %></th>
+                <th class="index-table-header text-end"><%= t('extras.index.unit') %></th>
                 <th class="index-table-header text-end"><%= t('extras.index.actions') %></th>
               </tr>
             </thead>
@@ -30,8 +30,8 @@
                 <tr>
                   <td><%= link_to extra.name, extra_path(extra) %></td>
                   <td><%= truncate(extra.description, length: 50) %></td>
-                  <td><%= number_to_currency(extra.cost) %></td>
-                  <td>
+                  <td class="text-end"><%= number_to_currency(extra.cost) %></td>
+                  <td class="text-end">
                     <% if extra.unit %>
                       <%= extra.unit.name %> (<%= extra.unit.abbreviation %>)
                     <% else %>

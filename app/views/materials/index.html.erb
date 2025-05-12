@@ -19,9 +19,9 @@
                 <tr>
                   <th class="index-table-header"><%= t('materials.index.name') %></th>
                   <th class="index-table-header"><%= t('materials.index.client_description') %></th>
-                  <th class="index-table-header"><%= t('materials.index.price') %></th>
-                  <th class="index-table-header"><%= t('materials.index.unit') %></th>
-                  <th class="index-table-header"><%= t('materials.index.dimensions') %></th>
+                  <th class="index-table-header text-end"><%= t('materials.index.price') %></th>
+                  <th class="index-table-header text-end"><%= t('materials.index.unit') %></th>
+                  <th class="index-table-header text-end"><%= t('materials.index.dimensions') %></th>
                   <th class="index-table-header text-end"><%= t('materials.index.actions') %></th>
                 </tr>
               </thead>
@@ -30,9 +30,9 @@
                   <tr>
                     <td><%= link_to material.description, material_path(material) %></td>
                     <td><%= material.client_description %></td>
-                    <td><%= number_to_currency(material.price) %></td>
-                    <td><%= material.unit.abbreviation %></td>
-                    <td>
+                    <td class="text-end"><%= number_to_currency(material.price) %></td>
+                    <td class="text-end"><%= material.unit.abbreviation %></td>
+                    <td class="text-end">
                       <% if material.ancho.present? && material.largo.present? %>
                         <%= material.ancho %> x <%= material.largo %>
                       <% elsif material.ancho.present? %>

@@ -4,7 +4,7 @@
 
 <% content_for :page_actions do %>
   <%= link_to new_product_path, class: "btn btn-outline-light" do %>
-    <i class="fa fa-plus me-1"></i> <%= t('products.index.new_product') %>
+    <i class="fas fa-plus me-1"></i> <%= t('products.index.new_product') %>
   <% end %>
 <% end %>
 
@@ -136,12 +136,11 @@
         <% end %>
       </div>
     <% else %>
-      <div class="card shadow-sm">
-        <div class="card-body p-4">
-          <div class="alert alert-info">
-            <%= t('products.index.no_products_html', link: link_to(t('products.index.create_first_product'), new_product_path)) %>
-          </div>
-        </div>
+      <div class="text-center py-5">
+        <p class="mb-4"><%= t('products.index.no_products') %></p>
+        <%= link_to new_product_path, class: "btn btn-primary" do %>
+          <i class="fas fa-plus"></i> <%= t('products.index.create_new') %>
+        <% end %>
       </div>
     <% end %>
   </div>

@@ -19,8 +19,8 @@
               <tr>
                 <th class="index-table-header"><%= t('processes.index.name') %></th>
                 <th class="index-table-header"><%= t('processes.index.description') %></th>
-                <th class="index-table-header"><%= t('processes.index.cost') %></th>
-                <th class="index-table-header"><%= t('processes.index.unit') %></th>
+                <th class="index-table-header text-end"><%= t('processes.index.cost') %></th>
+                <th class="index-table-header text-end"><%= t('processes.index.unit') %></th>
                 <th class="index-table-header text-end"><%= t('processes.index.actions') %></th>
               </tr>
             </thead>
@@ -29,8 +29,8 @@
                 <tr>
                   <td><%= link_to process.name, manufacturing_process_path(process) %></td>
                   <td><%= truncate(process.description, length: 50) %></td>
-                  <td><%= number_to_currency(process.cost) %></td>
-                  <td>
+                  <td class="text-end"><%= number_to_currency(process.cost) %></td>
+                  <td class="text-end">
                     <% if process.unit %>
                       <%= process.unit.name %> (<%= process.unit.abbreviation %>)
                     <% else %>

@@ -336,7 +336,8 @@ es:
       edit_product: "Editar producto"
       delete_product: "Eliminar producto"
       duplicate_product: "Duplicar producto"
-      no_products_html: "No hay productos. %{link}."
+      no_products: "No hay productos creados aún."
+      create_new: "Crear nuevo producto"
       create_first_product: "Crea tu primer producto"
       save_product: "Guardar producto"
     new:
