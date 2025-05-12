@@ -17,36 +17,4 @@ environment.plugins.prepend(
   })
 )
 
-// Completely disable compression and optimization for all environments
-environment.config.optimization = {
-  minimize: false,
-  runtimeChunk: false,
-  minimizer: [],
-  splitChunks: {
-    chunks: 'all',
-    maxInitialRequests: 1,
-    cacheGroups: {
-      vendor: {
-        test: /[\\/]node_modules[\\/]/,
-        name: 'vendors',
-        chunks: 'all',
-        enforce: true,
-      },
-    },
-  },
-}
-
-// Remove any existing compression plugins
-environment.plugins = environment.plugins.filter(plugin => {
-  const pluginName = plugin.constructor && plugin.constructor.name
-  return !pluginName || !pluginName.toLowerCase().includes('compression')
-})
-
-// Reduce memory usage
-environment.config.cache = false
-environment.config.parallelism = 1
-environment.config.performance = { hints: false }
-environment.config.stats = 'minimal'
-environment.config.devtool = false
-
 module.exports = environment
