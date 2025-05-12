@@ -17,23 +17,12 @@ environment.plugins.prepend(
   })
 )
 
-// Disable compression and optimize for Heroku
-if (process.env.RAILS_ENV === 'production' && process.env.NODE_ENV === 'production') {
-  // Remove all compression-related plugins
-  const pluginsToRemove = ['CompressionPlugin', 'compression-webpack-plugin']
-  pluginsToRemove.forEach(pluginName => {
-    try {
-      environment.plugins.delete(pluginName)
-    } catch (e) {
-      // Ignore if plugin doesn't exist
-    }
-  })
-  
-  // Disable compression and optimize for Heroku
-  environment.config.optimization = environment.config.optimization || {}
-  environment.config.optimization.minimize = false
-  environment.config.optimization.runtimeChunk = false
-  environment.config.optimization.splitChunks = {
+// Completely disable compression and optimization for all environments
+environment.config.optimization = {
+  minimize: false,
+  runtimeChunk: false,
+  minimizer: [],
+  splitChunks: {
     chunks: 'all',
     maxInitialRequests: 1,
     cacheGroups: {
@@ -44,14 +33,20 @@ if (process.env.RAILS_ENV === 'production' && process.env.NODE_ENV === 'producti
         enforce: true,
       },
     },
-  }
-  
-  // Reduce memory usage
-  environment.config.cache = false
-  environment.config.parallelism = 1
-  environment.config.performance = { hints: false }
-  environment.config.stats = 'minimal'
-  environment.config.devtool = false
+  },
 }
+
+// Remove any existing compression plugins
+environment.plugins = environment.plugins.filter(plugin => {
+  const pluginName = plugin.constructor && plugin.constructor.name
+  return !pluginName || !pluginName.toLowerCase().includes('compression')
+})
+
+// Reduce memory usage
+environment.config.cache = false
+environment.config.parallelism = 1
+environment.config.performance = { hints: false }
+environment.config.stats = 'minimal'
+environment.config.devtool = false
 
 module.exports = environment
