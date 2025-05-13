@@ -191,6 +191,8 @@ es:
         forgot_password: "¿Olvidaste tu contraseña?"
         no_account: "¿No tienes una cuenta?"
         register: "Regístrate"
+    failure:
+      account_disabled: "Tu cuenta ha sido deshabilitada. Por favor, contacta a un administrador."
   extras:
     index:
       title: "Extras"
@@ -421,4 +423,74 @@ es:
         edit_quantity: "Editar cantidad"
         remove_extra: "Eliminar extra"
       total_extras: "Total extras:"
+  admin:
+    dashboard:
+      title: "Panel de Control de Administrador"
+      total_users: "Total de Usuarios"
+      total_products: "Total de Productos"
+      total_quotes: "Total de Cotizaciones"
+      recent_users: "Usuarios Recientes"
+      manage_users: "Administrar Usuarios"
+    access_denied: "No tienes permiso para acceder a esta área."
+    users:
+      title: "Gestión de Usuarios"
+      back_to_dashboard: "Volver al Panel"
+      email: "Correo"
+      admin: "Administrador"
+      status: "Estado"
+      status_labels:
+        active: "Activo"
+        disabled: "Deshabilitado"
+      created_at: "Fecha de Creación"
+      actions: "Acciones"
+      impersonate: "Suplantar"
+      edit: "Editar"
+      delete:
+        button: "Eliminar"
+        confirm: "¿Estás seguro de que deseas eliminar este usuario?"
+      toggle_disabled:
+        enable: "Habilitar"
+        disable: "Deshabilitar"
+        confirm_enable: "¿Estás seguro de que deseas habilitar este usuario?"
+        confirm_disable: "¿Estás seguro de que deseas deshabilitar este usuario?"
+        disabled: "Usuario ha sido deshabilitado"
+        enabled: "Usuario ha sido habilitado"
+      update:
+        success: "Usuario actualizado exitosamente"
+      destroy:
+        success: "Usuario eliminado exitosamente"
+      show_disabled: "Mostrar usuarios deshabilitados"
+      last_login: "Último acceso"
+      never_logged_in: "Nunca"
+    impersonation:
+      currently_impersonating: "Actualmente estás suplantando a %{email}"
+      stop: "Dejar de Suplantar"
+    news:
+      title: "Noticias"
+      new: "Nueva Noticia"
+      published_at: "Fecha de Publicación"
+      actions: "Acciones"
+      create_first: "Crea tu primera noticia"
+      no_news_html: "No hay noticias configuradas. %{link}."
+      show:
+        title: "Detalles de la Noticia"
+        back: "Volver a Noticias"
+        edit: "Editar"
+        delete: "Eliminar"
+        published_on: "Publicado el"
+      edit:
+        title: "Editar Noticia"
+        back: "Volver a Noticias"
+      new:
+        title: "Nueva Noticia"
+        back: "Volver a Noticias"
+      form:
+        title: "Título"
+        title_placeholder: "Ingresa el título de la noticia"
+        content: "Contenido"
+        content_placeholder: "Escribe el contenido de la noticia"
+        create: "Crear Noticia"
+        update: "Actualizar Noticia"
+        cancel: "Cancelar"
+        errors: "impidieron guardar esta noticia"
  

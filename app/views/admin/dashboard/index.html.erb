@@ -1,84 +1,74 @@
+<% content_for :page_actions do %>
+  <%= link_to t('admin.dashboard.manage_users'), admin_users_path, class: 'btn btn-outline-light' %>
+<% end %>
+
 <% content_for :page_title do %>
-  Panel de control de administrador
+  <%= t('admin.dashboard.title') %>
 <% end %>
 
 <div class="scrollable-view-container">
   <% if session[:impersonated_user_id] %>
     <div class="alert alert-warning">
-      You are currently impersonating <%= current_user.email %>
+      <%= t('admin.impersonation.currently_impersonating', email: current_user.email) %>
       <%= button_to admin_impersonations_destroy_path, method: :delete, class: "btn btn-warning" do %>
-        <i class="fas fa-user-secret me-1"></i> Stop Impersonating
+        <i class="fas fa-user-secret me-1"></i> <%= t('admin.impersonation.stop') %>
       <% end %>
     </div>
   <% end %>
 
   <div class="row">
     <div class="col-md-4 mb-4">
-      <div class="card bg-dark text-white green-accent-panel">
+      <div class="green-accent-panel">
         <div class="card-body">
-          <h5 class="card-title">Total Users</h5>
+          <h5 class="card-title"><%= t('admin.dashboard.total_users') %></h5>
           <h2 class="card-text"><%= @total_users %></h2>
-          <%= link_to 'Manage Users', admin_users_path, class: 'btn btn-light btn-sm' %>
         </div>
       </div>
     </div>
 
     <div class="col-md-4 mb-4">
-      <div class="card bg-dark text-white green-accent-panel">
+      <div class="green-accent-panel">
         <div class="card-body">
-          <h5 class="card-title">Total Products</h5>
+          <h5 class="card-title"><%= t('admin.dashboard.total_products') %></h5>
           <h2 class="card-text"><%= @total_products %></h2>
         </div>
       </div>
     </div>
 
     <div class="col-md-4 mb-4">
-      <div class="card bg-dark text-white green-accent-panel">
+      <div class="green-accent-panel">
         <div class="card-body">
-          <h5 class="card-title">Total Quotes</h5>
+          <h5 class="card-title"><%= t('admin.dashboard.total_quotes') %></h5>
           <h2 class="card-text"><%= @total_quotes %></h2>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="card bg-dark text-white green-accent-panel mt-4">
+  <div class="green-accent-panel mt-4">
     <div class="card-body">
-      <h5 class="card-title">Recent Users</h5>
+      <h5 class="card-title"><%= t('admin.dashboard.recent_users') %></h5>
       <div class="table-responsive">
         <table class="table table-dark">
           <thead>
             <tr>
-              <th>Email</th>
-              <th>Admin</th>
-              <th>Created At</th>
-              <th class="text-end">Actions</th>
+              <th><%= t('admin.users.email') %></th>
+              <th><%= t('admin.users.admin') %></th>
+              <th><%= t('admin.users.created_at') %></th>
+              <th><%= t('admin.users.last_login') %></th>
             </tr>
           </thead>
           <tbody>
-            <% @users.order(created_at: :desc).limit(5).each do |user| %>
+            <% @users.sort_by { |u| [u.last_sign_in_at || u.created_at] }.reverse.first(10).each do |user| %>
               <tr>
-                <td><%= user.email %></td>
+                <td><%= link_to user.email, edit_admin_user_path(user), class: 'text-white' %></td>
                 <td>
                   <span class="badge <%= user.admin? ? 'bg-success' : 'bg-secondary' %>">
-                    <%= user.admin? ? 'Yes' : 'No' %>
+                    <%= user.admin? ? t('common.yes') : t('common.no') %>
                   </span>
                 </td>
                 <td><%= user.created_at.strftime("%Y-%m-%d") %></td>
-                <td class="text-end">
-                  <div class="d-inline-flex gap-2">
-                    <% unless user == current_user %>
-                      <%= button_to admin_impersonations_path(user_id: user.id), 
-                                  method: :post, 
-                                  class: "btn btn-sm btn-success" do %>
-                        <i class="fas fa-user-secret"></i> Impersonate
-                      <% end %>
-                    <% end %>
-                    <%= link_to edit_admin_user_path(user), class: "btn btn-sm btn-secondary" do %>
-                      <i class="fas fa-edit"></i> Edit
-                    <% end %>
-                  </div>
-                </td>
+                <td><%= user.last_sign_in_at ? user.last_sign_in_at.strftime("%Y-%m-%d %H:%M") : t('admin.users.never_logged_in') %></td>
               </tr>
             <% end %>
           </tbody>

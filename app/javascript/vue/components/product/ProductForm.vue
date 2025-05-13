@@ -157,11 +157,11 @@
 </template>
 
 <script>
-import ExtrasTab from './ExtrasTab.vue';
-import GeneralTab from './GeneralTab.vue';
-import PricingTab from './PricingTab.vue';
-import ProcessesTab from './ProcessesTab.vue';
-import MaterialsTab from './MaterialsTab.vue';
+import GeneralTab from './GeneralTab.vue'
+import PricingTab from './PricingTab.vue'
+import ProcessesTab from './ProcessesTab.vue'
+import MaterialsTab from './MaterialsTab.vue'
+import ExtrasTab from './ExtrasTab.vue'
 
 export default {
   name: 'ProductForm',

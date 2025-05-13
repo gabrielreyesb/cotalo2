@@ -63,8 +63,8 @@ describe('Product Creation', () => {
     // Select the first process
     cy.get('#process-select').select(1, { force: true })
     
-    // Click the Add Process button
-    cy.contains('Agregar Proceso').click()
+    // Wait for the Add Process button to be visible, then click it
+    cy.contains('Agregar proceso').should('be.visible').click()
     
     // Wait for the process to be added and pricing to update
     cy.wait(1000)

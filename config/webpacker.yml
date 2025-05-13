@@ -51,6 +51,11 @@ default: &default
     - .jpg
     - .vue
 
+  # Custom configurations for specific packs
+  custom_packs:
+    product_form:
+      config_path: ./config/webpack/product_form.js
+
 development:
   <<: *default
   compile: true

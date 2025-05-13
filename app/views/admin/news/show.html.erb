@@ -1,8 +1,8 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Detalles de la Noticia</h2>
+    <h2><%= t('admin.news.show.title') %></h2>
     <%= link_to admin_news_index_path, class: "btn btn-outline-secondary" do %>
-      <i class="fas fa-arrow-left me-1"></i> Volver a Noticias
+      <i class="fas fa-arrow-left me-1"></i> <%= t('admin.news.show.back') %>
     <% end %>
   </div>
 
@@ -12,7 +12,7 @@
         <h3 class="mb-3"><%= @news.title %></h3>
         <p class="text-muted">
           <i class="fas fa-calendar me-1"></i>
-          Publicado el <%= @news.published_at.strftime('%d/%m/%Y %H:%M') %>
+          <%= t('admin.news.show.published_on') %> <%= @news.published_at.strftime('%d/%m/%Y %H:%M') %>
         </p>
         <div class="mt-4">
           <%= simple_format(@news.content, class: 'mb-0') %>
@@ -21,12 +21,12 @@
 
       <div class="d-flex gap-2">
         <%= link_to edit_admin_news_path(@news), class: "btn btn-primary" do %>
-          <i class="fas fa-edit me-1"></i> Editar
+          <i class="fas fa-edit me-1"></i> <%= t('admin.news.show.edit') %>
         <% end %>
         <%= link_to admin_news_path(@news),
             class: "btn btn-danger",
-            data: { turbo_method: :delete, turbo_confirm: '¿Estás seguro?' } do %>
-          <i class="fas fa-trash me-1"></i> Eliminar
+            data: { turbo_method: :delete, turbo_confirm: t('common.confirm_delete') } do %>
+          <i class="fas fa-trash me-1"></i> <%= t('admin.news.show.delete') %>
         <% end %>
       </div>
     </div>

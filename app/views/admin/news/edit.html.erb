@@ -1,8 +1,8 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Editar Noticia</h2>
+    <h2><%= t('admin.news.edit.title') %></h2>
     <%= link_to admin_news_index_path, class: "btn btn-outline-secondary" do %>
-      <i class="fas fa-arrow-left me-1"></i> Volver a Noticias
+      <i class="fas fa-arrow-left me-1"></i> <%= t('admin.news.edit.back') %>
     <% end %>
   </div>
 

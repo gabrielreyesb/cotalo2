@@ -310,4 +310,20 @@ Devise.setup do |config|
   # When set to false, does not sign a user in automatically after their password is
   # changed. Defaults to true, so a user is signed in automatically after changing a password.
   # config.sign_in_after_change_password = true
+
+  # ==> Security Extension
+  # Configure security extension for devise
+  config.warden do |manager|
+    manager.default_strategies(scope: :user).unshift :database_authenticatable
+  end
+
+  # ==> Custom failure app
+  # If you want to use a custom failure app, uncomment the following line
+  # config.failure_app = CustomFailureApp
+
+  # ==> Custom messages
+  # Add custom messages for disabled accounts
+  config.warden do |manager|
+    manager.failure_app = CustomFailureApp
+  end
 end

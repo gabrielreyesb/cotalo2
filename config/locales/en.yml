@@ -217,6 +217,8 @@ en:
         forgot_password: "Forgot your password?"
         no_account: "Don't have an account?"
         register: "Register"
+    failure:
+      account_disabled: "Your account has been disabled. Please contact an administrator."
   extras:
     index:
       title: "Extras"
@@ -453,3 +455,73 @@ en:
       title: "New product"
     edit:
       title: "Edit product"
+  admin:
+    dashboard:
+      title: "Admin Dashboard"
+      total_users: "Total Users"
+      total_products: "Total Products"
+      total_quotes: "Total Quotes"
+      recent_users: "Recent Users"
+      manage_users: "Manage Users"
+    access_denied: "You don't have permission to access this area."
+    users:
+      title: "User Management"
+      back_to_dashboard: "Back to Dashboard"
+      email: "Email"
+      admin: "Admin"
+      status: "Status"
+      status:
+        active: "Active"
+        disabled: "Disabled"
+      created_at: "Created At"
+      actions: "Actions"
+      impersonate: "Impersonate"
+      edit: "Edit"
+      delete:
+        button: "Delete"
+        confirm: "Are you sure you want to delete this user?"
+      toggle_disabled:
+        enable: "Enable"
+        disable: "Disable"
+        confirm_enable: "Are you sure you want to enable this user?"
+        confirm_disable: "Are you sure you want to disable this user?"
+        disabled: "User has been disabled"
+        enabled: "User has been enabled"
+        show_disabled: "Show disabled users"
+      update:
+        success: "User was successfully updated"
+      destroy:
+        success: "User was successfully deleted"
+      last_login: "Last Login"
+      never_logged_in: "Never"
+    impersonation:
+      currently_impersonating: "You are currently impersonating %{email}"
+      stop: "Stop Impersonating"
+    news:
+      title: "News"
+      new: "New News"
+      published_at: "Published At"
+      actions: "Actions"
+      create_first: "Create your first news"
+      no_news_html: "No news configured. %{link}."
+      show:
+        title: "News Details"
+        back: "Back to News"
+        edit: "Edit"
+        delete: "Delete"
+        published_on: "Published on"
+      edit:
+        title: "Edit News"
+        back: "Back to News"
+      new:
+        title: "New News"
+        back: "Back to News"
+      form:
+        title: "Title"
+        title_placeholder: "Enter news title"
+        content: "Content"
+        content_placeholder: "Write news content"
+        create: "Create News"
+        update: "Update News"
+        cancel: "Cancel"
+        errors: "prevented this news from being saved"

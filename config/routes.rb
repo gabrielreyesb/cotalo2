@@ -5,7 +5,11 @@ Rails.application.routes.draw do
   # Admin routes
   namespace :admin do
     root to: 'dashboard#index'
-    resources :users
+    resources :users do
+      member do
+        post :toggle_disabled
+      end
+    end
     resources :impersonations, only: [:create]
     delete 'impersonations', to: 'impersonations#destroy', as: :impersonations_destroy
     resources :units

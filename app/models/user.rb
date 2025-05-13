@@ -2,7 +2,7 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :rememberable, :validatable, :trackable
 
   has_many :materials, dependent: :destroy
   has_many :manufacturing_processes, dependent: :destroy
@@ -17,6 +17,18 @@ class User < ApplicationRecord
 
   def admin?
     admin
+  end
+
+  def disabled?
+    disabled
+  end
+
+  def active_for_authentication?
+    super && !disabled?
+  end
+
+  def inactive_message
+    disabled? ? :account_disabled : super
   end
 
   # Helper methods to access configuration values
