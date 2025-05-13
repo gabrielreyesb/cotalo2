@@ -18,7 +18,7 @@ es:
     no: "No"
     confirm_delete: "¿Estás seguro?"
   dashboard:
-    title: "Panel de control"
+    title: "Tablero"
     products: "Productos"
     view_all: "Ver todos"
     add_new: "Agregar nuevo"
@@ -42,6 +42,16 @@ es:
     view_all_quotes_full: "Ver todas las cotizaciones"
     no_quotes_html: "No hay cotizaciones. %{link}"
     create_first_quote: "Crea tu primera cotización"
+    quote_metrics:
+      total_value: "Valor total"
+      average_value: "Valor promedio"
+      last_30_days: "Últimos 30 días"
+      highest_value: "Valor más alto"
+    product_metrics:
+      most_quoted: "Productos más cotizados"
+      most_quoted_desc: "Top 5 productos por frecuencia de cotización"
+      highest_value: "Productos de mayor valor"
+      highest_value_desc: "Top 5 productos por valor"
   config:
     title: "Configuraciones"
     general_settings: "Configuraciones generales"
@@ -59,7 +69,7 @@ es:
     whatsapp: "WhatsApp"
     sales_conditions: "Condiciones de venta"
   navbar:
-    dashboard: "Panel de control"
+    dashboard: "Tablero"
     products: "Productos"
     quotes: "Cotizaciones"
     catalogs: "Catálogos"
@@ -81,7 +91,7 @@ es:
   home:
     hero_title: "Calcula el costo de fabricación de cajas personalizadas en minutos"
     hero_subtitle: "Cotalo te permite diseñar y cotizar cajas personalizadas de manera rápida y precisa. Optimiza tus costos de producción con nuestra herramienta intuitiva."
-    go_to_dashboard: "Ir al Tablero"
+    go_to_dashboard: "Ir al tablero"
     register_free: "Regístrate gratis"
     login: "Iniciar sesión"
     features_title: "Características principales"
@@ -425,7 +435,7 @@ es:
       total_extras: "Total extras:"
   admin:
     dashboard:
-      title: "Panel de Control de Administrador"
+      title: "Tablero de Administrador"
       total_users: "Total de Usuarios"
       total_products: "Total de Productos"
       total_quotes: "Total de Cotizaciones"
@@ -434,7 +444,7 @@ es:
     access_denied: "No tienes permiso para acceder a esta área."
     users:
       title: "Gestión de Usuarios"
-      back_to_dashboard: "Volver al Panel"
+      back_to_dashboard: "Volver al tablero"
       email: "Correo"
       admin: "Administrador"
       status: "Estado"
