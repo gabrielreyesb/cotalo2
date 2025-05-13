@@ -153,13 +153,20 @@ es:
       width: "Ancho"
       length: "Largo"
       resistance: "Resistencia"
-      comments: "Comentarios"
+      comments: "Comentarios sobre los materiales"
+      comments_placeholder: "Agregar notas o comentarios generales sobre los materiales de este producto"
       materials_calculation_tooltip: |
         <strong>Cómo se calculan los costos:</strong><br>
         • <u>Piezas por material</u>: Cantidad de piezas que se pueden obtener de un pliego de material<br>
         • <u>Total pliegos</u>: Cantidad de pliegos de material necesarios para crear el producto<br>
         • <u>Total m²</u>: Cantidad de metros cuadrados de material necesarios para crear el producto<br>
         • <u>Precio total</u>: Precio total del material para crear el producto
+      materials:
+        comments: "Comentarios sobre los materiales"
+        comments_placeholder: "Agregar notas o comentarios generales sobre los materiales de este producto"
+    materials_tab:
+      comments_label: "Comentarios sobre los materiales"
+      comments_placeholder: "Agregar notas o comentarios generales sobre los materiales de este producto"
   processes:
     index:
       title: "Procesos"
@@ -367,8 +374,6 @@ es:
       width: "Ancho (cm)"
       length: "Largo (cm)"
       inner_measurements: "Medidas internas"
-      comments: "Comentarios sobre los materiales"
-      comments_placeholder: "Agregar notas o comentarios generales sobre los materiales de este producto"
       select_material: "Seleccionar material"
       add_material: "Agregar material"
       no_materials: "No hay materiales agregados. Selecciona un material y agrégalo al producto."
@@ -433,6 +438,9 @@ es:
         edit_quantity: "Editar cantidad"
         remove_extra: "Eliminar extra"
       total_extras: "Total extras:"
+    materials:
+      comments: "Comentarios sobre los materiales"
+      comments_placeholder: "Agregar notas o comentarios generales sobre los materiales de este producto"
   admin:
     dashboard:
       title: "Tablero de Administrador"

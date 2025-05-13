@@ -179,13 +179,13 @@
         <div class="card">
           <div class="card-body">
             <div class="form-group">
-              <label for="process-comments" class="form-label">{{ translations.processes.comments }}</label>
+              <label for="process-comments" class="form-label">Comentarios sobre los procesos</label>
               <textarea 
                 id="process-comments" 
                 class="form-control" 
                 v-model="globalComments" 
                 rows="3"
-                :placeholder="translations.processes.comments_placeholder"
+                placeholder="Agregar notas o comentarios generales sobre los procesos de este producto"
                 @change="updateGlobalComments"
               ></textarea>
             </div>

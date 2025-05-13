@@ -72,6 +72,16 @@ en:
     view_all_quotes_full: "View all quotes"
     no_quotes_html: "No quotes. %{link}"
     create_first_quote: "Create your first quote"
+    quote_metrics:
+      total_value: "Total Value"
+      average_value: "Average Value"
+      last_30_days: "Last 30 Days"
+      highest_value: "Highest Value"
+    product_metrics:
+      most_quoted: "Most Quoted Products"
+      most_quoted_desc: "Top 5 products by quote frequency"
+      highest_value: "Highest Value Products"
+      highest_value_desc: "Top 5 products by value"
   config:
     title: "Configurations"
     general_settings: "General Settings"

@@ -274,13 +274,13 @@
       <div class="card">
         <div class="card-body">
           <div class="form-group">
-            <label for="material-comments" class="form-label">{{ translations.materials.comments }}</label>
+            <label for="material-comments" class="form-label">Comentarios sobre los materiales</label>
             <textarea 
               id="material-comments" 
               class="form-control" 
               v-model="globalComments" 
               rows="3"
-              :placeholder="translations.materials.comments_placeholder"
+              placeholder="Agregar notas o comentarios generales sobre los materiales de este producto"
               @change="updateGlobalComments"
             ></textarea>
           </div>
