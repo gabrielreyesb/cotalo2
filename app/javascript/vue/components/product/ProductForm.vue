@@ -813,129 +813,84 @@ export default {
       if (!this.product || !this.product.data || !this.product.data.pricing) {
         return;
       }
-      
       const pricing = this.product.data.pricing;
-      
       // Ensure waste_percentage and margin_percentage are set from user config if not already set
       if (!pricing.waste_percentage && pricing.waste_percentage !== 0) {
         pricing.waste_percentage = this.userConfig.waste_percentage;
       }
-      
-      // Calculate subtotal - ensure all values are numbers
+      // Calculate subtotal – ensure all values are numbers
       pricing.materials_cost = parseFloat(pricing.materials_cost) || 0;
       pricing.processes_cost = parseFloat(pricing.processes_cost) || 0;
       pricing.extras_cost = parseFloat(pricing.extras_cost) || 0;
-      
       // Calculate subtotal based on whether extras should be included
       const includeExtrasInSubtotal = this.product.data.include_extras_in_subtotal !== undefined ? 
         this.product.data.include_extras_in_subtotal : true;
-      
       const newSubtotal = pricing.materials_cost + pricing.processes_cost + 
         (includeExtrasInSubtotal ? pricing.extras_cost : 0);
-      
       // If subtotal has changed significantly, recalculate margin
       if (Math.abs(pricing.subtotal - newSubtotal) > 0.01) {
         pricing.subtotal = newSubtotal;
-        
         // Calculate waste
         pricing.waste_value = pricing.subtotal * (pricing.waste_percentage / 100);
-        
-        // Calculate new suggested margin only if not manually overridden and margin_percentage is undefined/null
-        if (!this.manualMarginOverride && (pricing.margin_percentage === undefined || pricing.margin_percentage === null)) {
-          const newSuggestedMargin = await this.calculateSuggestedMargin();
-          this.suggestedMargin = newSuggestedMargin;
-          pricing.margin_percentage = newSuggestedMargin;
+        // Calculate new suggested margin (if new product or margin_percentage is undefined/null) and manualMarginOverride is false
+        if (this.isNew || (pricing.margin_percentage === undefined || pricing.margin_percentage === null)) {
+          if (!this.manualMarginOverride) {
+            const newSuggestedMargin = await this.calculateSuggestedMargin();
+            this.suggestedMargin = newSuggestedMargin;
+            pricing.margin_percentage = newSuggestedMargin;
+          }
         }
-      } else {
         pricing.subtotal = newSubtotal;
         // Calculate waste
         pricing.waste_value = pricing.subtotal * (pricing.waste_percentage / 100);
       }
-      
       // Calculate subtotal with waste
       const subtotalWithWaste = pricing.subtotal + pricing.waste_value;
-      
       // Get quantity from general_info if available, otherwise use product quantity or default to 1
       const quantity = 
         (this.product.data.general_info && this.product.data.general_info.quantity) || 
         this.product.data.quantity || 
         1;
-      
       // Calculate price per piece before margin
       pricing.price_per_piece_before_margin = subtotalWithWaste / quantity;
-      
       // Calculate margin
       pricing.margin_value = subtotalWithWaste * (pricing.margin_percentage / 100);
-      
       // Calculate total price
       pricing.total_price = subtotalWithWaste + pricing.margin_value;
-      
       // Calculate final price per piece
       pricing.final_price_per_piece = pricing.total_price / quantity;
     },
     async ensurePricingUpdated() {
-      if (!this.product || !this.product.data || !this.product.data.pricing) return;
-      
-      // Get total costs from materials, processes, and extras
-      const materialsCost = this.product.data.materials ? this.product.data.materials.reduce((sum, material) => {
-        return sum + (parseFloat(material.totalPrice) || 0);
-      }, 0) : 0;
-      
-      const processesCost = this.product.data.processes ? this.product.data.processes.reduce((sum, process) => {
-        return sum + (parseFloat(process.price) || 0);
-      }, 0) : 0;
-      
-      const extrasCost = this.product.data.extras ? this.product.data.extras.reduce((sum, extra) => {
-        const price = parseFloat(extra.unit_price) || 0;
-        const quantity = parseInt(extra.quantity) || 0;
-        return sum + (price * quantity);
-      }, 0) : 0;
-      
-      // Update pricing with the calculated values
+      if (!this.product || !this.product.data || !this.product.data.pricing) {
+        return;
+      }
       const pricing = this.product.data.pricing;
-      
-      // Update costs
-      pricing.materials_cost = materialsCost;
-      pricing.processes_cost = processesCost;
-      pricing.extras_cost = extrasCost;
-      
-      // Calculate new subtotal
+      // Calculate subtotal – ensure all values are numbers
+      pricing.materials_cost = parseFloat(pricing.materials_cost) || 0;
+      pricing.processes_cost = parseFloat(pricing.processes_cost) || 0;
+      pricing.extras_cost = parseFloat(pricing.extras_cost) || 0;
+      // Calculate subtotal (based on whether extras are included)
       const includeExtrasInSubtotal = this.product.data.include_extras_in_subtotal !== undefined ? 
         this.product.data.include_extras_in_subtotal : true;
-      
-      const newSubtotal = materialsCost + processesCost + 
-        (includeExtrasInSubtotal ? extrasCost : 0);
-      
+      const newSubtotal = pricing.materials_cost + pricing.processes_cost + (includeExtrasInSubtotal ? pricing.extras_cost : 0);
       pricing.subtotal = newSubtotal;
-      
-      // Calculate waste
+      // Calculate waste value
       pricing.waste_value = pricing.subtotal * (pricing.waste_percentage / 100);
-      
-      // Calculate subtotal with waste
-      const subtotalWithWaste = pricing.subtotal + pricing.waste_value;
-      
-      // Get quantity from general_info if available, otherwise use product quantity or default to 1
-      const quantity = 
-        (this.product.data.general_info && this.product.data.general_info.quantity) || 
-        this.product.data.quantity || 
-        1;
-      
       // Calculate price per piece before margin
-      pricing.price_per_piece_before_margin = subtotalWithWaste / quantity;
-      
-      // Calculate suggested margin based on the new subtotal with waste
-      if (!this.manualMarginOverride && (pricing.margin_percentage === undefined || pricing.margin_percentage === null)) {
-        const newSuggestedMargin = await this.calculateSuggestedMargin();
-        this.suggestedMargin = newSuggestedMargin;
-        pricing.margin_percentage = newSuggestedMargin;
+      const quantity = (this.product.data.general_info && this.product.data.general_info.quantity) || this.product.data.quantity || 1;
+      pricing.price_per_piece_before_margin = (newSubtotal + pricing.waste_value) / quantity;
+      // Calculate suggested margin (if new product or margin_percentage is undefined/null) and manualMarginOverride is false
+      if (this.isNew || (pricing.margin_percentage === undefined || pricing.margin_percentage === null)) {
+        if (!this.manualMarginOverride) {
+          const newSuggestedMargin = await this.calculateSuggestedMargin();
+          this.suggestedMargin = newSuggestedMargin;
+          pricing.margin_percentage = newSuggestedMargin;
+        }
       }
-      
       // Calculate margin value
-      pricing.margin_value = subtotalWithWaste * (pricing.margin_percentage / 100);
-      
+      pricing.margin_value = (newSubtotal + pricing.waste_value) * (pricing.margin_percentage / 100);
       // Calculate total price
-      pricing.total_price = subtotalWithWaste + pricing.margin_value;
-      
+      pricing.total_price = (newSubtotal + pricing.waste_value) + pricing.margin_value;
       // Calculate final price per piece
       pricing.final_price_per_piece = pricing.total_price / quantity;
     },
