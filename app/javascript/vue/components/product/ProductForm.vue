@@ -211,7 +211,8 @@ export default {
         total_price: 0,
         final_price_per_piece: 0
       },
-      translations: JSON.parse(document.getElementById('product-form-app').dataset.translations)
+      translations: JSON.parse(document.getElementById('product-form-app').dataset.translations),
+      manualMarginOverride: false
     };
   },
   computed: {
@@ -277,7 +278,23 @@ export default {
             pricing: {}
           };
         }
-        
+        // Ensure pricing object exists
+        if (!this.product.data.pricing) {
+          this.product.data.pricing = { ...this.defaultPricing };
+        }
+        // Only set margin_percentage if it is undefined or null
+        if (
+          this.product.data.pricing.margin_percentage === undefined ||
+          this.product.data.pricing.margin_percentage === null
+        ) {
+          const suggested = await this.calculateSuggestedMargin();
+          this.product.data.pricing.margin_percentage = suggested;
+          this.suggestedMargin = suggested;
+        } else {
+          this.suggestedMargin = this.product.data.pricing.margin_percentage;
+        }
+        // Do NOT call recalculatePricing or ensurePricingUpdated here
+        // Let the UI show the backend value first
       } catch (error) {
         console.error('Error loading product:', error);
         this.error = error.message;
@@ -823,10 +840,12 @@ export default {
         // Calculate waste
         pricing.waste_value = pricing.subtotal * (pricing.waste_percentage / 100);
         
-        // Calculate new suggested margin
-        const newSuggestedMargin = await this.calculateSuggestedMargin();
-        this.suggestedMargin = newSuggestedMargin;
-        pricing.margin_percentage = newSuggestedMargin;
+        // Calculate new suggested margin only if not manually overridden and margin_percentage is undefined/null
+        if (!this.manualMarginOverride && (pricing.margin_percentage === undefined || pricing.margin_percentage === null)) {
+          const newSuggestedMargin = await this.calculateSuggestedMargin();
+          this.suggestedMargin = newSuggestedMargin;
+          pricing.margin_percentage = newSuggestedMargin;
+        }
       } else {
         pricing.subtotal = newSubtotal;
         // Calculate waste
@@ -905,9 +924,11 @@ export default {
       pricing.price_per_piece_before_margin = subtotalWithWaste / quantity;
       
       // Calculate suggested margin based on the new subtotal with waste
-      const newSuggestedMargin = await this.calculateSuggestedMargin();
-      this.suggestedMargin = newSuggestedMargin;
-      pricing.margin_percentage = newSuggestedMargin;
+      if (!this.manualMarginOverride && (pricing.margin_percentage === undefined || pricing.margin_percentage === null)) {
+        const newSuggestedMargin = await this.calculateSuggestedMargin();
+        this.suggestedMargin = newSuggestedMargin;
+        pricing.margin_percentage = newSuggestedMargin;
+      }
       
       // Calculate margin value
       pricing.margin_value = subtotalWithWaste * (pricing.margin_percentage / 100);
@@ -1140,7 +1161,14 @@ export default {
     handlePricingUpdate(updatedPricing) {
       if (!this.product || !this.product.data) return;
       
-      
+      // Detect if margin_percentage was changed manually
+      if (
+        updatedPricing.margin_percentage !== undefined &&
+        updatedPricing.margin_percentage !== this.product.data.pricing.margin_percentage
+      ) {
+        this.manualMarginOverride = true;
+      }
+
       // Update the pricing data with the new values
       this.product.data.pricing = {
         ...this.product.data.pricing,

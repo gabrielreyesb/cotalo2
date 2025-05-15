@@ -436,8 +436,8 @@ en:
         • <u>Total m²</u>: Square meters of material needed<br>
         • <u>Total price</u>: Total material cost to make the product
       processes_calculation_tooltip: "<strong>How process costs are calculated:</strong><br>• <u>Unit price</u>: The cost per unit of the process<br>• <u>Applied to</u>: The material or part the process is applied to<br>• <u>Total price</u>: The total cost for this process on the product"
-      materials:
-        comments: "Comments about materials"
+      materials_tab:
+        comments_label: "Comments about materials"
         comments_placeholder: "Add notes or general comments about the materials for this product"
     extras_tab:
       select_extra: "Select extra"

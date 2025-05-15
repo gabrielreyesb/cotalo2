@@ -21,7 +21,7 @@
               <select 
                 id="process-select" 
                 v-model="selectedProcessId" 
-                class="form-select"
+                class="form-select bg-dark text-white border-secondary"
                 :disabled="!availableProcesses.length"
               >
                 <option value="" disabled>{{ translations.processes.select_process }}</option>

@@ -17,6 +17,7 @@ es:
     yes: "Sí"
     no: "No"
     confirm_delete: "¿Estás seguro?"
+
   dashboard:
     title: "Tablero"
     products: "Productos"
@@ -52,6 +53,7 @@ es:
       most_quoted_desc: "Top 5 productos por frecuencia de cotización"
       highest_value: "Productos de mayor valor"
       highest_value_desc: "Top 5 productos por valor"
+  
   config:
     title: "Configuraciones"
     general_settings: "Configuraciones generales"
@@ -68,6 +70,7 @@ es:
     phone: "Teléfono"
     whatsapp: "WhatsApp"
     sales_conditions: "Condiciones de venta"
+  
   navbar:
     dashboard: "Tablero"
     products: "Productos"
@@ -88,6 +91,7 @@ es:
     english: "Inglés"
     login: "Iniciar sesión"
     register: "Regístrate gratis"
+  
   home:
     hero_title: "Calcula el costo de fabricación de cajas personalizadas en minutos"
     hero_subtitle: "Cotalo te permite diseñar y cotizar cajas personalizadas de manera rápida y precisa. Optimiza tus costos de producción con nuestra herramienta intuitiva."
@@ -121,6 +125,7 @@ es:
     how4_desc: "Crea una cotización profesional para tu cliente en un instante"
     cta_title: "¿Listo para optimizar tus cotizaciones?"
     cta_subtitle: "Comienza a usar Cotalo hoy mismo. Es completamente gratis."
+  
   materials:
     index:
       title: "Materiales"
@@ -153,17 +158,12 @@ es:
       width: "Ancho"
       length: "Largo"
       resistance: "Resistencia"
-      comments: "Comentarios sobre los materiales"
-      comments_placeholder: "Agregar notas o comentarios generales sobre los materiales de este producto"
       materials_calculation_tooltip: |
         <strong>Cómo se calculan los costos:</strong><br>
         • <u>Piezas por material</u>: Cantidad de piezas que se pueden obtener de un pliego de material<br>
         • <u>Total pliegos</u>: Cantidad de pliegos de material necesarios para crear el producto<br>
         • <u>Total m²</u>: Cantidad de metros cuadrados de material necesarios para crear el producto<br>
         • <u>Precio total</u>: Precio total del material para crear el producto
-      materials:
-        comments: "Comentarios sobre los materiales"
-        comments_placeholder: "Agregar notas o comentarios generales sobre los materiales de este producto"
     materials_tab:
       comments_label: "Comentarios sobre los materiales"
       comments_placeholder: "Agregar notas o comentarios generales sobre los materiales de este producto"
@@ -195,6 +195,7 @@ es:
       unit: "Unidad"
       unit_help: "La unidad determina cómo se medirá el proceso durante la cotización."
       processes_calculation_tooltip: "<strong>Cómo se calculan los costos de procesos:</strong><br>• <u>Precio unitario</u>: El costo por unidad del proceso<br>• <u>Aplicado a</u>: El material o parte a la que se aplica el proceso<br>• <u>Precio total</u>: El costo total de este proceso en el producto"
+  
   devise:
     sessions:
       new:
@@ -210,6 +211,7 @@ es:
         register: "Regístrate"
     failure:
       account_disabled: "Tu cuenta ha sido deshabilitada. Por favor, contacta a un administrador."
+  
   extras:
     index:
       title: "Extras"
@@ -238,6 +240,7 @@ es:
       none: "Ninguna"
       cost: "Costo"
       description: "Descripción"
+  
   price_margins:
     index:
       title: "Márgenes de precio"
@@ -259,6 +262,7 @@ es:
       min_price: "Precio mínimo"
       max_price: "Precio máximo"
       margin_percentage: "Margen (%)"
+  
   quotes:
     index:
       title: "Cotizaciones"
@@ -337,6 +341,7 @@ es:
       print: "Imprimir"
       back: "Volver"
       not_specified: "No especificado"
+  
   products:
     index:
       title: "Productos"
@@ -374,6 +379,7 @@ es:
       width: "Ancho (cm)"
       length: "Largo (cm)"
       inner_measurements: "Medidas internas"
+      comments: "Comentarios"
       select_material: "Seleccionar material"
       add_material: "Agregar material"
       no_materials: "No hay materiales agregados. Selecciona un material y agrégalo al producto."
@@ -416,6 +422,9 @@ es:
       total_price: "Precio total:"
       final_price_per_piece: "Precio final por pieza:"
       save_product: "Guardar producto"
+      materials_tab:
+        comments_label: "Comentarios sobre los materiales"
+        comments_placeholder: "Agregar notas o comentarios generales sobre los materiales de este producto"
     extras_tab:
       select_extra: "Seleccionar extra"
       select_extra_placeholder: "Seleccionar un extra para agregar"
