@@ -507,6 +507,34 @@ export default {
       
       this.$emit('update:product-processes', updatedProcesses);
       this.$emit('update:processes-cost', newTotalCost);
+    },
+    initializeTooltips() {
+      // Dispose existing tooltips first
+      this.disposeTooltips();
+      
+      // Initialize new tooltips
+      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      tooltipTriggerList.forEach(tooltipTriggerEl => {
+        new bootstrap.Tooltip(tooltipTriggerEl, {
+          html: true,
+          placement: tooltipTriggerEl.dataset.bsPlacement || 'bottom'
+        });
+      });
+    },
+    disposeTooltips() {
+      const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+      tooltips.forEach(element => {
+        const tooltip = bootstrap.Tooltip.getInstance(element);
+        if (tooltip) {
+          tooltip.dispose();
+        }
+      });
+    },
+    handleLanguageChange() {
+      // Reinitialize tooltips when language changes
+      this.$nextTick(() => {
+        this.initializeTooltips();
+      });
     }
   },
   watch: {
@@ -535,10 +563,10 @@ export default {
   },
   mounted() {
     // Initialize tooltips
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-      return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
+    this.initializeTooltips();
+
+    // Listen for language changes
+    window.addEventListener('languageChanged', this.handleLanguageChange);
 
     // Emit initial processes cost when component mounts
     const initialCost = this.productProcesses.reduce((sum, process) => {
@@ -546,6 +574,13 @@ export default {
     }, 0);
     
     this.$emit('update:processes-cost', initialCost);
+  },
+  beforeUnmount() {
+    // Clean up event listener
+    window.removeEventListener('languageChanged', this.handleLanguageChange);
+    
+    // Clean up tooltips
+    this.disposeTooltips();
   }
 }
 </script>

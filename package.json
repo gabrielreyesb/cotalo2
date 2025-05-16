@@ -43,7 +43,7 @@
     "@babel/plugin-transform-runtime": "^7.26.10",
     "@babel/preset-env": "^7.26.9",
     "babel-plugin-dynamic-import-node": "^2.3.3",
-    "cypress": "^14.3.2",
+    "cypress": "^12.17.4",
     "webpack-dev-server": "^3.11.3"
   },
   "scripts": {
