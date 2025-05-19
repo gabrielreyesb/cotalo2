@@ -4,7 +4,7 @@
       <div class="card">
         <div class="card-body">
           <div class="row align-items-end">
-            <div class="col-md-6 mb-3 mb-md-0 me-md-2">
+            <div class="col-md-7 mb-3 mb-md-0 me-md-2">
               <label for="extra-select" class="form-label">{{ translations.extras_tab.select_extra }}</label>
               <select 
                 id="extra-select" 
@@ -22,22 +22,22 @@
                 </option>
               </select>
             </div>
-            <div class="col-md-3 mb-3 mb-md-0 me-md-2">
+            <div class="col-md-2 mb-3 mb-md-0 me-md-2">
               <label for="extra-quantity" class="form-label">{{ translations.extras_tab.quantity }}</label>
               <input 
                 id="extra-quantity" 
                 type="number" 
                 v-model.number="quantity" 
-                class="form-control bg-dark text-white border-secondary" 
+                class="form-control bg-dark text-white border-secondary text-end" 
                 style="color-scheme: dark;"
                 min="1" 
                 step="1"
                 :disabled="!selectedExtraId"
               />
             </div>
-            <div class="col-md-2 d-grid">
+            <div class="col-md-2 d-grid align-items-end">
               <button 
-                class="btn btn-primary" 
+                class="btn btn-primary w-100" 
                 @click="addExtra" 
                 :disabled="!canAdd"
               >
@@ -78,15 +78,15 @@
                   <th style="width: 20%">{{ translations.extras_tab.table.name }}</th>
                   <th style="width: 35%">{{ translations.extras_tab.table.description }}</th>
                   <th class="text-end" style="width: 15%">{{ translations.extras_tab.table.unit_price }}</th>
-                  <th class="text-center" style="width: 15%">{{ translations.extras_tab.table.quantity }}</th>
+                  <th class="text-end" style="width: 15%">{{ translations.extras_tab.table.quantity }}</th>
                   <th class="text-end" style="width: 15%">{{ translations.extras_tab.table.total }}</th>
                   <th class="text-center" style="width: 8%">{{ translations.extras_tab.table.actions }}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="(extra, index) in productExtras" :key="index">
-                  <td>{{ extra.name }}</td>
-                  <td>{{ extra.description }}</td>
+                  <td class="text-truncate" style="max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" :title="extra.name">{{ extra.name }}</td>
+                  <td class="text-truncate" style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" :title="extra.description">{{ extra.description }}</td>
                   <td class="text-end">
                     <input
                       type="number"
@@ -99,18 +99,17 @@
                       data-toggle="tooltip"
                     >
                   </td>
-                  <td class="text-center">
+                  <td class="text-end">
                     <div class="input-group input-group-sm">
                       <input 
                         type="number" 
-                        class="form-control form-control-sm text-center"
+                        class="form-control form-control-sm text-end"
                         v-model.number="extra.quantity"
                         min="1"
                         @change="updateExtraQuantity(index)"
                         :title="translations.extras_tab.tooltips.edit_quantity"
                         data-toggle="tooltip"
                       >
-                      <span class="input-group-text">{{ extra.unit }}</span>
                     </div>
                   </td>
                   <td class="text-end">{{ formatCurrency(calculateExtraTotal(extra)) }}</td>
@@ -177,13 +176,12 @@
                     <div class="input-group input-group-sm">
                       <input 
                         type="number" 
-                        class="form-control form-control-sm text-center"
+                        class="form-control form-control-sm text-end"
                         v-model.number="extra.quantity"
                         min="1"
                         @change="updateExtraQuantity(index)"
                         :title="translations.extras_tab.tooltips.edit_quantity"
                       />
-                      <span class="input-group-text">{{ extra.unit }}</span>
                     </div>
                   </div>
                 </div>

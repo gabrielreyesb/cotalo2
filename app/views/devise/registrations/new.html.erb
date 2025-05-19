@@ -81,6 +81,21 @@
     background-color: #2c3136;
     border: 1px solid #495057;
     border-radius: 4px;
+    text-align: left;
+  }
+
+  input.form-control[type="email"],
+  input.form-control[type="password"] {
+    text-align: left !important;
+  }
+  input.form-control[type="email"]::placeholder,
+  input.form-control[type="password"]::placeholder {
+    text-align: left !important;
+  }
+  input.form-control[type="email"]:-webkit-autofill,
+  input.form-control[type="password"]:-webkit-autofill {
+    text-align: left !important;
+    -webkit-text-align: left !important;
   }
 
   .form-control:focus {

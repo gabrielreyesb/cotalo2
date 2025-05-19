@@ -163,29 +163,48 @@ class AppConfigsController < ApplicationController
       current_user.set_config(AppConfig::SIGNATURE_WHATSAPP, params[:signature_whatsapp])
     end
     
+    # Update API keys
+    if params[:pipedrive_api_key].present?
+      current_user.set_config(AppConfig::PIPEDRIVE_API_KEY, params[:pipedrive_api_key])
+    elsif params.key?(:pipedrive_api_key)
+      # If the field is present but blank, delete the config
+      current_user.app_configs.where(key: AppConfig::PIPEDRIVE_API_KEY).delete_all
+    end
+    if params[:facturama_api_key].present?
+      current_user.set_config(AppConfig::FACTURAMA_API_KEY, params[:facturama_api_key])
+    elsif params.key?(:facturama_api_key)
+      current_user.app_configs.where(key: AppConfig::FACTURAMA_API_KEY).delete_all
+    end
+    
     redirect_to edit_app_configs_path, notice: "Configuraciones actualizadas exitosamente."
   end
   
   # Method to update API keys
   def update_api_key
+    Rails.logger.info "[update_api_key] Called by user_id=#{current_user.id}, email=#{current_user.email}"
+    Rails.logger.info "[update_api_key] Params: #{params.to_unsafe_h.inspect}"
     if params[:pipedrive_api_key].present?
       key_value = params[:pipedrive_api_key].strip
-      AppConfig.where(key: AppConfig::PIPEDRIVE_API_KEY).delete_all
+      Rails.logger.info "[update_api_key] Updating Pipedrive API key for user_id=#{current_user.id} with value: #{key_value[0..3]}..."
+      AppConfig.where(key: AppConfig::PIPEDRIVE_API_KEY, user_id: current_user.id).delete_all
       AppConfig.create!(
         key: AppConfig::PIPEDRIVE_API_KEY,
         value: key_value,
         user_id: current_user.id
       )
+      Rails.logger.info "[update_api_key] Pipedrive API key saved for user_id=#{current_user.id}"
     end
     
     if params[:facturama_api_key].present?
       key_value = params[:facturama_api_key].strip
+      Rails.logger.info "[update_api_key] Updating Facturama API key for user_id=#{current_user.id} with value: #{key_value[0..3]}..."
       AppConfig.where(key: AppConfig::FACTURAMA_API_KEY).delete_all
       AppConfig.create!(
         key: AppConfig::FACTURAMA_API_KEY,
         value: key_value,
         user_id: current_user.id
       )
+      Rails.logger.info "[update_api_key] Facturama API key saved for user_id=#{current_user.id}"
     end
     
     redirect_to edit_app_configs_path

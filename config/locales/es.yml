@@ -381,10 +381,10 @@ es:
       material_width: "Ancho"
       material_length: "Largo"
       material_price: "Precio"
-      pieces_per_material: "Piezas x material"
+      pieces_per_material: "Pzas x material"
       total_sheets: "Pliegos"
-      total_square_meters: "Total m²"
-      material_total_price: "Precio total"
+      total_square_meters: "m²"
+      material_total_price: "Precio"
       actions: "Acciones"
       total: "Total"
       remove: "Eliminar"
@@ -447,7 +447,7 @@ es:
         edit_price: "Editar precio del extra"
         edit_quantity: "Editar cantidad"
         remove_extra: "Eliminar extra"
-      total_extras: "Total extras:"
+      total_extras: "Total:"
     materials:
       comments: "Comentarios sobre los materiales"
       comments_placeholder: "Agregar notas o comentarios generales sobre los materiales de este producto"
@@ -521,4 +521,9 @@ es:
         update: "Actualizar Noticia"
         cancel: "Cancelar"
         errors: "impidieron guardar esta noticia"
+  activerecord:
+    errors:
+      messages:
+        record_invalid: "La validación falló: %{errors}"
+        taken: "ya ha sido tomado"
  

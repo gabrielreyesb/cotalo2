@@ -1,15 +1,10 @@
-<%= form_with(url: app_configs_path, method: :put, class: "needs-validation") do |form| %>
+<%= form_with(url: app_configs_path, method: :put, class: "needs-validation", local: true) do |form| %>
   <% content_for :page_title do %>
     <%= t('config.title') %>
   <% end %>
 
-  <% content_for :page_actions do %>
-    <%= link_to t('common.cancel'), :back, class: "btn btn-outline-light me-2" %>
-    <%= form.submit t('common.save'), class: "btn btn-outline-light" %>
-  <% end %>
-
   <div class="row">
-    <div class="col-12 mb-4">
+    <div class="col-md-8 offset-md-2 mb-4">
       <div class="settings-tab">
         <div class="green-accent-panel">
           <div class="card">
@@ -76,34 +71,32 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-12 mb-4">
-        <div class="settings-tab">
-          <div class="green-accent-panel">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="mb-0"><%= t('config.signature_info') %></h5>
+    <div class="col-md-8 offset-md-2 mb-4">
+      <div class="settings-tab">
+        <div class="green-accent-panel">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0"><%= t('config.signature_info') %></h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <%= form.label :signature_name, t('config.name'), class: "form-label" %>
+                <%= form.text_field :signature_name, value: @signature_info[:name], class: "form-control" %>
               </div>
-              <div class="card-body">
-                <div class="mb-3">
-                  <%= form.label :signature_name, t('config.name'), class: "form-label" %>
-                  <%= form.text_field :signature_name, value: @signature_info[:name], class: "form-control" %>
-                </div>
-                
-                <div class="mb-3">
-                  <%= form.label :signature_email, t('config.email'), class: "form-label" %>
-                  <%= form.email_field :signature_email, value: @signature_info[:email], class: "form-control" %>
-                </div>
-                
-                <div class="mb-3">
-                  <%= form.label :signature_phone, t('config.phone'), class: "form-label" %>
-                  <%= form.telephone_field :signature_phone, value: @signature_info[:phone], class: "form-control" %>
-                </div>
-                
-                <div class="mb-3">
-                  <%= form.label :signature_whatsapp, t('config.whatsapp'), class: "form-label" %>
-                  <%= form.telephone_field :signature_whatsapp, value: @signature_info[:whatsapp], class: "form-control" %>
-                </div>
+              
+              <div class="mb-3">
+                <%= form.label :signature_email, t('config.email'), class: "form-label" %>
+                <%= form.email_field :signature_email, value: @signature_info[:email], class: "form-control" %>
+              </div>
+              
+              <div class="mb-3">
+                <%= form.label :signature_phone, t('config.phone'), class: "form-label" %>
+                <%= form.telephone_field :signature_phone, value: @signature_info[:phone], class: "form-control" %>
+              </div>
+              
+              <div class="mb-3">
+                <%= form.label :signature_whatsapp, t('config.whatsapp'), class: "form-label" %>
+                <%= form.telephone_field :signature_whatsapp, value: @signature_info[:whatsapp], class: "form-control" %>
               </div>
             </div>
           </div>
@@ -112,91 +105,28 @@
     </div>
 
     <!-- Sales Conditions Section -->
-    <div class="row">
-      <div class="col-12 mb-4">
-        <div class="settings-tab">
-          <div class="green-accent-panel">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="mb-0"><%= t('config.sales_conditions') %></h5>
-              </div>
-              <div class="card-body">
-                <div class="mb-3">
-                  <%= form.text_field :condition_1, value: @sales_conditions[:condition_1], class: "form-control" %>
-                </div>
-                
-                <div class="mb-3">
-                  <%= form.text_field :condition_2, value: @sales_conditions[:condition_2], class: "form-control" %>
-                </div>
-                
-                <div class="mb-3">
-                  <%= form.text_field :condition_3, value: @sales_conditions[:condition_3], class: "form-control" %>
-                </div>
-                
-                <div class="mb-3">
-                  <%= form.text_field :condition_4, value: @sales_conditions[:condition_4], class: "form-control" %>
-                </div>
-              </div>
+    <div class="col-md-8 offset-md-2 mb-4">
+      <div class="settings-tab">
+        <div class="green-accent-panel">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0"><%= t('config.sales_conditions') %></h5>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- API Configuration section -->
-    <div class="row">
-      <div class="col-12 mb-4">
-        <div class="settings-tab">
-          <div class="green-accent-panel">
-            <div class="card">
-              <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">API Configuration</h5>
-                <span class="badge <%= AppConfig.get_pipedrive_api_key.present? ? 'bg-success' : 'bg-danger' %>">
-                  <%= AppConfig.get_pipedrive_api_key.present? ? 'Configured' : 'Not Configured' %>
-                </span>
+            <div class="card-body">
+              <div class="mb-3">
+                <%= form.text_field :condition_1, value: @sales_conditions[:condition_1], class: "form-control" %>
               </div>
-              <div class="card-body">
-                <p class="text-muted mb-3">
-                  Configure external API connections. API keys are stored in the database and available immediately.
-                </p>
-                
-                <%= form_with(url: update_api_key_app_configs_path, method: :put, class: "mb-3", id: "api_key_form", local: true) do |api_form| %>
-                  <div class="mb-3">
-                    <%= api_form.label :pipedrive_api_key, "Pipedrive API Key", class: "form-label" %>
-                    <div class="input-group">
-                      <%= api_form.password_field :pipedrive_api_key, placeholder: "Enter new API key", class: "form-control", autocomplete: "off", id: "pipedrive_api_key_input" %>
-                      <%= api_form.hidden_field :authenticity_token, value: form_authenticity_token, id: "authenticity_token_main" %>
-                      <button type="submit" class="btn btn-primary">Update API Key</button>
-                    </div>
-                    <small class="form-text text-muted">The API key will be stored in the database and will be used immediately.</small>
-                  </div>
-                <% end %>
-
-                <%= form_with(url: update_api_key_app_configs_path, method: :put, class: "mb-3", id: "facturama_api_key_form", local: true) do |api_form| %>
-                  <div class="mb-3">
-                    <%= api_form.label :facturama_api_key, "Facturama API Key", class: "form-label" %>
-                    <div class="input-group">
-                      <%= api_form.password_field :facturama_api_key, placeholder: "Enter new API key", class: "form-control", autocomplete: "off", id: "facturama_api_key_input" %>
-                      <%= api_form.hidden_field :authenticity_token, value: form_authenticity_token, id: "authenticity_token_facturama" %>
-                      <button type="submit" class="btn btn-primary">Update API Key</button>
-                    </div>
-                    <small class="form-text text-muted">The API key will be stored in the database and will be used immediately.</small>
-                  </div>
-                <% end %>
-
-                <div class="mt-4">
-                  <% if @facturama_api_configured %>
-                    <div class="alert alert-success mb-3">
-                      <i class="fas fa-check-circle"></i> Facturama API key is configured
-                    </div>
-                    
-                    <div class="mb-3">
-                      <button type="button" class="btn btn-info me-2" id="test_facturama_api">
-                        <i class="fas fa-vial"></i> Test Facturama API Connection
-                      </button>
-                    </div>
-                  <% end %>
-                </div>
+              
+              <div class="mb-3">
+                <%= form.text_field :condition_2, value: @sales_conditions[:condition_2], class: "form-control" %>
+              </div>
+              
+              <div class="mb-3">
+                <%= form.text_field :condition_3, value: @sales_conditions[:condition_3], class: "form-control" %>
+              </div>
+              
+              <div class="mb-3">
+                <%= form.text_field :condition_4, value: @sales_conditions[:condition_4], class: "form-control" %>
               </div>
             </div>
           </div>
@@ -204,6 +134,43 @@
       </div>
     </div>
   </div>
+
+  <!-- API Configuration section (now part of the main form) -->
+  <div class="row">
+    <div class="col-md-8 offset-md-2 mb-4">
+      <div class="settings-tab">
+        <div class="green-accent-panel">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">API Configuration</h5>
+            </div>
+            <div class="card-body">
+              <p class="text-muted mb-3">
+                Configure external API connections. API keys are stored in the database and available immediately.
+              </p>
+              <div class="mb-3">
+                <%= form.label :pipedrive_api_key, "Pipedrive API Key", class: "form-label" %>
+                <div class="input-group">
+                  <%= form.text_field :pipedrive_api_key, value: current_user.get_config(AppConfig::PIPEDRIVE_API_KEY), placeholder: "Enter Pipedrive API key", class: "form-control text-start", autocomplete: "off", id: "pipedrive_api_key_input" %>
+                </div>
+                <small class="form-text text-muted">The API key will be stored in the database and will be used immediately.</small>
+              </div>
+              <div class="mb-3">
+                <%= form.label :facturama_api_key, "Facturama API Key", class: "form-label" %>
+                <div class="input-group">
+                  <%= form.text_field :facturama_api_key, value: current_user.get_config(AppConfig::FACTURAMA_API_KEY), placeholder: "Enter Facturama API key", class: "form-control text-start", autocomplete: "off", id: "facturama_api_key_input" %>
+                </div>
+                <small class="form-text text-muted">The API key will be stored in the database and will be used immediately.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden submit button to be triggered by subnavbar button -->
+  <button type="submit" id="hidden-save-configs-btn" style="display:none"></button>
 <% end %>
 
 <% content_for :styles do %>
@@ -420,6 +387,17 @@
       console.log('Turbo Loaded');
       initializeTestButton();
     });
+
+    // Add submit event listener for Pipedrive API key form
+    document.addEventListener('DOMContentLoaded', function() {
+      var pipedriveForm = document.getElementById('pipedrive_api_key_form');
+      if (pipedriveForm) {
+        pipedriveForm.addEventListener('submit', function(e) {
+          console.log('Pipedrive API Key form is being submitted!');
+          alert('Pipedrive API Key form is being submitted!');
+        });
+      }
+    });
   </script>
 <% end %>
 
@@ -635,4 +613,21 @@
     document.addEventListener('DOMContentLoaded', initializeLogoUpload);
     document.addEventListener('turbo:load', initializeLogoUpload);
   </script>
-<% end %> 
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to t('common.cancel'), :back, class: "btn btn-outline-light me-2" %>
+  <button type="button" class="btn btn-outline-light" id="save-configs-btn"> <%= t('common.save') %> </button>
+<% end %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var saveBtn = document.getElementById('save-configs-btn');
+    var hiddenSubmit = document.getElementById('hidden-save-configs-btn');
+    if (saveBtn && hiddenSubmit) {
+      saveBtn.addEventListener('click', function() {
+        hiddenSubmit.click();
+      });
+    }
+  });
+</script> 

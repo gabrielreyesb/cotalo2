@@ -33,7 +33,7 @@
                       <label for="customer_name" class="form-label">{{ translations.customer_name }}</label>
                       <div class="input-group">
                         <input type="text" class="form-control text-start" id="customer_name" v-model="form.customer_name" required>
-                        <button type="button" class="btn btn-outline-secondary" @click="searchCustomersInline">
+                        <button type="button" class="btn btn-outline-secondary" @click="searchCustomersInline" :title="'Search customer'">
                           <i class="fas fa-search"></i>
                         </button>
                       </div>
@@ -218,9 +218,10 @@
               <label for="customerSearchQuery" class="form-label">{{ translations.customer_name }}</label>
               <div class="input-group">
                 <input type="text" class="form-control bg-dark text-light border-secondary" id="customerSearchQuery" v-model="customerSearch.query" :placeholder="translations.enter_at_least_3_chars">
-                <button class="btn btn-primary" @click="searchCustomers" :disabled="customerSearch.loading || customerSearch.query.length < 3">{{ translations.search }}</button>
+                <button class="btn btn-primary" @click="searchCustomers" :disabled="customerSearch.loading || customerSearch.query.length < 3" :title="'Search customer'">{{ translations.search }}</button>
               </div>
               <small class="form-text text-muted">{{ translations.enter_at_least_3_chars }}</small>
+              <small v-if="customerSearch.error" class="text-danger">{{ customerSearch.error }}</small>
             </div>
             
             <div v-if="customerSearch.loading" class="d-flex justify-content-center my-3">
@@ -331,7 +332,8 @@ export default {
       },
       productSearch: '',
       selectedCustomerId: '',
-      selectedProductId: ''
+      selectedProductId: '',
+      pipedriveApiConfigured: false
     }
   },
   
@@ -465,6 +467,12 @@ export default {
     },
     
     searchCustomers() {
+      // Check if API is configured
+      if (!this.pipedriveApiConfigured) {
+        this.customerSearch.error = 'Pipedrive API key not configured. Please configure it in settings to search customers.';
+        return;
+      }
+
       // Validate query
       if (this.customerSearch.query.length < 3) {
         this.customerSearch.error = 'Ingrese al menos 3 caracteres para buscar';
@@ -544,6 +552,12 @@ export default {
     },
     
     searchCustomersInline() {
+      // Check if API is configured
+      if (!this.pipedriveApiConfigured) {
+        this.customerSearch.error = 'Pipedrive API key not configured. Please configure it in settings to search customers.';
+        return;
+      }
+
       // Validate query
       if (!this.form.customer_name || this.form.customer_name.length < 3) {
         this.customerSearch.error = 'Ingrese al menos 3 caracteres para buscar';
@@ -629,6 +643,24 @@ export default {
         // Reset the selection after adding
         this.selectedProductId = '';
       }
+    },
+    
+    checkPipedriveApiStatus() {
+      fetch('/api/v1/verify_pipedrive', {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        this.pipedriveApiConfigured = data.success;
+      })
+      .catch(error => {
+        console.error('Error checking Pipedrive API status:', error);
+        this.pipedriveApiConfigured = false;
+      });
     }
   },
   
@@ -645,6 +677,9 @@ export default {
     if (saveButton) {
       saveButton.addEventListener('click', this.saveQuote);
     }
+
+    // Check Pipedrive API key status
+    this.checkPipedriveApiStatus();
   },
 
   beforeDestroy() {

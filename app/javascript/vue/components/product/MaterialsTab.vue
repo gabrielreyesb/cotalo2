@@ -69,23 +69,23 @@
               <thead>
                 <tr>
                   <th style="width: 32%">{{ translations.materials.description }}</th>
-                  <th style="width: 12%">{{ translations.materials.width }}</th>
-                  <th style="width: 12%">{{ translations.materials.length }}</th>
-                  <th style="width: 12%">{{ translations.materials.price }}</th>
-                  <th style="width: 12%">{{ translations.materials.pieces_per_material }}</th>
-                  <th style="width: 12%">{{ translations.materials.total_sheets }}</th>
-                  <th style="width: 12%">{{ translations.materials.total_square_meters }}</th>
-                  <th style="width: 12%">{{ translations.materials.total_price }}</th>
-                  <th style="width: 16%">{{ translations.materials.actions }}</th>
+                  <th style="width: 12%" class="text-end">{{ translations.materials.width }}</th>
+                  <th style="width: 12%" class="text-end">{{ translations.materials.length }}</th>
+                  <th style="width: 12%" class="text-end">{{ translations.materials.price }}</th>
+                  <th style="width: 12%" class="text-end">{{ translations.materials.pieces_per_material }}</th>
+                  <th style="width: 12%" class="text-end">{{ translations.materials.total_sheets }}</th>
+                  <th style="width: 12%" class="text-end">{{ translations.materials.total_square_meters }}</th>
+                  <th style="width: 12%" class="text-end">{{ translations.materials.total_price }}</th>
+                  <th style="width: 16%" class="text-center">{{ translations.materials.actions }}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="(material, index) in productMaterials" :key="index">
-                  <td>{{ material.description }}</td>
-                  <td>
+                  <td class="text-truncate" style="max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" :title="material.description">{{ material.description }}</td>
+                  <td class="text-end">
                     <input 
                       type="number" 
-                      class="form-control form-control-sm" 
+                      class="form-control form-control-sm text-end" 
                       v-model.number="material.ancho" 
                       min="0"
                       step="0.1"
@@ -94,10 +94,10 @@
                       data-toggle="tooltip"
                     />
                   </td>
-                  <td>
+                  <td class="text-end">
                     <input 
                       type="number" 
-                      class="form-control form-control-sm" 
+                      class="form-control form-control-sm text-end" 
                       v-model.number="material.largo" 
                       min="0"
                       step="0.1"
@@ -106,7 +106,7 @@
                       data-toggle="tooltip"
                     />
                   </td>
-                  <td>
+                  <td class="text-end">
                     <input 
                       type="number" 
                       class="form-control form-control-sm text-end" 
@@ -118,10 +118,10 @@
                       data-toggle="tooltip"
                     />
                   </td>
-                  <td class="text-center">
+                  <td class="text-end">
                     <input 
                       type="number" 
-                      class="form-control form-control-sm" 
+                      class="form-control form-control-sm text-end" 
                       v-model.number="material.piecesPerMaterial" 
                       min="1"
                       @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
@@ -129,18 +129,11 @@
                       data-toggle="tooltip"
                     />
                   </td>
-                  <td class="text-center">{{ material.totalSheets }}</td>
-                  <td class="text-center">{{ material.totalSquareMeters.toFixed(2) }}</td>
+                  <td class="text-end">{{ material.totalSheets }}</td>
+                  <td class="text-end">{{ material.totalSquareMeters.toFixed(2) }}</td>
                   <td class="text-end">{{ formatCurrency(material.totalPrice) }}</td>
-                  <td style="min-width: 140px;">
+                  <td class="text-center" style="min-width: 140px;">
                     <div class="d-flex align-items-center justify-content-center gap-2">
-                      <input
-                        type="radio"
-                        :id="'material-radio-' + index"
-                        :value="material.id"
-                        v-model="selectedMaterial"
-                        class="form-check-input"
-                      />
                       <button 
                         class="btn btn-sm btn-outline-info" 
                         @click="openVisualization(material)"
@@ -216,7 +209,7 @@
                   <div class="col-4">
                     <input 
                       type="number" 
-                      class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge"
+                      class="form-control form-control-sm text-end p-2 w-100 material-badge editable-badge"
                       v-model.number="material.piecesPerMaterial" 
                       min="1"
                       @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
@@ -238,13 +231,6 @@
                 <div class="d-flex justify-content-between align-items-center">
                   <span class="badge bg-success fs-5">{{ formatCurrency(material.totalPrice) }}</span>
                   <div class="d-flex align-items-center">
-                    <input
-                      type="radio"
-                      :id="'material-radio-mobile-' + index"
-                      :value="material.id"
-                      v-model="selectedMaterial"
-                      class="form-check-input me-2"
-                    />
                     <button 
                       class="btn btn-sm btn-outline-danger px-2 py-1" 
                       @click="removeMaterial(index)"
@@ -397,7 +383,6 @@ export default {
     'update:product-materials': null,
     'update:comments': null,
     'update:materials-cost': null,
-    'material-selected-for-products': null,
     'material-calculation-changed': null
   },
   props: {
@@ -425,10 +410,6 @@ export default {
       type: Number,
       default: 1
     },
-    selectedMaterialId: {
-      type: Number,
-      default: null
-    },
     widthMargin: {
       type: Number,
       default: 0
@@ -443,13 +424,16 @@ export default {
     }
   },
   data() {
+    console.log('Initializing MaterialsTab component');
     return {
       visualizationMaterial: null,
       materialIdForAdd: '',
-      selectedMaterial: this.selectedMaterialId,
       globalComments: this.comments,
       validationMessage: '',
     };
+  },
+  created() {
+    // Remove the initial material selection since we don't need it anymore
   },
   computed: {
     canAdd() {
@@ -617,16 +601,6 @@ export default {
         return;
       }
 
-      // Calculate initial pieces per material
-      const initialPiecesPerSheet = this.calculatePiecesPerSheet(
-        this.selectedMaterialDetails.ancho,
-        this.selectedMaterialDetails.largo,
-        this.productWidth,
-        this.productLength,
-        this.widthMargin,
-        this.lengthMargin
-      );
-
       const material = {
         id: this.selectedMaterialDetails.id,
         description: this.selectedMaterialDetails.description,
@@ -635,30 +609,41 @@ export default {
         ancho: this.selectedMaterialDetails.ancho,
         largo: this.selectedMaterialDetails.largo,
         price: this.selectedMaterialDetails.price,
-        piecesPerMaterial: initialPiecesPerSheet || 1,
+        piecesPerMaterial: this.calculatePiecesPerSheet(
+          this.selectedMaterialDetails.ancho,
+          this.selectedMaterialDetails.largo,
+          this.productWidth,
+          this.productLength,
+          this.widthMargin,
+          this.lengthMargin
+        ) || 1,
         totalSheets: 0,
         totalSquareMeters: 0,
         totalPrice: 0
       };
 
-      // Add to materials array
+      // Add material
       this.productMaterials.push(material);
       
-      // Calculate initial values
-      this.updateMaterialCalculations({ index: this.productMaterials.length - 1, updatePiecesPerMaterial: true, material });
-      
-      // Reset selection
+      // Reset and emit
       this.materialIdForAdd = '';
       this.validationMessage = '';
-      
-      // If this is the first material, select it automatically
-      if (this.productMaterials.length === 1) {
-        this.selectedMaterial = material.id;
-      }
-      
-      // Emit update event
       this.$emit('update:product-materials', this.productMaterials);
-      this.$emit('material-selected-for-products', material.id);
+      this.$emit('material-calculation-changed', {
+        materialId: material.id,
+        totalSheets: 0,
+        totalSquareMeters: 0,
+        totalPrice: 0,
+        needsProcessRecalculation: true,
+        needsPricingRecalculation: true
+      });
+      
+      // Calculate values
+      this.updateMaterialCalculations({ 
+        index: this.productMaterials.length - 1, 
+        updatePiecesPerMaterial: true, 
+        material 
+      });
     },
     updateMaterialCalculations({ index, updatePiecesPerMaterial = false, material }) {
       if (!material) return;
@@ -673,7 +658,20 @@ export default {
 
       let piecesPerMaterial = material.piecesPerMaterial || 1;
 
-      if (updatePiecesPerMaterial && effectiveProductWidth > 0 && effectiveProductLength > 0) {
+      // Only recalculate piecesPerMaterial if:
+      // 1. This is a new material (no piecesPerMaterial set)
+      // 2. The material dimensions have changed
+      // 3. The product dimensions have changed
+      const shouldRecalculate = updatePiecesPerMaterial && 
+        effectiveProductWidth > 0 && 
+        effectiveProductLength > 0 &&
+        (!material._piecesPerMaterialSet || // New material
+         material._lastWidth !== material.ancho || // Width changed
+         material._lastLength !== material.largo || // Length changed
+         material._lastProductWidth !== productWidth || // Product width changed
+         material._lastProductLength !== productLength); // Product length changed
+
+      if (shouldRecalculate) {
         const materialWidth = parseFloat(material.ancho) || 0;
         const materialLength = parseFloat(material.largo) || 0;
 
@@ -692,6 +690,13 @@ export default {
             horizontalPiecesAlt * verticalPiecesAlt
           );
         }
+
+        // Store the current dimensions to detect changes next time
+        material._lastWidth = material.ancho;
+        material._lastLength = material.largo;
+        material._lastProductWidth = productWidth;
+        material._lastProductLength = productLength;
+        material._piecesPerMaterialSet = true;
       }
 
       // Calculate total sheets needed
@@ -802,11 +807,14 @@ export default {
     }
   },
   watch: {
-    selectedMaterial(newValue) {
-      this.$emit('material-selected-for-products', newValue);
-    },
     comments(newValue) {
       this.globalComments = newValue;
+    },
+    productMaterials: {
+      handler(newVal) {
+        console.log('productMaterials changed:', newVal);
+      },
+      immediate: true
     },
     productWidth() {
       // Recalculate all materials when product width changes
@@ -840,19 +848,7 @@ export default {
 
 <style scoped lang="scss">
 .materials-tab {
-  // Custom radio button styles for material selection
-  .form-check-input[type="radio"] {
-    &:checked {
-      background-color: var(--cotalo-green);
-      border-color: var(--cotalo-green);
-    }
-
-    &:focus {
-      border-color: var(--cotalo-green);
-      box-shadow: 0 0 0 0.25rem rgba(66, 185, 131, 0.25);
-    }
-  }
-
+  // Remove custom radio button styles since we don't need them anymore
   .table {
     th, td {
       &:focus-within {
@@ -866,6 +862,11 @@ export default {
       border-color: var(--cotalo-green);
     }
   }
+}
+
+// Force right alignment for all number inputs in the product-table
+.product-table input[type='number'] {
+  text-align: right !important;
 }
 
 .custom-overlay {
