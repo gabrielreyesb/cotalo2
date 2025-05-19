@@ -149,11 +149,12 @@
         </div>
       </div>
       <!-- Video Column -->
-      <div class="col-lg-6 d-flex justify-content-center align-items-center">
+      <div class="col-lg-6 d-flex flex-column justify-content-center align-items-center">
+        <div class="mb-3 text-center fw-bold fs-5" style="color: #fff;">Video detallado de uso de Cotalo</div>
         <div class="ratio ratio-16x9 w-100" style="max-width: 480px;">
           <!-- Replace src with your video URL when ready -->
           <iframe
-            src="https://www.youtube.com/embed/VIDEO_ID"
+            src="https://www.youtube.com/embed/TSj0mBVBJ6w"
             title="Tutorial Video"
             allowfullscreen
             style="border:0;"
@@ -178,6 +179,11 @@
         <i class="fas fa-rocket me-2"></i><%= t('home.register_free') %>
       <% end %>
     <% end %>
+    <div class="mt-4">
+      <a href="#" class="text-success fw-bold" style="text-decoration: underline;">
+        ¿Tienes sugerencias o comentarios? ¡Envíanos tus sugerencias aquí!
+      </a>
+    </div>
   </div>
 </div>
 
@@ -254,3 +260,9 @@
   transform: translateY(-5px);
 }
 </style>
+
+<footer class="footer bg-dark text-center py-3 mt-5">
+  <div class="container">
+    <span class="text-muted">¿Tienes sugerencias o comentarios? <a href="#" class="text-success fw-bold" style="text-decoration: underline;">Envíanos tus sugerencias</a></span>
+  </div>
+</footer>
