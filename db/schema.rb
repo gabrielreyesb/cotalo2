@@ -132,6 +132,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_12_224340) do
     t.boolean "reviewed", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "admin_comment"
     t.index ["user_id"], name: "index_suggestions_on_user_id"
   end
 

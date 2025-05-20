@@ -6,8 +6,8 @@ module Admin
 
     def update
       @suggestion = Suggestion.find(params[:id])
-      if @suggestion.update(reviewed: true)
-        flash[:notice] = "Sugerencia marcada como revisada"
+      if @suggestion.update(admin_comment: params[:suggestion][:admin_comment], reviewed: true)
+        flash[:notice] = "Sugerencia marcada como revisada y comentario guardado"
       else
         flash[:alert] = "No se pudo actualizar la sugerencia"
       end

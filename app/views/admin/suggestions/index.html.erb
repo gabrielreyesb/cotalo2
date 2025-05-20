@@ -39,11 +39,9 @@
                   </td>
                   <td class="text-end">
                     <% unless suggestion.reviewed? %>
-                      <%= button_to admin_suggestion_path(suggestion), 
-                          method: :patch,
-                          class: "btn btn-sm btn-outline-success",
-                          title: "Marcar como revisada" do %>
-                        <i class="fas fa-check"></i>
+                      <%= form_with url: admin_suggestion_path(suggestion), method: :patch, local: true, scope: :suggestion, class: "d-inline-flex align-items-center" do |f| %>
+                        <%= f.text_area :admin_comment, value: suggestion.admin_comment, placeholder: "Comentario del admin", class: "form-control form-control-sm me-2", rows: 1, style: "min-width: 180px; max-width: 300px;" %>
+                        <%= f.submit "Revisar y guardar", class: "btn btn-sm btn-outline-success" %>
                       <% end %>
                     <% end %>
                   </td>
@@ -70,11 +68,9 @@
                 </div>
                 <div class="d-flex">
                   <% unless suggestion.reviewed? %>
-                    <%= button_to admin_suggestion_path(suggestion), 
-                        method: :patch,
-                        class: "btn btn-sm btn-outline-success",
-                        title: "Marcar como revisada" do %>
-                      <i class="fas fa-check fa-sm"></i>
+                    <%= form_with url: admin_suggestion_path(suggestion), method: :patch, local: true, scope: :suggestion, class: "d-inline-flex align-items-center" do |f| %>
+                      <%= f.text_area :admin_comment, value: suggestion.admin_comment, placeholder: "Comentario del admin", class: "form-control form-control-sm me-2", rows: 1, style: "min-width: 180px; max-width: 300px;" %>
+                      <%= f.submit "Revisar y guardar", class: "btn btn-sm btn-outline-success" %>
                     <% end %>
                   <% end %>
                 </div>

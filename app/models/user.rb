@@ -11,6 +11,7 @@ class User < ApplicationRecord
   has_many :products, dependent: :destroy
   has_many :quotes, dependent: :destroy
   has_many :price_margins
+  has_many :suggestions
 
   after_create :setup_initial_data
   after_create :send_admin_notification

@@ -8,4 +8,13 @@ class AdminMailer < ApplicationMailer
       subject: 'Nuevo usuario registrado en Cotalo'
     )
   end
+
+  def new_suggestion_notification(suggestion)
+    @suggestion = suggestion
+    @user = suggestion.user
+    mail(
+      to: 'gabriel@cotalo.app',
+      subject: 'Nueva sugerencia enviada en Cotalo'
+    )
+  end
 end 

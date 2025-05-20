@@ -1,0 +1,15 @@
+Nueva Sugerencia en Cotalo
+
+Se ha enviado una nueva sugerencia en la plataforma:
+
+Usuario: <%= @user&.email || 'Anónimo' %>
+Fecha: <%= @suggestion.created_at.strftime('%d/%m/%Y %H:%M') %>
+
+Contenido:
+<%= @suggestion.content %>
+
+Puedes ver todas las sugerencias en el panel de administración:
+<%= admin_suggestions_url %>
+
+Saludos,
+Sistema de Cotalo 

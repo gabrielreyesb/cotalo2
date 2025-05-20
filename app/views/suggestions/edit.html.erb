@@ -1,0 +1,10 @@
+<h2 class="mb-4">Editar sugerencia</h2>
+
+<%= form_with model: @suggestion, local: true do |f| %>
+  <div class="mb-3">
+    <%= f.label :content, "Sugerencia", class: "form-label" %>
+    <%= f.text_area :content, rows: 4, class: "form-control", required: true %>
+  </div>
+  <%= f.submit "Actualizar", class: "btn btn-success" %>
+  <%= link_to "Cancelar", suggestions_path, class: "btn btn-secondary ms-2" %>
+<% end %> 
