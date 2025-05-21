@@ -6,18 +6,19 @@ class QuotePdfGenerator
   end
 
   def generate
+    pdf_config = quote.user.pdf_config
     Prawn::Document.new(page_size: "LETTER", page_layout: :landscape, margin: [30, 30, 30, 30]) do |pdf|
       # Use default fonts with smaller base size
       pdf.font "Helvetica"
       pdf.font_size 8  # Reduced base font size
       
       # Define method to add header
-      def add_header(pdf)
+      def add_header(pdf, pdf_config)
         # Save current cursor position
         original_cursor = pdf.cursor
 
-        # Get logo URL from user's config
-        logo_url = quote.user.get_config(AppConfig::COMPANY_LOGO)
+        # Get logo URL from user's PDF config
+        logo_url = pdf_config&.logo_url
 
         if logo_url.present?
           begin
@@ -50,7 +51,7 @@ class QuotePdfGenerator
             # Clean up the tempfile
             logo_tempfile.close
             logo_tempfile.unlink
-          rescue StandardError => e
+          rescue => e
             Rails.logger.error("Error including logo in PDF: #{e.message}")
             Rails.logger.error(e.backtrace.join("\n"))
             fallback_header(pdf)
@@ -68,9 +69,8 @@ class QuotePdfGenerator
       end
 
       def fallback_header(pdf)
-        # Fallback to text logo
-        pdf.text_box "SURTIBOX", at: [0, pdf.bounds.top + 15], size: 24, style: :bold
-        pdf.text_box "Soluciones en empaques y más...", at: [0, pdf.bounds.top - 10], size: 12, style: :italic
+        # Text-based placeholder logo
+        pdf.text_box "Cotalo", at: [0, pdf.bounds.top + 15], size: 28, style: :bold
         
         # Add quote number in the middle
         pdf.text_box "Cotización: #{quote.quote_number}",
@@ -82,11 +82,11 @@ class QuotePdfGenerator
       end
       
       # Add header to first page
-      add_header(pdf)
+      add_header(pdf, pdf_config)
       
       # Add header to subsequent pages (except first)
       pdf.repeat(lambda { |pg| pg > 1 }) do
-        add_header(pdf)
+        add_header(pdf, pdf_config)
       end
       
       # Ensure we start at the right position after header
@@ -377,7 +377,12 @@ class QuotePdfGenerator
       pdf.move_down 20
       
       # Get sales conditions
-      sales_conditions = quote.user.sales_conditions.select(&:present?)
+      sales_conditions = [
+        pdf_config&.sales_condition_1,
+        pdf_config&.sales_condition_2,
+        pdf_config&.sales_condition_3,
+        pdf_config&.sales_condition_4
+      ].select(&:present?)
       
       # Calculate height needed for sales conditions and footer
       conditions_height = (sales_conditions.length * 12) + 25  # 12 points per line + 25 for header
@@ -386,7 +391,7 @@ class QuotePdfGenerator
       # Check if we need to move to next page for sales conditions
       if pdf.cursor < (conditions_height + footer_height)
         pdf.start_new_page
-        add_header(pdf)
+        add_header(pdf, pdf_config)
       end
       
       # Sales Conditions
@@ -400,7 +405,7 @@ class QuotePdfGenerator
       end
 
       # Define a method to add the footer
-      def add_footer(pdf)
+      def add_footer(pdf, pdf_config)
         # Save current cursor position
         original_cursor = pdf.cursor
         
@@ -409,23 +414,20 @@ class QuotePdfGenerator
         
         # Contact information (signature)
         begin
-          signature = quote.user.signature_info
-          Rails.logger.info("PDF Signature Info: #{signature.inspect}")
-          
-          contact_info = signature[:name].to_s
-          contact_info += " CORREO: #{signature[:email]}" if signature[:email].present?
-          contact_info += " CEL/TEL: #{signature[:phone]}" if signature[:phone].present?
-          contact_info += " WHATSAPP: #{signature[:whatsapp]}" if signature[:whatsapp].present?
-          
-          if contact_info.present?
-            pdf.text contact_info, size: 8, style: :bold
+          contact_info = ""
+          contact_info += pdf_config.signature_name.to_s if pdf_config&.signature_name.present?
+          contact_info += " CORREO: #{pdf_config.signature_email}" if pdf_config&.signature_email.present?
+          contact_info += " CEL/TEL: #{pdf_config.signature_phone}" if pdf_config&.signature_phone.present?
+          contact_info += " WHATSAPP: #{pdf_config.signature_whatsapp}" if pdf_config&.signature_whatsapp.present?
+          if contact_info.strip.present?
+            pdf.text contact_info.strip, size: 8, style: :bold
           else
-            pdf.text "Jonathan Gabriel Rubio Huerta", size: 8, style: :bold
+            pdf.text "Equipo Cotalo CORREO: gabriel@cotalo.app", size: 8, style: :bold
           end
         rescue StandardError => e
           Rails.logger.error("Error displaying signature in PDF: #{e.message}")
-          # Fallback signature in case of error
-          pdf.text "Jonathan Gabriel Rubio Huerta", size: 8, style: :bold
+          # Professional default signature in case of error
+          pdf.text "Equipo Cotalo CORREO: gabriel@cotalo.app", size: 8, style: :bold
         end
         
         pdf.move_down 5
@@ -433,15 +435,14 @@ class QuotePdfGenerator
         # Footer with sustainability message and horizontal rule
         pdf.stroke_horizontal_rule
         pdf.move_down 10
-        
-        # Green text for sustainability message
-        pdf.fill_color "009933"
-        pdf.text "Fabricamos con materiales sustentables que protegen al medio ambiente...", 
-                size: 8, 
-                style: :italic, 
-                align: :left
-        pdf.fill_color "000000" # Reset to black
-        
+
+        # PDF custom footer text (user-defined)
+        if pdf_config&.footer_text.present?
+          pdf.fill_color '42b983'
+          pdf.text pdf_config.footer_text, size: 8, align: :left, style: :normal
+          pdf.fill_color '000000' # Reset to black
+        end
+
         # Add more space for the logos
         pdf.move_down 15
         
@@ -476,7 +477,7 @@ class QuotePdfGenerator
       
       # Add footer to all pages
       pdf.repeat :all do
-        add_footer(pdf)
+        add_footer(pdf, pdf_config)
       end
     end.render
   end

@@ -81,6 +81,23 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_12_224340) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "pdf_configs", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "footer_text"
+    t.string "logo_url"
+    t.string "signature_name"
+    t.string "signature_email"
+    t.string "signature_phone"
+    t.string "signature_whatsapp"
+    t.string "sales_condition_1"
+    t.string "sales_condition_2"
+    t.string "sales_condition_3"
+    t.string "sales_condition_4"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_pdf_configs_on_user_id", unique: true
+  end
+
   create_table "price_margins", force: :cascade do |t|
     t.decimal "min_price"
     t.decimal "max_price"
@@ -171,6 +188,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_12_224340) do
   add_foreign_key "manufacturing_processes", "users"
   add_foreign_key "materials", "units"
   add_foreign_key "materials", "users"
+  add_foreign_key "pdf_configs", "users"
   add_foreign_key "price_margins", "users"
   add_foreign_key "products", "users"
   add_foreign_key "quote_products", "products"

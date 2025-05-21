@@ -15,18 +15,6 @@ class AppConfig < ApplicationRecord
   PIPEDRIVE_API_KEY = 'pipedrive_api_key'
   FACTURAMA_API_KEY = 'facturama_api_key'
   
-  # Sales conditions
-  SALES_CONDITION_1 = 'sales_condition_1'
-  SALES_CONDITION_2 = 'sales_condition_2'
-  SALES_CONDITION_3 = 'sales_condition_3'
-  SALES_CONDITION_4 = 'sales_condition_4'
-  
-  # Signature information
-  SIGNATURE_NAME = 'signature_name'
-  SIGNATURE_EMAIL = 'signature_email'
-  SIGNATURE_PHONE = 'signature_phone'
-  SIGNATURE_WHATSAPP = 'signature_whatsapp'
-  
   # Value types
   TEXT = 'text'
   NUMERIC = 'numeric'

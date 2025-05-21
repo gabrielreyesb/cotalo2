@@ -35,99 +35,6 @@
                   </div>
                 </div>
               </div>
-
-              <hr class="border-secondary my-3">
-
-              <div class="mb-3">
-                <label class="form-label"><%= t('config.company_logo') %></label>
-                <div class="text-center mb-3">
-                  <div id="logo-preview-container" class="border border-secondary rounded p-3 mb-3" style="min-height: 150px; display: flex; align-items: center; justify-content: center; flex-direction: column;">
-                    <div id="logo-display-area" style="min-height: 120px; display: flex; align-items: center; justify-content: center;">
-                      <% if @general_settings[:company_logo].present? %>
-                        <%= image_tag @general_settings[:company_logo], class: "img-fluid", style: "max-height: 120px;", id: "current-logo" %>
-                      <% else %>
-                        <div class="text-muted" id="logo-placeholder">
-                          <i class="fas fa-image fa-3x mb-2"></i>
-                          <p class="mb-0"><%= t('config.no_logo_selected') %></p>
-                        </div>
-                      <% end %>
-                      <img id="logo-preview" class="img-fluid" style="max-height: 120px; display: none;">
-                    </div>
-                  </div>
-                </div>
-                <div class="input-group">
-                  <input type="file" class="form-control" id="logo-input" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
-                  <button class="btn btn-dark border-secondary" type="button" id="upload-logo-btn" disabled>
-                    <i class="fa fa-upload"></i> <%= t('config.upload') %>
-                  </button>
-                </div>
-                <small class="form-text text-muted">
-                  <%= t('config.accepted_formats') %>
-                </small>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-8 offset-md-2 mb-4">
-      <div class="settings-tab">
-        <div class="green-accent-panel">
-          <div class="card">
-            <div class="card-header">
-              <h5 class="mb-0"><%= t('config.signature_info') %></h5>
-            </div>
-            <div class="card-body">
-              <div class="mb-3">
-                <%= form.label :signature_name, t('config.name'), class: "form-label" %>
-                <%= form.text_field :signature_name, value: @signature_info[:name], class: "form-control" %>
-              </div>
-              
-              <div class="mb-3">
-                <%= form.label :signature_email, t('config.email'), class: "form-label" %>
-                <%= form.email_field :signature_email, value: @signature_info[:email], class: "form-control" %>
-              </div>
-              
-              <div class="mb-3">
-                <%= form.label :signature_phone, t('config.phone'), class: "form-label" %>
-                <%= form.telephone_field :signature_phone, value: @signature_info[:phone], class: "form-control" %>
-              </div>
-              
-              <div class="mb-3">
-                <%= form.label :signature_whatsapp, t('config.whatsapp'), class: "form-label" %>
-                <%= form.telephone_field :signature_whatsapp, value: @signature_info[:whatsapp], class: "form-control" %>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sales Conditions Section -->
-    <div class="col-md-8 offset-md-2 mb-4">
-      <div class="settings-tab">
-        <div class="green-accent-panel">
-          <div class="card">
-            <div class="card-header">
-              <h5 class="mb-0"><%= t('config.sales_conditions') %></h5>
-            </div>
-            <div class="card-body">
-              <div class="mb-3">
-                <%= form.text_field :condition_1, value: @sales_conditions[:condition_1], class: "form-control" %>
-              </div>
-              
-              <div class="mb-3">
-                <%= form.text_field :condition_2, value: @sales_conditions[:condition_2], class: "form-control" %>
-              </div>
-              
-              <div class="mb-3">
-                <%= form.text_field :condition_3, value: @sales_conditions[:condition_3], class: "form-control" %>
-              </div>
-              
-              <div class="mb-3">
-                <%= form.text_field :condition_4, value: @sales_conditions[:condition_4], class: "form-control" %>
-              </div>
             </div>
           </div>
         </div>
@@ -616,8 +523,10 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= link_to t('common.cancel'), :back, class: "btn btn-outline-light me-2" %>
-  <button type="button" class="btn btn-outline-light" id="save-configs-btn"> <%= t('common.save') %> </button>
+  <%= link_to t('actions.cancel'), dashboard_path, class: 'btn btn-outline-secondary me-2' %>
+  <button class="btn btn-success" id="save-configs-btn" type="button" onclick="document.getElementById('hidden-save-configs-btn').click()">
+    <i class="fas fa-save"></i> <%= t('actions.save') %>
+  </button>
 <% end %>
 
 <script>

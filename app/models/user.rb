@@ -8,6 +8,7 @@ class User < ApplicationRecord
   has_many :manufacturing_processes, dependent: :destroy
   has_many :extras, dependent: :destroy
   has_many :app_configs, dependent: :destroy
+  has_one :pdf_config, dependent: :destroy
   has_many :products, dependent: :destroy
   has_many :quotes, dependent: :destroy
   has_many :price_margins
@@ -44,9 +45,14 @@ class User < ApplicationRecord
     AppConfig.set(self, key, value, value_type)
   end
   
-  # Get waste percentage (default 5%)
+  # Get waste percentage (default 0) – returns the numeric value as stored (e.g. 10 for 10%)
   def waste_percentage
-    get_config(AppConfig::WASTE_PERCENTAGE) || 0.05
+    get_config(AppConfig::WASTE_PERCENTAGE) || 0
+  end
+  
+  # (Optional) Get waste percentage as a decimal (e.g. 0.1 for 10%)
+  def waste_percentage_decimal
+    (get_config(AppConfig::WASTE_PERCENTAGE) || 0) / 100.0
   end
   
   # Get width margin (default 0)
@@ -57,26 +63,6 @@ class User < ApplicationRecord
   # Get length margin (default 0)
   def length_margin
     get_config(AppConfig::LENGTH_MARGIN) || 0
-  end
-  
-  # Get sales conditions as an array
-  def sales_conditions
-    [
-      get_config(AppConfig::SALES_CONDITION_1),
-      get_config(AppConfig::SALES_CONDITION_2),
-      get_config(AppConfig::SALES_CONDITION_3),
-      get_config(AppConfig::SALES_CONDITION_4)
-    ].compact
-  end
-  
-  # Get signature information
-  def signature_info
-    {
-      name: get_config(AppConfig::SIGNATURE_NAME) || '',
-      email: get_config(AppConfig::SIGNATURE_EMAIL) || '',
-      phone: get_config(AppConfig::SIGNATURE_PHONE) || '',
-      whatsapp: get_config(AppConfig::SIGNATURE_WHATSAPP) || ''
-    }
   end
 
   private

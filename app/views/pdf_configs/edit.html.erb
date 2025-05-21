@@ -1,0 +1,342 @@
+<% content_for :page_title do %>
+  <%= t('config.pdf_config_title') %>
+<% end %>
+
+<%= form_with(model: @pdf_config, url: pdf_config_path, method: :put, local: true, class: "needs-validation") do |form| %>
+  <div class="row">
+    <div class="col-md-8 offset-md-2 mb-4">
+      <div class="settings-tab">
+        <div class="green-accent-panel">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0"><%= t('config.pdf_config_title') %></h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <label class="form-label"><%= t('config.company_logo') %></label>
+                <div class="text-center mb-3">
+                  <div id="pdf-logo-preview-container" class="border border-secondary rounded p-3 mb-3" style="min-height: 150px; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                    <div id="pdf-logo-display-area" style="min-height: 120px; display: flex; align-items: center; justify-content: center;">
+                      <% if @pdf_config.logo_url.present? %>
+                        <%= image_tag @pdf_config.logo_url, class: "img-fluid", style: "max-height: 120px;", id: "pdf-current-logo" %>
+                      <% else %>
+                        <div class="text-muted" id="pdf-logo-placeholder">
+                          <i class="fas fa-image fa-3x mb-2"></i>
+                          <p class="mb-0"><%= t('config.no_logo_selected') %></p>
+                        </div>
+                      <% end %>
+                      <img id="pdf-logo-preview" class="img-fluid" style="max-height: 120px; display: none;">
+                    </div>
+                  </div>
+                </div>
+                <div class="input-group">
+                  <input type="file" class="form-control" id="pdf-logo-input" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
+                  <button class="btn btn-dark border-secondary" type="button" id="upload-pdf-logo-btn" disabled>
+                    <i class="fa fa-upload"></i> <%= t('config.upload') %>
+                  </button>
+                </div>
+                <small class="form-text text-muted">
+                  <%= t('config.accepted_formats') %>
+                </small>
+              </div>
+
+              <hr class="border-secondary my-3">
+
+              <div class="mb-3">
+                <%= form.label :footer_text, 'Texto de pie de página para PDF', class: "form-label" %>
+                <%= form.text_field :footer_text, class: "form-control", maxlength: 200, placeholder: "Texto opcional para el pie de página del PDF" %>
+                <small class="form-text text-muted">Este texto aparecerá en el pie de página de tus cotizaciones PDF. Déjalo vacío para omitirlo.</small>
+              </div>
+
+              <hr class="border-secondary my-3">
+              <h6>Firma</h6>
+              <div class="mb-3">
+                <%= form.label :signature_name, 'Nombre', class: "form-label" %>
+                <%= form.text_field :signature_name, class: "form-control" %>
+              </div>
+              <div class="mb-3">
+                <%= form.label :signature_email, 'Correo', class: "form-label" %>
+                <%= form.email_field :signature_email, class: "form-control" %>
+              </div>
+              <div class="mb-3">
+                <%= form.label :signature_phone, 'Teléfono', class: "form-label" %>
+                <%= form.telephone_field :signature_phone, class: "form-control" %>
+              </div>
+              <div class="mb-3">
+                <%= form.label :signature_whatsapp, 'WhatsApp', class: "form-label" %>
+                <%= form.telephone_field :signature_whatsapp, class: "form-control" %>
+              </div>
+              <hr class="border-secondary my-3">
+              <h6>Condiciones de venta</h6>
+              <div class="mb-3">
+                <%= form.text_field :sales_condition_1, class: "form-control", placeholder: "Condición de venta 1" %>
+              </div>
+              <div class="mb-3">
+                <%= form.text_field :sales_condition_2, class: "form-control", placeholder: "Condición de venta 2" %>
+              </div>
+              <div class="mb-3">
+                <%= form.text_field :sales_condition_3, class: "form-control", placeholder: "Condición de venta 3" %>
+              </div>
+              <div class="mb-3">
+                <%= form.text_field :sales_condition_4, class: "form-control", placeholder: "Condición de venta 4" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Hidden submit button to be triggered by subnavbar button -->
+  <button type="submit" id="hidden-save-configs-btn" style="display:none"></button>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to t('common.cancel'), :back, class: "btn btn-outline-light me-2" %>
+  <button type="button" class="btn btn-outline-light" id="save-configs-btn">
+    <%= t('common.save') %>
+  </button>
+<% end %>
+
+<script>
+function initializePdfLogoUpload() {
+  const logoInput = document.getElementById('pdf-logo-input');
+  const uploadButton = document.getElementById('upload-pdf-logo-btn');
+  const logoPreview = document.getElementById('pdf-logo-preview');
+  const currentLogo = document.getElementById('pdf-current-logo');
+  const logoPlaceholder = document.getElementById('pdf-logo-placeholder');
+  const logoDisplayArea = document.getElementById('pdf-logo-display-area');
+
+  if (!logoInput) return;
+
+  // Function to update the logo display
+  function updateLogoDisplay(url) {
+    if (currentLogo) {
+      currentLogo.src = url;
+      currentLogo.style.display = 'block';
+    } else {
+      // Create new image if it doesn't exist
+      const newLogo = document.createElement('img');
+      newLogo.src = url;
+      newLogo.className = 'img-fluid';
+      newLogo.style.maxHeight = '120px';
+      newLogo.id = 'pdf-current-logo';
+      logoDisplayArea.appendChild(newLogo);
+    }
+    if (logoPlaceholder) logoPlaceholder.style.display = 'none';
+    if (logoPreview) logoPreview.style.display = 'none';
+  }
+
+  logoInput.addEventListener('change', function() {
+    const file = this.files[0];
+    console.log('File selected:', file ? {
+      name: file.name,
+      type: file.type,
+      size: file.size,
+      lastModified: new Date(file.lastModified).toISOString()
+    } : 'No file');
+    
+    if (file) {
+      // More permissive file type checking
+      const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/octet-stream'];
+      const validExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+      
+      const hasValidType = validTypes.includes(file.type);
+      const hasValidExtension = validExtensions.some(ext => 
+        file.name.toLowerCase().endsWith(ext)
+      );
+
+      if (!hasValidType && !hasValidExtension) {
+        console.error('Invalid file type or extension:', file.type, file.name);
+        alert('Por favor selecciona una imagen en formato JPG, PNG o GIF');
+        logoInput.value = ''; // Clear the input
+        return;
+      }
+
+      // Validate file size
+      if (file.size === 0) {
+        console.error('File size is 0 bytes');
+        alert('El archivo está vacío. Por favor selecciona una imagen válida.');
+        logoInput.value = ''; // Clear the input
+        return;
+      }
+
+      if (file.size > 2 * 1024 * 1024) { // 2MB in bytes
+        console.error('File too large:', file.size);
+        alert('El archivo es demasiado grande. El tamaño máximo es 2MB.');
+        logoInput.value = ''; // Clear the input
+        return;
+      }
+
+      // Enable upload button when file is selected
+      uploadButton.disabled = false;
+      
+      // Create preview using URL.createObjectURL for better compatibility
+      try {
+        const objectUrl = URL.createObjectURL(file);
+        
+        // Create a new image to test loading
+        const img = new Image();
+        
+        img.onload = function() {
+          console.log('Image loaded successfully:', {
+            width: img.width,
+            height: img.height,
+            naturalWidth: img.naturalWidth,
+            naturalHeight: img.naturalHeight
+          });
+
+          if (img.width === 0 || img.height === 0) {
+            console.error('Invalid image dimensions');
+            alert('La imagen no tiene dimensiones válidas. Por favor intenta con otra.');
+            logoInput.value = '';
+            URL.revokeObjectURL(objectUrl);
+            return;
+          }
+          
+          // Remove any existing filename
+          const existingFilename = logoDisplayArea.querySelector('p.text-muted');
+          if (existingFilename) {
+            existingFilename.remove();
+          }
+          
+          // Hide current logo or placeholder
+          if (currentLogo) currentLogo.style.display = 'none';
+          if (logoPlaceholder) logoPlaceholder.style.display = 'none';
+          
+          // Show and update preview
+          logoPreview.style.display = 'block';
+          logoPreview.src = objectUrl;
+
+          // Add preview filename below the image
+          const filename = document.createElement('p');
+          filename.className = 'text-muted mt-2 mb-0';
+          filename.textContent = file.name;
+          logoDisplayArea.appendChild(filename);
+        };
+        
+        img.onerror = function(error) {
+          console.error('Image loading error:', error);
+          
+          // Fallback to FileReader if URL.createObjectURL fails
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            logoPreview.style.display = 'block';
+            logoPreview.src = e.target.result;
+            
+            const filename = document.createElement('p');
+            filename.className = 'text-muted mt-2 mb-0';
+            filename.textContent = file.name;
+            logoDisplayArea.appendChild(filename);
+          };
+          
+          reader.onerror = function() {
+            console.error('FileReader error:', reader.error);
+            alert('Error al cargar la vista previa. Por favor intenta con otra imagen.');
+            logoInput.value = '';
+          };
+          
+          reader.readAsDataURL(file);
+        };
+        
+        img.src = objectUrl;
+      } catch (error) {
+        console.error('Error creating preview:', error);
+        alert('Error al crear la vista previa. Por favor intenta con otra imagen.');
+        logoInput.value = '';
+      }
+    } else {
+      // No file selected
+      uploadButton.disabled = true;
+      
+      // Show current logo or placeholder
+      if (currentLogo) currentLogo.style.display = 'block';
+      if (logoPlaceholder && !currentLogo) logoPlaceholder.style.display = 'block';
+      
+      // Hide preview
+      if (logoPreview) logoPreview.style.display = 'none';
+      
+      // Remove filename if exists
+      const filename = logoDisplayArea.querySelector('p.text-muted');
+      if (filename) filename.remove();
+    }
+  });
+
+  // Handle upload
+  uploadButton.addEventListener('click', function() {
+    if (!logoInput.files[0]) {
+      alert('Por favor selecciona un archivo primero');
+      return;
+    }
+
+    // Show loading state
+    uploadButton.disabled = true;
+    uploadButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Subiendo...';
+
+    const formData = new FormData();
+    formData.append('logo', logoInput.files[0]);
+    
+    // Get CSRF token from meta tag
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    fetch('/pdf_config/update_logo', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-CSRF-Token': csrfToken
+      },
+      credentials: 'same-origin'
+    })
+    .then(response => {
+      if (!response.ok) {
+        return response.json().then(data => {
+          throw new Error(data.error || 'Error desconocido');
+        });
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.success) {
+        // Update the logo display immediately
+        updateLogoDisplay(data.url);
+        // Clear the file input
+        logoInput.value = '';
+        // Reset the upload button
+        uploadButton.disabled = true;
+        uploadButton.innerHTML = '<i class="fa fa-upload"></i> <%= t('config.upload') %>';
+        // Show success message
+        const successMessage = document.createElement('div');
+        successMessage.className = 'alert alert-success mt-2';
+        successMessage.textContent = 'Logo actualizado correctamente';
+        logoDisplayArea.appendChild(successMessage);
+        // Remove success message after 3 seconds
+        setTimeout(() => {
+          successMessage.remove();
+        }, 3000);
+      } else {
+        throw new Error(data.error || 'Error desconocido');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Error al subir el logo: ' + error.message);
+      // Reset button state
+      uploadButton.disabled = false;
+      uploadButton.innerHTML = '<i class="fa fa-upload"></i> <%= t('config.upload') %>';
+    });
+  });
+}
+
+// Initialize on both DOMContentLoaded and turbo:load
+document.addEventListener('DOMContentLoaded', initializePdfLogoUpload);
+document.addEventListener('turbo:load', initializePdfLogoUpload);
+
+document.addEventListener('DOMContentLoaded', function() {
+  var saveBtn = document.getElementById('save-configs-btn');
+  var hiddenSubmit = document.getElementById('hidden-save-configs-btn');
+  if (saveBtn && hiddenSubmit) {
+    saveBtn.addEventListener('click', function() {
+      hiddenSubmit.click();
+    });
+  }
+});
+</script> 

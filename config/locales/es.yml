@@ -70,6 +70,7 @@ es:
     phone: "Teléfono"
     whatsapp: "WhatsApp"
     sales_conditions: "Condiciones de venta"
+    pdf_config_title: "Configuración de PDF"
   
   navbar:
     dashboard: "Tablero"
@@ -84,7 +85,7 @@ es:
     news: "Noticias"
     suggestions: "Sugerencias"
     new: "Nuevo"
-    configurations: "Configuraciones"
+    configurations: "Configuración"
     admin: "Admin"
     language: "Idioma"
     spanish: "Español"

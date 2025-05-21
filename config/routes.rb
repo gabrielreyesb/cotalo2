@@ -134,4 +134,8 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   resources :suggestions, only: [:index, :create, :edit, :update]
+
+  resource :pdf_config, only: [:edit, :update] do
+    post :update_logo, on: :collection
+  end
 end

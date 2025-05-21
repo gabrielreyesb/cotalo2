@@ -29,23 +29,39 @@
                role="button"
                data-bs-toggle="dropdown"
                aria-expanded="false">
-              <i class="fa fa-list me-1"></i> <%= t('navbar.catalogs') %>
+              <i class="fa fa-cog me-1"></i> <%= t('navbar.configurations') %>
             </a>
             <div class="dropdown-menu" aria-labelledby="catalogsDropdown">
+
               <%= link_to materials_path, class: "dropdown-item #{current_page?(materials_path) ? 'active' : ''}" do %>
                 <i class="fa fa-cubes me-1"></i> <%= t('navbar.materials') %>
               <% end %>
+
               <%= link_to manufacturing_processes_path, class: "dropdown-item #{current_page?(manufacturing_processes_path) ? 'active' : ''}" do %>
                 <i class="fa fa-cogs me-1"></i> <%= t('navbar.processes') %>
               <% end %>
+
               <%= link_to extras_path, class: "dropdown-item #{current_page?(extras_path) ? 'active' : ''}" do %>
                 <i class="fa fa-plus-circle me-1"></i> <%= t('navbar.extras') %>
               <% end %>
+              
               <%= link_to price_margins_path, class: "dropdown-item #{current_page?(price_margins_path) ? 'active' : ''}" do %>
                 <i class="fa fa-percentage me-1"></i> <%= t('navbar.price_margins') %>
               <% end %>
+
+              <hr class="dropdown-divider" style="border-top: 1px solid #42b983 !important; opacity: 1 !important;">
+            
+              <%= link_to edit_app_configs_path, class: "dropdown-item #{current_page?(edit_app_configs_path) ? 'active' : ''}" do %>
+                <i class="fa fa-cog me-1"></i> Generales
+              <% end %>
+
+              <%= link_to edit_pdf_config_path, class: "dropdown-item #{current_page?(edit_pdf_config_path) ? 'active' : ''}" do %>
+                <i class="fa fa-file-pdf me-1"></i> PDF
+              <% end %>
+
               <% if current_user.admin? %>
-                <div class="dropdown-divider"></div>
+                <hr class="dropdown-divider" style="border-top: 1px solid #42b983 !important; opacity: 1 !important;">  
+                <div style="height:1px; background:#42b983; margin:0.5rem 0; opacity:0.7;"></div>
                 <%= link_to admin_units_path, class: "dropdown-item #{current_page?(admin_units_path) ? 'active' : ''}" do %>
                   <i class="fa fa-ruler me-1"></i> <%= t('navbar.units') %>
                 <% end %>
@@ -54,19 +70,11 @@
                 <% end %>
                 <%= link_to admin_suggestions_path, class: "dropdown-item #{current_page?(admin_suggestions_path) ? 'active' : ''}" do %>
                   <i class="fas fa-lightbulb me-1"></i> <%= t('navbar.suggestions') %>
-                  <% if Suggestion.where(reviewed: false).exists? %>
-                    <span class="badge bg-warning text-dark"><%= t('navbar.new') %></span>
-                  <% end %>
                 <% end %>
               <% end %>
             </div>
           </li>
           
-          <li class="nav-item">
-            <%= link_to edit_app_configs_path, class: "nav-link #{current_page?(edit_app_configs_path) ? 'active' : ''}" do %>
-              <i class="fa fa-cog me-1"></i> <%= t('navbar.configurations') %>
-            <% end %>
-          </li>
           <% if current_user.admin? %>
             <li class="nav-item">
               <%= link_to admin_root_path, class: "nav-link #{current_page?(admin_root_path) ? 'active' : ''}" do %>
@@ -101,15 +109,15 @@
                 <%= button_to admin_impersonations_destroy_path, method: :delete, class: "dropdown-item text-warning" do %>
                   <i class="fas fa-user-secret me-1"></i> Stop Impersonating
                 <% end %>
-                <div class="dropdown-divider"></div>
+                <div style="height:1px; background:#42b983; margin:0.5rem 0; opacity:0.7;"></div>
               <% end %>
               <%= link_to edit_user_registration_path, class: "dropdown-item" do %>
                 <i class="fa fa-user-edit me-1"></i> Editar perfil
               <% end %>
               <%= link_to edit_app_configs_path, class: "dropdown-item" do %>
-                <i class="fa fa-cog me-1"></i> Configuraciones
+                <i class="fa fa-cog me-1"></i> Configuración
               <% end %>
-              <div class="dropdown-divider"></div>
+              <div style="height:1px; background:#42b983; margin:0.5rem 0; opacity:0.7;"></div>
               <%= button_to destroy_user_session_path, method: :delete, class: "dropdown-item" do %>
                 <i class="fa fa-sign-out-alt me-1"></i> Cerrar sesión
               <% end %>
@@ -161,6 +169,12 @@
     border: 1px solid var(--border-color);
     border-top: none;
     background: var(--dark);
+  }
+
+  .navbar .dropdown-menu .dropdown-divider {
+    border-top: 1px solid #42b983 !important;
+    margin: 0.5rem 0;
+    opacity: 1 !important;
   }
 </style>
 

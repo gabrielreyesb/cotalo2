@@ -98,6 +98,7 @@ en:
     phone: "Phone"
     whatsapp: "WhatsApp"
     sales_conditions: "Sales Conditions"
+    pdf_config_title: "PDF Configuration"
   navbar:
     dashboard: "Dashboard"
     products: "Products"

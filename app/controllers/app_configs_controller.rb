@@ -3,32 +3,14 @@ class AppConfigsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:update_api_key, :test_facturama_api, :update_logo]
   
   def edit
-    # Get raw percentage values
-    waste_pct_raw = current_user.get_config(AppConfig::WASTE_PERCENTAGE)
-    
-    # Convert decimal percentages (0.05) to whole numbers (5) for the form
-    waste_pct = waste_pct_raw.nil? ? 5 : (waste_pct_raw * 100).round
-    
+    # Get waste percentage as stored (integer)
+    waste_pct = current_user.get_config(AppConfig::WASTE_PERCENTAGE) || 0
     # Group configurations by category
     @general_settings = {
       waste_percentage: waste_pct,
       width_margin: current_user.get_config(AppConfig::WIDTH_MARGIN) || 0,
       length_margin: current_user.get_config(AppConfig::LENGTH_MARGIN) || 0,
       company_logo: current_user.get_config(AppConfig::COMPANY_LOGO)
-    }
-    
-    @sales_conditions = {
-      condition_1: current_user.get_config(AppConfig::SALES_CONDITION_1) || '',
-      condition_2: current_user.get_config(AppConfig::SALES_CONDITION_2) || '',
-      condition_3: current_user.get_config(AppConfig::SALES_CONDITION_3) || '',
-      condition_4: current_user.get_config(AppConfig::SALES_CONDITION_4) || ''
-    }
-    
-    @signature_info = {
-      name: current_user.get_config(AppConfig::SIGNATURE_NAME) || '',
-      email: current_user.get_config(AppConfig::SIGNATURE_EMAIL) || '',
-      phone: current_user.get_config(AppConfig::SIGNATURE_PHONE) || '',
-      whatsapp: current_user.get_config(AppConfig::SIGNATURE_WHATSAPP) || ''
     }
     
     # Check if APIs are configured (don't show the actual keys)
@@ -39,15 +21,7 @@ class AppConfigsController < ApplicationController
     @app_config = OpenStruct.new(
       waste_percentage: @general_settings[:waste_percentage],
       width_margin: @general_settings[:width_margin],
-      length_margin: @general_settings[:length_margin],
-      signature_name: @signature_info[:name],
-      signature_email: @signature_info[:email],
-      signature_phone: @signature_info[:phone],
-      signature_whatsapp: @signature_info[:whatsapp],
-      condition_1: @sales_conditions[:condition_1],
-      condition_2: @sales_conditions[:condition_2],
-      condition_3: @sales_conditions[:condition_3],
-      condition_4: @sales_conditions[:condition_4]
+      length_margin: @general_settings[:length_margin]
     )
   end
   
@@ -118,7 +92,7 @@ class AppConfigsController < ApplicationController
   def update
     # Update general settings
     if params[:waste_percentage].present?
-      current_user.set_config(AppConfig::WASTE_PERCENTAGE, params[:waste_percentage].to_f / 100, AppConfig::PERCENTAGE)
+      current_user.set_config(AppConfig::WASTE_PERCENTAGE, params[:waste_percentage], AppConfig::NUMERIC)
     end
     
     if params[:width_margin].present?
@@ -127,40 +101,6 @@ class AppConfigsController < ApplicationController
     
     if params[:length_margin].present?
       current_user.set_config(AppConfig::LENGTH_MARGIN, params[:length_margin], AppConfig::NUMERIC)
-    end
-    
-    # Update sales conditions
-    if params[:condition_1].present?
-      current_user.set_config(AppConfig::SALES_CONDITION_1, params[:condition_1])
-    end
-    
-    if params[:condition_2].present?
-      current_user.set_config(AppConfig::SALES_CONDITION_2, params[:condition_2])
-    end
-    
-    if params[:condition_3].present?
-      current_user.set_config(AppConfig::SALES_CONDITION_3, params[:condition_3])
-    end
-    
-    if params[:condition_4].present?
-      current_user.set_config(AppConfig::SALES_CONDITION_4, params[:condition_4])
-    end
-    
-    # Update signature information
-    if params[:signature_name].present?
-      current_user.set_config(AppConfig::SIGNATURE_NAME, params[:signature_name])
-    end
-    
-    if params[:signature_email].present?
-      current_user.set_config(AppConfig::SIGNATURE_EMAIL, params[:signature_email])
-    end
-    
-    if params[:signature_phone].present?
-      current_user.set_config(AppConfig::SIGNATURE_PHONE, params[:signature_phone])
-    end
-    
-    if params[:signature_whatsapp].present?
-      current_user.set_config(AppConfig::SIGNATURE_WHATSAPP, params[:signature_whatsapp])
     end
     
     # Update API keys
