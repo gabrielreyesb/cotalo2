@@ -74,7 +74,9 @@
     total: t("products.form.total"),
     actions: t("products.form.actions"),
     remove: t("products.form.remove"),
-    include_in_subtotal: t("products.form.include_in_subtotal")
+    include_in_subtotal: t("products.form.include_in_subtotal"),
+    comments_label: t("products.form.extras_tab.comments_label"),
+    comments_placeholder: t("products.form.extras_tab.comments_placeholder")
   },
   pricing: {
     materials_cost: t("products.form.materials_cost"),
@@ -90,7 +92,37 @@
   },
   materials_calculation_tooltip: t("products.form.materials_calculation_tooltip"),
   processes_calculation_tooltip: t("products.form.processes_calculation_tooltip"),
-  extras_tab: t("products.extras_tab")
+  extras_tab: {
+    select_extra: t("products.form.select_extra"),
+    select_extra_placeholder: t("products.form.extras_tab.select_extra_placeholder"),
+    add_extra: t("products.form.add_extra"),
+    no_extras: t("products.form.no_extras"),
+    name: t("products.form.extra_name"),
+    description: t("products.form.extra_description"),
+    unit_price: t("products.form.extra_unit_price"),
+    quantity: t("products.form.extra_quantity"),
+    total: t("products.form.total"),
+    actions: t("products.form.actions"),
+    remove: t("products.form.remove"),
+    include_in_subtotal: t("products.form.include_in_subtotal"),
+    include_in_subtotal_mobile: t("products.form.include_in_subtotal_mobile"),
+    comments_label: t("products.form.extras_tab.comments_label"),
+    comments_placeholder: t("products.form.extras_tab.comments_placeholder"),
+    total_extras: t("products.form.extras_tab.total_extras"),
+    table: {
+      name: t("products.form.extras_tab.table.name"),
+      description: t("products.form.extras_tab.table.description"),
+      unit_price: t("products.form.extras_tab.table.unit_price"),
+      quantity: t("products.form.extras_tab.table.quantity"),
+      total: t("products.form.extras_tab.table.total"),
+      actions: t("products.form.extras_tab.table.actions")
+    },
+    tooltips: {
+      edit_price: t("products.form.extras_tab.tooltips.edit_price"),
+      edit_quantity: t("products.form.extras_tab.tooltips.edit_quantity"),
+      remove_extra: t("products.form.extras_tab.tooltips.remove_extra")
+    }
+  }
 }.to_json.html_safe %>'></div>
 
 <!-- API token for authentication -->

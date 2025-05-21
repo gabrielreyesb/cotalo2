@@ -427,6 +427,28 @@ es:
         • <u>Total m²</u>: Cantidad de metros cuadrados de material necesarios para crear el producto<br>
         • <u>Precio total</u>: Precio total del material para crear el producto
       processes_calculation_tooltip: "<strong>Cómo se calculan los costos de procesos:</strong><br>• <u>Precio unitario</u>: El costo por unidad del proceso<br>• <u>Aplicado a</u>: El material o parte a la que se aplica el proceso<br>• <u>Precio total</u>: El costo total de este proceso en el producto"
+      extras_tab:
+        select_extra: "Seleccionar extra"
+        select_extra_placeholder: "Seleccionar un extra para agregar"
+        quantity: "Cantidad"
+        add_extra: "Agregar Extra"
+        no_extras: "No hay extras agregados. Selecciona un extra y agrégalo al producto."
+        include_in_subtotal: "Incluir extras al valor del producto"
+        include_in_subtotal_mobile: "Incluir extras en el subtotal del producto"
+        table:
+          name: "Nombre"
+          description: "Descripción"
+          unit_price: "Precio unitario"
+          quantity: "Cantidad"
+          total: "Total"
+          actions: "Acciones"
+        comments_label: "Comentarios sobre los extras"
+        comments_placeholder: "Agregar notas o comentarios generales sobre los extras de este producto"
+        tooltips:
+          edit_price: "Editar precio del extra"
+          edit_quantity: "Editar cantidad"
+          remove_extra: "Eliminar extra"
+        total_extras: "Total:"
     extras_tab:
       select_extra: "Seleccionar extra"
       select_extra_placeholder: "Seleccionar un extra para agregar"
