@@ -13,7 +13,7 @@
             </div>
             <div class="card-body">
               <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-4">
                   <%= form.label :waste_percentage, t('config.waste_percentage'), class: "form-label" %>
                   <div class="input-group">
                     <%= form.number_field :waste_percentage, value: @general_settings[:waste_percentage], class: "form-control bg-dark text-light border-secondary", min: 0, max: 100, step: 1 %>
@@ -21,14 +21,14 @@
                   </div>
                 </div>
                 
-                <div class="col-md-3">
+                <div class="col-md-4">
                   <%= form.label :width_margin, t('config.width_margin'), class: "form-label" %>
                   <div class="input-group">
                     <%= form.number_field :width_margin, value: @general_settings[:width_margin], step: '0.01', class: "form-control bg-dark text-light border-secondary" %>
                   </div>
                 </div>
                 
-                <div class="col-md-3">
+                <div class="col-md-4">
                   <%= form.label :length_margin, t('config.length_margin'), class: "form-label" %>
                   <div class="input-group">
                     <%= form.number_field :length_margin, value: @general_settings[:length_margin], step: '0.01', class: "form-control bg-dark text-light border-secondary" %>
@@ -42,7 +42,7 @@
     </div>
   </div>
 
-  <!-- API Configuration section (now part of the main form) -->
+  <!-- API Configuration section -->
   <div class="row">
     <div class="col-md-8 offset-md-2 mb-4">
       <div class="settings-tab">

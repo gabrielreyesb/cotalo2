@@ -14,9 +14,6 @@
         <p><strong>Fecha de registro:</strong> <%= @user.created_at.strftime('%d/%m/%Y %H:%M') %></p>
       </div>
       
-      <p>Puedes ver los detalles del usuario en el panel de administración:</p>
-      <%= link_to 'Ver Usuario', admin_user_url(@user), style: 'display: inline-block; padding: 10px 20px; background-color: #42B983; color: white; text-decoration: none; border-radius: 5px;' %>
-      
       <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
         <p style="margin: 0;">Saludos,</p>
         <p style="margin: 5px 0;"><strong>Sistema de Cotalo</strong></p>

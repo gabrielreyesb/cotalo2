@@ -46,7 +46,7 @@
               <% end %>
               
               <%= link_to price_margins_path, class: "dropdown-item #{current_page?(price_margins_path) ? 'active' : ''}" do %>
-                <i class="fa fa-percentage me-1"></i> <%= t('navbar.price_margins') %>
+                <i class="fa fa-sliders-h me-1"></i> <%= t('navbar.price_margins') %>
               <% end %>
 
               <hr class="dropdown-divider" style="border-top: 1px solid #42b983 !important; opacity: 1 !important;">
@@ -57,6 +57,12 @@
 
               <%= link_to edit_pdf_config_path, class: "dropdown-item #{current_page?(edit_pdf_config_path) ? 'active' : ''}" do %>
                 <i class="fa fa-file-pdf me-1"></i> PDF
+              <% end %>
+
+              <hr class="dropdown-divider" style="border-top: 1px solid #42b983 !important; opacity: 1 !important;">
+
+              <%= link_to edit_price_adjustments_path, class: "dropdown-item" do %>
+                <i class="fa fa-percentage me-1"></i> Ajuste de precios
               <% end %>
 
               <% if current_user.admin? %>

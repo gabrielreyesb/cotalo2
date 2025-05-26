@@ -1,0 +1,49 @@
+<% content_for :page_title do %>
+  <%= t('price_adjustments.title') %>
+<% end %>
+
+<div class="row">
+  <div class="col-md-8 offset-md-2">
+    <div class="settings-tab">
+      <div class="green-accent-panel">
+        <div class="card">
+          <div class="card-body pb-3 pt-3">
+            <div class="alert alert-info mb-2">
+              <h6 class="mb-1"><%= t('price_adjustments.last_adjustment') %></h6>
+              <p class="mb-0"><%= number_to_percentage(@last_adjustment, precision: 2) %></p>
+            </div>
+            
+            <%= form_with(url: update_prices_price_adjustments_path, method: :post, class: "row g-3 align-items-end mt-1", id: "price-adjustment-form") do |f| %>
+              <div class="col-md-4">
+                <%= f.label :percentage, t('price_adjustments.adjustment_percentage'), class: "form-label" %>
+                <div class="input-group">
+                  <%= f.number_field :percentage, class: "form-control bg-dark text-light border-secondary", step: '0.01', required: true %>
+                  <span class="input-group-text bg-dark text-light border-secondary">%</span>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :page_actions do %>
+  <%= link_to t('actions.cancel'), dashboard_path, class: 'btn btn-outline-secondary me-2' %>
+  <button class="btn btn-success" id="apply-price-adjustment-btn" type="button">
+    <%= t('price_adjustments.apply_adjustment') %>
+  </button>
+<% end %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var btn = document.getElementById('apply-price-adjustment-btn');
+    var form = document.getElementById('price-adjustment-form');
+    if (btn && form) {
+      btn.addEventListener('click', function() {
+        form.requestSubmit();
+      });
+    }
+  });
+</script> 

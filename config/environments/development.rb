@@ -38,22 +38,21 @@ Rails.application.configure do
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = true
-
   config.action_mailer.perform_caching = false
 
-  # SMTP settings for GoDaddy email
+  # Use letter_opener for development
+  # config.action_mailer.delivery_method = :letter_opener
+
+  # Use GoDaddy SMTP for real email delivery in development (same as production)
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.perform_deliveries = true
-  config.action_mailer.raise_delivery_errors = true
   config.action_mailer.default_url_options = { host: 'localhost:3000' }
-  
   config.action_mailer.smtp_settings = {
     address: 'smtpout.secureserver.net',
     port: 587,
     domain: 'cotalo.app',
     user_name: 'gabriel@cotalo.app',
-    password: ENV['SMTP_PASSWORD'],
-    authentication: 'plain',
+    password: 't2h0u1l9E,',
+    authentication: :login,
     enable_starttls_auto: true
   }
 

@@ -16,6 +16,7 @@ class User < ApplicationRecord
 
   after_create :setup_initial_data
   after_create :send_admin_notification
+  after_create :send_welcome_email
 
   def admin?
     admin
@@ -119,5 +120,9 @@ class User < ApplicationRecord
 
   def send_admin_notification
     AdminMailer.new_user_notification(self).deliver_later
+  end
+
+  def send_welcome_email
+    UserMailer.welcome_email(self).deliver_later
   end
 end

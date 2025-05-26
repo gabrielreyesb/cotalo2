@@ -1,6 +1,6 @@
 class QuotesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_quote, only: [:show, :edit, :update, :destroy, :add_product, :remove_product, :update_product_quantity, :pdf]
+  before_action :set_quote, only: [:show, :edit, :update, :destroy, :add_product, :remove_product, :update_product_quantity, :pdf, :modern_pdf]
   
   # Use the Vue-specific layout for new and edit pages
   layout 'vue_application', only: [:new, :edit]
@@ -243,6 +243,20 @@ class QuotesController < ApplicationController
     end
   end
   
+  def modern_pdf
+    pdf_content = generate_modern_pdf_for_quote(@quote)
+    filename = "#{@quote.quote_number}.pdf"
+    
+    respond_to do |format|
+      format.pdf do
+        send_data pdf_content, 
+                  filename: filename, 
+                  type: 'application/pdf', 
+                  disposition: 'inline'
+      end
+    end
+  end
+  
   def duplicate
     @original_quote = current_user.quotes.find(params[:id])
     
@@ -304,6 +318,12 @@ class QuotesController < ApplicationController
     # Ensure we have all the necessary associations loaded
     quote = Quote.includes(:user, :quote_products => [:product]).find(quote.id) unless quote.quote_products.loaded?
     pdf_generator = QuotePdfGenerator.new(quote)
+    pdf_generator.generate
+  end
+  
+  def generate_modern_pdf_for_quote(quote)
+    quote = Quote.includes(:user, :quote_products => [:product]).find(quote.id) unless quote.quote_products.loaded?
+    pdf_generator = QuotePdfGeneratorModern.new(quote)
     pdf_generator.generate
   end
   

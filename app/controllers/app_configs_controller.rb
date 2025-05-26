@@ -5,6 +5,7 @@ class AppConfigsController < ApplicationController
   def edit
     # Get waste percentage as stored (integer)
     waste_pct = current_user.get_config(AppConfig::WASTE_PERCENTAGE) || 0
+    
     # Group configurations by category
     @general_settings = {
       waste_percentage: waste_pct,

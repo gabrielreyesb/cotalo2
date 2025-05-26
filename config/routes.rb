@@ -70,6 +70,7 @@ Rails.application.routes.draw do
       delete :remove_product
       patch :update_product_quantity
       get :pdf
+      get :modern_pdf
       get :duplicate
       post :send_email
     end
@@ -117,10 +118,22 @@ Rails.application.routes.draw do
   # Application configs
   resource :app_configs, only: [:edit, :update] do
     collection do
-      put :update_api_key
+      post :update_api_key
       post :test_facturama_api
       post :update_logo
     end
+  end
+  
+  # Price adjustments
+  resource :price_adjustments, only: [:edit] do
+    collection do
+      post :update_prices
+    end
+  end
+  
+  # PDF config
+  resource :pdf_config, only: [:edit, :update] do
+    post :update_logo, on: :collection
   end
   
   # Simple admin route
@@ -134,8 +147,4 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   resources :suggestions, only: [:index, :create, :edit, :update]
-
-  resource :pdf_config, only: [:edit, :update] do
-    post :update_logo, on: :collection
-  end
 end

@@ -49,7 +49,7 @@
                               title: t('common.edit') do %>
                             <i class="fas fa-edit"></i>
                           <% end %>
-                          <%= link_to pdf_quote_path(quote, format: :pdf), class: "btn btn-sm btn-outline-secondary", 
+                          <%= link_to modern_pdf_quote_path(quote, format: :pdf), class: "btn btn-sm btn-outline-secondary", 
                               data: { bs_toggle: "tooltip" }, 
                               title: t('quotes.index.download_pdf'),
                               target: "_blank" do %>
@@ -129,7 +129,7 @@
                       title: t('common.edit') do %>
                     <i class="fas fa-edit fa-sm"></i>
                   <% end %>
-                  <%= link_to pdf_quote_path(quote, format: :pdf), class: "btn btn-sm btn-outline-secondary", 
+                  <%= link_to modern_pdf_quote_path(quote, format: :pdf), class: "btn btn-sm btn-outline-secondary", 
                       data: { bs_toggle: "tooltip" }, 
                       title: t('quotes.index.download_pdf'),
                       target: "_blank" do %>

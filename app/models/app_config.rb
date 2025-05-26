@@ -10,6 +10,7 @@ class AppConfig < ApplicationRecord
   WIDTH_MARGIN = 'width_margin'
   LENGTH_MARGIN = 'length_margin'
   COMPANY_LOGO = 'company_logo'
+  PRICE_ADJUSTMENT_PERCENTAGE = 'price_adjustment_percentage'
   
   # API Keys (stored in ENV but configured through app)
   PIPEDRIVE_API_KEY = 'pipedrive_api_key'

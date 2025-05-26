@@ -71,6 +71,19 @@ es:
     whatsapp: "WhatsApp"
     sales_conditions: "Condiciones de venta"
     pdf_config_title: "Configuración de PDF"
+    price_adjustment_percentage: "Último ajuste de precios"
+    price_adjustment_title: "Ajuste de precios"
+    price_adjustment_description: "Aplica un porcentaje de ajuste a todos los precios de materiales, procesos y extras. Usa valores positivos para aumentar los precios y negativos para disminuirlos."
+    adjustment_percentage: "Porcentaje de ajuste"
+    apply_price_adjustment: "Aplicar ajuste de precios"
+  
+  price_adjustments:
+    title: "Ajuste de precios"
+    last_adjustment: "Último ajuste aplicado"
+    adjustment_title: "Ajuste de precios"
+    adjustment_description: "Aplica un porcentaje de ajuste a todos los precios de materiales, procesos y extras. Usa valores positivos para aumentar los precios y negativos para disminuirlos."
+    adjustment_percentage: "Porcentaje de ajuste"
+    apply_adjustment: "Aplicar ajuste de precios"
   
   navbar:
     dashboard: "Tablero"
