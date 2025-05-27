@@ -1,5 +1,8 @@
 class SetupTrialPeriodForExistingUsers < ActiveRecord::Migration[7.0]
   def up
+    # Skip if the column doesn't exist yet
+    return unless column_exists?(:users, :trial_ends_at)
+
     # Find all users who don't have trial_ends_at set and are not admins
     User.where(trial_ends_at: nil).where.not(admin: true).find_each do |user|
       # Set trial period to 14 days from now
