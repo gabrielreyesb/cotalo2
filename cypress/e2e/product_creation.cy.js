@@ -62,9 +62,12 @@ describe('Product Creation', () => {
     
     // Select the first process
     cy.get('#process-select').select(1, { force: true })
-    
-    // Wait for the Add Process button to be visible, then click it
-    cy.contains('Agregar proceso').should('be.visible').click()
+
+    // Select the first material in the process tab
+    cy.get('#material-select').select(1, { force: true })
+
+    // Wait for the Add Process button to be enabled, then click it
+    cy.get('.processes-tab .btn-primary').should('not.be.disabled').click();
     
     // Wait for the process to be added and pricing to update
     cy.wait(1000)
@@ -82,7 +85,7 @@ describe('Product Creation', () => {
     cy.get('#extra-select').select(1, { force: true })
     
     // Click the Add Extra button
-    cy.contains('Agregar Extra').click()
+    cy.get('.extras-tab .btn-primary').should('not.be.disabled').click();
     
     // Wait for the extra to be added and pricing to update
     cy.wait(1000)

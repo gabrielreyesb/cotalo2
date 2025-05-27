@@ -413,18 +413,26 @@ export default {
       const process = this.productProcesses[index];
       const basePrice = parseFloat(process.unitPrice) || 0;
       let calculatedPrice = basePrice;
-      
-      // Recalculate price based on unit type
+
+      // Find the associated material for this process, if any
+      let material = null;
+      if (process.materialId) {
+        material = this.productMaterials.find(m => m.id === process.materialId);
+      }
+
+      // Use the correct value for calculation
       if (process.unit === 'pieza') {
         calculatedPrice = basePrice * this.productQuantity;
       } else if (process.unit === 'pliego') {
-        calculatedPrice = basePrice * this.totalSheets;
+        const sheets = material ? material.totalSheets : this.totalSheets;
+        calculatedPrice = basePrice * sheets;
       } else if (process.unit === 'mt2') {
-        calculatedPrice = basePrice * this.totalSquareMeters;
+        const sqm = material ? material.totalSquareMeters : this.totalSquareMeters;
+        calculatedPrice = basePrice * sqm;
       } else {
         calculatedPrice = basePrice;
       }
-      
+
       // Create a copy of the processes array
       const updatedProcesses = [...this.productProcesses];
       

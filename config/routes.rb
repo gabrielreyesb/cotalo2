@@ -147,4 +147,9 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   resources :suggestions, only: [:index, :create, :edit, :update]
+
+  # Stripe webhook endpoint
+  post 'stripe/webhook', to: 'stripe_webhooks#create'
+
+  get 'subscribe', to: 'subscriptions#new', as: :subscribe
 end

@@ -108,7 +108,7 @@ export default {
   },
   data() {
     return {
-      localWastePercentage: this.pricing.waste_percentage || 5,
+      localWastePercentage: this.pricing.waste_percentage || 0,
       localMarginPercentage: this.pricing.margin_percentage || 0
     };
   },
@@ -137,7 +137,7 @@ export default {
   watch: {
     'pricing.waste_percentage': {
       handler(newVal) {
-        this.localWastePercentage = newVal;
+        this.localWastePercentage = newVal || 0;
       },
       immediate: true
     },

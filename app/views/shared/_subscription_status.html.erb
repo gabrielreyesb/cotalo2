@@ -1,0 +1,69 @@
+<%# Subscription Status Component %>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="card-title mb-3"><%= t('subscription.status_title') %></h5>
+    
+    <% if current_user.trial? %>
+      <%# Trial Status %>
+      <div class="alert <%= current_user.trial_days_remaining < 3 ? 'alert-warning' : 'alert-info' %>">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h6 class="mb-0"><%= t('subscription.trial_status') %></h6>
+          <span class="badge bg-<%= current_user.trial_days_remaining < 3 ? 'warning' : 'info' %>">
+            <%= t('subscription.days_remaining', count: current_user.trial_days_remaining) %>
+          </span>
+        </div>
+        
+        <%# Trial Progress Bar %>
+        <div class="progress mb-2" style="height: 8px;">
+          <div class="progress-bar bg-<%= current_user.trial_days_remaining < 3 ? 'warning' : 'info' %>" 
+               role="progressbar" 
+               style="width: <%= current_user.trial_percentage_completed %>%;" 
+               aria-valuenow="<%= current_user.trial_percentage_completed %>" 
+               aria-valuemin="0" 
+               aria-valuemax="100">
+          </div>
+        </div>
+        
+        <small class="text-muted">
+          <%= t('subscription.trial_ends_at', date: l(current_user.trial_ends_at, format: :long)) %>
+        </small>
+        
+        <% if current_user.trial_days_remaining < 3 %>
+          <div class="mt-2">
+            <%= link_to t('subscription.upgrade_now'), new_subscription_path, class: 'btn btn-warning btn-sm' %>
+          </div>
+        <% end %>
+      </div>
+    <% elsif current_user.active_subscription? %>
+      <%# Active Subscription Status %>
+      <div class="alert alert-success">
+        <div class="d-flex justify-content-between align-items-center">
+          <h6 class="mb-0"><%= t('subscription.active_status') %></h6>
+          <span class="badge bg-success">
+            <%= t('subscription.days_remaining', count: current_user.subscription_days_remaining) %>
+          </span>
+        </div>
+        <small class="text-muted">
+          <%= t('subscription.renews_at', date: l(current_user.subscription_ends_at, format: :long)) %>
+        </small>
+        <div class="mt-2">
+          <%= link_to t('subscription.manage_subscription'), subscription_path, class: 'btn btn-outline-success btn-sm' %>
+        </div>
+      </div>
+    <% elsif current_user.subscription_status == 'past_due' %>
+      <%# Past Due Status %>
+      <div class="alert alert-danger">
+        <h6 class="mb-2"><%= t('subscription.past_due_status') %></h6>
+        <p class="mb-2"><%= t('subscription.past_due_message') %></p>
+        <%= link_to t('subscription.update_payment'), subscription_path, class: 'btn btn-danger btn-sm' %>
+      </div>
+    <% elsif current_user.subscription_status == 'expired' %>
+      <%# Expired Status %>
+      <div class="alert alert-danger">
+        <h6 class="mb-2"><%= t('subscription.expired_status') %></h6>
+        <p class="mb-2"><%= t('subscription.expired_message') %></p>
+        <%= link_to t('subscription.resubscribe'), new_subscription_path, class: 'btn btn-danger btn-sm' %>
+      </div>
+    <% end %>
+  </div>
+</div> 

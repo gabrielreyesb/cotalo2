@@ -1,0 +1,59 @@
+<% content_for :page_title do %>
+  Suscribirse
+<% end %>
+
+<div class="container mt-5" style="max-width: 900px;">
+  <div class="row g-4">
+    <!-- Info Block -->
+    <div class="col-md-6">
+      <div class="green-accent-panel">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h3 class="mb-3">Gracias por suscribirte a Cotalo.</h3>
+            <p><strong>El costo de la suscripción es de $3,000 pesos anuales.</strong></p>
+            <p>Al suscribirte tienes acceso ilimitado a Cotalo, mejoras continuas sin costo y soporte técnico por correo con respuesta en menos de 48 horas hábiles.</p>
+            <p><strong>Confidencialidad y seguridad:</strong> Tu información personal y de negocio es tratada con la máxima confidencialidad. Nunca compartiremos tus datos con terceros sin tu consentimiento.</p>
+            <p><strong>Seguridad y privacidad de tu tarjeta:</strong> El manejo de los datos de tu tarjeta de crédito es realizado de forma segura gracias a las funciones de Stripe, cumpliendo con los más altos estándares de seguridad y privacidad.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Subscription Form -->
+    <div class="col-md-6">
+      <div class="green-accent-panel">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h2 class="mb-4">Suscríbete</h2>
+            <form>
+              <div class="mb-3">
+                <label for="subscription_name" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="subscription_name" placeholder="Tu nombre completo">
+              </div>
+              <div class="mb-3">
+                <label for="subscription_address" class="form-label">Dirección</label>
+                <input type="text" class="form-control" id="subscription_address" placeholder="Dirección">
+              </div>
+              <div class="mb-3">
+                <label for="subscription_city" class="form-label">Ciudad</label>
+                <input type="text" class="form-control" id="subscription_city" placeholder="Ciudad">
+              </div>
+              <div class="mb-3">
+                <label for="subscription_state" class="form-label">Estado</label>
+                <input type="text" class="form-control" id="subscription_state" placeholder="Estado">
+              </div>
+              <div class="mb-3">
+                <label for="subscription_card" class="form-label">Número de tarjeta</label>
+                <input type="text" class="form-control" id="subscription_card" placeholder="•••• •••• •••• ••••">
+              </div>
+              <div class="mb-3">
+                <label for="subscription_expiry" class="form-label">Fecha de expiración</label>
+                <input type="text" class="form-control" id="subscription_expiry" placeholder="MM/AA">
+              </div>
+              <button type="submit" class="btn btn-primary w-100" disabled>Suscribirse</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

@@ -219,6 +219,9 @@ es:
         register: "Regístrate"
     failure:
       account_disabled: "Tu cuenta ha sido deshabilitada. Por favor, contacta a un administrador."
+      user:
+        trial_expired: "Tu período de prueba ha expirado. Por favor, actualiza tu suscripción para continuar."
+        subscription_expired: "Tu suscripción ha expirado. Por favor, renueva tu suscripción para continuar."
   
   extras:
     index:
@@ -562,4 +565,47 @@ es:
       messages:
         record_invalid: "La validación falló: %{errors}"
         taken: "ya ha sido tomado"
+  mailers:
+    subscription:
+      welcome_subject: "¡Bienvenido a tu suscripción de Cotalo!"
+      past_due_subject: "Tu suscripción de Cotalo está vencida"
+      canceled_subject: "Tu suscripción de Cotalo ha sido cancelada"
+      expired_subject: "Tu suscripción de Cotalo ha expirado"
+      payment_succeeded_subject: "Pago de suscripción de Cotalo exitoso"
+      payment_failed_subject: "Pago de suscripción de Cotalo fallido"
+  subscription:
+    status_title: "Estado de Suscripción"
+    trial_status: "Período de Prueba"
+    active_status: "Suscripción Activa"
+    past_due_status: "Pago Pendiente"
+    expired_status: "Suscripción Expirada"
+    days_remaining:
+      one: "1 día restante"
+      other: "%{count} días restantes"
+    trial_ends_at: "El período de prueba termina el %{date}"
+    renews_at: "La suscripción se renueva el %{date}"
+    past_due_message: "Tu último pago no pudo ser procesado. Por favor, actualiza tu información de pago para continuar usando Cotalo."
+    expired_message: "Tu suscripción ha expirado. Suscríbete nuevamente para continuar usando Cotalo."
+    upgrade_now: "Actualizar Ahora"
+    manage_subscription: "Administrar Suscripción"
+    update_payment: "Actualizar Pago"
+    resubscribe: "Suscribirse Nuevamente"
+  time:
+    formats:
+      default: "%d/%m/%Y %H:%M"
+      short: "%d %b %H:%M"
+      long: "%d de %B de %Y a las %H:%M"
+  date:
+    formats:
+      default: "%d/%m/%Y"
+      short: "%d %b"
+      long: "%d de %B de %Y"
+    day_names: [Domingo, Lunes, Martes, Miércoles, Jueves, Viernes, Sábado]
+    abbr_day_names: [Dom, Lun, Mar, Mié, Jue, Vie, Sáb]
+    month_names: [~, Enero, Febrero, Marzo, Abril, Mayo, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre]
+    abbr_month_names: [~, Ene, Feb, Mar, Abr, May, Jun, Jul, Ago, Sep, Oct, Nov, Dic]
+    order:
+      - :day
+      - :month
+      - :year
  

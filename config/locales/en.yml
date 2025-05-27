@@ -49,6 +49,23 @@ en:
   hello: "Hello world"
   dashboard:
     title: "Dashboard"
+    subscription:
+      status_title: "Subscription Status"
+      trial_status: "Trial Period"
+      active_status: "Active Subscription"
+      past_due_status: "Payment Past Due"
+      expired_status: "Subscription Expired"
+      days_remaining:
+        one: "1 day remaining"
+        other: "%{count} days remaining"
+      trial_ends_at: "Trial period ends on %{date}"
+      renews_at: "Subscription renews on %{date}"
+      past_due_message: "Your last payment could not be processed. Please update your payment information to continue using Cotalo."
+      expired_message: "Your subscription has expired. Subscribe again to continue using Cotalo."
+      upgrade_now: "Upgrade Now"
+      manage_subscription: "Manage Subscription"
+      update_payment: "Update Payment"
+      resubscribe: "Resubscribe"
     products: "Products"
     view_all: "View all"
     add_new: "Add new"
@@ -230,6 +247,9 @@ en:
         register: "Register"
     failure:
       account_disabled: "Your account has been disabled. Please contact an administrator."
+      user:
+        trial_expired: "Your trial period has expired. Please upgrade your subscription to continue."
+        subscription_expired: "Your subscription has expired. Please renew your subscription to continue."
   extras:
     index:
       title: "Extras"
@@ -536,3 +556,21 @@ en:
         update: "Update News"
         cancel: "Cancel"
         errors: "prevented this news from being saved"
+  time:
+    formats:
+      default: "%m/%d/%Y %H:%M"
+      short: "%b %d %H:%M"
+      long: "%B %d, %Y at %H:%M"
+  date:
+    formats:
+      default: "%m/%d/%Y"
+      short: "%b %d"
+      long: "%B %d, %Y"
+    day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
+    abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
+    month_names: [~, January, February, March, April, May, June, July, August, September, October, November, December]
+    abbr_month_names: [~, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec]
+    order:
+      - :month
+      - :day
+      - :year

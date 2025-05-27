@@ -155,7 +155,7 @@ class QuotePdfGeneratorModern
 
   def add_modern_products_table(pdf, accent_color, bg_color)
     header = [
-      "Fecha", "Producto", "Medidas", "Resistencia", "Materiales", "Procesos/Acabados", "Cantidad", "Precio Unitario"
+      "Fecha", "Producto", "Medidas", "Resistencia", "Materiales", "Acabados", "Cantidad", "Precio unit."
     ]
     rows = [header]
     quote.quote_products.each do |qp|
@@ -192,12 +192,13 @@ class QuotePdfGeneratorModern
       ]
     end
     pdf.bounding_box([pdf.bounds.left, pdf.cursor], width: pdf.bounds.width, keep_together: true) do
-      pdf.table(rows, header: true, cell_style: { size: 9, inline_format: true, padding: [6, 4, 6, 4] }, width: pdf.bounds.width, column_widths: { 0 => 70 }) do |t|
+      pdf.table(rows, header: true, cell_style: { size: 9, inline_format: true, padding: [6, 4, 6, 4] }, column_widths: { 0 => 60, 1 => 130, 2 => 95, 3 => 80, 4 => 95, 5 => 130, 6 => 75, 7 => 65 }) do |t|
         t.row(0).font_style = :bold
         t.row(0).background_color = accent_color
         t.row(0).text_color = 'FFFFFF'
         t.row(0).align = :center
         t.column(0..7).align = :center
+        t.column(1).align = :left
         t.column(4).align = :left
         t.column(5).align = :left
         t.cells.borders = [:left, :right, :top, :bottom]

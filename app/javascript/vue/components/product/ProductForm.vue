@@ -190,7 +190,7 @@ export default {
       availableMaterials: [],
       suggestedMargin: 0,
       userConfig: {
-        waste_percentage: 5,
+        waste_percentage: 0,
         width_margin: 0,
         length_margin: 0
       },
@@ -199,7 +199,7 @@ export default {
         processes_cost: 0,
         extras_cost: 0,
         subtotal: 0,
-        waste_percentage: 5,
+        waste_percentage: 0,
         waste_value: 0,
         price_per_piece_before_margin: 0,
         margin_percentage: 0,
@@ -315,17 +315,17 @@ export default {
         
         // Update user configuration values
         if (data) {
-          this.userConfig.waste_percentage = data.waste_percentage || 5;
+          // Use the waste_percentage directly from the app config
+          this.userConfig.waste_percentage = data.waste_percentage;
           this.userConfig.width_margin = data.width_margin || 0;
           this.userConfig.length_margin = data.length_margin || 0;
           
           // Update default pricing with user config values
-          this.defaultPricing.waste_percentage = this.userConfig.waste_percentage;
-          
+          this.defaultPricing.waste_percentage = data.waste_percentage;
         }
       } catch (error) {
         console.error('Error loading user config:', error);
-        // Continue with default values
+        // Don't set default values, let the backend handle defaults
       }
     },
     initializeNewProduct() {

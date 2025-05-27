@@ -121,7 +121,7 @@ class QuotePdfGenerator
       products_header = [
         "FECHA",
         "PRODUCTO", 
-        "MEDIDA\nINTERNAS MM\n(L, A, AL)", 
+        "MEDIDAS INTERNAS (MM)",
         "RESISTENCIA", 
         "PAPEL", 
         "ACABADOS",
@@ -221,17 +221,17 @@ class QuotePdfGenerator
           
           # Set relative column widths
           column_widths = {
-            0 => 10,  # FECHA
-            1 => 15,  # PRODUCTO
-            2 => 12,  # MEDIDA
-            3 => 10,  # RESISTENCIA
-            4 => 15,  # PAPEL
-            5 => 15,  # ACABADOS
-            6 => 8,   # CANTIDAD
+            0 => 8,   # FECHA
+            1 => 14,  # PRODUCTO
+            2 => 30,  # MEDIDAS (much larger for test)
+            3 => 8,   # RESISTENCIA
+            4 => 14,  # PAPEL
+            5 => 5,   # ACABADOS (much smaller for test)
+            6 => 12,  # CANTIDAD
             7 => 8    # PRECIO
           }
           
-          # Calculate proportional widths
+          # Calculate proportional widthsƒp
           total_proportion = column_widths.values.sum
           available_width = pdf.bounds.width
           
