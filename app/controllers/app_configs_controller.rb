@@ -15,8 +15,8 @@ class AppConfigsController < ApplicationController
     }
     
     # Check if APIs are configured (don't show the actual keys)
-    @pipedrive_api_configured = AppConfig.get_pipedrive_api_key.present?
-    @facturama_api_configured = AppConfig.get_facturama_api_key.present?
+    @pipedrive_api_configured = AppConfig.get_pipedrive_api_key(current_user).present?
+    @facturama_api_configured = AppConfig.get_facturama_api_key(current_user).present?
 
     # Create a proper app_config object for the form
     @app_config = OpenStruct.new(
@@ -27,7 +27,7 @@ class AppConfigsController < ApplicationController
   end
   
   def test_facturama_api
-    api_key = AppConfig.get_facturama_api_key
+    api_key = AppConfig.get_facturama_api_key(current_user)
     if api_key.blank?
       render json: { success: false, error: "Facturama API key is not configured" }, status: :unprocessable_entity
       return
@@ -57,7 +57,7 @@ class AppConfigsController < ApplicationController
   end
   
   def test_create_product
-    api_key = AppConfig.get_facturama_api_key
+    api_key = AppConfig.get_facturama_api_key(current_user)
     if api_key.blank?
       render json: { success: false, error: "Facturama API key is not configured" }, status: :unprocessable_entity
       return

@@ -49,6 +49,10 @@
                 <i class="fa fa-sliders-h me-1"></i> <%= t('navbar.price_margins') %>
               <% end %>
 
+              <%= link_to customers_path, class: "dropdown-item #{current_page?(customers_path) ? 'active' : ''}" do %>
+                <i class="fa fa-users me-1"></i> <%= t('navbar.customers') %>
+              <% end %>
+
               <hr class="dropdown-divider" style="border-top: 1px solid #42b983 !important; opacity: 1 !important;">
             
               <%= link_to edit_app_configs_path, class: "dropdown-item #{current_page?(edit_app_configs_path) ? 'active' : ''}" do %>

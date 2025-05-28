@@ -9,7 +9,7 @@ class Api::V1::CustomersController < ApplicationController
 
   def search
     # Get API key from current user's config
-    api_key = current_user.get_config(AppConfig::PIPEDRIVE_API_KEY)
+    api_key = AppConfig.get_pipedrive_api_key(current_user)
     
     if api_key.blank?
       render json: { error: "API key not configured" }, status: :internal_server_error
@@ -81,7 +81,7 @@ class Api::V1::CustomersController < ApplicationController
   # Public endpoint to verify the Pipedrive API key and return account information
   def verify_pipedrive_account
     # Get the API key from the current user's config
-    api_key = current_user.get_config(AppConfig::PIPEDRIVE_API_KEY)
+    api_key = AppConfig.get_pipedrive_api_key(current_user)
     
     if api_key.blank?
       render json: { success: false, error: "API key not configured" }

@@ -53,7 +53,7 @@
                         <option v-for="customer in customerSearch.results" 
                                 :key="customer.id" 
                                 :value="customer.id">
-                          {{ customer.org_name || translations.no_organization }} ({{ customer.name }})
+                          {{ customer.org_name || translations.no_organization }}
                         </option>
                       </select>
                       <input v-else type="text" class="form-control" id="organization" v-model="form.organization" required>
@@ -467,12 +467,6 @@ export default {
     },
     
     searchCustomers() {
-      // Check if API is configured
-      if (!this.pipedriveApiConfigured) {
-        this.customerSearch.error = 'Pipedrive API key not configured. Please configure it in settings to search customers.';
-        return;
-      }
-
       // Validate query
       if (this.customerSearch.query.length < 3) {
         this.customerSearch.error = 'Ingrese al menos 3 caracteres para buscar';
@@ -552,12 +546,6 @@ export default {
     },
     
     searchCustomersInline() {
-      // Check if API is configured
-      if (!this.pipedriveApiConfigured) {
-        this.customerSearch.error = 'Pipedrive API key not configured. Please configure it in settings to search customers.';
-        return;
-      }
-
       // Validate query
       if (!this.form.customer_name || this.form.customer_name.length < 3) {
         this.customerSearch.error = 'Ingrese al menos 3 caracteres para buscar';
@@ -601,12 +589,11 @@ export default {
           this.customerSearch.results = data.customers;
         } else {
           this.customerSearch.noResults = true;
-          this.customerSearch.error = 'No se encontraron clientes con ese nombre';
         }
       })
       .catch(error => {
         this.customerSearch.loading = false;
-        this.customerSearch.error = 'Error al buscar clientes: ' + error.message;
+        this.customerSearch.error = 'Error al buscar clientes. Intente nuevamente: ' + error.message;
         console.error('Error:', error);
       });
     },

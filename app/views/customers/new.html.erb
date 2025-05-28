@@ -1,0 +1,25 @@
+<% content_for :page_title do %>
+  <%= t('customers.new.title') %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to customers_path, class: "btn btn-outline-light me-2" do %>
+    <%= t('common.cancel') %>
+  <% end %>
+  <%= button_tag class: "btn btn-outline-light", form: "customer-form" do %>
+    <%= t('common.save') %>
+  <% end %>
+<% end %>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card green-accent-panel">
+      <div class="card-header">
+        <h5><%= t('customers.new.details') %></h5>
+      </div>
+      <div class="card-body">
+        <%= render 'form', customer: @customer %>
+      </div>
+    </div>
+  </div>
+</div> 

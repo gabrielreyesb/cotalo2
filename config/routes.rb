@@ -152,4 +152,6 @@ Rails.application.routes.draw do
   post 'stripe/webhook', to: 'stripe_webhooks#create'
 
   get 'subscribe', to: 'subscriptions#new', as: :subscribe
+
+  resources :customers
 end

@@ -8,7 +8,7 @@ class InvoicesController < ApplicationController
     
     if @invoice.persisted?
       # Get Facturama API key
-      api_key = AppConfig.get_facturama_api_key
+      api_key = AppConfig.get_facturama_api_key(current_user)
       
       if api_key.blank?
         @invoice.mark_as_cancelled!
@@ -40,7 +40,7 @@ class InvoicesController < ApplicationController
   def show
     if @invoice.created?
       # Get Facturama API key
-      api_key = AppConfig.get_facturama_api_key
+      api_key = AppConfig.get_facturama_api_key(current_user)
       
       if api_key.present?
         # Initialize Facturama service
@@ -62,7 +62,7 @@ class InvoicesController < ApplicationController
   def status
     if @invoice.created?
       # Get Facturama API key
-      api_key = AppConfig.get_facturama_api_key
+      api_key = AppConfig.get_facturama_api_key(current_user)
       
       if api_key.present?
         # Initialize Facturama service

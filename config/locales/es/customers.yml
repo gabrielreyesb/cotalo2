@@ -1,0 +1,40 @@
+es:
+  customers:
+    index:
+      title: "Clientes"
+      new_customer: "Nuevo Cliente"
+      name: "Nombre"
+      company: "Empresa"
+      email: "Correo"
+      phone: "Teléfono"
+      actions: "Acciones"
+      no_customers: "No hay clientes registrados"
+    new:
+      title: "Nuevo Cliente"
+      details: "Detalles del Cliente"
+    edit:
+      title: "Editar Cliente"
+    show:
+      title: "Detalles del Cliente"
+      company: "Empresa"
+      email: "Correo"
+      phone: "Teléfono"
+      address: "Dirección"
+      notes: "Notas"
+      not_provided: "No proporcionado"
+    form:
+      name: "Nombre"
+      company: "Empresa"
+      email: "Correo"
+      phone: "Teléfono"
+      address: "Dirección"
+      notes: "Notas"
+      errors:
+        one: "1 error impidió que se guardara este cliente:"
+        other: "%{count} errores impidieron que se guardara este cliente:"
+    create:
+      success: "Cliente creado exitosamente"
+    update:
+      success: "Cliente actualizado exitosamente"
+    destroy:
+      success: "Cliente eliminado exitosamente" 

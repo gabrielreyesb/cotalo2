@@ -22,6 +22,21 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_26_201948) do
     t.index ["user_id"], name: "index_app_configs_on_user_id"
   end
 
+  create_table "customers", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "email"
+    t.string "phone"
+    t.string "company"
+    t.text "address"
+    t.text "notes"
+    t.integer "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "email"], name: "index_customers_on_user_id_and_email", unique: true
+    t.index ["user_id", "name"], name: "index_customers_on_user_id_and_name"
+    t.index ["user_id"], name: "index_customers_on_user_id"
+  end
+
   create_table "extras", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -190,6 +205,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_26_201948) do
   end
 
   add_foreign_key "app_configs", "users"
+  add_foreign_key "customers", "users"
   add_foreign_key "extras", "units"
   add_foreign_key "extras", "users"
   add_foreign_key "invoices", "quotes"

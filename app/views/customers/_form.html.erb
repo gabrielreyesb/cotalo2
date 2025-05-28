@@ -1,0 +1,46 @@
+<%= form_with(model: customer, class: "customer-form", id: "customer-form") do |form| %>
+  <% if customer.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= t('customers.form.errors', count: customer.errors.count) %></h4>
+      <ul>
+        <% customer.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= form.label :name, t('customers.form.name'), class: "form-label" %>
+      <%= form.text_field :name, class: "form-control", required: true %>
+    </div>
+    
+    <div class="col-md-6 mb-3">
+      <%= form.label :company, t('customers.form.company'), class: "form-label" %>
+      <%= form.text_field :company, class: "form-control" %>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= form.label :email, t('customers.form.email'), class: "form-label" %>
+      <%= form.email_field :email, class: "form-control" %>
+    </div>
+    
+    <div class="col-md-6 mb-3">
+      <%= form.label :phone, t('customers.form.phone'), class: "form-label" %>
+      <%= form.telephone_field :phone, class: "form-control" %>
+    </div>
+  </div>
+  
+  <div class="mb-3">
+    <%= form.label :address, t('customers.form.address'), class: "form-label" %>
+    <%= form.text_area :address, class: "form-control", rows: 3 %>
+  </div>
+  
+  <div class="mb-3">
+    <%= form.label :notes, t('customers.form.notes'), class: "form-label" %>
+    <%= form.text_area :notes, class: "form-control", rows: 3 %>
+  </div>
+<% end %> 

@@ -1,0 +1,59 @@
+<% content_for :page_title do %>
+  <%= t('customers.show.title') %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to customers_path, class: "btn btn-outline-light me-2" do %>
+    <%= t('common.back') %>
+  <% end %>
+  <%= link_to edit_customer_path(@customer), class: "btn btn-outline-light me-2" do %>
+    <i class="fa fa-edit me-1"></i> <%= t('common.edit') %>
+  <% end %>
+<% end %>
+
+<div class="row">
+  <div class="col-md-8 offset-md-2">
+    <div class="card green-accent-panel">
+      <div class="card-header">
+        <h3><%= @customer.name %></h3>
+      </div>
+      <div class="card-body">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <strong><%= t('customers.show.company') %>:</strong> 
+            <p><%= @customer.company.present? ? @customer.company : t('customers.show.not_provided') %></p>
+          </div>
+          <div class="col-md-6">
+            <strong><%= t('customers.show.email') %>:</strong> 
+            <p><%= @customer.email.present? ? @customer.email : t('customers.show.not_provided') %></p>
+          </div>
+        </div>
+        
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <strong><%= t('customers.show.phone') %>:</strong> 
+            <p><%= @customer.phone.present? ? @customer.phone : t('customers.show.not_provided') %></p>
+          </div>
+        </div>
+        
+        <% if @customer.address.present? %>
+          <div class="row mb-3">
+            <div class="col-12">
+              <strong><%= t('customers.show.address') %>:</strong>
+              <p><%= @customer.address %></p>
+            </div>
+          </div>
+        <% end %>
+        
+        <% if @customer.notes.present? %>
+          <div class="row mb-3">
+            <div class="col-12">
+              <strong><%= t('customers.show.notes') %>:</strong>
+              <p><%= @customer.notes %></p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div> 

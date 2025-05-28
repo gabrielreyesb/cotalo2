@@ -157,74 +157,89 @@ class QuotesController < ApplicationController
     end
   end
   
-  # Customer search via Pipedrive
+  # Customer search via Pipedrive or local database
   def search_customer
-    query = params[:query]
-    
-    # Return early if query is too short
-    if query.blank? || query.length < 3
-      render json: { error: "Search query must be at least 3 characters." }
-      return
-    end
-    
     begin
-      # Get API key from database
-      api_key = AppConfig.get_pipedrive_api_key
+      query = params[:query]
+      Rails.logger.info "[search_customer] Query: #{query.inspect}"
       
-      unless api_key
-        render json: { error: "Pipedrive API key not configured." }
+      # Return early if query is too short
+      if query.blank? || query.length < 3
+        Rails.logger.info "[search_customer] Query too short"
+        render json: { error: "Search query must be at least 3 characters." }, status: :bad_request
         return
       end
       
-      # Search for persons (customers) in Pipedrive
-      url = URI("https://api.pipedrive.com/v1/persons/search?term=#{CGI.escape(query)}&api_token=#{api_key}")
+      # Get API key from database
+      api_key = AppConfig.get_pipedrive_api_key(current_user)
+      Rails.logger.info "[search_customer] API key present: #{api_key.present?}"
+      customers = []
       
-      http = Net::HTTP.new(url.host, url.port)
-      http.use_ssl = (url.scheme == 'https')
-      http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+      if api_key.present?
+        # Search in Pipedrive if API key is configured
+        begin
+          url = URI("https://api.pipedrive.com/v1/persons/search?term=#{CGI.escape(query)}&api_token=#{api_key}")
+          http = Net::HTTP.new(url.host, url.port)
+          http.use_ssl = (url.scheme == 'https')
+          http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+          request = Net::HTTP::Get.new(url)
+          request["Accept"] = "application/json"
+          response = http.request(request)
+          Rails.logger.info "[search_customer] Pipedrive response code: #{response.code}"
+          if response.code == '200'
+            data = JSON.parse(response.body)
+            if data['data'] && data['data']['items']
+              data['data']['items'].each do |item|
+                person = item['item']
+                email = if person['email']
+                         person['email'].is_a?(Array) ? person['email'].first['value'] : person['email']
+                       elsif person['emails']
+                         person['emails'].is_a?(Array) ? person['emails'].first : person['emails']
+                       end
+                phone = if person['phone']
+                         person['phone'].is_a?(Array) ? person['phone'].first['value'] : person['phone']
+                       elsif person['phones']
+                         person['phones'].is_a?(Array) ? person['phones'].first : person['phones']
+                       end
+                customers << {
+                  id: person['id'],
+                  name: person['name'],
+                  email: email,
+                  phone: phone,
+                  org_name: person.dig('organization', 'name')
+                }
+              end
+            end
+          else
+            Rails.logger.error("[search_customer] Pipedrive API error: #{response.code}")
+          end
+        rescue => e
+          Rails.logger.error("[search_customer] Pipedrive API error: #{e.message}")
+        end
+      end
       
-      request = Net::HTTP::Get.new(url)
-      request["Accept"] = "application/json"
-      
-      response = http.request(request)
-      
-      if response.code == '200'
-        data = JSON.parse(response.body)
-        customers = []
-        
-        if data['data'] && data['data']['items']
-          data['data']['items'].each do |item|
-            person = item['item']
-            
-            email = if person['email']
-                     person['email'].is_a?(Array) ? person['email'].first['value'] : person['email']
-                   elsif person['emails']
-                     person['emails'].is_a?(Array) ? person['emails'].first : person['emails']
-                   end
-
-            phone = if person['phone']
-                     person['phone'].is_a?(Array) ? person['phone'].first['value'] : person['phone']
-                   elsif person['phones']
-                     person['phones'].is_a?(Array) ? person['phones'].first : person['phones']
-                   end
-
-            customers << {
-              id: person['id'],
-              name: person['name'],
-              email: email,
-              phone: phone,
-              org_name: person.dig('organization', 'name')
+      # If no customers found from Pipedrive or no API key, search in local database
+      if customers.empty?
+        Rails.logger.info "[search_customer] Searching local customers for query: #{query.inspect}"
+        customers = current_user.customers
+          .where("name LIKE ? OR email LIKE ? OR company LIKE ?", "%#{query}%", "%#{query}%", "%#{query}%")
+          .limit(10)
+          .map do |customer|
+            {
+              id: customer.id,
+              name: customer.name,
+              email: customer.email,
+              phone: customer.phone,
+              org_name: customer.company
             }
           end
-        end
-        
-        render json: { customers: customers }
-      else
-        render json: { error: "Pipedrive API error: #{response.code}" }
+        Rails.logger.info "[search_customer] Local customers found: #{customers.size}"
       end
+      
+      render json: { customers: customers }, status: :ok
     rescue => e
-      Rails.logger.error("Pipedrive API error: #{e.message}")
-      render json: { error: "An error occurred while searching for customers: #{e.message}" }
+      Rails.logger.error "[search_customer] Unexpected error: #{e.class}: #{e.message}\n#{e.backtrace.join("\n")}"
+      render json: { customers: [] }, status: :ok
     end
   end
   

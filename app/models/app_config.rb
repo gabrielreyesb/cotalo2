@@ -57,15 +57,15 @@ class AppConfig < ApplicationRecord
       end
     end
     
-    # Get Pipedrive API key
-    def get_pipedrive_api_key
-      config = AppConfig.find_by(key: PIPEDRIVE_API_KEY)
+    # Get Pipedrive API key (user-specific)
+    def get_pipedrive_api_key(user)
+      config = AppConfig.find_by(user_id: user.id, key: PIPEDRIVE_API_KEY)
       config&.value
     end
     
-    # Get Facturama API key
-    def get_facturama_api_key
-      config = AppConfig.find_by(key: FACTURAMA_API_KEY)
+    # Get Facturama API key (user-specific)
+    def get_facturama_api_key(user)
+      config = AppConfig.find_by(user_id: user.id, key: FACTURAMA_API_KEY)
       config&.value
     end
   end
