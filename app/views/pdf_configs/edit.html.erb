@@ -43,43 +43,36 @@
               <hr class="border-secondary my-3">
 
               <div class="mb-3">
-                <%= form.label :footer_text, 'Texto de pie de página para PDF', class: "form-label" %>
-                <%= form.text_field :footer_text, class: "form-control", maxlength: 200, placeholder: "Texto opcional para el pie de página del PDF" %>
-                <small class="form-text text-muted">Este texto aparecerá en el pie de página de tus cotizaciones PDF. Déjalo vacío para omitirlo.</small>
+                <%= form.label :footer_text, t('config.pdf_footer_label'), class: "form-label" %>
+                <%= form.text_field :footer_text, class: "form-control", maxlength: 200, placeholder: t('config.pdf_footer_placeholder') %>
+                <small class="form-text text-muted"><%= t('config.pdf_footer_help') %></small>
               </div>
 
               <hr class="border-secondary my-3">
-              <h6>Firma</h6>
+              <h6><%= t('config.signature_section') %></h6>
               <div class="mb-3">
-                <%= form.label :signature_name, 'Nombre', class: "form-label" %>
+                <%= form.label :signature_name, t('config.signature_name'), class: "form-label" %>
                 <%= form.text_field :signature_name, class: "form-control" %>
               </div>
               <div class="mb-3">
-                <%= form.label :signature_email, 'Correo', class: "form-label" %>
+                <%= form.label :signature_email, t('config.signature_email'), class: "form-label" %>
                 <%= form.email_field :signature_email, class: "form-control" %>
               </div>
               <div class="mb-3">
-                <%= form.label :signature_phone, 'Teléfono', class: "form-label" %>
+                <%= form.label :signature_phone, t('config.signature_phone'), class: "form-label" %>
                 <%= form.telephone_field :signature_phone, class: "form-control" %>
               </div>
               <div class="mb-3">
-                <%= form.label :signature_whatsapp, 'WhatsApp', class: "form-label" %>
+                <%= form.label :signature_whatsapp, t('config.signature_whatsapp'), class: "form-label" %>
                 <%= form.telephone_field :signature_whatsapp, class: "form-control" %>
               </div>
               <hr class="border-secondary my-3">
-              <h6>Condiciones de venta</h6>
-              <div class="mb-3">
-                <%= form.text_field :sales_condition_1, class: "form-control", placeholder: "Condición de venta 1" %>
-              </div>
-              <div class="mb-3">
-                <%= form.text_field :sales_condition_2, class: "form-control", placeholder: "Condición de venta 2" %>
-              </div>
-              <div class="mb-3">
-                <%= form.text_field :sales_condition_3, class: "form-control", placeholder: "Condición de venta 3" %>
-              </div>
-              <div class="mb-3">
-                <%= form.text_field :sales_condition_4, class: "form-control", placeholder: "Condición de venta 4" %>
-              </div>
+              <h6><%= t('config.sales_conditions_section') %></h6>
+              <% (1..4).each do |i| %>
+                <div class="mb-3">
+                  <%= form.text_field "sales_condition_#{i}", class: "form-control", placeholder: t('config.sales_condition_placeholder', number: i) %>
+                </div>
+              <% end %>
             </div>
           </div>
         </div>

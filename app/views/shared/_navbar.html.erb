@@ -56,17 +56,17 @@
               <hr class="dropdown-divider" style="border-top: 1px solid #42b983 !important; opacity: 1 !important;">
             
               <%= link_to edit_app_configs_path, class: "dropdown-item #{current_page?(edit_app_configs_path) ? 'active' : ''}" do %>
-                <i class="fa fa-cog me-1"></i> Generales
+                <i class="fa fa-cog me-1"></i> <%= t('navbar.general_settings') %>
               <% end %>
 
               <%= link_to edit_pdf_config_path, class: "dropdown-item #{current_page?(edit_pdf_config_path) ? 'active' : ''}" do %>
-                <i class="fa fa-file-pdf me-1"></i> PDF
+                <i class="fa fa-file-pdf me-1"></i> <%= t('navbar.pdf') %>
               <% end %>
 
               <hr class="dropdown-divider" style="border-top: 1px solid #42b983 !important; opacity: 1 !important;">
 
               <%= link_to edit_price_adjustments_path, class: "dropdown-item" do %>
-                <i class="fa fa-percentage me-1"></i> Ajuste de precios
+                <i class="fa fa-percentage me-1"></i> <%= t('navbar.price_adjustment') %>
               <% end %>
 
               <% if current_user.admin? %>

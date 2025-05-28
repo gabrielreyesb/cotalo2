@@ -148,12 +148,11 @@ class User < ApplicationRecord
       pieza_unit.update!(abbreviation: 'pieza') unless pieza_unit.abbreviation == 'pieza'
       pliego_unit = Unit.find_or_create_by!(name: 'pliego')
       pliego_unit.update!(abbreviation: 'pliego') unless pliego_unit.abbreviation == 'pliego'
-      Rails.logger.info "[setup_initial_data] Units: mt2=#{mt2_unit.id}, pieza=#{pieza_unit.id}, pliego=#{pliego_unit.id}"
 
       Rails.logger.info "[setup_initial_data] Setting default app configs..."
-      set_config(AppConfig::WASTE_PERCENTAGE, 10, AppConfig::PERCENTAGE)
-      set_config(AppConfig::WIDTH_MARGIN, 2, AppConfig::NUMERIC)
-      set_config(AppConfig::LENGTH_MARGIN, 2, AppConfig::NUMERIC)
+      set_config(AppConfig::WASTE_PERCENTAGE, 0, AppConfig::PERCENTAGE)
+      set_config(AppConfig::WIDTH_MARGIN, 0, AppConfig::NUMERIC)
+      set_config(AppConfig::LENGTH_MARGIN, 0, AppConfig::NUMERIC)
 
       Rails.logger.info "[setup_initial_data] Creating demo materials..."
       materials.create!([

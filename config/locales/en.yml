@@ -116,6 +116,25 @@ en:
     whatsapp: "WhatsApp"
     sales_conditions: "Sales Conditions"
     pdf_config_title: "PDF Configuration"
+    pdf_footer_label: "PDF footer text"
+    pdf_footer_placeholder: "Optional text for the PDF footer"
+    pdf_footer_help: "This text will appear in the footer of your PDF quotes. Leave it blank to omit."
+    signature_section: "Signature"
+    signature_name: "Name"
+    signature_email: "Email"
+    signature_phone: "Phone"
+    signature_whatsapp: "WhatsApp"
+    sales_conditions_section: "Sales conditions"
+    sales_condition_placeholder: "Sales condition %{number}"
+    logo_upload_error_type: "Please select an image in JPG, PNG, or GIF format"
+    logo_upload_error_empty: "The file is empty. Please select a valid image."
+    logo_upload_error_size: "The file is too large. Maximum size is 2MB."
+    logo_upload_error_dimensions: "The image has invalid dimensions. Please try another."
+    logo_upload_error_preview: "Error creating preview. Please try another image."
+    logo_upload_error_upload: "Error uploading logo: %{error}"
+    logo_upload_success: "Logo updated successfully"
+    logo_uploading: "Uploading..."
+    select_file_first: "Please select a file first"
   navbar:
     dashboard: "Dashboard"
     products: "Products"
@@ -136,6 +155,9 @@ en:
     english: "English"
     login: "Log in"
     register: "Register for free"
+    general_settings: "General"
+    price_adjustment: "Price Adjustment"
+    pdf: "PDF"
   home:
     hero_title: "Calculate the cost of custom box manufacturing in minutes"
     hero_subtitle: "Cotalo lets you design and quote custom boxes quickly and accurately. Optimize your production costs with our intuitive tool."
@@ -169,6 +191,7 @@ en:
     how4_desc: "Create a professional quote for your client instantly"
     cta_title: "Ready to optimize your quotes?"
     cta_subtitle: "Start using Cotalo today. It's completely free."
+    suggestions_info: "Have suggestions or comments? Send us your suggestions here!"
   materials:
     index:
       title: "Materials"
@@ -232,6 +255,9 @@ en:
       unit: "Unit"
       unit_help: "The unit determines how the process will be measured during quoting."
       processes_calculation_tooltip: "<strong>How process costs are calculated:</strong><br>• <u>Unit price</u>: The cost per unit of the process<br>• <u>Applied to</u>: The material or part the process is applied to<br>• <u>Total price</u>: The total cost for this process on the product"
+    select_material: "Select material"
+    comments_label: "Comments about processes"
+    comments_placeholder: "Add notes or general comments about the processes for this product"
   devise:
     sessions:
       new:
@@ -245,6 +271,8 @@ en:
         forgot_password: "Forgot your password?"
         no_account: "Don't have an account?"
         register: "Register"
+        show_password: "Show password"
+        hide_password: "Hide password"
     failure:
       account_disabled: "Your account has been disabled. Please contact an administrator."
       user:
@@ -376,6 +404,30 @@ en:
       print: "Print"
       back: "Back"
       not_specified: "Not specified"
+    pdf:
+      header: "Quote"
+      logo_placeholder: "LOGO"
+      date_line: "Guadalajara, Jalisco. On %{date}"
+      customer: "Customer:"
+      organization: "Organization:"
+      email: "Email:"
+      telephone: "Telephone:"
+      project: "Project:"
+      not_specified: "Not specified"
+      date: "Date"
+      product: "Product"
+      measurements: "Measurements"
+      resistance: "Resistance"
+      materials: "Materials"
+      processes: "Processes"
+      quantity: "Quantity"
+      unit_price: "Unit Price"
+      currency_symbol: "$"
+      tax_note: "VAT NOT INCLUDED"
+      extras: "Extras"
+      sales_conditions: "Sales Conditions:"
+      sustainable_message: "We manufacture with sustainable materials that protect the environment."
+      whatsapp_label: "WhatsApp: %{number}"
   products:
     index:
       title: "Products"

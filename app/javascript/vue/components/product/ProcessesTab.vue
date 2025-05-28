@@ -43,7 +43,7 @@
             <!-- Material Selector -->
             <div class="col-md-5">
               <div class="d-flex align-items-center">
-                <label for="material-select" class="form-label mb-0 me-2">{{ translations.processes.select_material || 'Seleccionar material' }}</label>
+                <label for="material-select" class="form-label mb-0 me-2">{{ translations.processes.select_material }}</label>
                 <button 
                   type="button" 
                   class="btn btn-outline-success btn-sm"
@@ -61,7 +61,7 @@
                 class="form-select bg-dark text-white border-secondary"
                 :disabled="!productMaterials.length"
               >
-                <option value="" disabled>{{ translations.processes.select_material || 'Seleccionar material' }}</option>
+                <option value="" disabled>{{ translations.processes.select_material }}</option>
                 <option 
                   v-for="material in productMaterials" 
                   :key="material.id" 
@@ -214,13 +214,13 @@
         <div class="card">
           <div class="card-body">
             <div class="form-group">
-              <label for="process-comments" class="form-label">Comentarios sobre los procesos</label>
+              <label for="process-comments" class="form-label">{{ translations.processes.comments_label }}</label>
               <textarea 
                 id="process-comments" 
                 class="form-control" 
                 v-model="globalComments" 
                 rows="3"
-                placeholder="Agregar notas o comentarios generales sobre los procesos de este producto"
+                :placeholder="translations.processes.comments_placeholder"
                 @change="updateGlobalComments"
               ></textarea>
             </div>

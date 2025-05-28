@@ -323,7 +323,7 @@ Devise.setup do |config|
 
   # ==> Custom messages
   # Add custom messages for disabled accounts
-  config.warden do |manager|
-    manager.failure_app = CustomFailureApp
-  end
+  # config.warden do |manager|
+  #   manager.failure_app = CustomFailureApp
+  # end
 end

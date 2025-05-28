@@ -76,6 +76,25 @@ es:
     price_adjustment_description: "Aplica un porcentaje de ajuste a todos los precios de materiales, procesos y extras. Usa valores positivos para aumentar los precios y negativos para disminuirlos."
     adjustment_percentage: "Porcentaje de ajuste"
     apply_price_adjustment: "Aplicar ajuste de precios"
+    pdf_footer_label: "Texto de pie de página para PDF"
+    pdf_footer_placeholder: "Texto opcional para el pie de página del PDF"
+    pdf_footer_help: "Este texto aparecerá en el pie de página de tus cotizaciones PDF. Déjalo vacío para omitirlo."
+    signature_section: "Firma"
+    signature_name: "Nombre"
+    signature_email: "Correo"
+    signature_phone: "Teléfono"
+    signature_whatsapp: "WhatsApp"
+    sales_conditions_section: "Condiciones de venta"
+    sales_condition_placeholder: "Condición de venta %{number}"
+    logo_upload_error_type: "Por favor selecciona una imagen en formato JPG, PNG o GIF"
+    logo_upload_error_empty: "El archivo está vacío. Por favor selecciona una imagen válida."
+    logo_upload_error_size: "El archivo es demasiado grande. El tamaño máximo es 2MB."
+    logo_upload_error_dimensions: "La imagen no tiene dimensiones válidas. Por favor intenta con otra."
+    logo_upload_error_preview: "Error al crear la vista previa. Por favor intenta con otra imagen."
+    logo_upload_error_upload: "Error al subir el logo: %{error}"
+    logo_upload_success: "Logo actualizado correctamente"
+    logo_uploading: "Subiendo..."
+    select_file_first: "Por favor selecciona un archivo primero"
   
   price_adjustments:
     title: "Ajuste de precios"
@@ -105,6 +124,9 @@ es:
     english: "Inglés"
     login: "Iniciar sesión"
     register: "Regístrate gratis"
+    general_settings: "Generales"
+    price_adjustment: "Ajuste de precios"
+    pdf: "PDF"
   
   home:
     hero_title: "Calcula el costo de fabricación de cajas personalizadas en minutos"
@@ -139,6 +161,7 @@ es:
     how4_desc: "Crea una cotización profesional para tu cliente en un instante"
     cta_title: "¿Listo para optimizar tus cotizaciones?"
     cta_subtitle: "Comienza a usar Cotalo hoy mismo. Es completamente gratis."
+    suggestions_info: "¿Tienes sugerencias o comentarios? ¡Envíanos tus sugerencias aquí!"
   
   materials:
     index:
@@ -203,6 +226,9 @@ es:
       unit: "Unidad"
       unit_help: "La unidad determina cómo se medirá el proceso durante la cotización."
       processes_calculation_tooltip: "<strong>Cómo se calculan los costos de procesos:</strong><br>• <u>Precio unitario</u>: El costo por unidad del proceso<br>• <u>Aplicado a</u>: El material o parte a la que se aplica el proceso<br>• <u>Precio total</u>: El costo total de este proceso en el producto"
+    select_material: "Seleccionar material"
+    comments_label: "Comentarios sobre los procesos"
+    comments_placeholder: "Agregar notas o comentarios generales sobre los procesos de este producto"
   
   devise:
     sessions:
@@ -217,6 +243,8 @@ es:
         forgot_password: "¿Olvidaste tu contraseña?"
         no_account: "¿No tienes una cuenta?"
         register: "Regístrate"
+        show_password: "Mostrar contraseña"
+        hide_password: "Ocultar contraseña"
     failure:
       account_disabled: "Tu cuenta ha sido deshabilitada. Por favor, contacta a un administrador."
       user:
@@ -352,6 +380,30 @@ es:
       print: "Imprimir"
       back: "Volver"
       not_specified: "No especificado"
+    pdf:
+      header: "Cotización"
+      logo_placeholder: "LOGO"
+      date_line: "Guadalajara, Jalisco. A %{date}"
+      customer: "Cliente:"
+      organization: "Empresa:"
+      email: "Correo:"
+      telephone: "Teléfono:"
+      project: "Proyecto:"
+      not_specified: "No especificado"
+      date: "Fecha"
+      product: "Producto"
+      measurements: "Medidas"
+      resistance: "Resistencia"
+      materials: "Materiales"
+      processes: "Acabados"
+      quantity: "Cantidad"
+      unit_price: "Precio unit."
+      currency_symbol: "$"
+      tax_note: "IVA NO INCLUIDO"
+      extras: "Extras"
+      sales_conditions: "Condiciones de Venta:"
+      sustainable_message: "Fabricamos con materiales sustentables que protegen el medio ambiente..."
+      whatsapp_label: "WhatsApp: %{number}"
   
   products:
     index:
