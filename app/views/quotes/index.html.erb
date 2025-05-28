@@ -55,6 +55,9 @@
                               target: "_blank" do %>
                             <i class="fas fa-file-pdf"></i>
                           <% end %>
+                          <%= button_to send_email_quote_path(quote), method: :post, class: "btn btn-sm btn-outline-success", data: { confirm: t('quotes.index.send_email_confirm') }, title: t('quotes.index.send_email'), form: { class: "d-inline-block m-0" } do %>
+                            <i class="fas fa-envelope"></i>
+                          <% end %>
                           <%= link_to duplicate_quote_path(quote), class: "btn btn-sm btn-outline-info", 
                               data: { bs_toggle: "tooltip", turbo_method: :get }, 
                               title: t('quotes.index.duplicate') do %>
@@ -134,6 +137,9 @@
                       title: t('quotes.index.download_pdf'),
                       target: "_blank" do %>
                     <i class="fas fa-file-pdf fa-sm"></i>
+                  <% end %>
+                  <%= button_to send_email_quote_path(quote), method: :post, class: "btn btn-sm btn-outline-success", data: { confirm: t('quotes.index.send_email_confirm') }, title: t('quotes.index.send_email'), form: { class: "d-inline-block m-0" } do %>
+                    <i class="fas fa-envelope fa-sm"></i>
                   <% end %>
                   <%= link_to duplicate_quote_path(quote), class: "btn btn-sm btn-outline-info", 
                       data: { bs_toggle: "tooltip", turbo_method: :get }, 

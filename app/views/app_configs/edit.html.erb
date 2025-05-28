@@ -14,6 +14,23 @@
             <div class="card-body">
               <div class="row">
                 <div class="col-md-4">
+                  <%= form.label :customer_name, t('config.customer_name'), class: "form-label" %>
+                  <div class="input-group">
+                    <%= form.text_field :customer_name, value: @general_settings[:customer_name], class: "form-control bg-dark text-light border-secondary text-start" %>
+                    <span class="input-group-text bg-dark text-light border-secondary"><i class="fas fa-user"></i></span>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <%= form.label :company_name, t('config.company_name'), class: "form-label" %>
+                  <div class="input-group">
+                    <%= form.text_field :company_name, value: @general_settings[:company_name], class: "form-control bg-dark text-light border-secondary text-start" %>
+                    <span class="input-group-text bg-dark text-light border-secondary"><i class="fas fa-building"></i></span>
+                  </div>
+                </div>
+                <div class="col-md-4"></div>
+              </div>
+              <div class="row mt-4">
+                <div class="col-md-4">
                   <%= form.label :waste_percentage, t('config.waste_percentage'), class: "form-label" %>
                   <div class="input-group">
                     <%= form.number_field :waste_percentage, value: @general_settings[:waste_percentage], class: "form-control bg-dark text-light border-secondary", min: 0, max: 100, step: 1 %>

@@ -6,9 +6,9 @@
   <%= link_to pdf_quote_path(@quote, format: :pdf), class: "btn btn-primary me-2", target: "_blank" do %>
     <i class="fas fa-file-pdf me-1"></i> <%= t('quotes.show.view_pdf') %>
   <% end %>
-  <button type="button" class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#sendEmailModal">
+  <%= button_to send_email_quote_path(@quote), method: :post, class: "btn btn-success me-2", data: { confirm: t('quotes.index.send_email_confirm') }, title: t('quotes.show.send_email'), form: { class: "d-inline-block m-0" } do %>
     <i class="fas fa-envelope me-1"></i> <%= t('quotes.show.send_email') %>
-  </button>
+  <% end %>
   <%= link_to duplicate_quote_path(@quote), class: "btn btn-info me-2", data: { turbo_method: :get } do %>
     <i class="fas fa-copy me-1"></i> <%= t('quotes.show.duplicate') %>
   <% end %>
@@ -168,33 +168,4 @@
       box-shadow: none !important;
     }
   }
-</style>
-
-<!-- Email Modal (moved outside container-fluid to prevent layout issues) -->
-<div class="modal fade" id="sendEmailModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content bg-dark text-white">
-      <div class="modal-header">
-        <h5 class="modal-title"><%= t('quotes.show.send_email_title') %></h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <%= form_with(url: send_email_quote_path(@quote), local: true) do |f| %>
-        <div class="modal-body">
-          <div class="mb-3">
-            <label class="form-label"><%= t('quotes.show.customer_email') %></label>
-            <input type="email" class="form-control" value="<%= @quote.email %>" readonly>
-          </div>
-          <div class="mb-3">
-            <label class="form-label"><%= t('quotes.show.additional_message') %></label>
-            <%= f.text_area :message, class: "form-control", rows: 4, 
-                placeholder: t('quotes.show.additional_message_placeholder') %>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('common.cancel') %></button>
-          <%= f.submit t('quotes.show.send'), class: "btn btn-success" %>
-        </div>
-      <% end %>
-    </div>
-  </div>
-</div> 
+</style> 

@@ -11,7 +11,9 @@ class AppConfigsController < ApplicationController
       waste_percentage: waste_pct,
       width_margin: current_user.get_config(AppConfig::WIDTH_MARGIN) || 0,
       length_margin: current_user.get_config(AppConfig::LENGTH_MARGIN) || 0,
-      company_logo: current_user.get_config(AppConfig::COMPANY_LOGO)
+      company_logo: current_user.get_config(AppConfig::COMPANY_LOGO),
+      customer_name: current_user.get_config('customer_name').presence || "Cotalo",
+      company_name: current_user.get_config('company_name').presence || "Cotalo"
     }
     
     # Check if APIs are configured (don't show the actual keys)
@@ -22,7 +24,9 @@ class AppConfigsController < ApplicationController
     @app_config = OpenStruct.new(
       waste_percentage: @general_settings[:waste_percentage],
       width_margin: @general_settings[:width_margin],
-      length_margin: @general_settings[:length_margin]
+      length_margin: @general_settings[:length_margin],
+      customer_name: @general_settings[:customer_name],
+      company_name: @general_settings[:company_name]
     )
   end
   
@@ -115,6 +119,13 @@ class AppConfigsController < ApplicationController
       current_user.set_config(AppConfig::FACTURAMA_API_KEY, params[:facturama_api_key])
     elsif params.key?(:facturama_api_key)
       current_user.app_configs.where(key: AppConfig::FACTURAMA_API_KEY).delete_all
+    end
+    
+    if params[:customer_name].present?
+      current_user.set_config('customer_name', params[:customer_name])
+    end
+    if params[:company_name].present?
+      current_user.set_config('company_name', params[:company_name])
     end
     
     redirect_to edit_app_configs_path, notice: "Configuraciones actualizadas exitosamente."

@@ -305,23 +305,23 @@ class QuotesController < ApplicationController
     @quote = current_user.quotes.includes(:user, :quote_products => [:product]).find(params[:id])
     
     begin
-      pdf_content = generate_pdf_for_quote(@quote)
+      pdf_content = generate_modern_pdf_for_quote(@quote)
       
       QuoteMailer.with(
         quote: @quote,
         user: current_user,
-        message: params[:message],
+        message: "Adjuntamos la cotización solicitada. Si tienes alguna duda, por favor responde a este correo.",
         pdf_content: pdf_content
       ).send_quote.deliver_now
       
       respond_to do |format|
-        format.html { redirect_to @quote, notice: 'La cotización ha sido enviada por correo.' }
+        format.html { redirect_to quotes_path, notice: 'La cotización ha sido enviada por correo.' }
         format.json { render json: { message: 'Email sent successfully' }, status: :ok }
       end
     rescue => e
       Rails.logger.error "Error sending email: #{e.message}"
       respond_to do |format|
-        format.html { redirect_to @quote, alert: 'Error al enviar el correo. Por favor intente nuevamente.' }
+        format.html { redirect_to quotes_path, alert: 'Error al enviar el correo. Por favor intente nuevamente.' }
         format.json { render json: { error: e.message }, status: :unprocessable_entity }
       end
     end

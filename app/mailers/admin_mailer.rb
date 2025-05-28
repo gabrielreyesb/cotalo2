@@ -1,5 +1,4 @@
 class AdminMailer < ApplicationMailer
-  default from: 'gabriel@cotalo.app'
 
   def new_user_notification(user)
     @user = user

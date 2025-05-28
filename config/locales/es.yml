@@ -56,7 +56,7 @@ es:
   
   config:
     title: "Configuraciones"
-    general_settings: "Configuraciones generales"
+    general_settings: "Configuración General"
     waste_percentage: "Porcentaje de desperdicio"
     width_margin: "Margen de ancho"
     length_margin: "Margen de largo"
@@ -95,6 +95,8 @@ es:
     logo_upload_success: "Logo actualizado correctamente"
     logo_uploading: "Subiendo..."
     select_file_first: "Por favor selecciona un archivo primero"
+    customer_name: "Nombre"
+    company_name: "Empresa"
   
   price_adjustments:
     title: "Ajuste de precios"
@@ -314,6 +316,7 @@ es:
       actions: "Acciones"
       view_details: "Ver detalles"
       download_pdf: "Descargar PDF"
+      send_email: "Enviar por correo"
       duplicate: "Duplicar"
       create_invoice: "Crear Factura"
       view: "Ver"

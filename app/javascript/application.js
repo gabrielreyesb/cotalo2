@@ -20,7 +20,37 @@ document.addEventListener('DOMContentLoaded', () => {
     app.component('language-switcher', LanguageSwitcher)
     app.mount('#language-switcher')
   }
+
+  // Initialize tooltips and modals
+  initializeBootstrapComponents();
 })
+
+// Initialize Bootstrap components (tooltips and modals)
+function initializeBootstrapComponents() {
+  // Initialize tooltips
+  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.forEach(tooltipTriggerEl => {
+    new bootstrap.Tooltip(tooltipTriggerEl, {
+      html: true,
+      placement: tooltipTriggerEl.dataset.bsPlacement || 'bottom'
+    });
+  });
+
+  // Initialize modals
+  const modalTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="modal"]'));
+  modalTriggerList.forEach(modalTriggerEl => {
+    const target = modalTriggerEl.getAttribute('data-bs-target');
+    if (target) {
+      const modalEl = document.querySelector(target);
+      if (modalEl) {
+        new bootstrap.Modal(modalEl);
+      }
+    }
+  });
+}
+
+// Reinitialize components after Turbo navigation
+document.addEventListener('turbo:load', initializeBootstrapComponents);
 
 document.addEventListener("DOMContentLoaded", function() {
   var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))

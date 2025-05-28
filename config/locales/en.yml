@@ -102,6 +102,8 @@ en:
   config:
     title: "Configurations"
     general_settings: "General Settings"
+    customer_name: "Name"
+    company_name: "Company"
     waste_percentage: "Waste Percentage"
     width_margin: "Width Margin"
     length_margin: "Length Margin"
@@ -339,6 +341,7 @@ en:
       actions: "Actions"
       view_details: "View details"
       download_pdf: "Download PDF"
+      send_email: "Send by email"
       duplicate: "Duplicate"
       create_invoice: "Create Invoice"
       view: "View"
