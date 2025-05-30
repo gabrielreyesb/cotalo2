@@ -20,7 +20,12 @@ class QuotesController < ApplicationController
   
   def create
     begin
-      quote_data = params[:quote_data] ? JSON.parse(params[:quote_data]) : {}
+      Rails.logger.info "[QuotesController#create] params[:quote_data] class: #{params[:quote_data].class}"
+      quote_data = params[:quote_data]
+      if quote_data.is_a?(String)
+        quote_data = JSON.parse(quote_data)
+      end
+      Rails.logger.info "[QuotesController#create] quote_data: #{quote_data.inspect}"
       
       @quote = current_user.quotes.new(
         project_name: quote_data['project_name'],
@@ -31,6 +36,25 @@ class QuotesController < ApplicationController
         comments: quote_data['comments'],
         data: quote_data['data'] || {}
       )
+      
+      # Validate all required fields in order
+      @quote.valid? # Populate errors
+      ordered_errors = []
+      ordered_errors << "El nombre del proyecto es requerido" if @quote.errors[:project_name].present?
+      ordered_errors << "El nombre del cliente es requerido" if @quote.errors[:customer_name].present?
+      ordered_errors << "La organización es requerida" if @quote.errors[:organization].present?
+      ordered_errors << "El correo electrónico es requerido" if @quote.errors[:email].present?
+      if quote_data['selected_products'].blank?
+        ordered_errors << "Debe agregar al menos un producto a la cotización"
+      end
+      if ordered_errors.any?
+        @products = current_user.products
+        respond_to do |format|
+          format.html { render :new }
+          format.json { render json: { errors: ordered_errors }, status: :unprocessable_entity }
+        end
+        return
+      end
       
       if @quote.save
         # Add selected products if any
@@ -43,15 +67,28 @@ class QuotesController < ApplicationController
           end
         end
         
-        redirect_to quotes_path
+        respond_to do |format|
+          format.html { redirect_to quotes_path }
+          format.json { render json: { success: true, redirect_url: quotes_path } }
+        end
       else
+        Rails.logger.info "[QuotesController#create] Validation errors: #{@quote.errors.map(&:message)}"
         @products = current_user.products
-        render :new
+        respond_to do |format|
+          format.html { render :new }
+          format.json { render json: { errors: @quote.errors.map(&:message) }, status: :unprocessable_entity }
+        end
       end
-    rescue JSON::ParserError => e
+    rescue => e
+      Rails.logger.error "[QuotesController#create] Exception: #{e.class}: #{e.message}\n#{e.backtrace.join("\n")}" 
       @products = current_user.products
-      flash.now[:alert] = "Error al procesar los datos: #{e.message}"
-      render :new
+      respond_to do |format|
+        format.html do
+          flash.now[:alert] = "Error al procesar los datos: #{e.message}"
+          render :new
+        end
+        format.json { render json: { error: "Error al procesar los datos: #{e.message}" }, status: :bad_request }
+      end
     end
   end
   
@@ -63,7 +100,12 @@ class QuotesController < ApplicationController
   
   def update
     begin
-      quote_data = params[:quote_data] ? JSON.parse(params[:quote_data]) : {}
+      Rails.logger.info "[QuotesController#update] params[:quote_data] class: #{params[:quote_data].class}"
+      quote_data = params[:quote_data]
+      if quote_data.is_a?(String)
+        quote_data = JSON.parse(quote_data)
+      end
+      Rails.logger.info "[QuotesController#update] quote_data: #{quote_data.inspect}"
       
       @quote.assign_attributes(
         project_name: quote_data['project_name'],
@@ -74,6 +116,25 @@ class QuotesController < ApplicationController
         comments: quote_data['comments'],
         data: quote_data['data'] || {}
       )
+      
+      # Validate all required fields in order (update)
+      @quote.valid?
+      ordered_errors = []
+      ordered_errors << "El nombre del proyecto es requerido" if @quote.errors[:project_name].present?
+      ordered_errors << "El nombre del cliente es requerido" if @quote.errors[:customer_name].present?
+      ordered_errors << "La organización es requerida" if @quote.errors[:organization].present?
+      ordered_errors << "El correo electrónico es requerido" if @quote.errors[:email].present?
+      if quote_data['selected_products'].blank?
+        ordered_errors << "Debe agregar al menos un producto a la cotización"
+      end
+      if ordered_errors.any?
+        @products = current_user.products
+        respond_to do |format|
+          format.html { render :edit }
+          format.json { render json: { errors: ordered_errors }, status: :unprocessable_entity }
+        end
+        return
+      end
       
       if @quote.save
         # Remove existing products and add the new selection
@@ -88,15 +149,28 @@ class QuotesController < ApplicationController
           end
         end
         
-        redirect_to quotes_path, notice: "Cotización actualizada exitosamente."
+        respond_to do |format|
+          format.html { redirect_to quotes_path, notice: "Cotización actualizada exitosamente." }
+          format.json { render json: { success: true, redirect_url: quotes_path } }
+        end
       else
+        Rails.logger.info "[QuotesController#update] Validation errors: #{@quote.errors.map(&:message)}"
         @products = current_user.products
-        render :edit
+        respond_to do |format|
+          format.html { render :edit }
+          format.json { render json: { errors: @quote.errors.map(&:message) }, status: :unprocessable_entity }
+        end
       end
-    rescue JSON::ParserError => e
+    rescue => e
+      Rails.logger.error "[QuotesController#update] Exception: #{e.class}: #{e.message}\n#{e.backtrace.join("\n")}" 
       @products = current_user.products
-      flash.now[:alert] = "Error al procesar los datos: #{e.message}"
-      render :edit
+      respond_to do |format|
+        format.html do
+          flash.now[:alert] = "Error al procesar los datos: #{e.message}"
+          render :edit
+        end
+        format.json { render json: { error: "Error al procesar los datos: #{e.message}" }, status: :bad_request }
+      end
     end
   end
   

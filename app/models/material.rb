@@ -4,10 +4,10 @@ class Material < ApplicationRecord
   has_many :product_materials
   has_many :products, through: :product_materials
   
-  validates :client_description, presence: true
-  validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }
-  validates :unit, presence: true
-  validates :user, presence: true
+  validates :client_description, presence: { message: "La descripción del cliente es requerida" }
+  validates :price, presence: { message: "El precio es requerido" }, numericality: { greater_than_or_equal_to: 0 }
+  validates :unit, presence: { message: "La unidad es requerida" }
+  validates :user, presence: { message: "El usuario es requerido" }
   validates :ancho, numericality: { greater_than: 0 }, allow_nil: true
   validates :largo, numericality: { greater_than: 0 }, allow_nil: true
 

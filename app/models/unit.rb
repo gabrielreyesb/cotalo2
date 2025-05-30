@@ -3,8 +3,8 @@ class Unit < ApplicationRecord
   has_many :manufacturing_processes
   has_many :extras
 
-  validates :name, presence: true, uniqueness: true
-  validates :abbreviation, presence: true, uniqueness: true
+  validates :name, presence: { message: "El nombre es requerido" }, uniqueness: true
+  validates :abbreviation, presence: { message: "La abreviatura es requerida" }, uniqueness: true
 
   before_destroy :check_for_dependencies
 

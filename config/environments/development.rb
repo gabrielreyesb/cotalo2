@@ -56,17 +56,6 @@ Rails.application.configure do
     enable_starttls_auto: true
   }
 
-  # Debug logging for SMTP settings
-  puts "\n=== SMTP Settings being used ==="
-  puts "Address: #{config.action_mailer.smtp_settings[:address]}"
-  puts "Port: #{config.action_mailer.smtp_settings[:port]}"
-  puts "Domain: #{config.action_mailer.smtp_settings[:domain]}"
-  puts "Username: #{config.action_mailer.smtp_settings[:user_name]}"
-  puts "Password length: #{config.action_mailer.smtp_settings[:password].length}"
-  puts "Authentication: #{config.action_mailer.smtp_settings[:authentication]}"
-  puts "TLS: #{config.action_mailer.smtp_settings[:enable_starttls_auto]}"
-  puts "================================\n"
-
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 

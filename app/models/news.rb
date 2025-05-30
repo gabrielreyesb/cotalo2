@@ -1,7 +1,7 @@
 class News < ApplicationRecord
-  validates :title, presence: true
-  validates :content, presence: true
-  validates :published_at, presence: true
+  validates :title, presence: { message: "El título es requerido" }
+  validates :content, presence: { message: "El contenido es requerido" }
+  validates :published_at, presence: { message: "La fecha de publicación es requerida" }
   
   # Scope to get the most recent news first
   scope :recent, -> { order(published_at: :desc) }

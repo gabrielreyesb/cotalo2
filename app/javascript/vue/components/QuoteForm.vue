@@ -1,5 +1,10 @@
 <template>
   <div class="quote-form">
+    <div v-if="validationErrors.length" class="alert alert-danger">
+      <ul class="mb-0">
+        <li v-for="(error, idx) in validationErrors" :key="idx">{{ error }}</li>
+      </ul>
+    </div>
     <div class="row">
       <div class="col-lg-7">
         <form @submit.prevent="saveQuote">
@@ -333,7 +338,8 @@ export default {
       productSearch: '',
       selectedCustomerId: '',
       selectedProductId: '',
-      pipedriveApiConfigured: false
+      pipedriveApiConfigured: false,
+      validationErrors: []
     }
   },
   
@@ -648,6 +654,14 @@ export default {
         console.error('Error checking Pipedrive API status:', error);
         this.pipedriveApiConfigured = false;
       });
+    },
+    
+    setValidationErrors(errors) {
+      this.validationErrors = errors;
+    },
+    
+    clearValidationErrors() {
+      this.validationErrors = [];
     }
   },
   

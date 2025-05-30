@@ -74,8 +74,12 @@ document.addEventListener('DOMContentLoaded', () => {
       quote,
       editMode,
       translations,
-      onSave: (formData) => {
+      onSave: async (formData) => {
         try {
+          // Clear previous errors
+          if (app._instance && app._instance.proxy && app._instance.proxy.clearValidationErrors) {
+            app._instance.proxy.clearValidationErrors();
+          }
           // Create a data object with the form data and selected products
           const quoteData = {
             ...formData.form,
@@ -93,42 +97,44 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           };
 
-          // Create a hidden form to submit the data to Rails
-          const form = document.createElement('form');
-          form.method = 'post';
-          form.action = editMode ? `/quotes/${quote.id}` : '/quotes';
-          form.style.display = 'none';
-
-          // Add CSRF token
+          // Get CSRF token
           const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
           
-          const csrfInput = document.createElement('input');
-          csrfInput.type = 'hidden';
-          csrfInput.name = 'authenticity_token';
-          csrfInput.value = csrfToken;
-          form.appendChild(csrfInput);
+          // Submit the form data via fetch
+          const response = await fetch(editMode ? `/quotes/${quote.id}.json` : '/quotes.json', {
+            method: editMode ? 'PATCH' : 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': csrfToken,
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({ quote_data: quoteData })
+          });
 
-          // Add method override for PUT/PATCH if editing
-          if (editMode) {
-            const methodInput = document.createElement('input');
-            methodInput.type = 'hidden';
-            methodInput.name = '_method';
-            methodInput.value = 'patch';
-            form.appendChild(methodInput);
+          const data = await response.json();
+
+          if (response.ok) {
+            // If successful, redirect to quotes index
+            window.location.href = '/quotes';
+          } else {
+            // Handle validation errors
+            if (data.errors) {
+              if (Array.isArray(data.errors)) {
+                app._instance.proxy.setValidationErrors(data.errors);
+              } else {
+                const errorMessages = Object.entries(data.errors)
+                  .map(([field, messages]) => `${field}: ${messages.join(', ')}`);
+                app._instance.proxy.setValidationErrors(errorMessages);
+              }
+            } else {
+              app._instance.proxy.setValidationErrors([data.error || 'Error al guardar la cotización']);
+            }
           }
-
-          // Add the quote data as a hidden field
-          const quoteInput = document.createElement('input');
-          quoteInput.type = 'hidden';
-          quoteInput.name = 'quote_data';
-          quoteInput.value = JSON.stringify(quoteData);
-          form.appendChild(quoteInput);
-
-          // Append the form to the body and submit it
-          document.body.appendChild(form);
-          form.submit();
         } catch (e) {
           console.error('Error in onSave handler:', e);
+          if (app._instance && app._instance.proxy && app._instance.proxy.setValidationErrors) {
+            app._instance.proxy.setValidationErrors(['Error al guardar la cotización. Por favor intente nuevamente.']);
+          }
         }
       },
       onCancel: () => {

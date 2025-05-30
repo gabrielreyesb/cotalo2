@@ -615,11 +615,6 @@ es:
         update: "Actualizar Noticia"
         cancel: "Cancelar"
         errors: "impidieron guardar esta noticia"
-  activerecord:
-    errors:
-      messages:
-        record_invalid: "La validación falló: %{errors}"
-        taken: "ya ha sido tomado"
   mailers:
     subscription:
       welcome_subject: "¡Bienvenido a tu suscripción de Cotalo!"
