@@ -671,6 +671,15 @@ export default {
       window.quoteFormEventBus.on('add-product', (product) => {
         this.addProduct(product);
       });
+
+      // Listen for validation error events
+      window.quoteFormEventBus.on('set-validation-errors', (errors) => {
+        this.setValidationErrors(errors);
+      });
+
+      window.quoteFormEventBus.on('clear-validation-errors', () => {
+        this.clearValidationErrors();
+      });
     }
 
     // Add event listener for the save button in the subnavbar
@@ -684,7 +693,13 @@ export default {
   },
 
   beforeDestroy() {
-    // Remove event listener when component is destroyed
+    // Remove event listeners when component is destroyed
+    if (window.quoteFormEventBus) {
+      window.quoteFormEventBus.events['add-product'] = [];
+      window.quoteFormEventBus.events['set-validation-errors'] = [];
+      window.quoteFormEventBus.events['clear-validation-errors'] = [];
+    }
+
     const saveButton = document.getElementById('save-quote-button');
     if (saveButton) {
       saveButton.removeEventListener('click', this.saveQuote);

@@ -76,10 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
       translations,
       onSave: async (formData) => {
         try {
-          // Clear previous errors
-          if (app._instance && app._instance.proxy && app._instance.proxy.clearValidationErrors) {
-            app._instance.proxy.clearValidationErrors();
-          }
+          // Clear previous errors using event bus
+          window.quoteFormEventBus.emit('clear-validation-errors');
+          
           // Create a data object with the form data and selected products
           const quoteData = {
             ...formData.form,
@@ -117,24 +116,20 @@ document.addEventListener('DOMContentLoaded', () => {
             // If successful, redirect to quotes index
             window.location.href = '/quotes';
           } else {
-            // Handle validation errors
+            // Handle validation errors using event bus
             if (data.errors) {
-              if (Array.isArray(data.errors)) {
-                app._instance.proxy.setValidationErrors(data.errors);
-              } else {
-                const errorMessages = Object.entries(data.errors)
+              const errorMessages = Array.isArray(data.errors) ? 
+                data.errors : 
+                Object.entries(data.errors)
                   .map(([field, messages]) => `${field}: ${messages.join(', ')}`);
-                app._instance.proxy.setValidationErrors(errorMessages);
-              }
+              window.quoteFormEventBus.emit('set-validation-errors', errorMessages);
             } else {
-              app._instance.proxy.setValidationErrors([data.error || 'Error al guardar la cotización']);
+              window.quoteFormEventBus.emit('set-validation-errors', [data.error || 'Error al guardar la cotización']);
             }
           }
         } catch (e) {
           console.error('Error in onSave handler:', e);
-          if (app._instance && app._instance.proxy && app._instance.proxy.setValidationErrors) {
-            app._instance.proxy.setValidationErrors(['Error al guardar la cotización. Por favor intente nuevamente.']);
-          }
+          window.quoteFormEventBus.emit('set-validation-errors', ['Error al guardar la cotización. Por favor intente nuevamente.']);
         }
       },
       onCancel: () => {
