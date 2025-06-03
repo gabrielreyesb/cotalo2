@@ -30,7 +30,9 @@ class InvoicesController < ApplicationController
         redirect_to quote_invoice_path(@quote, @invoice), notice: 'Invoice created successfully in Facturama.'
       else
         @invoice.mark_as_cancelled!
-        redirect_to quote_path(@quote), alert: "Failed to create invoice in Facturama: #{result[:error]}"
+        error_message = result[:error].is_a?(String) ? result[:error] : result[:error].inspect
+        error_message = error_message.truncate(300)
+        redirect_to quote_path(@quote), alert: "Failed to create invoice in Facturama: #{error_message}"
       end
     else
       redirect_to quote_path(@quote), alert: 'Failed to create invoice.'
@@ -96,54 +98,45 @@ class InvoicesController < ApplicationController
   
   def prepare_invoice_data(invoice)
     {
-      # Basic invoice information
-      series: "F", # You might want to make this configurable
-      folio: invoice.id.to_s,
-      date: Time.current.strftime("%Y-%m-%d"),
-      currency: "MXN",
-      exchange_rate: 1,
-      payment_method: "PUE", # Payment in a single exhibition
-      payment_terms: "Immediate",
-      
-      # Customer information
-      customer: {
-        tax_id: invoice.data["customer_tax_id"], # You'll need to add this to the quote form
-        name: invoice.data["customer_name"],
-        email: invoice.data["email"],
-        phone: invoice.data["telephone"],
-        address: {
-          street: invoice.data["customer_address"], # You'll need to add this to the quote form
-          exterior_number: invoice.data["customer_exterior_number"], # You'll need to add this to the quote form
-          interior_number: invoice.data["customer_interior_number"], # You'll need to add this to the quote form
-          neighborhood: invoice.data["customer_neighborhood"], # You'll need to add this to the quote form
-          zip_code: invoice.data["customer_zip_code"], # You'll need to add this to the quote form
-          locality: invoice.data["customer_locality"], # You'll need to add this to the quote form
-          municipality: invoice.data["customer_municipality"], # You'll need to add this to the quote form
-          state: invoice.data["customer_state"], # You'll need to add this to the quote form
-          country: "México"
-        }
+      "Serie" => "F",
+      "Folio" => invoice.id.to_s,
+      "CfdiType" => "I", # Ingreso (income)
+      "ExpeditionPlace" => "64000", # Replace with your postal code
+      "PaymentForm" => "01", # Efectivo (cash), adjust as needed
+      "PaymentMethod" => "PUE", # Pago en una sola exhibición
+      "Issuer" => {
+        "Rfc" => "REBG66125A60",
+        "Name" => "Gabriel Arturo Reyes Barredo",
+        "FiscalRegime" => "605"
       },
-      
-      # Items (products)
-      items: invoice.data["products"].map do |product|
+      "Receiver" => {
+        "Rfc" => invoice.data["customer_tax_id"] || "XAXX010101000",
+        "Name" => invoice.data["customer_name"] || "Publico en General",
+        "CfdiUse" => "G03",
+        "FiscalRegime" => "601", # TODO: Replace or make dynamic as needed
+        "TaxZipCode" => "64000"  # TODO: Replace or make dynamic as needed
+      },
+      "Items" => invoice.data["products"].map do |product|
         {
-          product_code: "84111506", # You might want to make this configurable per product
-          description: product["description"],
-          unit: "ACT", # Unit of measurement
-          quantity: product["quantity"],
-          unit_price: product["unit_price"],
-          amount: product["total"],
-          tax_rate: 0.16, # 16% VAT
-          tax_amount: product["total"] * 0.16,
-          total: product["total"] * 1.16
+          "Quantity" => product["quantity"],
+          "ProductCode" => "84111506", # SAT code, adjust as needed
+          "UnitCode" => "ACT",         # SAT unit code, adjust as needed
+          "Unit" => "Actividad",       # Unit name, adjust as needed
+          "Description" => product["description"],
+          "UnitPrice" => product["unit_price"],
+          "Subtotal" => product["unit_price"] * product["quantity"],
+          "Total" => product["unit_price"] * product["quantity"],
+          "Taxes" => [
+            {
+              "Total" => product["unit_price"] * product["quantity"] * 0.16,
+              "Name" => "IVA",
+              "Base" => product["unit_price"] * product["quantity"],
+              "Rate" => 0.16,
+              "IsRetention" => false
+            }
+          ]
         }
-      end,
-      
-      # Totals
-      subtotal: invoice.total,
-      tax_rate: 0.16,
-      tax_amount: invoice.total * 0.16,
-      total: invoice.total * 1.16
+      end
     }
   end
 end

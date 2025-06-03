@@ -83,8 +83,23 @@
                 <%= form.label :facturama_api_key, "Facturama API Key", class: "form-label" %>
                 <div class="input-group">
                   <%= form.text_field :facturama_api_key, value: current_user.get_config(AppConfig::FACTURAMA_API_KEY), placeholder: "Enter Facturama API key", class: "form-control text-start", autocomplete: "off", id: "facturama_api_key_input" %>
+                  <button type="button" class="btn btn-outline-primary" id="test_facturama_api">
+                    <i class="fas fa-vial"></i> Test Facturama API Connection
+                  </button>
                 </div>
                 <small class="form-text text-muted">The API key will be stored in the database and will be used immediately.</small>
+                
+                <!-- Results section for API test -->
+                <div id="results" class="mt-3 d-none">
+                  <div class="card">
+                    <div class="card-header">
+                      <h6 class="mb-0">Test Results</h6>
+                    </div>
+                    <div class="card-body" id="content">
+                      <!-- Results will be displayed here -->
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -139,10 +154,11 @@
           console.log('Making API request to /app_configs/test_facturama_api');
           // Make the API request
           fetch('/app_configs/test_facturama_api', {
-            method: 'GET',
+            method: 'POST',
             headers: {
               'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
-              'Accept': 'application/json'
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
             }
           })
           .then(response => {

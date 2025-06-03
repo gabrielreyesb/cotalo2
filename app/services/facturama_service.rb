@@ -8,8 +8,8 @@ class FacturamaService
 
   def initialize(api_key)
     @api_key = api_key
-    # Using the production API
-    @base_url = 'https://api.facturama.mx'
+    # Using the sandbox API for testing
+    @base_url = 'https://apisandbox.facturama.mx'
     
     # Ensure API key is in the correct format (username:password)
     unless @api_key.include?(':')
@@ -128,7 +128,7 @@ class FacturamaService
   # Create a new invoice
   def create_invoice(invoice_data)
     begin
-      response = make_request(:post, '/api/Invoice', invoice_data)
+      response = make_request(:post, '/api-lite/3/cfdis', invoice_data)
       if response['success']
         {
           success: true,

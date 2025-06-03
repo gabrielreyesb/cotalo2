@@ -63,9 +63,7 @@
                               title: t('quotes.index.duplicate') do %>
                             <i class="fas fa-copy"></i>
                           <% end %>
-                          <%= link_to quote_invoices_path(quote), class: "btn btn-sm btn-outline-success", 
-                              data: { bs_toggle: "tooltip", turbo_method: :post }, 
-                              title: t('quotes.index.create_invoice') do %>
+                          <%= button_to quote_invoices_path(quote), method: :post, class: "btn btn-sm btn-outline-success", data: { bs_toggle: "tooltip" }, title: t('quotes.index.create_invoice'), form: { class: "d-inline-block m-0" } do %>
                             <i class="fas fa-file-invoice"></i>
                           <% end %>
                           <%= button_to quote_path(quote), 
@@ -146,9 +144,7 @@
                       title: t('quotes.index.duplicate') do %>
                     <i class="fas fa-copy fa-sm"></i>
                   <% end %>
-                  <%= link_to quote_invoices_path(quote), class: "btn btn-sm btn-outline-success", 
-                      data: { bs_toggle: "tooltip", turbo_method: :post }, 
-                      title: t('quotes.index.create_invoice') do %>
+                  <%= button_to quote_invoices_path(quote), method: :post, class: "btn btn-sm btn-outline-success", data: { bs_toggle: "tooltip" }, title: t('quotes.index.create_invoice'), form: { class: "d-inline-block m-0" } do %>
                     <i class="fas fa-file-invoice fa-sm"></i>
                   <% end %>
                   <%= button_to quote_path(quote), 
