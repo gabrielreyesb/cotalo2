@@ -358,18 +358,6 @@ export default {
     productQuantity() {
       this.updateExtrasCalculations();
     },
-    // Also watch for changes to extras array
-    productExtras: {
-      handler(newExtras) {
-        // Check if any extras have the recalculation flag
-        const needsRecalculation = newExtras.some(extra => extra._needsRecalculation);
-        
-        if (needsRecalculation) {
-          this.updateExtrasCalculations();
-        }
-      },
-      deep: true
-    }
   },
   mounted() {
     // Need to import Bootstrap Modal JS

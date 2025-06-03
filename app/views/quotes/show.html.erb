@@ -3,14 +3,11 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= link_to pdf_quote_path(@quote, format: :pdf), class: "btn btn-primary me-2", target: "_blank" do %>
+  <%= link_to modern_pdf_quote_path(@quote, format: :pdf), class: "btn btn-outline-light me-2", target: "_blank" do %>
     <i class="fas fa-file-pdf me-1"></i> <%= t('quotes.show.view_pdf') %>
   <% end %>
   <%= button_to send_email_quote_path(@quote), method: :post, class: "btn btn-success me-2", data: { confirm: t('quotes.index.send_email_confirm') }, title: t('quotes.show.send_email'), form: { class: "d-inline-block m-0" } do %>
     <i class="fas fa-envelope me-1"></i> <%= t('quotes.show.send_email') %>
-  <% end %>
-  <%= link_to duplicate_quote_path(@quote), class: "btn btn-info me-2", data: { turbo_method: :get } do %>
-    <i class="fas fa-copy me-1"></i> <%= t('quotes.show.duplicate') %>
   <% end %>
   <%= link_to edit_quote_path(@quote), class: "btn btn-warning me-2" do %>
     <i class="fas fa-edit me-1"></i> <%= t('common.edit') %>
@@ -20,8 +17,8 @@
       data: { turbo_method: :delete, turbo_confirm: t('common.confirm_delete') } do %>
     <i class="fas fa-trash me-1"></i> <%= t('common.delete') %>
   <% end %>
-  <button class="btn btn-success me-2" onclick="window.print()">
-    <i class="fas fa-print"></i> <%= t('quotes.show.print') %>
+  <button class="btn btn-outline-light me-2" disabled title="Próximamente">
+    <i class="fas fa-file-invoice me-1"></i> <%= t('quotes.show.invoice') %>
   </button>
   <%= link_to quotes_path, class: "btn btn-secondary" do %>
     <i class="fas fa-arrow-left"></i> <%= t('quotes.show.back') %>

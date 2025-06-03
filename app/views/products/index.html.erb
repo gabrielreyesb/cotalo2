@@ -11,6 +11,9 @@
 <div class="row">
   <div class="col-12">
     <% if @products.any? %>
+      <div class="d-flex mt-0 mb-2">
+        <%= render_pagination(@products) %>
+      </div>
       <!-- Table view for medium and large screens -->
       <div class="card green-accent-panel d-none d-md-block shadow-sm mb-4">
         <div class="card-body p-4">
@@ -51,18 +54,22 @@
                     <td class="text-end"><%= number_to_currency(product.pricing["total_price"] || 0) %></td>
                     <td class="text-end"><%= number_to_currency(product.pricing["final_price_per_piece"] || 0) %></td>
                     <td class="text-center action-buttons">
-                      <%= link_to edit_product_path(product), class: "btn btn-sm btn-outline-primary", 
+                      <%= link_to product_path(product), class: "btn btn-sm btn-outline-secondary mx-1", 
+                          data: { bs_toggle: "tooltip" }, title: t('products.index.view_details') do %>
+                        <i class="fa fa-eye"></i>
+                      <% end %>
+                      <%= link_to edit_product_path(product), class: "btn btn-sm btn-outline-primary mx-1", 
                           data: { bs_toggle: "tooltip" }, title: t('common.edit') do %>
                         <i class="fa fa-edit"></i>
                       <% end %>
                       <%= button_to product_path(product), method: :delete, 
-                          class: "btn btn-sm btn-outline-danger", 
+                          class: "btn btn-sm btn-outline-danger mx-1", 
                           form: { style: 'display: inline-block;', data: { turbo_confirm: t('common.confirm_delete') } },
                           data: { bs_toggle: "tooltip" }, title: t('common.delete') do %>
                         <i class="fa fa-trash"></i>
                       <% end %>
                       <%= button_to duplicate_product_path(product), method: :post, 
-                          class: "btn btn-sm btn-outline-secondary", 
+                          class: "btn btn-sm btn-outline-secondary mx-1", 
                           form: { style: 'display: inline-block;' },
                           data: { bs_toggle: "tooltip" }, title: t('products.index.duplicate') do %>
                         <i class="fa fa-copy"></i>
@@ -109,22 +116,22 @@
                 </div>
                 
                 <div class="d-flex action-buttons">
-                  <%= link_to product_path(product), class: "btn btn-sm btn-outline-secondary", 
+                  <%= link_to product_path(product), class: "btn btn-sm btn-outline-secondary mx-1", 
                       data: { bs_toggle: "tooltip" }, title: t('products.index.view_details') do %>
                     <i class="fa fa-eye fa-sm"></i>
                   <% end %>
-                  <%= link_to edit_product_path(product), class: "btn btn-sm btn-outline-primary", 
+                  <%= link_to edit_product_path(product), class: "btn btn-sm btn-outline-primary mx-1", 
                       data: { bs_toggle: "tooltip" }, title: t('products.index.edit_product') do %>
                     <i class="fa fa-edit fa-sm"></i>
                   <% end %>
                   <%= button_to product_path(product), method: :delete, 
-                      class: "btn btn-sm btn-outline-danger", 
+                      class: "btn btn-sm btn-outline-danger mx-1", 
                       form: { class: "d-inline", data: { turbo_confirm: t('common.confirm_delete') } },
                       data: { bs_toggle: "tooltip" }, title: t('products.index.delete_product') do %>
                     <i class="fa fa-trash fa-sm"></i>
                   <% end %>
                   <%= button_to duplicate_product_path(product), method: :post, 
-                      class: "btn btn-sm btn-outline-secondary", 
+                      class: "btn btn-sm btn-outline-secondary mx-1", 
                       form: { class: "d-inline" },
                       data: { bs_toggle: "tooltip" }, title: t('products.index.duplicate_product') do %>
                     <i class="fa fa-copy fa-sm"></i>

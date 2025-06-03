@@ -390,6 +390,7 @@ en:
       view_pdf: "View PDF"
       send_email: "Send by email"
       duplicate: "Duplicate"
+      invoice: "Create Invoice"
       send_email_title: "Send Quote by Email"
       customer_email: "Customer email"
       additional_message: "Additional message (optional)"
@@ -629,3 +630,10 @@ en:
       - :month
       - :day
       - :year
+views:
+  pagination:
+    first: "First"
+    last: "Last"
+    previous: "Previous"
+    next: "Next"
+    truncate: "…"

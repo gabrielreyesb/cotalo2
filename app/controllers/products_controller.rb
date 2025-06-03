@@ -4,7 +4,7 @@ class ProductsController < ApplicationController
   before_action :no_cache, only: [:index, :show, :new, :edit]
 
   def index
-    @products = current_user.products.order(created_at: :desc)
+    @products = current_user.products.order(created_at: :desc).page(params[:page]).per(10)
   end
 
   def show

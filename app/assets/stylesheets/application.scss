@@ -122,3 +122,39 @@ div:empty,
 div:has(> .debug) {
   display: none !important;
 }
+
+// Ensure Kaminari pagination is always horizontal and styled
+.pagination {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 0.5rem;
+  margin-top: 0;
+}
+.pagination li {
+  display: inline-block;
+  margin: 0 4px;
+}
+
+/* Ensure that the container (or parent) of pagination is not centered, so that the pagination is left-justified */
+.container-fluid .pagination, .container .pagination {
+  text-align: left;
+}
+
+/* Make the active pagination item larger and more rounded (moderate size) */
+.pagination .active .page-link {
+  background-color: var(--cotalo-green, #28a745) !important;
+  color: #fff !important;
+  padding: 0.25rem 0.55rem !important;
+  font-size: 1rem !important;
+  border-radius: 0.375rem !important;
+  min-width: 1.25rem;
+  min-height: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(40,167,69,0.10);
+}

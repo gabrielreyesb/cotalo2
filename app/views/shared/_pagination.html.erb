@@ -1,0 +1,6 @@
+<%# Shared pagination partial for Kaminari %>
+<% if collection.respond_to?(:total_pages) && collection.total_pages > 1 %>
+  <nav aria-label="Page navigation">
+    <%= paginate collection %>
+  </nav>
+<% end %> 

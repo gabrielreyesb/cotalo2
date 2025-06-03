@@ -30,6 +30,26 @@ window.quoteFormEventBus = {
   }
 };
 
+// Global error handler for uncaught errors
+window.addEventListener('error', (event) => {
+  console.error('Uncaught error:', event.error);
+  if (window.quoteFormEventBus) {
+    window.quoteFormEventBus.emit('set-validation-errors', [
+      'Ha ocurrido un error inesperado. Por favor, intente nuevamente o contacte al soporte técnico si el problema persiste.'
+    ]);
+  }
+});
+
+// Global promise rejection handler
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('Unhandled promise rejection:', event.reason);
+  if (window.quoteFormEventBus) {
+    window.quoteFormEventBus.emit('set-validation-errors', [
+      'Ha ocurrido un error inesperado. Por favor, intente nuevamente o contacte al soporte técnico si el problema persiste.'
+    ]);
+  }
+});
+
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', () => {
   try {
@@ -79,6 +99,29 @@ document.addEventListener('DOMContentLoaded', () => {
           // Clear previous errors using event bus
           window.quoteFormEventBus.emit('clear-validation-errors');
           
+          // Validate required fields before submission
+          const validationErrors = [];
+          if (!formData.form.project_name?.trim()) {
+            validationErrors.push('El nombre del proyecto es requerido');
+          }
+          if (!formData.form.customer_name?.trim()) {
+            validationErrors.push('El nombre del cliente es requerido');
+          }
+          if (!formData.form.organization?.trim()) {
+            validationErrors.push('La organización es requerida');
+          }
+          if (!formData.form.email?.trim()) {
+            validationErrors.push('El correo electrónico es requerido');
+          }
+          if (formData.selectedProducts.length === 0) {
+            validationErrors.push('Debe agregar al menos un producto a la cotización');
+          }
+
+          if (validationErrors.length > 0) {
+            window.quoteFormEventBus.emit('set-validation-errors', validationErrors);
+            return;
+          }
+
           // Create a data object with the form data and selected products
           const quoteData = {
             ...formData.form,
@@ -97,7 +140,10 @@ document.addEventListener('DOMContentLoaded', () => {
           };
 
           // Get CSRF token
-          const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+          const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+          if (!csrfToken) {
+            throw new Error('No se pudo obtener el token CSRF. Por favor, recargue la página e intente nuevamente.');
+          }
           
           // Submit the form data via fetch
           const response = await fetch(editMode ? `/quotes/${quote.id}.json` : '/quotes.json', {
@@ -110,7 +156,13 @@ document.addEventListener('DOMContentLoaded', () => {
             body: JSON.stringify({ quote_data: quoteData })
           });
 
-          const data = await response.json();
+          let data;
+          try {
+            data = await response.json();
+          } catch (e) {
+            console.error('Error parsing response:', e);
+            throw new Error('Error al procesar la respuesta del servidor. Por favor, intente nuevamente.');
+          }
 
           if (response.ok) {
             // If successful, redirect to quotes index
@@ -124,12 +176,25 @@ document.addEventListener('DOMContentLoaded', () => {
                   .map(([field, messages]) => `${field}: ${messages.join(', ')}`);
               window.quoteFormEventBus.emit('set-validation-errors', errorMessages);
             } else {
-              window.quoteFormEventBus.emit('set-validation-errors', [data.error || 'Error al guardar la cotización']);
+              const errorMessage = data.error || 
+                (response.status === 422 ? 'Error de validación en los datos ingresados' :
+                 response.status === 500 ? 'Error interno del servidor' :
+                 'Error al guardar la cotización');
+              window.quoteFormEventBus.emit('set-validation-errors', [errorMessage]);
             }
           }
         } catch (e) {
           console.error('Error in onSave handler:', e);
-          window.quoteFormEventBus.emit('set-validation-errors', ['Error al guardar la cotización. Por favor intente nuevamente.']);
+          // Log the full error for debugging
+          console.error('Full error details:', {
+            message: e.message,
+            stack: e.stack,
+            formData: formData
+          });
+          
+          // Show user-friendly error message
+          const errorMessage = e.message || 'Error al guardar la cotización. Por favor intente nuevamente.';
+          window.quoteFormEventBus.emit('set-validation-errors', [errorMessage]);
         }
       },
       onCancel: () => {
@@ -137,16 +202,26 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Add global error handler
+    // Add global error handler for Vue
     app.config.errorHandler = (err, vm, info) => {
       console.error('Vue Error:', err);
       console.error('Error Info:', info);
+      console.error('Component:', vm);
+      
+      // Show error to user
+      if (window.quoteFormEventBus) {
+        window.quoteFormEventBus.emit('set-validation-errors', [
+          'Ha ocurrido un error en la aplicación. Por favor, recargue la página e intente nuevamente.'
+        ]);
+      }
+      
+      // Update UI to show error state
       el.innerHTML = `
         <div class="alert alert-danger my-5">
-          <h4 class="alert-heading">Vue Application Error</h4>
-          <p>${err.message}</p>
+          <h4 class="alert-heading">Error en la aplicación</h4>
+          <p>Ha ocurrido un error inesperado. Por favor, recargue la página e intente nuevamente.</p>
           <hr>
-          <p class="mb-0">Please check the console for more details.</p>
+          <p class="mb-0">Si el problema persiste, contacte al soporte técnico.</p>
         </div>
       `;
     };

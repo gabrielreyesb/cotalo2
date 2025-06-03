@@ -6,7 +6,7 @@ class QuotesController < ApplicationController
   layout 'vue_application', only: [:new, :edit]
   
   def index
-    @quotes = current_user.quotes.order(created_at: :desc).limit(10)
+    @quotes = current_user.quotes.order(created_at: :desc).page(params[:page]).per(10)
   end
   
   def show
@@ -15,7 +15,7 @@ class QuotesController < ApplicationController
   
   def new
     @quote = current_user.quotes.new
-    @products = current_user.products
+    @products = current_user.products.order(created_at: :desc)
   end
   
   def create

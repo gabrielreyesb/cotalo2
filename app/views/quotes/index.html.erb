@@ -11,6 +11,9 @@
 <div class="row">
   <div class="col-12">
     <% if @quotes.any? %>
+      <div class="d-flex mt-0 mb-2">
+        <%= render_pagination(@quotes) %>
+      </div>
       <!-- Table view for medium and large screens -->
       <div class="card green-accent-panel d-none d-md-block shadow-sm mb-4">
         <div class="card-body p-4">
@@ -24,7 +27,7 @@
                     <th class="index-table-header" style="width: 10%;"><%= t('quotes.index.date') %></th>
                     <th class="index-table-header" style="width: 15%;"><%= t('quotes.index.number') %></th>
                     <th class="index-table-header text-end" style="width: 10%;"><%= t('quotes.index.total') %></th>
-                    <th class="index-table-header text-end" style="width: 20%;"><%= t('quotes.index.actions') %></th>
+                    <th class="index-table-header text-center" style="width: 20%;"><%= t('quotes.index.actions') %></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -37,38 +40,21 @@
                       <td><%= quote.created_at.strftime("%d/%m/%Y") %></td>
                       <td><%= quote.quote_number %></td>
                       <td class="text-end"><%= number_to_currency(quote.quote_data["totals"]["total"]) %></td>
-                      <td class="text-end action-buttons">
-                        <div class="btn-group">
-                          <%= link_to quote_path(quote), class: "btn btn-sm btn-outline-secondary", 
+                      <td class="text-center action-buttons">
+                        <div class="btn-group justify-content-center">
+                          <%= link_to quote_path(quote), class: "btn btn-sm btn-outline-secondary mx-1", 
                               data: { bs_toggle: "tooltip" }, 
                               title: t('quotes.index.view_details') do %>
                             <i class="fas fa-eye"></i>
                           <% end %>
-                          <%= link_to edit_quote_path(quote), class: "btn btn-sm btn-outline-primary", 
+                          <%= link_to edit_quote_path(quote), class: "btn btn-sm btn-outline-primary mx-1", 
                               data: { bs_toggle: "tooltip" }, 
                               title: t('common.edit') do %>
                             <i class="fas fa-edit"></i>
                           <% end %>
-                          <%= link_to modern_pdf_quote_path(quote, format: :pdf), class: "btn btn-sm btn-outline-secondary", 
-                              data: { bs_toggle: "tooltip" }, 
-                              title: t('quotes.index.download_pdf'),
-                              target: "_blank" do %>
-                            <i class="fas fa-file-pdf"></i>
-                          <% end %>
-                          <%= button_to send_email_quote_path(quote), method: :post, class: "btn btn-sm btn-outline-success", data: { confirm: t('quotes.index.send_email_confirm') }, title: t('quotes.index.send_email'), form: { class: "d-inline-block m-0" } do %>
-                            <i class="fas fa-envelope"></i>
-                          <% end %>
-                          <%= link_to duplicate_quote_path(quote), class: "btn btn-sm btn-outline-info", 
-                              data: { bs_toggle: "tooltip", turbo_method: :get }, 
-                              title: t('quotes.index.duplicate') do %>
-                            <i class="fas fa-copy"></i>
-                          <% end %>
-                          <%= button_to quote_invoices_path(quote), method: :post, class: "btn btn-sm btn-outline-success", data: { bs_toggle: "tooltip" }, title: t('quotes.index.create_invoice'), form: { class: "d-inline-block m-0" } do %>
-                            <i class="fas fa-file-invoice"></i>
-                          <% end %>
                           <%= button_to quote_path(quote), 
                               method: :delete,
-                              class: "btn btn-sm btn-outline-danger",
+                              class: "btn btn-sm btn-outline-danger mx-1",
                               form: { class: "d-inline-block m-0" },
                               data: { bs_toggle: "tooltip" },
                               title: t('common.delete') do %>
@@ -120,36 +106,22 @@
                 <span class="fs-5 fw-bold text-success"><%= number_to_currency(quote.quote_data["totals"]["total"]) %></span>
                 
                 <div class="d-flex action-buttons">
-                  <%= link_to quote_path(quote), class: "btn btn-sm btn-outline-secondary", 
+                  <%= link_to quote_path(quote), class: "btn btn-sm btn-outline-secondary mx-1", 
                       data: { bs_toggle: "tooltip" }, 
                       title: t('quotes.index.view') do %>
                     <i class="fas fa-eye fa-sm"></i>
                   <% end %>
-                  <%= link_to edit_quote_path(quote), class: "btn btn-sm btn-outline-primary", 
+                  <%= link_to edit_quote_path(quote), class: "btn btn-sm btn-outline-primary mx-1", 
                       data: { bs_toggle: "tooltip" }, 
                       title: t('common.edit') do %>
                     <i class="fas fa-edit fa-sm"></i>
                   <% end %>
-                  <%= link_to modern_pdf_quote_path(quote, format: :pdf), class: "btn btn-sm btn-outline-secondary", 
-                      data: { bs_toggle: "tooltip" }, 
-                      title: t('quotes.index.download_pdf'),
-                      target: "_blank" do %>
-                    <i class="fas fa-file-pdf fa-sm"></i>
-                  <% end %>
-                  <%= button_to send_email_quote_path(quote), method: :post, class: "btn btn-sm btn-outline-success", data: { confirm: t('quotes.index.send_email_confirm') }, title: t('quotes.index.send_email'), form: { class: "d-inline-block m-0" } do %>
-                    <i class="fas fa-envelope fa-sm"></i>
-                  <% end %>
-                  <%= link_to duplicate_quote_path(quote), class: "btn btn-sm btn-outline-info", 
-                      data: { bs_toggle: "tooltip", turbo_method: :get }, 
-                      title: t('quotes.index.duplicate') do %>
-                    <i class="fas fa-copy fa-sm"></i>
-                  <% end %>
-                  <%= button_to quote_invoices_path(quote), method: :post, class: "btn btn-sm btn-outline-success", data: { bs_toggle: "tooltip" }, title: t('quotes.index.create_invoice'), form: { class: "d-inline-block m-0" } do %>
+                  <%= button_to quote_invoices_path(quote), method: :post, class: "btn btn-sm btn-outline-success mx-1", data: { bs_toggle: "tooltip" }, title: t('quotes.index.create_invoice'), form: { class: "d-inline-block m-0" } do %>
                     <i class="fas fa-file-invoice fa-sm"></i>
                   <% end %>
                   <%= button_to quote_path(quote), 
                       method: :delete,
-                      class: "btn btn-sm btn-outline-danger",
+                      class: "btn btn-sm btn-outline-danger mx-1",
                       form: { class: "d-inline-block m-0" },
                       data: { bs_toggle: "tooltip" },
                       title: t('common.delete') do %>
@@ -209,7 +181,16 @@
 /* Ensure buttons remain on a single row */
 .action-buttons {
   white-space: nowrap;
-  min-width: 240px; /* Adjust based on the width needed for all buttons */
+  min-width: 240px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-group {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Fix table layout to prevent wrapping */

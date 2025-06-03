@@ -366,6 +366,7 @@ es:
       view_pdf: "Ver PDF"
       send_email: "Enviar por correo"
       duplicate: "Duplicar"
+      invoice: "Crear Factura"
       send_email_title: "Enviar Cotización por Correo"
       customer_email: "Correo del cliente"
       additional_message: "Mensaje adicional (opcional)"
@@ -658,4 +659,11 @@ es:
       - :day
       - :month
       - :year
+  views:
+    pagination:
+      first: "Primera"
+      last: "Última"
+      previous: "Anterior"
+      next: "Siguiente"
+      truncate: "…"
  
