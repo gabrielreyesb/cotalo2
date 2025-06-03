@@ -180,6 +180,7 @@ es:
       length: "Largo"
       no_materials: "No hay materiales."
       create_first: "Crea tu primer material"
+      search_placeholder: "Buscar materiales…"
     new:
       title: "Nuevo material"
       details: "Detalles del material"
@@ -212,6 +213,7 @@ es:
       no_unit: "Sin unidad"
       no_processes: "No hay procesos."
       create_first: "Crea tu primer proceso"
+      search_placeholder: "Buscar procesos…"
     new:
       title: "Nuevo proceso"
       details: "Detalles del proceso"
@@ -265,6 +267,7 @@ es:
       no_unit: "Sin unidad"
       no_extras_html: "No hay extras. %{link}."
       create_first: "Crea tu primer extra"
+      search_placeholder: "Buscar extras…"
     new:
       title: "Nuevo extra"
     edit:
@@ -322,6 +325,7 @@ es:
       view: "Ver"
       no_quotes: "No hay cotizaciones creadas aún."
       create_new: "Crear nueva cotización"
+      search_placeholder: "Buscar cotizaciones…"
     form:
       quote_info: "Información de la cotización"
       project_name: "Nombre del proyecto"
@@ -431,6 +435,7 @@ es:
       create_new: "Crear nuevo producto"
       create_first_product: "Crea tu primer producto"
       save_product: "Guardar producto"
+      search_placeholder: "Buscar productos…"
     new:
       title: "Nuevo producto"
     edit:
@@ -666,4 +671,7 @@ es:
       previous: "Anterior"
       next: "Siguiente"
       truncate: "…"
+  customers:
+    index:
+      search_placeholder: "Buscar clientes…"
  

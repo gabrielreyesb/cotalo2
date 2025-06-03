@@ -6,7 +6,17 @@ class QuotesController < ApplicationController
   layout 'vue_application', only: [:new, :edit]
   
   def index
-    @quotes = current_user.quotes.order(created_at: :desc).page(params[:page]).per(10)
+    @quotes = current_user.quotes.order(created_at: :desc)
+    if params[:q].present?
+      query = "%#{params[:q]}%"
+      adapter = ActiveRecord::Base.connection.adapter_name.downcase
+      if adapter.include?("sqlite")
+        @quotes = @quotes.where("project_name LIKE ? OR quote_number LIKE ?", query, query)
+      else
+        @quotes = @quotes.where("project_name ILIKE ? OR quote_number ILIKE ?", query, query)
+      end
+    end
+    @quotes = @quotes.page(params[:page]).per(10)
   end
   
   def show

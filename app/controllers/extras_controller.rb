@@ -7,7 +7,17 @@ class ExtrasController < ApplicationController
     # Clear any potential AR cache to ensure fresh data
     ActiveRecord::Base.connection.clear_query_cache
     
-    @extras = current_user.extras.includes(:unit).order(name: :asc).reload
+    @extras = current_user.extras.includes(:unit).order(name: :asc)
+    if params[:q].present?
+      query = "%#{params[:q]}%"
+      adapter = ActiveRecord::Base.connection.adapter_name.downcase
+      if adapter.include?("sqlite")
+        @extras = @extras.where("name LIKE ? OR description LIKE ?", query, query)
+      else
+        @extras = @extras.where("name ILIKE ? OR description ILIKE ?", query, query)
+      end
+    end
+    @extras = @extras.page(params[:page]).per(10)
     
     # Debug logs
     puts "INDEX - EXTRAS:"

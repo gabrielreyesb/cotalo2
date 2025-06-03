@@ -1,0 +1,13 @@
+<%# app/views/shared/_search_form.html.erb %>
+<%# Usage: render_search_form(placeholder: "Search products…", extra_class: "my-custom-class") %>
+<% extra_class ||= "" %>
+<div class="d-flex mt-0 mb-2 justify-content-start <%= extra_class %>" style="max-width: 500px;">
+  <%= form_tag(request.path, method: :get, class: "d-flex w-100 justify-content-start", data: { turbo_frame: "search_results" }) do %>
+    <div class="input-group w-100">
+      <%= text_field_tag(:q, params[:q], class: "form-control text-start", placeholder: placeholder) %>
+      <button type="submit" class="btn btn-outline-primary">
+         <i class="fa fa-search"></i>
+      </button>
+    </div>
+  <% end %>
+</div> 

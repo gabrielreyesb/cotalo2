@@ -11,6 +11,16 @@
 <div class="row">
   <div class="col-12">
     <% if @manufacturing_processes.any? %>
+      <div class="row align-items-center mt-0 mb-2">
+        <div class="col-md-6 col-12">
+          <div class="d-flex">
+            <%= render_pagination(@manufacturing_processes) %>
+          </div>
+        </div>
+        <div class="col-md-6 col-12 d-flex justify-content-md-end justify-content-start mt-2 mt-md-0">
+          <%= render partial: "shared/search_form", locals: { placeholder: t('processes.index.search_placeholder', default: 'Search processes…'), extra_class: 'w-100 w-md-auto' } %>
+        </div>
+      </div>
       <!-- Table view for medium and large screens -->
       <div class="card green-accent-panel d-none d-md-block shadow-sm mb-4">
         <div class="card-body p-4">

@@ -7,13 +7,17 @@ class ManufacturingProcessesController < ApplicationController
     # Clear any potential AR cache to ensure fresh data
     ActiveRecord::Base.connection.clear_query_cache
     
-    @manufacturing_processes = current_user.manufacturing_processes.includes(:unit).order(name: :asc).reload
-    
-    # Debug logs
-    puts "INDEX - MANUFACTURING PROCESSES:"
-    @manufacturing_processes.each do |mp|
-      puts "  ID: #{mp.id}, Name: #{mp.name}, Unit ID: #{mp.unit_id}, Unit: #{mp.unit&.name || 'None'}"
+    @manufacturing_processes = current_user.manufacturing_processes.includes(:unit).order(name: :asc)
+    if params[:q].present?
+      query = "%#{params[:q]}%"
+      adapter = ActiveRecord::Base.connection.adapter_name.downcase
+      if adapter.include?("sqlite")
+        @manufacturing_processes = @manufacturing_processes.where("name LIKE ? OR description LIKE ?", query, query)
+      else
+        @manufacturing_processes = @manufacturing_processes.where("name ILIKE ? OR description ILIKE ?", query, query)
+      end
     end
+    @manufacturing_processes = @manufacturing_processes.page(params[:page]).per(10)
   end
 
   def show

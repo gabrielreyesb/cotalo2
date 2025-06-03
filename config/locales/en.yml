@@ -211,6 +211,7 @@ en:
       create_first: "Create your first material"
       comments: "Comments about materials"
       comments_placeholder: "Add notes or general comments about the materials for this product"
+      search_placeholder: "Search materials…"
     new:
       title: "New material"
       details: "Material details"
@@ -241,6 +242,7 @@ en:
       no_unit: "No unit"
       no_processes: "No processes."
       create_first: "Create your first process"
+      search_placeholder: "Search processes…"
     new:
       title: "New process"
       details: "Process details"
@@ -292,6 +294,7 @@ en:
       no_unit: "No unit"
       no_extras_html: "No extras. %{link}."
       create_first: "Create your first extra"
+      search_placeholder: "Search extras…"
     new:
       title: "New extra"
     edit:
@@ -347,6 +350,7 @@ en:
       view: "View"
       no_quotes: "No quotes created yet."
       create_new: "Create new quote"
+      search_placeholder: "Search quotes…"
     form:
       quote_info: "Quote Info"
       project_name: "Project Name"
@@ -452,6 +456,7 @@ en:
       duplicate_product: "Duplicate product"
       no_products: "No products created yet."
       create_new: "Create new product"
+      search_placeholder: "Search products…"
     form:
       tabs:
         general: "General Information"
@@ -581,6 +586,7 @@ en:
         success: "User was successfully deleted"
       last_login: "Last Login"
       never_logged_in: "Never"
+      search_placeholder: "Search customers…"
     impersonation:
       currently_impersonating: "You are currently impersonating %{email}"
       stop: "Stop Impersonating"

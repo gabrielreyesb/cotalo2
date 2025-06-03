@@ -4,6 +4,16 @@ class CustomersController < ApplicationController
 
   def index
     @customers = current_user.customers.order(name: :asc)
+    if params[:q].present?
+      query = "%#{params[:q]}%"
+      adapter = ActiveRecord::Base.connection.adapter_name.downcase
+      if adapter.include?("sqlite")
+        @customers = @customers.where("name LIKE ? OR email LIKE ? OR company LIKE ?", query, query, query)
+      else
+        @customers = @customers.where("name ILIKE ? OR email ILIKE ? OR company ILIKE ?", query, query, query)
+      end
+    end
+    @customers = @customers.page(params[:page]).per(10)
   end
 
   def show

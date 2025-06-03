@@ -4,7 +4,17 @@ class ProductsController < ApplicationController
   before_action :no_cache, only: [:index, :show, :new, :edit]
 
   def index
-    @products = current_user.products.order(created_at: :desc).page(params[:page]).per(10)
+    @products = current_user.products.order(created_at: :desc)
+    if params[:q].present?
+      query = "%#{params[:q]}%"
+      adapter = ActiveRecord::Base.connection.adapter_name.downcase
+      if adapter.include?("sqlite")
+        @products = @products.where("description LIKE ?", query)
+      else
+        @products = @products.where("description ILIKE ?", query)
+      end
+    end
+    @products = @products.page(params[:page]).per(10)
   end
 
   def show

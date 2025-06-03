@@ -4,6 +4,16 @@ class MaterialsController < ApplicationController
 
   def index
     @materials = current_user.materials.includes(:unit).order(description: :asc)
+    if params[:q].present?
+      query = "%#{params[:q]}%"
+      adapter = ActiveRecord::Base.connection.adapter_name.downcase
+      if adapter.include?("sqlite")
+        @materials = @materials.where("description LIKE ? OR client_description LIKE ?", query, query)
+      else
+        @materials = @materials.where("description ILIKE ? OR client_description ILIKE ?", query, query)
+      end
+    end
+    @materials = @materials.page(params[:page]).per(10)
   end
 
   def show
