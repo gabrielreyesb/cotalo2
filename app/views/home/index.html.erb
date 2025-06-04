@@ -78,28 +78,35 @@
   <div class="container">
     <h2 class="text-center mb-5"><%= t('home.benefits_title') %></h2>
     <div class="row g-4">
-      <div class="col-md-3">
+      <div class="col-md-2 col-lg-2-4 order-1">
         <div class="text-center">
           <i class="fas fa-clock fa-3x mb-3" style="color: var(--cotalo-green);"></i>
           <h5><%= t('home.benefit1_title') %></h5>
           <p><%= t('home.benefit1_desc') %></p>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-2 col-lg-2-4 order-2">
         <div class="text-center">
           <i class="fas fa-check-circle fa-3x mb-3" style="color: var(--cotalo-green);"></i>
           <h5><%= t('home.benefit2_title') %></h5>
           <p><%= t('home.benefit2_desc') %></p>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-2 col-lg-2-4 order-3">
+        <div class="text-center">
+          <i class="fas fa-print fa-3x mb-3" style="color: var(--cotalo-green);"></i>
+          <h5><%= t('home.benefit5_title') %></h5>
+          <p><%= t('home.benefit5_desc') %></p>
+        </div>
+      </div>
+      <div class="col-md-2 col-lg-2-4 order-4">
         <div class="text-center">
           <i class="fas fa-chart-line fa-3x mb-3" style="color: var(--cotalo-green);"></i>
           <h5><%= t('home.benefit3_title') %></h5>
           <p><%= t('home.benefit3_desc') %></p>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-2 col-lg-2-4 order-5">
         <div class="text-center">
           <i class="fas fa-user-friends fa-3x mb-3" style="color: var(--cotalo-green);"></i>
           <h5><%= t('home.benefit4_title') %></h5>
@@ -210,6 +217,14 @@
 
 .bg-darker {
   background-color: var(--darker-bg);
+}
+
+/* Custom column width for 5 benefits */
+@media (min-width: 992px) {
+  .col-lg-2-4 {
+    flex: 0 0 auto;
+    width: 20%;
+  }
 }
 
 .timeline {
