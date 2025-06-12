@@ -142,12 +142,9 @@ class User < ApplicationRecord
     setup_trial_period
     begin
       Rails.logger.info "[setup_initial_data] Creating or finding units..."
-      mt2_unit = Unit.find_or_create_by!(name: 'mt2')
-      mt2_unit.update!(abbreviation: 'm²') unless mt2_unit.abbreviation == 'm²'
-      pieza_unit = Unit.find_or_create_by!(name: 'pieza')
-      pieza_unit.update!(abbreviation: 'pieza') unless pieza_unit.abbreviation == 'pieza'
-      pliego_unit = Unit.find_or_create_by!(name: 'pliego')
-      pliego_unit.update!(abbreviation: 'pliego') unless pliego_unit.abbreviation == 'pliego'
+      mt2_unit = Unit.find_or_create_by!(name: 'mt2', abbreviation: 'm²')
+      pieza_unit = Unit.find_or_create_by!(name: 'pieza', abbreviation: 'pieza')
+      pliego_unit = Unit.find_or_create_by!(name: 'pliego', abbreviation: 'pliego')
 
       Rails.logger.info "[setup_initial_data] Setting default app configs..."
       set_config(AppConfig::WASTE_PERCENTAGE, 0, AppConfig::PERCENTAGE)
@@ -180,7 +177,141 @@ class User < ApplicationRecord
         { min_price: 5001, max_price: 50000, margin_percentage: 15 },
         { min_price: 50001, max_price: 200000, margin_percentage: 25 }
       ])
+
+      Rails.logger.info "[setup_initial_data] Creating demo product..."
+      # Get the created demo data
+      demo_materials = materials.limit(3).to_a
+      demo_processes = manufacturing_processes.limit(3).to_a
+      demo_extras = extras.limit(2).to_a
+
+      # Create a test product with 2 materials, 2 processes, and 1 extra
+      test_product = products.create!(
+        description: "Producto de prueba",
+        data: {
+          general_info: {
+            width: 50,
+            length: 30,
+            inner_measurements: nil,
+            quantity: 100,
+            comments: "Producto de demostración para nuevos usuarios"
+          },
+          materials: [
+            {
+              material_id: demo_materials[0].id,
+              description: demo_materials[0].description,
+              client_description: demo_materials[0].client_description,
+              resistance: demo_materials[0].resistance,
+              price: demo_materials[0].price,
+              unit: {
+                id: demo_materials[0].unit.id,
+                name: demo_materials[0].unit.name,
+                abbreviation: demo_materials[0].unit.abbreviation
+              },
+              ancho: 50,
+              largo: 30,
+              quantity: 100,
+              piecesPerMaterial: 6,
+              totalSheets: 17,
+              totalSquareMeters: 25.5,
+              totalPrice: 255.0,
+              comments: "Material principal del producto"
+            },
+            {
+              material_id: demo_materials[1].id,
+              description: demo_materials[1].description,
+              client_description: demo_materials[1].client_description,
+              resistance: demo_materials[1].resistance,
+              price: demo_materials[1].price,
+              unit: {
+                id: demo_materials[1].unit.id,
+                name: demo_materials[1].unit.name,
+                abbreviation: demo_materials[1].unit.abbreviation
+              },
+              ancho: 25,
+              largo: 15,
+              quantity: 100,
+              piecesPerMaterial: 24,
+              totalSheets: 5,
+              totalSquareMeters: 1.875,
+              totalPrice: 22.5,
+              comments: "Material secundario para detalles"
+            }
+          ],
+          processes: [
+            {
+              id: demo_processes[0].id,
+              description: demo_processes[0].name,
+              unit: demo_processes[0].unit.abbreviation,
+              unitPrice: demo_processes[0].cost,
+              materialId: demo_materials[0].id,
+              materialDescription: demo_materials[0].description,
+              price: 3.5 * 25.5,
+              quantity: 25.5,
+              comments: "Proceso principal de empalmado"
+            },
+            {
+              id: demo_processes[1].id,
+              description: demo_processes[1].name,
+              unit: demo_processes[1].unit.abbreviation,
+              unitPrice: demo_processes[1].cost,
+              materialId: demo_materials[1].id,
+              materialDescription: demo_materials[1].description,
+              price: 0.35 * 100,
+              quantity: 100,
+              comments: "Pegado lineal para cada pieza"
+            }
+          ],
+          extras: [
+            {
+              id: demo_extras[0].id,
+              name: demo_extras[0].name,
+              description: demo_extras[0].description,
+              unit_price: demo_extras[0].cost.to_f,
+              quantity: 1,
+              total: demo_extras[0].cost.to_f * 1,
+              comments: "Placas necesarias para la impresión"
+            }
+          ],
+          pricing: {
+            materials_cost: 277.5,
+            processes_cost: 124.25,
+            extras_cost: 250.0,
+            subtotal: 651.75,
+            waste_percentage: 5,
+            waste_value: 32.59,
+            price_per_piece_before_margin: 6.84,
+            margin_percentage: 10,
+            margin_value: 68.43,
+            total_price: 752.77,
+            final_price_per_piece: 7.53
+          }
+        }
+      )
+
       Rails.logger.info "[setup_initial_data] Demo data creation complete."
+      
+      # Create a test quote using the test product
+      Rails.logger.info "[setup_initial_data] Creating demo quote..."
+      test_quote = quotes.create!(
+        project_name: "Proyecto de demostración",
+        customer_name: "Cliente de prueba",
+        organization: "Empresa de demostración",
+        email: "cliente@ejemplo.com",
+        telephone: "555-123-4567",
+        comments: "Cotización de demostración para nuevos usuarios",
+        data: Quote.default_data
+      )
+      
+      # Add the test product to the quote
+      test_quote.quote_products.create!(
+        product: test_product,
+        quantity: 50
+      )
+      
+      # Calculate totals for the quote
+      test_quote.calculate_totals
+      
+      Rails.logger.info "[setup_initial_data] Demo quote created: #{test_quote.quote_number}"
     rescue => e
       Rails.logger.error "[setup_initial_data] ERROR: #{e.class}: #{e.message}"
       Rails.logger.error e.backtrace.join("\n")

@@ -4,10 +4,8 @@ one:
   title: MyString
   content: MyText
   published_at: 2025-04-02 11:24:29
-  user: one
 
 two:
   title: MyString
   content: MyText
   published_at: 2025-04-02 11:24:29
-  user: two

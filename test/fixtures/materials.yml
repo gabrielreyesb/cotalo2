@@ -3,8 +3,8 @@
 one:
   description: MyString
   price: 9.99
-  nombre: MyString
-  especificaciones: MyString
+  client_description: MyString
+  resistance: MyString
   ancho: 9.99
   largo: 9.99
   comments: MyText
@@ -14,8 +14,8 @@ one:
 two:
   description: MyString
   price: 9.99
-  nombre: MyString
-  especificaciones: MyString
+  client_description: MyString
+  resistance: MyString
   ancho: 9.99
   largo: 9.99
   comments: MyText
