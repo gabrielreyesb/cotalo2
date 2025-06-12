@@ -1,6 +1,9 @@
 <nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container-fluid px-4">
-    <%= link_to "Cotalo", root_path, class: "navbar-brand" %>
+    <%= link_to root_path, class: "navbar-brand d-flex align-items-center" do %>
+      <i class="fas fa-box-open fa-lg me-2" style="color: var(--cotalo-green);"></i>
+      Cotalo
+    <% end %>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -170,6 +173,16 @@
   
   .main-navbar .navbar-brand {
     font-size: 1.5rem;
+  }
+  
+  .main-navbar .navbar-brand img {
+    max-height: 40px;
+    width: auto;
+    transition: transform 0.2s ease;
+  }
+  
+  .main-navbar .navbar-brand:hover img {
+    transform: scale(1.05);
   }
   
   .main-navbar .nav-link {

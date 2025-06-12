@@ -27,6 +27,7 @@ gem "dotenv-rails", "~> 3.1"
 gem "cloudinary", "~> 2.3"
 gem "down", "~> 5.4"
 gem 'mini_racer'
+gem 'roo'
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ]

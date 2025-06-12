@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+  <h1>Nueva solicitud de demostración</h1>
+  
+  <h2>Información del solicitante:</h2>
+  <p><strong>Nombre:</strong> <%= @demo_request.name %></p>
+  <p><strong>Email:</strong> <%= @demo_request.email %></p>
+  <p><strong>Empresa:</strong> <%= @demo_request.company %></p>
+  <% if @demo_request.phone.present? %>
+    <p><strong>Teléfono:</strong> <%= @demo_request.phone %></p>
+  <% end %>
+  
+  <h2>Mensaje:</h2>
+  <p><%= @demo_request.message %></p>
+  
+  <hr>
+  <p><small>Esta solicitud fue enviada desde el formulario de demostración de Cotalo.</small></p>
+</body>
+</html> 

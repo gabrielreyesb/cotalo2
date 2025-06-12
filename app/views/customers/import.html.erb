@@ -1,0 +1,357 @@
+<% 
+   has_validation_data = @has_validated_file
+   import_summary = @validation_summary || {}
+   validated_file_name = @validated_file_name
+   can_import = import_summary['valid_rows'].to_i > 0 || import_summary['updated_customers'].to_i > 0
+   has_import_results = defined?(@has_import_results) && @has_import_results
+%>
+
+<% content_for :page_title do %>
+  <%= t('customers.import.title') %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to customers_path, class: "btn btn-outline-light" do %>
+    <i class="fa fa-arrow-left me-1"></i> <%= t('customers.import.back_to_customers') %>
+  <% end %>
+<% end %>
+
+<div class="row">
+  <div class="col-12 col-lg-10 mx-auto">
+    <div class="card green-accent-panel">
+      <div class="card-body">
+        <!-- Step 1: Download Template -->
+        <div class="import-step import-step-panel mb-4">
+          <div class="d-flex align-items-center mb-0 justify-content-between">
+            <div class="d-flex align-items-center">
+              <div class="step-number me-3">1</div>
+              <h6 class="mb-0">Descargar Plantilla</h6>
+            </div>
+            <%= link_to import_template_customers_path(format: :csv), class: "btn btn-outline-primary ms-3 import-btn-wide" do %>
+              <i class="fa fa-download me-1"></i> Descargar Plantilla
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Step 2: Upload File -->
+        <div class="import-step import-step-panel mb-4">
+          <div class="d-flex align-items-center mb-0 justify-content-between">
+            <div class="d-flex align-items-center">
+              <div class="step-number me-3">2</div>
+              <h6 class="mb-0" style="min-width: 200px; white-space: nowrap;">Subir Archivo</h6>
+            </div>
+            <div class="custom-file-upload d-flex align-items-center justify-content-end w-100">
+              <span id="file-upload-filename" class="filename-display me-4 text-truncate" tabindex="0">
+                <%= (@original_file_name.presence || @validated_file_name.presence) || 'Ningún archivo seleccionado' %>
+              </span>
+              <label for="file-upload" class="btn btn-outline-primary import-btn-wide mb-0" style="white-space:nowrap;">
+                <i class="fa fa-upload me-1"></i> Seleccionar archivo
+              </label>
+            </div>
+          </div>
+          <input type="file" accept=".xlsx,.xls,.csv" class="form-control d-none" id="file-upload" required>
+        </div>
+
+        <!-- Step 3: Validate File (always visible) -->
+        <div class="import-step import-step-panel mb-4">
+          <div class="d-flex align-items-center mb-0 justify-content-between mb-3">
+            <div class="d-flex align-items-center">
+              <div class="step-number me-3">3</div>
+              <h6 class="mb-0">Validar Archivo</h6>
+            </div>
+            <form id="validate-form" action="<%= validate_upload_customers_path %>" method="post" enctype="multipart/form-data" class="d-inline">
+              <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+              <input type="file" name="file" accept=".xlsx,.xls,.csv" class="form-control d-none" id="file-upload-validate" required>
+              <button type="submit" id="validateBtn" class="btn btn-outline-primary import-btn-wide" disabled>
+                <i class="fa fa-check me-1"></i> Validar Archivo
+              </button>
+            </form>
+          </div>
+          <% if has_validation_data %>
+          <!-- Validation Results -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h6 class="mb-0">
+                <i class="fa fa-check-circle text-success me-2"></i>
+                Resultados de Validación
+              </h6>
+            </div>
+            <div class="card-body">
+              <% if import_summary['invalid_rows'].to_i > 0 %>
+                <!-- Show validation errors -->
+                <div class="alert alert-danger">
+                  <i class="fa fa-exclamation-triangle me-2"></i>
+                  <strong>Errores de Validación Encontrados</strong>
+                  <p class="mb-0 mt-2">
+                    Se encontraron <%= import_summary['invalid_rows'] %> filas con errores que necesitan ser corregidas antes de importar.
+                  </p>
+                </div>
+              <% else %>
+                <!-- Show success summary -->
+                <% new_customers = import_summary['valid_rows'] || 0 %>
+                <% updated_customers = import_summary['updated_customers'] || 0 %>
+                <% total_actions = new_customers + updated_customers %>
+                
+                <% if total_actions > 0 %>
+                  <div class="alert alert-success">
+                    <i class="fa fa-check-circle me-2"></i>
+                    <strong>Validación Exitosa</strong>
+                    <p class="mb-0 mt-2">
+                      <% if new_customers > 0 && updated_customers > 0 %>
+                        Se importarán <strong><%= new_customers %></strong> clientes nuevos y se actualizarán <strong><%= updated_customers %></strong> clientes existentes.
+                      <% elsif new_customers > 0 %>
+                        Se importarán <strong><%= new_customers %></strong> clientes nuevos.
+                      <% elsif updated_customers > 0 %>
+                        Se actualizarán <strong><%= updated_customers %></strong> clientes existentes.
+                      <% end %>
+                    </p>
+                  </div>
+                <% else %>
+                  <div class="alert alert-warning">
+                    <i class="fa fa-exclamation-triangle me-2"></i>
+                    <strong>No hay datos válidos para importar</strong>
+                    <p class="mb-0 mt-2">
+                      No se encontraron datos válidos para importar. Verifica que el archivo contenga información correcta.
+                    </p>
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+          <% end %>
+        </div>
+
+        <% if has_validation_data && !has_import_results %>
+        <!-- Step 4: Confirm Upload -->
+        <div class="import-step import-step-panel mb-4">
+          <div class="d-flex align-items-center mb-0 justify-content-between mb-3">
+            <div class="d-flex align-items-center">
+              <div class="step-number me-3">4</div>
+              <h6 class="mb-0">Confirmar Importación</h6>
+            </div>
+            <% if can_import %>
+              <%= form_with url: import_process_customers_path, method: :post, local: true, multipart: true, class: "d-inline" do |form| %>
+                <%= hidden_field_tag :validated_file_path, @validated_file_path if @validated_file_path.present? %>
+                <%= hidden_field_tag :original_file_name, (@original_file_name.presence || @validated_file_name) if (@original_file_name.presence || @validated_file_name) %>
+                <button type="submit" class="btn btn-outline-primary import-btn-wide">
+                  <i class="fa fa-check me-1"></i> Confirmar Importación
+                </button>
+              <% end %>
+            <% else %>
+              <button class="btn btn-outline-primary import-btn-wide" disabled>
+                <i class="fa fa-check me-1"></i> Confirmar Importación
+              </button>
+            <% end %>
+          </div>
+        </div>
+        <% end %>
+
+        <% if has_import_results %>
+        <!-- Import Results -->
+        <div class="import-step import-step-panel mb-4">
+          <div class="d-flex align-items-center mb-0 justify-content-between mb-3">
+            <div class="d-flex align-items-center">
+              <div class="step-number me-3">4</div>
+              <h6 class="mb-0">Resultados de Importación</h6>
+            </div>
+            <%= link_to 'Realizar otra importación', import_customers_path, class: 'btn btn-outline-primary import-btn-wide' %>
+          </div>
+          <div class="card mb-4 bg-dark border-secondary shadow-sm rounded-4">
+            <div class="card-header bg-dark border-bottom border-secondary rounded-top-4">
+              <h6 class="mb-0 text-white">
+                <i class="fa fa-database text-white me-2"></i>
+                Resumen de Importación
+              </h6>
+            </div>
+            <div class="card-body">
+              <% if @import_results[:errors].any? %>
+                <!-- Show import errors -->
+                <div class="alert alert-danger border-danger bg-dark text-danger mb-4 rounded-3">
+                  <i class="fa fa-exclamation-triangle me-2"></i>
+                  <strong>Errores de Importación Encontrados</strong>
+                  <p class="mb-0 mt-2">
+                    Se encontraron <%= @import_results[:errors].count %> errores durante la importación.
+                  </p>
+                </div>
+                <div class="table-responsive mb-4">
+                  <table class="table table-sm table-dark table-striped align-middle rounded-3 overflow-hidden">
+                    <thead>
+                      <tr>
+                        <th>Fila</th>
+                        <th>Error</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% @import_results[:errors].each do |error| %>
+                        <tr>
+                          <td><%= error.split(':').first %></td>
+                          <td><%= error.split(':').last.strip %></td>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              <% end %>
+              <!-- Import Summary Table -->
+              <div class="table-responsive mb-4">
+                <table class="table table-sm table-dark align-middle rounded-3 overflow-hidden">
+                  <thead>
+                    <tr>
+                      <th class="text-light">Acción</th>
+                      <th class="text-light">Cantidad</th>
+                      <th class="text-light">Descripción</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="text-light"><i class="fa fa-plus-circle me-2 text-white"></i><span>Nuevos Clientes</span></td>
+                      <td><span class="badge bg-dark border border-secondary text-white fs-6"><%= @import_results[:imported] %></span></td>
+                      <td class="text-secondary">Clientes agregados exitosamente</td>
+                    </tr>
+                    <tr>
+                      <td class="text-light"><i class="fa fa-edit me-2 text-white"></i><span>Actualizados</span></td>
+                      <td><span class="badge bg-dark border border-secondary text-white fs-6"><%= @import_results[:updated] %></span></td>
+                      <td class="text-secondary">Clientes existentes con datos modificados</td>
+                    </tr>
+                    <tr>
+                      <td class="text-light"><i class="fa fa-minus-circle me-2 text-white"></i><span>Sin Cambios</span></td>
+                      <td><span class="badge bg-dark border border-secondary text-white fs-6"><%= @import_results[:unchanged] %></span></td>
+                      <td class="text-secondary">Clientes existentes sin modificaciones</td>
+                    </tr>
+                    <tr>
+                      <td class="text-light"><i class="fa fa-list me-2 text-white"></i><span>Total Procesado</span></td>
+                      <td><span class="badge bg-dark border border-secondary text-white fs-6"><%= @import_results[:total_rows] %></span></td>
+                      <td class="text-secondary">Total de filas en el archivo</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <% if @import_results[:imported] > 0 || @import_results[:updated] > 0 %>
+                <div class="alert border-success bg-dark text-success mt-3 rounded-3">
+                  <i class="fa fa-check-circle me-2"></i>
+                  <span class="fw-bold">Importación Completada</span>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.import-step {
+  border-left: 3px solid var(--cotalo-green);
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  background-color: var(--cotalo-green);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.upload-form {
+  max-width: 400px;
+}
+
+.badge i {
+  font-size: 0.8em;
+}
+
+.import-btn-wide {
+  min-width: 220px;
+}
+
+.import-btn-wide:disabled {
+  background-color: #6c757d !important;
+  border-color: #6c757d !important;
+  color: #adb5bd !important;
+  opacity: 0.6;
+}
+
+.import-step-panel {
+  border: 1px solid #32383e;
+  border-radius: 4px;
+  background-color: #1a1e21;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.filename-display {
+  width: 600px;
+  min-width: 300px;
+  max-width: 100%;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 8px 16px;
+  border-radius: 4px;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.filename-display.has-content,
+.filename-display:focus {
+  border-color: var(--cotalo-green);
+  box-shadow: 0 0 0 0.25rem rgba(var(--cotalo-green-rgb, 138,191,80), 0.25);
+  outline: none;
+}
+
+@media (max-width: 991.98px) {
+  .custom-file-upload {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.5rem;
+  }
+  #file-upload-filename, .filename-display {
+    margin-bottom: 0.5rem;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+</style>
+
+<script>
+// File upload and validate button logic
+(function() {
+  var fileInput = document.getElementById('file-upload');
+  var fileNameSpan = document.getElementById('file-upload-filename');
+  var validateBtn = document.getElementById('validateBtn');
+  var validateFileInput = document.getElementById('file-upload-validate');
+  var validateForm = document.getElementById('validate-form');
+
+  // When file is selected in step 2, update filename and enable validate button in step 3
+  if (fileInput && fileNameSpan && validateBtn && validateFileInput) {
+    fileInput.addEventListener('change', function() {
+      if (fileInput.files.length > 0) {
+        var fileName = fileInput.files[0].name;
+        fileNameSpan.textContent = fileName;
+        fileNameSpan.classList.add('has-content');
+        validateBtn.disabled = false;
+        // Copy file to validate input
+        validateFileInput.files = fileInput.files;
+      } else {
+        fileNameSpan.textContent = 'Ningún archivo seleccionado';
+        fileNameSpan.classList.remove('has-content');
+        validateBtn.disabled = true;
+        validateFileInput.value = '';
+      }
+    });
+  }
+})();
+</script> 

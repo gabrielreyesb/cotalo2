@@ -9,7 +9,7 @@
               <select 
                 id="extra-select" 
                 v-model="selectedExtraId" 
-                class="form-select"
+                class="form-select bg-dark text-white border-secondary"
                 :disabled="!availableExtras.length"
               >
                 <option value="" disabled>{{ translations.extras_tab.select_extra_placeholder }}</option>
@@ -90,7 +90,7 @@
                   <td class="text-end">
                     <input
                       type="number"
-                      class="form-control form-control-sm text-end"
+                      class="form-control form-control-sm text-end bg-dark text-white border-secondary"
                       v-model.number="extra.unit_price"
                       @change="updateExtraPrice(index)"
                       min="0"
@@ -103,7 +103,7 @@
                     <div class="input-group input-group-sm">
                       <input 
                         type="number" 
-                        class="form-control form-control-sm text-end"
+                        class="form-control form-control-sm text-end bg-dark text-white border-secondary"
                         v-model.number="extra.quantity"
                         min="1"
                         @change="updateExtraQuantity(index)"
@@ -162,7 +162,7 @@
                     <div class="input-group input-group-sm">
                       <input 
                         type="number" 
-                        class="form-control form-control-sm text-end"
+                        class="form-control form-control-sm text-end bg-dark text-white border-secondary"
                         v-model.number="extra.unit_price"
                         @change="updateExtraPrice(index)"
                         min="0"
@@ -176,7 +176,7 @@
                     <div class="input-group input-group-sm">
                       <input 
                         type="number" 
-                        class="form-control form-control-sm text-end"
+                        class="form-control form-control-sm text-end bg-dark text-white border-secondary"
                         v-model.number="extra.quantity"
                         min="1"
                         @change="updateExtraQuantity(index)"
@@ -222,7 +222,7 @@
             <label for="global-comments" class="form-label">{{ translations.extras_tab.comments_label }}</label>
             <textarea 
               id="global-comments" 
-              class="form-control" 
+              class="form-control bg-dark text-white border-secondary" 
               v-model="globalComments" 
               rows="3"
               :placeholder="translations.extras_tab.comments_placeholder"

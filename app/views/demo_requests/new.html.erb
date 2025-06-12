@@ -1,0 +1,148 @@
+<% content_for :page_title do %>
+  Solicitar Demostración
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to root_path, class: "btn btn-outline-light" do %>
+    <i class="fas fa-arrow-left"></i> Volver
+  <% end %>
+<% end %>
+
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="green-accent-panel">
+        <div class="card shadow-lg border-0">
+          <div class="card-body p-5">
+            <div class="text-center mb-4">
+              <h2 class="fw-bold mb-2"><%= t('demo_requests.title') %></h2>
+              <p class="text-muted"><%= t('demo_requests.subtitle') %></p>
+            </div>
+
+            <%= form_with(model: @demo_request, local: true, class: "demo-request-form") do |f| %>
+              <% if @demo_request.errors.any? %>
+                <div class="alert alert-danger">
+                  <h4><%= pluralize(@demo_request.errors.count, "error") %> impidieron que se enviara la solicitud:</h4>
+                  <ul>
+                    <% @demo_request.errors.full_messages.each do |message| %>
+                      <li><%= message %></li>
+                    <% end %>
+                  </ul>
+                </div>
+              <% end %>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <%= f.label :name, t('demo_requests.form.name'), class: "form-label text-start" %>
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      <i class="fa fa-user"></i>
+                    </span>
+                    <%= f.text_field :name, class: "form-control text-start", placeholder: t('demo_requests.form.name_placeholder') %>
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <%= f.label :email, t('demo_requests.form.email'), class: "form-label text-start" %>
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      <i class="fa fa-envelope"></i>
+                    </span>
+                    <%= f.email_field :email, class: "form-control text-start", placeholder: t('demo_requests.form.email_placeholder') %>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <%= f.label :company, t('demo_requests.form.company'), class: "form-label text-start" %>
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      <i class="fa fa-building"></i>
+                    </span>
+                    <%= f.text_field :company, class: "form-control text-start", placeholder: t('demo_requests.form.company_placeholder') %>
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <%= f.label :phone, t('demo_requests.form.phone'), class: "form-label text-start" %>
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      <i class="fa fa-phone"></i>
+                    </span>
+                    <%= f.telephone_field :phone, class: "form-control text-start", placeholder: t('demo_requests.form.phone_placeholder') %>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <%= f.label :message, t('demo_requests.form.message'), class: "form-label text-start" %>
+                <%= f.text_area :message, class: "form-control text-start", rows: 5, placeholder: t('demo_requests.form.message_placeholder') %>
+                <small class="form-text text-muted text-start"><%= t('demo_requests.form.message_help') %></small>
+              </div>
+
+              <div class="d-grid">
+                <%= f.submit t('demo_requests.form.submit'), class: "btn btn-success btn-lg" %>
+              </div>
+            <% end %>
+
+            <div class="text-center mt-4">
+              <small class="text-muted">
+                <%= t('demo_requests.privacy_notice') %>
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.demo-request-form .form-control {
+  color: #e1e1e1;
+  background-color: #2c3136;
+  border: 1px solid #495057;
+  border-radius: 4px;
+  text-align: left;
+}
+
+.demo-request-form .form-control:focus {
+  color: #e1e1e1;
+  background-color: #2c3136;
+  border-color: var(--cotalo-green);
+  box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25);
+  text-align: left;
+}
+
+.demo-request-form .form-control::placeholder {
+  color: #6c757d;
+  text-align: left;
+}
+
+.demo-request-form .input-group-text {
+  color: #e1e1e1;
+  background-color: #2c3136;
+  border: 1px solid #495057;
+}
+
+.demo-request-form .btn-success {
+  background-color: var(--cotalo-green);
+  border-color: var(--cotalo-green);
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+}
+
+.demo-request-form .btn-success:hover {
+  background-color: var(--cotalo-green-dark);
+  border-color: var(--cotalo-green-dark);
+}
+
+.demo-request-form .form-label {
+  text-align: left;
+}
+
+.demo-request-form .form-text {
+  text-align: left;
+}
+</style>

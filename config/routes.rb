@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'demo_requests/new'
+  get 'demo_requests/create'
   # Authentication routes
   devise_for :users
   
@@ -153,5 +155,17 @@ Rails.application.routes.draw do
 
   get 'subscribe', to: 'subscriptions#new', as: :subscribe
 
-  resources :customers
+  resources :customers do
+    collection do
+      get :import
+      post :validate_upload
+      post :import_process
+      get :import_template
+      delete :clear_import_session
+    end
+  end
+  
+  # Demo requests
+  resources :demo_requests, only: [:new, :create]
+  get 'demo_request/success', to: 'demo_requests#success', as: :demo_request_success
 end

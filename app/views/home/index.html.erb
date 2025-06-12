@@ -167,6 +167,22 @@
             style="border:0;"
           ></iframe>
         </div>
+        
+        <!-- Demo Request CTA -->
+        <div class="text-center mt-4 w-100">
+          <div class="card bg-darker border-success">
+            <div class="card-body p-4">
+              <h4 class="text-success mb-3"><%= t('home.demo_request_title') %></h4>
+              <p class="text-light mb-4"><%= t('home.demo_request_subtitle') %></p>
+              <%= link_to new_demo_request_path, class: "btn btn-success btn-lg" do %>
+                <i class="fas fa-video me-2"></i><%= t('home.request_demo') %>
+              <% end %>
+              <div class="mt-2">
+                <small class="text-muted"><%= t('home.demo_request_info') %></small>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!, unless: :skip_authentication?
   before_action :set_cors_headers
   before_action :set_locale
+  before_action :skip_trackable_for_impersonation
 
   # Redirect to dashboard after sign in
   def after_sign_in_path_for(resource)
@@ -42,5 +43,12 @@ class ApplicationController < ActionController::Base
 
   def default_url_options
     { locale: I18n.locale }
+  end
+
+  # Skip Devise trackable if impersonating
+  def skip_trackable_for_impersonation
+    if session[:impersonated_user_id]
+      request.env['devise.skip_trackable'] = true
+    end
   end
 end

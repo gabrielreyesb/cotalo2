@@ -1,0 +1,43 @@
+<% content_for :page_title do %>
+  Solicitud Enviada
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to root_path, class: "btn btn-outline-light" do %>
+    <i class="fas fa-home"></i> Inicio
+  <% end %>
+<% end %>
+
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="green-accent-panel">
+        <div class="card shadow-lg border-0">
+          <div class="card-body p-5 text-center">
+            <div class="mb-4">
+              <i class="fas fa-check-circle fa-5x" style="color: var(--cotalo-green);"></i>
+            </div>
+            
+            <h2 class="fw-bold mb-3"><%= t('demo_requests.success.title') %></h2>
+            <p class="lead mb-4"><%= t('demo_requests.success.message') %></p>
+            
+            <div class="alert alert-info">
+              <h5><i class="fas fa-info-circle me-2"></i><%= t('demo_requests.success.what_happens_next') %></h5>
+              <ul class="list-unstyled mb-0">
+                <li><i class="fas fa-clock me-2"></i><%= t('demo_requests.success.timeline_1') %></li>
+                <li><i class="fas fa-calendar me-2"></i><%= t('demo_requests.success.timeline_2') %></li>
+                <li><i class="fas fa-video me-2"></i><%= t('demo_requests.success.timeline_3') %></li>
+              </ul>
+            </div>
+            
+            <div class="mt-4">
+              <%= link_to root_path, class: "btn btn-success btn-lg me-3" do %>
+                <i class="fas fa-home me-2"></i><%= t('demo_requests.success.back_home') %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
