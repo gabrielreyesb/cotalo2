@@ -207,13 +207,13 @@ class User < ApplicationRecord
                 name: demo_materials[0].unit.name,
                 abbreviation: demo_materials[0].unit.abbreviation
               },
-              ancho: 50,
-              largo: 30,
+              ancho: demo_materials[0].ancho,
+              largo: demo_materials[0].largo,
               quantity: 100,
               piecesPerMaterial: 6,
               totalSheets: 17,
-              totalSquareMeters: 25.5,
-              totalPrice: 255.0,
+              totalSquareMeters: 17.0,
+              totalPrice: 170.0,
               comments: "Material principal del producto"
             },
             {
@@ -227,13 +227,13 @@ class User < ApplicationRecord
                 name: demo_materials[1].unit.name,
                 abbreviation: demo_materials[1].unit.abbreviation
               },
-              ancho: 25,
-              largo: 15,
+              ancho: demo_materials[1].ancho,
+              largo: demo_materials[1].largo,
               quantity: 100,
-              piecesPerMaterial: 24,
-              totalSheets: 5,
-              totalSquareMeters: 1.875,
-              totalPrice: 22.5,
+              piecesPerMaterial: 6,
+              totalSheets: 17,
+              totalSquareMeters: 17.0,
+              totalPrice: 204.0,
               comments: "Material secundario para detalles"
             }
           ],
@@ -245,8 +245,8 @@ class User < ApplicationRecord
               unitPrice: demo_processes[0].cost,
               materialId: demo_materials[0].id,
               materialDescription: demo_materials[0].description,
-              price: 3.5 * 25.5,
-              quantity: 25.5,
+              price: 3.5 * 17.0,
+              quantity: 17.0,
               comments: "Proceso principal de empalmado"
             },
             {
@@ -273,17 +273,17 @@ class User < ApplicationRecord
             }
           ],
           pricing: {
-            materials_cost: 277.5,
-            processes_cost: 124.25,
+            materials_cost: 374.0,
+            processes_cost: 94.5,
             extras_cost: 250.0,
-            subtotal: 651.75,
+            subtotal: 718.5,
             waste_percentage: 5,
-            waste_value: 32.59,
-            price_per_piece_before_margin: 6.84,
+            waste_value: 35.93,
+            price_per_piece_before_margin: 7.54,
             margin_percentage: 10,
-            margin_value: 68.43,
-            total_price: 752.77,
-            final_price_per_piece: 7.53
+            margin_value: 75.44,
+            total_price: 829.87,
+            final_price_per_piece: 8.30
           }
         }
       )
