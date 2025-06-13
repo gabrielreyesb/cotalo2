@@ -20,6 +20,7 @@
   <div class="col-12 col-lg-10 mx-auto">
     <div class="card green-accent-panel">
       <div class="card-body">
+
         <!-- Step 1: Download Template -->
         <div class="import-step import-step-panel mb-4">
           <div class="d-flex align-items-center mb-0 justify-content-between">
@@ -27,9 +28,11 @@
               <div class="step-number me-3">1</div>
               <h6 class="mb-0">Descargar Plantilla</h6>
             </div>
-            <%= link_to import_template_customers_path(format: :csv), class: "btn btn-outline-primary ms-3 import-btn-wide" do %>
-              <i class="fa fa-download me-1"></i> Descargar Plantilla
-            <% end %>
+            <div class="d-flex justify-content-end w-100">
+              <%= link_to import_template_customers_path(format: :csv), class: "btn btn-outline-primary import-btn-wide mb-0" do %>
+                <i class="fa fa-download me-1"></i> Descargar Plantilla
+              <% end %>
+            </div>
           </div>
         </div>
 
@@ -38,16 +41,16 @@
           <div class="d-flex align-items-center mb-0 justify-content-between">
             <div class="d-flex align-items-center">
               <div class="step-number me-3">2</div>
-              <h6 class="mb-0" style="min-width: 200px; white-space: nowrap;">Subir Archivo</h6>
+              <h6 class="mb-0">Subir Archivo</h6>
             </div>
-            <div class="custom-file-upload d-flex align-items-center justify-content-end w-100">
-              <span id="file-upload-filename" class="filename-display me-4 text-truncate" tabindex="0">
-                <%= (@original_file_name.presence || @validated_file_name.presence) || 'Ningún archivo seleccionado' %>
-              </span>
-              <label for="file-upload" class="btn btn-outline-primary import-btn-wide mb-0" style="white-space:nowrap;">
-                <i class="fa fa-upload me-1"></i> Seleccionar archivo
-              </label>
-            </div>
+            <label for="file-upload" class="btn btn-outline-primary import-btn-wide mb-0" style="white-space:nowrap;">
+              <i class="fa fa-upload me-1"></i> Seleccionar archivo
+            </label>
+          </div>
+          <div class="d-flex justify-content-end mt-2">
+            <span id="file-upload-filename" class="filename-display text-end" tabindex="0">
+              <%= (@original_file_name.presence || @validated_file_name.presence) || 'Ningún archivo seleccionado' %>
+            </span>
           </div>
           <input type="file" accept=".xlsx,.xls,.csv" class="form-control d-none" id="file-upload" required>
         </div>
@@ -289,41 +292,18 @@
 }
 
 .filename-display {
-  width: 600px;
-  min-width: 300px;
-  max-width: 100%;
-  background-color: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  padding: 8px 16px;
+  border: 1px solid #495057 !important;
+  background: #23272b !important;
+  color: #fff;
+  padding: 6px 14px;
   border-radius: 4px;
   display: inline-block;
+  white-space: nowrap;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-  flex-shrink: 0;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.filename-display.has-content,
-.filename-display:focus {
-  border-color: var(--cotalo-green);
-  box-shadow: 0 0 0 0.25rem rgba(var(--cotalo-green-rgb, 138,191,80), 0.25);
-  outline: none;
 }
 
-@media (max-width: 991.98px) {
-  .custom-file-upload {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 0.5rem;
-  }
-  #file-upload-filename, .filename-display {
-    margin-bottom: 0.5rem;
-    width: 100%;
-    min-width: 0;
-    max-width: 100%;
-  }
-}
 </style>
 
 <script>

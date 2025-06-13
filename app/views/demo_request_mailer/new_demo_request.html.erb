@@ -4,20 +4,25 @@
   <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
 </head>
 <body>
-  <h1>Nueva solicitud de demostración</h1>
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+    <div style="text-align: center; margin-bottom: 20px;">
+      <img src="<%= root_url %>assets/Cotalo_logo.png" alt="Cotalo Logo" style="max-width: 150px; height: auto; margin-bottom: 15px;">
+    </div>
+    <h1>Nueva solicitud de demostración</h1>
   
-  <h2>Información del solicitante:</h2>
-  <p><strong>Nombre:</strong> <%= @demo_request.name %></p>
-  <p><strong>Email:</strong> <%= @demo_request.email %></p>
-  <p><strong>Empresa:</strong> <%= @demo_request.company %></p>
-  <% if @demo_request.phone.present? %>
-    <p><strong>Teléfono:</strong> <%= @demo_request.phone %></p>
-  <% end %>
+    <h2>Información del solicitante:</h2>
+    <p><strong>Nombre:</strong> <%= @demo_request.name %></p>
+    <p><strong>Email:</strong> <%= @demo_request.email %></p>
+    <p><strong>Empresa:</strong> <%= @demo_request.company %></p>
+    <% if @demo_request.phone.present? %>
+      <p><strong>Teléfono:</strong> <%= @demo_request.phone %></p>
+    <% end %>
   
-  <h2>Mensaje:</h2>
-  <p><%= @demo_request.message %></p>
+    <h2>Mensaje:</h2>
+    <p><%= @demo_request.message %></p>
   
-  <hr>
-  <p><small>Esta solicitud fue enviada desde el formulario de demostración de Cotalo.</small></p>
+    <hr>
+    <p><small>Esta solicitud fue enviada desde el formulario de demostración de Cotalo.</small></p>
+  </div>
 </body>
 </html> 

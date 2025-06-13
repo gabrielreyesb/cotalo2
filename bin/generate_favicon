@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Generate favicon files from Cotalo logo
+# This script creates favicon.ico, favicon-16x16.png, favicon-32x32.png, and apple-touch-icon.png
+
+echo "Generating favicon files from Cotalo logo..."
+
+# Check if ImageMagick is installed
+if ! command -v magick &> /dev/null; then
+    echo "Error: ImageMagick is not installed. Please install it first."
+    echo "On macOS: brew install imagemagick"
+    exit 1
+fi
+
+# Check if source logo exists
+if [ ! -f "app/assets/images/Cotalo_logo.png" ]; then
+    echo "Error: Cotalo_logo.png not found in app/assets/images/"
+    exit 1
+fi
+
+# Create favicon files
+echo "Creating favicon.ico..."
+magick app/assets/images/Cotalo_logo.png -resize 32x32 public/favicon.ico
+
+echo "Creating favicon-16x16.png..."
+magick app/assets/images/Cotalo_logo.png -resize 16x16 public/favicon-16x16.png
+
+echo "Creating favicon-32x32.png..."
+magick app/assets/images/Cotalo_logo.png -resize 32x32 public/favicon-32x32.png
+
+echo "Creating apple-touch-icon.png..."
+magick app/assets/images/Cotalo_logo.png -resize 180x180 public/apple-touch-icon.png
+
+echo "Favicon generation complete!"
+echo "Files created:"
+ls -la public/favicon* public/apple-touch-icon.png 
