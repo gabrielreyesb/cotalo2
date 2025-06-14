@@ -65,7 +65,6 @@
   </head>
 
   <body>
-    <%# Removed big banner and spacer for development %>
     <%= render 'shared/navbar' %>
     <%= render 'shared/subnavbar' %>
     
@@ -91,9 +90,7 @@
       </div>
     </main>
 
-    <!-- Simple dropdown fix -->
     <style>
-      /* Force display for dropdown menus when they have the show class */
       .dropdown-menu.show {
         display: block !important;
         opacity: 1 !important;
@@ -130,7 +127,6 @@
       });
     </script>
 
-    <%# Initialize Bootstrap components %>
     <script>
       document.addEventListener("DOMContentLoaded", function() {
         initializeTooltips();
@@ -164,7 +160,6 @@
         });
       }
 
-      // Cleanup tooltips before Turbo cache
       document.addEventListener("turbo:before-cache", function() {
         var tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
         tooltips.forEach(function(element) {
@@ -177,11 +172,5 @@
     </script>
     
     <%= yield :page_scripts %>
-
-    <% if Rails.env.development? %>
-      <div style="position: fixed; top: 16px; right: 16px; z-index: 9999; background: #ff3333; color: white; font-size: 1.1rem; font-weight: bold; padding: 0.5rem 1.2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); letter-spacing: 1px; opacity: 0.95;">
-        🛠️ DEV
-      </div>
-    <% end %>
   </body>
 </html>
