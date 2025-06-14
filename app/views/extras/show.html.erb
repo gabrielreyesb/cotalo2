@@ -1,62 +1,52 @@
-<div class="row">
-  <div class="col-12 mb-4">
-    <div class="d-flex justify-content-between align-items-center">
-      <h1><%= @extra.name %></h1>
-      <div>
-        <%= link_to edit_extra_path(@extra), class: "btn btn-outline-primary me-2" do %>
-          <i class="fa fa-edit me-1"></i> Edit
-        <% end %>
-        <%= link_to extras_path, class: "btn btn-outline-secondary" do %>
-          <i class="fa fa-arrow-left me-1"></i> Back
-        <% end %>
-      </div>
-    </div>
-  </div>
-</div>
+<% content_for :page_title do %>
+  <%= t('extras.show.title') %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to edit_extra_path(@extra), class: "btn btn-outline-light me-2" do %>
+    <i class="fas fa-edit me-1"></i><%= t('extras.show.edit') %>
+  <% end %>
+  <%= button_to extra_path(@extra), method: :delete, 
+      class: "btn btn-outline-danger me-2", 
+      form: { data: { turbo_confirm: t('extras.show.delete_confirm') } } do %>
+    <i class="fas fa-trash me-1"></i><%= t('extras.show.delete') %>
+  <% end %>
+  <%= link_to extras_path, class: "btn btn-outline-light" do %>
+    <i class="fas fa-arrow-left me-1"></i><%= t('extras.show.back_to_extras') %>
+  <% end %>
+<% end %>
 
 <div class="row">
-  <div class="col-12">
+  <div class="col-md-8 offset-md-2">
     <div class="card">
       <div class="card-header">
-        <h5>Extra Details</h5>
+        <h3><%= @extra.name %></h3>
       </div>
       <div class="card-body">
         <div class="row mb-3">
-          <div class="col-md-3 col-lg-2">
-            <strong>Name:</strong>
+          <div class="col-md-6">
+            <strong><%= t('extras.show.name') %>:</strong>
+            <p><%= @extra.name %></p>
           </div>
-          <div class="col-md-9 col-lg-10">
-            <%= @extra.name %>
-          </div>
-        </div>
-        
-        <div class="row mb-3">
-          <div class="col-md-3 col-lg-2">
-            <strong>Cost:</strong>
-          </div>
-          <div class="col-md-9 col-lg-10">
-            <%= number_to_currency(@extra.cost) %>
+          <div class="col-md-6">
+            <strong><%= t('extras.show.cost') %>:</strong>
+            <p><%= number_to_currency(@extra.cost) %></p>
           </div>
         </div>
         
         <div class="row mb-3">
-          <div class="col-md-3 col-lg-2">
-            <strong>Unit:</strong>
+          <div class="col-md-6">
+            <strong><%= t('extras.show.unit') %>:</strong>
+            <p>
+              <%= @extra.unit&.name || t('extras.show.not_specified') %>
+              <% if @extra.unit&.abbreviation.present? %>
+                (<%= @extra.unit.abbreviation %>)
+              <% end %>
+            </p>
           </div>
-          <div class="col-md-9 col-lg-10">
-            <%= @extra.unit&.name || "Not specified" %>
-            <% if @extra.unit&.abbreviation.present? %>
-              (<%= @extra.unit.abbreviation %>)
-            <% end %>
-          </div>
-        </div>
-        
-        <div class="row mb-3">
-          <div class="col-md-3 col-lg-2">
-            <strong>Description:</strong>
-          </div>
-          <div class="col-md-9 col-lg-10">
-            <%= simple_format(@extra.description) %>
+          <div class="col-md-6">
+            <strong><%= t('extras.show.description') %>:</strong>
+            <p><%= simple_format(@extra.description) %></p>
           </div>
         </div>
       </div>

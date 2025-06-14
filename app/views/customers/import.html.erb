@@ -7,12 +7,12 @@
 %>
 
 <% content_for :page_title do %>
-  <%= t('customers.import.title') %>
+  <%= t('views.customers.import.title') %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= link_to customers_path, class: "btn btn-outline-light" do %>
-    <i class="fa fa-arrow-left me-1"></i> <%= t('customers.import.back_to_customers') %>
+  <%= link_to customers_path(locale: I18n.locale), class: "btn btn-outline-light" do %>
+    <i class="fa fa-arrow-left me-1"></i> <%= t('views.customers.import.back_to_customers') %>
   <% end %>
 <% end %>
 
@@ -26,11 +26,11 @@
           <div class="d-flex align-items-center mb-0 justify-content-between">
             <div class="d-flex align-items-center">
               <div class="step-number me-3">1</div>
-              <h6 class="mb-0">Descargar Plantilla</h6>
+              <h6 class="mb-0"><%= t('views.customers.import.step1_title') %></h6>
             </div>
             <div class="d-flex justify-content-end w-100">
-              <%= link_to import_template_customers_path(format: :csv), class: "btn btn-outline-primary import-btn-wide mb-0" do %>
-                <i class="fa fa-download me-1"></i> Descargar Plantilla
+              <%= link_to import_template_customers_path(format: :csv, locale: I18n.locale), class: "btn btn-outline-primary import-btn-wide mb-0" do %>
+                <i class="fa fa-download me-1"></i> <%= t('views.customers.import.download_template') %>
               <% end %>
             </div>
           </div>
@@ -41,15 +41,15 @@
           <div class="d-flex align-items-center mb-0 justify-content-between">
             <div class="d-flex align-items-center">
               <div class="step-number me-3">2</div>
-              <h6 class="mb-0">Subir Archivo</h6>
+              <h6 class="mb-0"><%= t('views.customers.import.step2_title') %></h6>
             </div>
             <label for="file-upload" class="btn btn-outline-primary import-btn-wide mb-0" style="white-space:nowrap;">
-              <i class="fa fa-upload me-1"></i> Seleccionar archivo
+              <i class="fa fa-upload me-1"></i> <%= t('views.customers.import.select_file') %>
             </label>
           </div>
           <div class="d-flex justify-content-end mt-2">
             <span id="file-upload-filename" class="filename-display text-end" tabindex="0">
-              <%= (@original_file_name.presence || @validated_file_name.presence) || 'Ningún archivo seleccionado' %>
+              <%= (@original_file_name.presence || @validated_file_name.presence) || t('views.customers.import.no_file_selected') %>
             </span>
           </div>
           <input type="file" accept=".xlsx,.xls,.csv" class="form-control d-none" id="file-upload" required>
@@ -60,13 +60,13 @@
           <div class="d-flex align-items-center mb-0 justify-content-between mb-3">
             <div class="d-flex align-items-center">
               <div class="step-number me-3">3</div>
-              <h6 class="mb-0">Validar Archivo</h6>
+              <h6 class="mb-0"><%= t('views.customers.import.step3_title') %></h6>
             </div>
-            <form id="validate-form" action="<%= validate_upload_customers_path %>" method="post" enctype="multipart/form-data" class="d-inline">
+            <form id="validate-form" action="<%= validate_upload_customers_path(locale: I18n.locale) %>" method="post" enctype="multipart/form-data" class="d-inline">
               <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
               <input type="file" name="file" accept=".xlsx,.xls,.csv" class="form-control d-none" id="file-upload-validate" required>
               <button type="submit" id="validateBtn" class="btn btn-outline-primary import-btn-wide" disabled>
-                <i class="fa fa-check me-1"></i> Validar Archivo
+                <i class="fa fa-check me-1"></i> <%= t('views.customers.import.validate_file') %>
               </button>
             </form>
           </div>
@@ -76,7 +76,7 @@
             <div class="card-header">
               <h6 class="mb-0">
                 <i class="fa fa-check-circle text-success me-2"></i>
-                Resultados de Validación
+                <%= t('views.customers.import.validation_results') %>
               </h6>
             </div>
             <div class="card-body">
@@ -84,9 +84,9 @@
                 <!-- Show validation errors -->
                 <div class="alert alert-danger">
                   <i class="fa fa-exclamation-triangle me-2"></i>
-                  <strong>Errores de Validación Encontrados</strong>
+                  <strong><%= t('views.customers.import.validation_errors_found') %></strong>
                   <p class="mb-0 mt-2">
-                    Se encontraron <%= import_summary['invalid_rows'] %> filas con errores que necesitan ser corregidas antes de importar.
+                    <%= t('views.customers.import.validation_errors_message', count: import_summary['invalid_rows']) %>
                   </p>
                 </div>
               <% else %>
@@ -98,23 +98,23 @@
                 <% if total_actions > 0 %>
                   <div class="alert alert-success">
                     <i class="fa fa-check-circle me-2"></i>
-                    <strong>Validación Exitosa</strong>
+                    <strong><%= t('views.customers.import.validation_successful') %></strong>
                     <p class="mb-0 mt-2">
                       <% if new_customers > 0 && updated_customers > 0 %>
-                        Se importarán <strong><%= new_customers %></strong> clientes nuevos y se actualizarán <strong><%= updated_customers %></strong> clientes existentes.
+                        <%= t('views.customers.import.validation_success_message_both', new: new_customers, update: updated_customers) %>
                       <% elsif new_customers > 0 %>
-                        Se importarán <strong><%= new_customers %></strong> clientes nuevos.
+                        <%= t('views.customers.import.validation_success_message_new', count: new_customers) %>
                       <% elsif updated_customers > 0 %>
-                        Se actualizarán <strong><%= updated_customers %></strong> clientes existentes.
+                        <%= t('views.customers.import.validation_success_message_update', count: updated_customers) %>
                       <% end %>
                     </p>
                   </div>
                 <% else %>
                   <div class="alert alert-warning">
                     <i class="fa fa-exclamation-triangle me-2"></i>
-                    <strong>No hay datos válidos para importar</strong>
+                    <strong><%= t('views.customers.import.no_valid_data') %></strong>
                     <p class="mb-0 mt-2">
-                      No se encontraron datos válidos para importar. Verifica que el archivo contenga información correcta.
+                      <%= t('views.customers.import.no_valid_data_message') %>
                     </p>
                   </div>
                 <% end %>
@@ -130,19 +130,19 @@
           <div class="d-flex align-items-center mb-0 justify-content-between mb-3">
             <div class="d-flex align-items-center">
               <div class="step-number me-3">4</div>
-              <h6 class="mb-0">Confirmar Importación</h6>
+              <h6 class="mb-0"><%= t('views.customers.import.step4_title') %></h6>
             </div>
             <% if can_import %>
-              <%= form_with url: import_process_customers_path, method: :post, local: true, multipart: true, class: "d-inline" do |form| %>
+              <%= form_with url: import_process_customers_path(locale: I18n.locale), method: :post, local: true, multipart: true, class: "d-inline" do |form| %>
                 <%= hidden_field_tag :validated_file_path, @validated_file_path if @validated_file_path.present? %>
                 <%= hidden_field_tag :original_file_name, (@original_file_name.presence || @validated_file_name) if (@original_file_name.presence || @validated_file_name) %>
                 <button type="submit" class="btn btn-outline-primary import-btn-wide">
-                  <i class="fa fa-check me-1"></i> Confirmar Importación
+                  <i class="fa fa-check me-1"></i> <%= t('views.customers.import.confirm_import') %>
                 </button>
               <% end %>
             <% else %>
               <button class="btn btn-outline-primary import-btn-wide" disabled>
-                <i class="fa fa-check me-1"></i> Confirmar Importación
+                <i class="fa fa-check me-1"></i> <%= t('views.customers.import.confirm_import') %>
               </button>
             <% end %>
           </div>
@@ -155,15 +155,15 @@
           <div class="d-flex align-items-center mb-0 justify-content-between mb-3">
             <div class="d-flex align-items-center">
               <div class="step-number me-3">4</div>
-              <h6 class="mb-0">Resultados de Importación</h6>
+              <h6 class="mb-0"><%= t('views.customers.import.import_results') %></h6>
             </div>
-            <%= link_to 'Realizar otra importación', import_customers_path, class: 'btn btn-outline-primary import-btn-wide' %>
+            <%= link_to t('views.customers.import.perform_another_import'), import_customers_path(locale: I18n.locale), class: 'btn btn-outline-primary import-btn-wide' %>
           </div>
           <div class="card mb-4 bg-dark border-secondary shadow-sm rounded-4">
             <div class="card-header bg-dark border-bottom border-secondary rounded-top-4">
               <h6 class="mb-0 text-white">
                 <i class="fa fa-database text-white me-2"></i>
-                Resumen de Importación
+                <%= t('views.customers.import.import_summary') %>
               </h6>
             </div>
             <div class="card-body">
@@ -171,17 +171,17 @@
                 <!-- Show import errors -->
                 <div class="alert alert-danger border-danger bg-dark text-danger mb-4 rounded-3">
                   <i class="fa fa-exclamation-triangle me-2"></i>
-                  <strong>Errores de Importación Encontrados</strong>
+                  <strong><%= t('views.customers.import.import_errors_found') %></strong>
                   <p class="mb-0 mt-2">
-                    Se encontraron <%= @import_results[:errors].count %> errores durante la importación.
+                    <%= t('views.customers.import.import_errors_message', count: @import_results[:errors].count) %>
                   </p>
                 </div>
                 <div class="table-responsive mb-4">
                   <table class="table table-sm table-dark table-striped align-middle rounded-3 overflow-hidden">
                     <thead>
                       <tr>
-                        <th>Fila</th>
-                        <th>Error</th>
+                        <th><%= t('views.customers.import.row') %></th>
+                        <th><%= t('views.customers.import.error') %></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -200,31 +200,31 @@
                 <table class="table table-sm table-dark align-middle rounded-3 overflow-hidden">
                   <thead>
                     <tr>
-                      <th class="text-light">Acción</th>
-                      <th class="text-light">Cantidad</th>
-                      <th class="text-light">Descripción</th>
+                      <th class="text-light"><%= t('views.customers.import.action') %></th>
+                      <th class="text-light"><%= t('views.customers.import.quantity') %></th>
+                      <th class="text-light"><%= t('views.customers.import.description') %></th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td class="text-light"><i class="fa fa-plus-circle me-2 text-white"></i><span>Nuevos Clientes</span></td>
+                      <td class="text-light"><i class="fa fa-plus-circle me-2 text-white"></i><span><%= t('views.customers.import.new_customers') %></span></td>
                       <td><span class="badge bg-dark border border-secondary text-white fs-6"><%= @import_results[:imported] %></span></td>
-                      <td class="text-secondary">Clientes agregados exitosamente</td>
+                      <td class="text-secondary"><%= t('views.customers.import.new_customers_description') %></td>
                     </tr>
                     <tr>
-                      <td class="text-light"><i class="fa fa-edit me-2 text-white"></i><span>Actualizados</span></td>
+                      <td class="text-light"><i class="fa fa-edit me-2 text-white"></i><span><%= t('views.customers.import.updated') %></span></td>
                       <td><span class="badge bg-dark border border-secondary text-white fs-6"><%= @import_results[:updated] %></span></td>
-                      <td class="text-secondary">Clientes existentes con datos modificados</td>
+                      <td class="text-secondary"><%= t('views.customers.import.updated_description') %></td>
                     </tr>
                     <tr>
-                      <td class="text-light"><i class="fa fa-minus-circle me-2 text-white"></i><span>Sin Cambios</span></td>
+                      <td class="text-light"><i class="fa fa-minus-circle me-2 text-white"></i><span><%= t('views.customers.import.unchanged') %></span></td>
                       <td><span class="badge bg-dark border border-secondary text-white fs-6"><%= @import_results[:unchanged] %></span></td>
-                      <td class="text-secondary">Clientes existentes sin modificaciones</td>
+                      <td class="text-secondary"><%= t('views.customers.import.unchanged_description') %></td>
                     </tr>
                     <tr>
-                      <td class="text-light"><i class="fa fa-list me-2 text-white"></i><span>Total Procesado</span></td>
+                      <td class="text-light"><i class="fa fa-list me-2 text-white"></i><span><%= t('views.customers.import.total_processed') %></span></td>
                       <td><span class="badge bg-dark border border-secondary text-white fs-6"><%= @import_results[:total_rows] %></span></td>
-                      <td class="text-secondary">Total de filas en el archivo</td>
+                      <td class="text-secondary"><%= t('views.customers.import.total_processed_description') %></td>
                     </tr>
                   </tbody>
                 </table>
@@ -232,7 +232,7 @@
               <% if @import_results[:imported] > 0 || @import_results[:updated] > 0 %>
                 <div class="alert border-success bg-dark text-success mt-3 rounded-3">
                   <i class="fa fa-check-circle me-2"></i>
-                  <span class="fw-bold">Importación Completada</span>
+                  <span class="fw-bold"><%= t('views.customers.import.import_completed') %></span>
                 </div>
               <% end %>
             </div>
@@ -304,6 +304,10 @@
   text-overflow: ellipsis;
 }
 
+.import-step .d-flex.align-items-center h6 {
+  white-space: nowrap;
+}
+
 </style>
 
 <script>
@@ -326,7 +330,7 @@
         // Copy file to validate input
         validateFileInput.files = fileInput.files;
       } else {
-        fileNameSpan.textContent = 'Ningún archivo seleccionado';
+        fileNameSpan.textContent = '<%= t('views.customers.import.no_file_selected') %>';
         fileNameSpan.classList.remove('has-content');
         validateBtn.disabled = true;
         validateFileInput.value = '';

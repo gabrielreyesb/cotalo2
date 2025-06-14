@@ -154,28 +154,26 @@
                 {{ translations.no_selected_products }}
               </div>
               <div v-else>
-                <div class="table-responsive">
-                  <table class="table table-sm">
-                    <thead>
-                      <tr>
-                        <th style="width: 70%">{{ translations.product }}</th>
-                        <th>{{ translations.price }}</th>
-                        <th style="width: 40px"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="(product, index) in selectedProducts" :key="product.id">
-                        <td class="text-wrap">{{ product.name }}</td>
-                        <td>{{ formatCurrency(product.price) }}</td>
-                        <td>
-                          <button type="button" class="btn btn-sm btn-danger" @click="removeProduct(index)">
-                            <i class="fas fa-trash"></i>
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                <table class="table table-sm">
+                  <thead>
+                    <tr>
+                      <th style="width: 70%">{{ translations.product }}</th>
+                      <th>{{ translations.price }}</th>
+                      <th style="width: 40px"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(product, index) in selectedProducts" :key="product.id">
+                      <td class="text-wrap">{{ product.name }}</td>
+                      <td>{{ formatCurrency(product.price) }}</td>
+                      <td>
+                        <button type="button" class="btn btn-sm btn-danger" @click="removeProduct(index)">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>

@@ -9,6 +9,7 @@ es:
       not_saved:
         one: "1 error prohibió que este %{resource} se guardara:"
         other: "%{count} errores prohibieron que este %{resource} se guardara:"
+      blank: "no puede estar en blanco"
   devise:
     confirmations:
       confirmed: "Tu cuenta fue confirmada exitosamente. Ya puedes iniciar sesión."
@@ -63,4 +64,23 @@ es:
     unlocks:
       send_instructions: "Recibirás un correo electrónico con instrucciones para desbloquear tu cuenta en unos minutos."
       send_paranoid_instructions: "Si tu cuenta existe, recibirás un correo electrónico con instrucciones para desbloquearla en unos minutos."
-      unlocked: "Tu cuenta ha sido desbloqueada exitosamente. Ya puedes iniciar sesión." 
+      unlocked: "Tu cuenta ha sido desbloqueada exitosamente. Ya puedes iniciar sesión."
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            email:
+              blank: "no puede estar en blanco"
+              invalid: "no es un correo electrónico válido"
+            password:
+              blank: "no puede estar en blanco"
+              too_short: "es demasiado corta (mínimo %{count} caracteres)"
+            password_confirmation:
+              confirmation: "no coincide con la contraseña"
+    attributes:
+      user:
+        email: "Correo electrónico"
+        password: "Contraseña"
+        password_confirmation: "Confirmación de contraseña"
+ 

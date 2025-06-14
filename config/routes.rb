@@ -155,16 +155,15 @@ Rails.application.routes.draw do
 
   get 'subscribe', to: 'subscriptions#new', as: :subscribe
 
-  resources :customers do
-    collection do
-      get :import
-      post :validate_upload
-      post :import_process
-      get :import_template
-      delete :clear_import_session
-    end
-  end
-  
+  # Customers import-related routes (move these above resources :customers)
+  get 'customers/import', to: 'customers#import', as: :import_customers
+  post 'customers/validate_upload', to: 'customers#validate_upload', as: :validate_upload_customers
+  post 'customers/import_process', to: 'customers#import_process', as: :import_process_customers
+  get 'customers/import_template', to: 'customers#import_template', as: :import_template_customers
+  delete 'customers/clear_import_session', to: 'customers#clear_import_session', as: :clear_import_session_customers
+
+  resources :customers
+
   # Demo requests
   resources :demo_requests, only: [:new, :create]
   get 'demo_request/success', to: 'demo_requests#success', as: :demo_request_success

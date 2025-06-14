@@ -106,8 +106,13 @@
             🌐 <%= t('navbar.language') %>
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
-            <li><%= link_to "🇪🇸 #{t('navbar.spanish')}", url_for(locale: :es), class: "dropdown-item #{I18n.locale == :es ? 'active' : ''}" %></li>
-            <li><%= link_to "🇺🇸 #{t('navbar.english')}", url_for(locale: :en), class: "dropdown-item #{I18n.locale == :en ? 'active' : ''}" %></li>
+            <% if controller_name == 'customers' && action_name == 'import' %>
+              <li><%= link_to "🇪🇸 #{t('navbar.spanish')}", import_customers_path(locale: :es), class: "dropdown-item #{I18n.locale == :es ? 'active' : ''}" %></li>
+              <li><%= link_to "🇺🇸 #{t('navbar.english')}", import_customers_path(locale: :en), class: "dropdown-item #{I18n.locale == :en ? 'active' : ''}" %></li>
+            <% else %>
+              <li><%= link_to "🇪🇸 #{t('navbar.spanish')}", url_for(locale: :es), class: "dropdown-item #{I18n.locale == :es ? 'active' : ''}" %></li>
+              <li><%= link_to "🇺🇸 #{t('navbar.english')}", url_for(locale: :en), class: "dropdown-item #{I18n.locale == :en ? 'active' : ''}" %></li>
+            <% end %>
           </ul>
         </li>
         <% if user_signed_in? %>

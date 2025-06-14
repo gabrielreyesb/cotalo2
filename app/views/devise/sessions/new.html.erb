@@ -8,7 +8,31 @@
             <p class="text-muted"><%= t('devise.sessions.new.subtitle') %></p>
           </div>
 
-          <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "login-form" }) do |f| %>
+          <% if flash[:alert] %>
+            <div class="alert alert-danger text-center mb-4">
+              <%= flash[:alert] %>
+            </div>
+          <% end %>
+          <% if flash[:error] %>
+            <div class="alert alert-danger text-center mb-4">
+              <%= flash[:error] %>
+            </div>
+          <% end %>
+          <% if flash[:notice] %>
+            <div class="alert alert-info text-center mb-4">
+              <%= flash[:notice] %>
+            </div>
+          <% end %>
+
+          <% if resource.errors.any? %>
+            <div class="alert alert-danger text-center mb-4">
+              <% resource.errors.full_messages.each do |msg| %>
+                <div><%= msg %></div>
+              <% end %>
+            </div>
+          <% end %>
+
+          <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "login-form", novalidate: true }) do |f| %>
             <%= csrf_meta_tags %>
             <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
             <%= hidden_field_tag :locale, I18n.locale %>
@@ -32,7 +56,11 @@
                 </span>
                 <%= f.password_field :password, autocomplete: "current-password",
                     class: "form-control",
-                    placeholder: t('devise.sessions.new.password_placeholder') %>
+                    placeholder: t('devise.sessions.new.password_placeholder'),
+                    id: "user_password" %>
+                <button type="button" class="btn btn-outline-secondary" id="toggle-password-visibility" tabindex="-1" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                  <i class="fa fa-eye" id="toggle-password-icon"></i>
+                </button>
               </div>
             </div>
 
@@ -162,4 +190,27 @@
     -webkit-text-align: left !important;
   }
 </style>
+<% end %>
+
+<% content_for :scripts do %>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var toggleBtn = document.getElementById('toggle-password-visibility');
+    var passwordInput = document.getElementById('user_password');
+    var icon = document.getElementById('toggle-password-icon');
+    if (toggleBtn && passwordInput && icon) {
+      toggleBtn.addEventListener('click', function() {
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          icon.classList.remove('fa-eye');
+          icon.classList.add('fa-eye-slash');
+        } else {
+          passwordInput.type = 'password';
+          icon.classList.remove('fa-eye-slash');
+          icon.classList.add('fa-eye');
+        }
+      });
+    }
+  });
+</script>
 <% end %> 

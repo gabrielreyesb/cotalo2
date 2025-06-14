@@ -65,6 +65,8 @@ class CustomersController < ApplicationController
     @validation_summary = flash[:import_summary]
     @has_validated_file = flash[:has_validated_file]
     @validated_file_name = flash[:validated_file_name]
+    @validated_file_path = flash[:validated_file_path]
+    @original_file_name = flash[:original_file_name]
   end
 
   # Validate and preview import (upload + validate in one step)
@@ -80,12 +82,12 @@ class CustomersController < ApplicationController
 
     import_service = ImportService.new(current_user, temp_file_path.to_s, 'customers')
     if import_service.process_file && import_service.validate_and_prepare_import
-      @validation_summary = import_service.summary
-      @has_validated_file = true
-      @validated_file_name = uploaded_file.original_filename
-      @validated_file_path = temp_file_path.to_s
-      @original_file_name = uploaded_file.original_filename
-      render :import
+      flash[:import_summary] = import_service.summary
+      flash[:has_validated_file] = true
+      flash[:validated_file_name] = uploaded_file.original_filename
+      flash[:validated_file_path] = temp_file_path.to_s
+      flash[:original_file_name] = uploaded_file.original_filename
+      redirect_to import_customers_path
     else
       File.delete(temp_file_path) if File.exist?(temp_file_path)
       redirect_to import_customers_path, alert: import_service.errors.join(', ')

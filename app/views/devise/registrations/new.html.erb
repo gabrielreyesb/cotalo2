@@ -8,7 +8,31 @@
             <p class="text-muted">Crea tu cuenta para continuar</p>
           </div>
 
-          <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "login-form" }) do |f| %>
+          <% if flash[:alert] %>
+            <div class="alert alert-danger text-center mb-4">
+              <%= flash[:alert] %>
+            </div>
+          <% end %>
+          <% if flash[:error] %>
+            <div class="alert alert-danger text-center mb-4">
+              <%= flash[:error] %>
+            </div>
+          <% end %>
+          <% if flash[:notice] %>
+            <div class="alert alert-info text-center mb-4">
+              <%= flash[:notice] %>
+            </div>
+          <% end %>
+          <% if resource.errors.any? %>
+            <div class="alert alert-danger text-center mb-4">
+              <% resource.errors.full_messages.each do |msg| %>
+                <div><%= msg %></div>
+              <% end %>
+            </div>
+          <% end %>
+
+          <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "login-form", novalidate: true }) do |f| %>
+            
             <div class="form-group mb-4">
               <%= f.label :email, class: "form-label" %>
               <div class="input-group">
@@ -23,16 +47,17 @@
 
             <div class="form-group mb-4">
               <%= f.label :password, "Contraseña", class: "form-label" %>
-              <% if @minimum_password_length %>
-                <small class="text-muted d-block mb-2">Mínimo <%= @minimum_password_length %> caracteres</small>
-              <% end %>
               <div class="input-group">
                 <span class="input-group-text">
                   <i class="fa fa-lock"></i>
                 </span>
                 <%= f.password_field :password, autocomplete: "new-password",
                     class: "form-control",
-                    placeholder: "••••••••" %>
+                    placeholder: "••••••••",
+                    id: "user_password" %>
+                <button type="button" class="btn btn-outline-secondary" id="toggle-password-visibility" tabindex="-1" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                  <i class="fa fa-eye" id="toggle-password-icon"></i>
+                </button>
               </div>
             </div>
 
@@ -44,7 +69,11 @@
                 </span>
                 <%= f.password_field :password_confirmation, autocomplete: "new-password",
                     class: "form-control",
-                    placeholder: "••••••••" %>
+                    placeholder: "••••••••",
+                    id: "user_password_confirmation" %>
+                <button type="button" class="btn btn-outline-secondary" id="toggle-password-confirmation-visibility" tabindex="-1" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                  <i class="fa fa-eye" id="toggle-password-confirmation-icon"></i>
+                </button>
               </div>
             </div>
 
@@ -166,4 +195,45 @@
     font-size: 0.875rem;
   }
 </style>
+<% end %>
+
+<% content_for :scripts do %>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Password field
+    var toggleBtn = document.getElementById('toggle-password-visibility');
+    var passwordInput = document.getElementById('user_password');
+    var icon = document.getElementById('toggle-password-icon');
+    if (toggleBtn && passwordInput && icon) {
+      toggleBtn.addEventListener('click', function() {
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          icon.classList.remove('fa-eye');
+          icon.classList.add('fa-eye-slash');
+        } else {
+          passwordInput.type = 'password';
+          icon.classList.remove('fa-eye-slash');
+          icon.classList.add('fa-eye');
+        }
+      });
+    }
+    // Password confirmation field
+    var toggleBtn2 = document.getElementById('toggle-password-confirmation-visibility');
+    var passwordInput2 = document.getElementById('user_password_confirmation');
+    var icon2 = document.getElementById('toggle-password-confirmation-icon');
+    if (toggleBtn2 && passwordInput2 && icon2) {
+      toggleBtn2.addEventListener('click', function() {
+        if (passwordInput2.type === 'password') {
+          passwordInput2.type = 'text';
+          icon2.classList.remove('fa-eye');
+          icon2.classList.add('fa-eye-slash');
+        } else {
+          passwordInput2.type = 'password';
+          icon2.classList.remove('fa-eye-slash');
+          icon2.classList.add('fa-eye');
+        }
+      });
+    }
+  });
+</script>
 <% end %> 

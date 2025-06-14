@@ -1,13 +1,13 @@
 <% content_for :page_title do %>
-  <%= t('customers.index.title') %>
+  <%= t('views.customers.index.title') %>
 <% end %>
 
 <% content_for :page_actions do %>
   <%= link_to new_customer_path, class: "btn btn-outline-light me-2" do %>
     <i class="fa fa-plus me-1"></i> <%= t('customers.index.new_customer') %>
   <% end %>
-  <%= link_to import_customers_path, class: "btn btn-outline-light" do %>
-    <i class="fa fa-file-excel me-1"></i> <%= t('customers.index.import_customers') %>
+  <%= link_to import_customers_path(locale: I18n.locale), class: "btn btn-outline-light" do %>
+    <i class="fa fa-file-excel me-1"></i> <%= t('views.customers.index.import_customers') %>
   <% end %>
 <% end %>
 
