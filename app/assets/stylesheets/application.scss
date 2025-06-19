@@ -1,37 +1,17 @@
-/*
- * This is a manifest file that'll be compiled into application.css, which will include all the files
- * listed below.
- *
- * Any CSS (and SCSS, if configured) file within this directory, lib/assets/stylesheets, or any plugin's
- * vendor/assets/stylesheets directory can be referenced here using a relative path.
- *
- * You're free to add application-wide styles to this file and they'll appear at the bottom of the
- * compiled file so the styles you add here take precedence over styles defined in any other CSS
- * files in this directory. Styles in this file should be added after the last require_* statement.
- * It is generally better to create a new file per style scope.
- *
- *= require_tree .
- *= require_self
- */
-
-// Import custom Bootstrap configuration
 @import "bootstrap_custom";
 
-// Import base styles
 @import "base/layout";
 
-// Import theme
 @import "dark_theme";
+@import "light_theme";
 
-// Import components
 @import "components/vue";
 @import "components/navbar";
 @import "components/subnavbar";
+@import "components/home";
 
-// Import shared styles
 @import "shared";
 
-// Additional global styles
 body {
   font-family: 'Roboto', sans-serif;
   line-height: 1.5;
@@ -43,30 +23,30 @@ body {
   overflow-y: auto;
 }
 
-// Dark scrollbar styling
+// Theme-aware scrollbar styling
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: var(--lighter-bg, #f8f9fa);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3a3a3a;
+  background: var(--border-gray, #dee2e6);
   border-radius: 4px;
   
   &:hover {
-    background: #4a4a4a;
+    background: var(--text-secondary, #6c757d);
   }
 }
 
 // Firefox scrollbar styling
 * {
   scrollbar-width: thin;
-  scrollbar-color: #3a3a3a #1a1a1a;
+  scrollbar-color: var(--border-gray, #dee2e6) var(--lighter-bg, #f8f9fa);
 }
 
 html {
@@ -117,7 +97,6 @@ a {
 
 // Hide debugging containers
 [style*="border: 3px solid red"],
-div:empty,
 .empty-container,
 div:has(> .debug) {
   display: none !important;
@@ -157,4 +136,52 @@ div:has(> .debug) {
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 8px rgba(40,167,69,0.10);
+}
+
+// Ensure all cards use the theme variable for background color
+.card {
+  background-color: var(--card-bg) !important;
+  border: 1.5px solid var(--border-color) !important;
+}
+
+body[data-theme="light"] .table,
+body[data-theme="light"] .table tr,
+body[data-theme="light"] .table td {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+body[data-theme="light"] .pricing-tab .table th,
+body[data-theme="light"] .pricing-tab .table td,
+body[data-theme="light"] .pricing-tab .table tr {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+body[data-theme="light"] .card-header {
+  background-color: var(--lighter-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+body[data-theme="light"] .nav-tabs {
+  background-color: var(--card-bg) !important;
+}
+body[data-theme="light"] .card,
+body[data-theme="light"] .card-header {
+  background-color: var(--card-bg) !important;
+}
+
+body[data-theme="light"] .general-tab {
+  background: linear-gradient(135deg, #f8fafc 0%, #e9f5ee 100%);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+body[data-theme="light"] select.form-select {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+body[data-theme="light"] select.form-select option {
+  background-color: #fff !important;
+  color: #212529 !important;
 }

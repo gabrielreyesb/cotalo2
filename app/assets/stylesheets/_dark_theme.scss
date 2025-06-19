@@ -7,7 +7,7 @@
 }
 
 // Dark theme variables
-:root {
+body[data-theme="dark"] {
   --cotalo-green: #42b983;
   --cotalo-green-dark: #3aa876;
   --dark-bg: #1a1a1a;
@@ -19,10 +19,11 @@
   --text-primary: #ffffff;
   --text-secondary: #d1d1d1;
   --border-gray: rgb(50, 56, 62);
+  --bg-primary: #23272b;
 }
 
-// Base styles
-body { 
+// Base styles for dark theme
+body[data-theme="dark"] { 
   background-color: var(--dark-bg);
   color: var(--text-primary);
   min-height: 100vh;
@@ -31,7 +32,7 @@ body {
 }
 
 // Tab navigation styles
-.nav-tabs {
+body[data-theme="dark"] .nav-tabs {
   border-bottom: 1px solid var(--cotalo-green-dark);
   
   .nav-item {
@@ -58,7 +59,7 @@ body {
   }
 }
 
-.tab-content {
+body[data-theme="dark"] .tab-content {
   background-color: var(--card-bg);
   border: 1px solid var(--cotalo-green-dark);
   border-top: 0;
@@ -80,7 +81,7 @@ body {
 }
 
 // Navbar styles
-.navbar {
+body[data-theme="dark"] .navbar {
   background-color: var(--nav-bg);
   border-bottom: 1px solid var(--border-color);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -99,7 +100,7 @@ body {
 }
 
 // Button styles with increased specificity
-.btn.btn-primary {
+body[data-theme="dark"] .btn.btn-primary {
   background-color: var(--cotalo-green) !important;
   border-color: var(--cotalo-green) !important;
   color: #ffffff !important;
@@ -117,8 +118,8 @@ body {
 }
 
 // Ensure "Agregar Material/Proceso/Extra" buttons are consistently green
-.btn.btn-primary[class*="Agregar"],
-button[class*="Agregar"].btn-primary {
+body[data-theme="dark"] .btn.btn-primary[class*="Agregar"],
+body[data-theme="dark"] button[class*="Agregar"].btn-primary {
   background-color: var(--cotalo-green) !important;
   border-color: var(--cotalo-green) !important;
   
@@ -129,8 +130,8 @@ button[class*="Agregar"].btn-primary {
 }
 
 // Card base styles
-.card {
-  background-color: var(--card-bg);
+body[data-theme="dark"] .card {
+  background-color: var(--card-bg) !important;
   border: 1px solid var(--border-color);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 1rem;
@@ -152,7 +153,8 @@ button[class*="Agregar"].btn-primary {
 }
 
 // Form controls base styles
-.form-control, .form-select {
+body[data-theme="dark"] .form-control, 
+body[data-theme="dark"] .form-select {
   background-color: var(--darker-bg);
   border-color: var(--border-color);
   color: var(--text-primary);
@@ -166,7 +168,7 @@ button[class*="Agregar"].btn-primary {
 }
 
 // Table base styles
-.table {
+body[data-theme="dark"] .table {
   color: var(--text-primary);
   
   thead th {
@@ -188,7 +190,7 @@ button[class*="Agregar"].btn-primary {
 }
 
 // Enhanced table styling for true dark mode
-.table {
+body[data-theme="dark"] .table {
   --bs-table-bg: transparent;
   --bs-table-accent-bg: transparent;
   --bs-table-striped-color: var(--text-primary);
@@ -200,18 +202,18 @@ button[class*="Agregar"].btn-primary {
   border-color: var(--border-color);
 }
 
-.table-striped > tbody > tr:nth-of-type(odd) > * {
+body[data-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) > * {
   background-color: var(--darker-bg);
   color: var(--text-primary);
 }
 
-.table-hover > tbody > tr:hover > * {
+body[data-theme="dark"] .table-hover > tbody > tr:hover > * {
   background-color: var(--hover-bg);
   color: var(--text-primary);
 }
 
 // Alerts and notices
-.alert {
+body[data-theme="dark"] .alert {
   border: none;
   
   &-success {
@@ -226,7 +228,7 @@ button[class*="Agregar"].btn-primary {
 }
 
 // Pagination
-.pagination {
+body[data-theme="dark"] .pagination {
   .page-item {
     .page-link {
       background-color: var(--card-bg);
@@ -246,7 +248,7 @@ button[class*="Agregar"].btn-primary {
 }
 
 // Dropdown improvements
-.dropdown-menu {
+body[data-theme="dark"] .dropdown-menu {
   background-color: var(--card-bg);
   border-color: var(--border-color);
   
@@ -265,7 +267,7 @@ button[class*="Agregar"].btn-primary {
 }
 
 // Links
-a {
+body[data-theme="dark"] a {
   color: var(--cotalo-green);
   
   &:hover {
@@ -274,53 +276,53 @@ a {
 }
 
 // Input group adjustments
-.input-group-text {
+body[data-theme="dark"] .input-group-text {
   background-color: var(--hover-bg);
   border-color: var(--border-color);
   color: var(--text-primary);
 }
 
 // Form labels
-.form-label {
+body[data-theme="dark"] .form-label {
   color: var(--text-primary);
   font-weight: 500;
   margin-bottom: 0.5rem;
 }
 
 // Field labels and hints
-.field_with_errors label,
-.form-text,
-small.form-text {
+body[data-theme="dark"] .field_with_errors label,
+body[data-theme="dark"] .form-text,
+body[data-theme="dark"] small.form-text {
   color: #e0e0e0;
 }
 
 // Form text helpers
-.form-text {
+body[data-theme="dark"] .form-text {
   color: #c5c5c5;
 }
 
 // Home/Dashboard improvements for dark theme
-.card-title, 
-.card-text,
-.lead,
-.display-4,
-.table th,
-.table td,
-.alert-info {
+body[data-theme="dark"] .card-title, 
+body[data-theme="dark"] .card-text,
+body[data-theme="dark"] .lead,
+body[data-theme="dark"] .display-4,
+body[data-theme="dark"] .table th,
+body[data-theme="dark"] .table td,
+body[data-theme="dark"] .alert-info {
   color: var(--text-primary);
 }
 
-p.card-text,
-p.lead {
+body[data-theme="dark"] p.card-text,
+body[data-theme="dark"] p.lead {
   color: var(--text-secondary);
 }
 
-.alert-info {
+body[data-theme="dark"] .alert-info {
   background-color: rgba(23, 162, 184, 0.15);
   border-color: rgba(23, 162, 184, 0.2);
 }
 
-.btn-outline-primary {
+body[data-theme="dark"] .btn-outline-primary {
   color: var(--cotalo-green);
   border-color: var(--cotalo-green);
   
@@ -332,12 +334,12 @@ p.lead {
 }
 
 // Emphasize icons
-i.fa-3x {
+body[data-theme="dark"] i.fa-3x {
   filter: drop-shadow(0 0 2px rgba(138, 191, 80, 0.3));
 }
 
 // Enhanced card styling for dashboard and welcome
-.card {
+body[data-theme="dark"] .card {
   h2, h3, h5 {
     color: var(--text-primary);
     font-weight: 500;
@@ -351,14 +353,14 @@ i.fa-3x {
 }
 
 // Dashboard specific dark styling
-.recent-materials {
+body[data-theme="dark"] .recent-materials {
   .card {
     background-color: var(--card-bg);
   }
 }
 
 // Main content area adjustments
-main.container {
+body[data-theme="dark"] main.container {
   background-color: var(--dark-bg);
   min-height: 0;
   height: auto;
@@ -368,7 +370,7 @@ main.container {
 }
 
 // Table row links
-tbody tr a {
+body[data-theme="dark"] tbody tr a {
   color: var(--cotalo-green);
   text-decoration: none;
   
@@ -379,8 +381,8 @@ tbody tr a {
 }
 
 // View all links
-.btn-outline-primary,
-a.view-all {
+body[data-theme="dark"] .btn-outline-primary,
+body[data-theme="dark"] a.view-all {
   color: var(--cotalo-green);
   border-color: var(--cotalo-green);
   
@@ -392,7 +394,7 @@ a.view-all {
 }
 
 // Stats numbers
-h2.card-text {
+body[data-theme="dark"] h2.card-text {
   color: var(--cotalo-green);
   font-weight: 600;
   margin-top: 0.5rem;
@@ -440,4 +442,67 @@ h2.card-text {
     padding: 1rem 15px;
     overflow: visible;
   }
+}
+
+// Multiselect dark mode styles
+body[data-theme="dark"] .multiselect,
+body[data-theme="dark"] .multiselect__input,
+body[data-theme="dark"] .multiselect__tags,
+body[data-theme="dark"] .multiselect__content-wrapper,
+body[data-theme="dark"] .multiselect__option {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+body[data-theme="dark"] .multiselect__option--highlight {
+  background: var(--hover-bg) !important;
+  color: var(--text-primary) !important;
+}
+body[data-theme="dark"] .multiselect__option--selected {
+  background: var(--cotalo-green-dark) !important;
+  color: #fff !important;
+}
+
+// Ensure selected value and input text in multiselect are readable in dark mode
+body[data-theme="dark"] .multiselect__single,
+body[data-theme="dark"] .multiselect__tags input,
+body[data-theme="dark"] .multiselect__tags {
+  color: var(--text-primary) !important;
+  background: var(--card-bg) !important;
+}
+
+// Dark mode for form controls in green-accent-panel (Extras, Materials, Processes)
+body[data-theme="dark"] .green-accent-panel .form-control,
+body[data-theme="dark"] .green-accent-panel .input-group-text {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+// Autofill styling for dark mode
+body[data-theme="dark"] input:-webkit-autofill,
+body[data-theme="dark"] input:-webkit-autofill:focus,
+body[data-theme="dark"] input:-webkit-autofill:hover {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+body[data-theme="dark"] .green-accent-panel .card .form-control,
+body[data-theme="dark"] .green-accent-panel .card textarea.form-control {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+body[data-theme="dark"] .choices__inner {
+  background: #23272b;
+  color: #e9ecef;
+  border-color: var(--border-color);
+}
+
+body[data-theme="dark"] .btn-success {
+  --bs-btn-color: #fff !important;
+  color: #fff !important;
 }

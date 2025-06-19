@@ -13,7 +13,8 @@ class AppConfigsController < ApplicationController
       length_margin: current_user.get_config(AppConfig::LENGTH_MARGIN) || 0,
       company_logo: current_user.get_config(AppConfig::COMPANY_LOGO),
       customer_name: current_user.get_config('customer_name').presence || "Cotalo",
-      company_name: current_user.get_config('company_name').presence || "Cotalo"
+      company_name: current_user.get_config('company_name').presence || "Cotalo",
+      theme: current_user.get_config(AppConfig::THEME) || 'dark'
     }
     
     # Check if APIs are configured (don't show the actual keys)
@@ -26,7 +27,8 @@ class AppConfigsController < ApplicationController
       width_margin: @general_settings[:width_margin],
       length_margin: @general_settings[:length_margin],
       customer_name: @general_settings[:customer_name],
-      company_name: @general_settings[:company_name]
+      company_name: @general_settings[:company_name],
+      theme: @general_settings[:theme]
     )
   end
   
@@ -126,6 +128,10 @@ class AppConfigsController < ApplicationController
     end
     if params[:company_name].present?
       current_user.set_config('company_name', params[:company_name])
+    end
+    
+    if params[:theme].present?
+      current_user.set_config(AppConfig::THEME, params[:theme])
     end
     
     redirect_to edit_app_configs_path, notice: "Configuraciones actualizadas exitosamente."

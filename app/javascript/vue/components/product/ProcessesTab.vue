@@ -23,21 +23,15 @@
                   <i class="fa fa-question-circle"></i>
                 </button>
               </div>
-              <select 
-                id="process-select" 
-                v-model="selectedProcessId" 
-                class="form-select bg-dark text-white border-secondary"
+              <multiselect
+                v-model="selectedProcessId"
+                :options="availableProcesses"
+                :track-by="'id'"
+                :label="'description'"
+                :placeholder="translations.processes.select_process"
                 :disabled="!availableProcesses.length"
-              >
-                <option value="" disabled>{{ translations.processes.select_process }}</option>
-                <option 
-                  v-for="process in availableProcesses" 
-                  :key="process.id" 
-                  :value="process.id"
-                >
-                  {{ process.description }}
-                </option>
-              </select>
+                :select-label="translations.extras_tab.press_enter_to_select"
+              />
             </div>
 
             <!-- Material Selector -->
@@ -55,21 +49,15 @@
                   <i class="fa fa-question-circle"></i>
                 </button>
               </div>
-              <select 
-                id="material-select" 
-                v-model="selectedMaterialId" 
-                class="form-select bg-dark text-white border-secondary"
+              <multiselect
+                v-model="selectedMaterialId"
+                :options="productMaterials"
+                :track-by="'id'"
+                :label="'description'"
+                :placeholder="translations.processes.select_material"
                 :disabled="!productMaterials.length"
-              >
-                <option value="" disabled>{{ translations.processes.select_material }}</option>
-                <option 
-                  v-for="material in productMaterials" 
-                  :key="material.id" 
-                  :value="material.id"
-                >
-                  {{ material.description }}
-                </option>
-              </select>
+                :select-label="translations.extras_tab.press_enter_to_select"
+              />
             </div>
 
             <!-- Add Process Button -->
@@ -98,7 +86,7 @@
           <div class="card-body p-0">
             <!-- Desktop Table -->
             <div class="d-none d-md-block">
-              <table class="table table-dark table-striped mb-0">
+              <table class="table table-striped table-hover mb-0">
                 <thead>
                   <tr>
                     <th style="width: 45%">{{ translations.processes.description }}</th>
@@ -232,8 +220,14 @@
 </template>
 
 <script>
+import Multiselect from 'vue-multiselect'
+import 'vue-multiselect/dist/vue-multiselect.min.css'
+
 export default {
   name: 'ProcessesTab',
+  components: {
+    Multiselect,
+  },
   props: {
     productProcesses: {
       type: Array,
@@ -278,8 +272,8 @@ export default {
   },
   data() {
     return {
-      selectedProcessId: '',
-      selectedMaterialId: '',
+      selectedProcessId: null,
+      selectedMaterialId: null,
       globalComments: this.comments || '',
       validationMessage: ''
     }
@@ -290,23 +284,16 @@ export default {
         this.validationMessage = '';
         return false;
       }
-
       const process = this.selectedProcess;
       if (!process) return false;
-
-      // First validate that there is at least one material
       if (!this.productMaterials || this.productMaterials.length === 0) {
         this.validationMessage = 'Primero debes agregar al menos un material en la pestaña de materiales';
         return false;
       }
-
-      // Then validate based on process unit type
       if (process.unit === 'mt2' || process.unit === 'pliego') {
-        // No additional validation needed for m2 and pliego units since we already checked for materials
         this.validationMessage = '';
         return true;
       } else if (process.unit === 'pieza') {
-        // For pieza unit, validate product dimensions and quantity
         if (!this.productQuantity || this.productQuantity <= 0) {
           this.validationMessage = 'Por favor, especifica la cantidad de piezas del producto en la pestaña de información general';
           return false;
@@ -316,14 +303,11 @@ export default {
           return false;
         }
       }
-
       this.validationMessage = '';
       return true;
     },
     selectedProcess() {
-      if (!this.selectedProcessId) return null;
-      const process = this.availableProcesses.find(process => process.id === this.selectedProcessId);
-      return process;
+      return this.selectedProcessId;
     },
     totalCost() {
       return this.productProcesses.reduce((sum, process) => {
@@ -339,7 +323,6 @@ export default {
       }).format(value || 0);
     },
     addProcess() {
-      // Validation: both process and material must be selected
       if (!this.selectedProcessId) {
         this.validationMessage = this.translations.processes.must_select_process || 'Debes seleccionar un proceso.';
         return;
@@ -350,18 +333,16 @@ export default {
       }
       if (!this.canAdd || !this.selectedProcess) return;
       this.validationMessage = '';
-      
-      const process = this.selectedProcess;
+
+      const process = this.selectedProcessId;
       const basePrice = parseFloat(process.price) || 0;
       let calculatedPrice = basePrice;
 
-      // Find the selected material in the processes tab
-      const selectedMaterial = this.productMaterials.find(m => m.id === this.selectedMaterialId);
+      const selectedMaterial = this.selectedMaterialId;
       const materialSheets = selectedMaterial ? selectedMaterial.totalSheets : 0;
       const materialSquareMeters = selectedMaterial ? selectedMaterial.totalSquareMeters : 0;
       const materialDescription = selectedMaterial ? selectedMaterial.description : null;
-      
-      // Calculate price based on unit type and selected material
+
       if (process.unit === 'pieza') {
         calculatedPrice = basePrice * this.productQuantity;
       } else if (process.unit === 'pliego') {
@@ -369,29 +350,23 @@ export default {
       } else if (process.unit === 'mt2') {
         calculatedPrice = basePrice * materialSquareMeters;
       }
-      
+
       const newProcess = {
         id: process.id,
         description: process.description,
         unit: process.unit || 'unidad',
-        unitPrice: basePrice, // Store the original unit price
-        price: calculatedPrice, // Store the calculated total price
+        unitPrice: basePrice,
+        price: calculatedPrice,
         materialId: selectedMaterial ? selectedMaterial.id : null,
         materialDescription: materialDescription
       };
-      
+
       const updatedProcesses = [...this.productProcesses, newProcess];
       this.$emit('update:product-processes', updatedProcesses);
-      
-      // Calculate the new total cost including the new process
       const newTotalCost = this.totalCost + calculatedPrice;
-      
-      // Emit the updated total cost of processes
       this.$emit('update:processes-cost', newTotalCost);
-      
-      // Reset form
-      this.selectedProcessId = '';
-      this.selectedMaterialId = '';
+      this.selectedProcessId = null;
+      this.selectedMaterialId = null;
     },
     removeProcess(index) {
       const processToRemove = this.productProcesses[index];

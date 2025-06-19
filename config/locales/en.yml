@@ -108,6 +108,10 @@ en:
     width_margin: "Width Margin"
     length_margin: "Length Margin"
     company_logo: "Company Logo"
+    theme: "Theme"
+    theme_dark: "Dark Mode"
+    theme_light: "Light Mode"
+    theme_description: "Choose your preferred theme. Changes will be applied immediately."
     no_logo_selected: "No logo selected"
     upload: "Upload"
     accepted_formats: "Accepted formats: JPG, PNG or GIF. Max size: 2MB"
@@ -590,6 +594,7 @@ en:
           edit_quantity: "Edit quantity"
           remove_extra: "Remove extra"
         total_extras: "Total extras:"
+        press_enter_to_select: "Press enter to select"
     new:
       title: "New product"
     edit:

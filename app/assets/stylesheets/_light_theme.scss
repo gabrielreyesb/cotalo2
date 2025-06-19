@@ -1,0 +1,450 @@
+// Light theme variables
+body[data-theme="light"] {
+  --cotalo-green: #42b983;
+  --cotalo-green-dark: #3aa876;
+  --cotalo-dark: #f8f9fa;
+  --light-bg: #ffffff;
+  --lighter-bg: #f1f3f7;
+  --nav-bg: #ffffff;
+  --card-bg: #f9fbfd;
+  --hover-bg: #e3e8ee;
+  --border-color: rgba(0, 0, 0, 0.125);
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --border-gray: #dee2e6;
+  --bg-primary: #fff;
+}
+
+// Light theme base styles
+body[data-theme="light"] { 
+  background-color: var(--light-bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+// Tab navigation styles for light theme
+body[data-theme="light"] .nav-tabs {
+  border-bottom: 1px solid var(--cotalo-green-dark);
+  
+  .nav-item {
+    margin-bottom: -1px;
+  }
+  
+  .nav-link {
+    border: 1px solid transparent;
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+    color: var(--text-primary);
+    background-color: var(--card-bg);
+    
+    &:hover, &:focus {
+      border-color: var(--border-color) var(--border-color) transparent;
+      background-color: var(--hover-bg);
+    }
+    
+    &.active {
+      color: #ffffff;
+      background-color: var(--cotalo-green-dark);
+      border-color: var(--cotalo-green-dark) var(--cotalo-green-dark) transparent;
+    }
+  }
+}
+
+body[data-theme="light"] .tab-content {
+  background-color: var(--card-bg);
+  border: 1px solid var(--cotalo-green-dark);
+  border-top: 0;
+  border-bottom-left-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  overflow: visible;
+  
+  .tab-pane {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+}
+
+// Navbar styles for light theme
+body[data-theme="light"] .navbar {
+  background-color: var(--nav-bg);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  &-brand {
+    display: flex;
+    align-items: center;
+    height: 50px;
+    color: var(--cotalo-green-dark) !important;
+    font-weight: 700;
+  }
+  
+  &-logo {
+    max-height: 40px;
+    width: auto;
+    object-fit: contain;
+  }
+}
+
+// Override navbar-dark class for light theme
+body[data-theme="light"] .navbar.navbar-dark {
+  .navbar-brand {
+    color: var(--cotalo-green-dark) !important;
+    
+    &:hover {
+      color: var(--cotalo-green) !important;
+    }
+  }
+  
+  .navbar-nav .nav-link {
+    color: var(--text-primary) !important;
+    
+    &:hover {
+      color: var(--cotalo-green) !important;
+    }
+    
+    &.active {
+      color: var(--cotalo-green-dark) !important;
+      font-weight: 600;
+    }
+  }
+  
+  .navbar-toggler {
+    border-color: var(--border-color);
+    
+    .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(33, 37, 41, 0.75)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+  }
+  
+  .dropdown-toggle::after {
+    border-top-color: var(--text-primary);
+  }
+}
+
+// Override subnavbar for light theme
+body[data-theme="light"] .subnavbar.navbar-dark.bg-dark {
+  background-color: var(--lighter-bg) !important;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  
+  .navbar-brand {
+    color: var(--text-primary) !important;
+    font-weight: 600;
+  }
+}
+
+// Button styles for light theme
+body[data-theme="light"] .btn.btn-primary {
+  background-color: var(--cotalo-green) !important;
+  border-color: var(--cotalo-green) !important;
+  color: #ffffff !important;
+  
+  &:hover, &:focus, &:active {
+    background-color: var(--cotalo-green-dark) !important;
+    border-color: var(--cotalo-green-dark) !important;
+    color: #ffffff !important;
+  }
+
+  &:disabled {
+    background-color: rgba(66, 185, 131, 0.65) !important;
+    border-color: rgba(66, 185, 131, 0.65) !important;
+  }
+}
+
+// Card base styles for light theme
+body[data-theme="light"] .card {
+  background-color: var(--card-bg) !important;
+  border: 1.5px solid #c8e0d4 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  
+  &-body {
+    background-color: var(--card-bg);
+    padding: 1rem;
+  }
+  
+  &-header {
+    background-color: var(--lighter-bg);
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  &-footer {
+    background-color: var(--lighter-bg);
+    border-top: 1px solid var(--border-color);
+  }
+}
+
+// Form controls for light theme
+body[data-theme="light"] .form-control, 
+body[data-theme="light"] .form-select {
+  background-color: var(--light-bg);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+  
+  &:focus {
+    background-color: var(--light-bg);
+    border-color: var(--cotalo-green);
+    box-shadow: 0 0 0 0.25rem rgba(66, 185, 131, 0.25);
+    color: var(--text-primary);
+  }
+}
+
+// Table styles for light theme
+body[data-theme="light"] .table {
+  color: var(--text-primary);
+  
+  thead th {
+    background-color: var(--lighter-bg);
+    border-bottom: 2px solid var(--cotalo-green-dark);
+  }
+  
+  tbody tr {
+    background-color: var(--card-bg);
+    
+    &:hover {
+      background-color: var(--hover-bg);
+    }
+  }
+  
+  td, th {
+    border-color: var(--border-color);
+  }
+}
+
+// Dropdown improvements for light theme
+body[data-theme="light"] .dropdown-menu {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+  
+  .dropdown-item {
+    color: var(--text-primary);
+    
+    &:hover, &:focus {
+      background-color: var(--hover-bg);
+      color: var(--text-primary);
+    }
+  }
+
+  .dropdown-divider {
+    border-color: var(--border-color);
+  }
+}
+
+// Links for light theme
+body[data-theme="light"] a {
+  color: var(--cotalo-green);
+  
+  &:hover {
+    color: var(--cotalo-green-dark);
+  }
+}
+
+// Input group adjustments for light theme
+body[data-theme="light"] .input-group-text {
+  background-color: var(--lighter-bg);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+// Form labels for light theme
+body[data-theme="light"] .form-label {
+  color: var(--text-primary);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+// Form text helpers for light theme
+body[data-theme="light"] .form-text {
+  color: var(--text-secondary);
+}
+
+// Alerts and notices for light theme
+body[data-theme="light"] .alert {
+  border: none;
+  
+  &-success {
+    background-color: rgba(117, 164, 67, 0.1);
+    color: #198754;
+  }
+  
+  &-danger {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+  }
+}
+
+// Pagination for light theme
+body[data-theme="light"] .pagination {
+  .page-item {
+    .page-link {
+      background-color: var(--card-bg);
+      border-color: var(--border-color);
+      color: var(--text-primary);
+      
+      &:hover {
+        background-color: var(--hover-bg);
+      }
+    }
+    
+    &.active .page-link {
+      background-color: var(--cotalo-green);
+      border-color: var(--cotalo-green);
+    }
+  }
+}
+
+// Text colors for light theme
+body[data-theme="light"] .text-primary {
+  color: var(--cotalo-green) !important;
+}
+
+body[data-theme="light"] .text-muted {
+  color: var(--text-secondary) !important;
+}
+
+// Green accent panel for light theme
+body[data-theme="light"] .green-accent-panel {
+  border: 1.5px solid #b7cfc3;
+  border-left: 4px solid var(--cotalo-green);
+  border-radius: 6px;
+  background: var(--card-bg);
+  margin-bottom: 1rem;
+  padding-left: 0;
+  margin-left: 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+
+  > .card,
+  > .table {
+    border-left: none;
+    border-right: none;
+    padding-left: 0;
+    margin-left: 0;
+    margin-bottom: 0;
+  }
+}
+
+body[data-theme="light"] .green-accent-panel .table,
+body[data-theme="light"] .green-accent-panel .table tbody tr {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+}
+body[data-theme="light"] .green-accent-panel .table thead th {
+  background-color: var(--lighter-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+// Force all striped table rows in green-accent-panel to use light background in light mode (materials, processes, and extras tabs)
+body[data-theme="light"] .green-accent-panel .table-striped > tbody > tr,
+body[data-theme="light"] .green-accent-panel .table-striped > tbody > tr:nth-of-type(odd),
+body[data-theme="light"] .green-accent-panel .table-striped > tbody > tr:nth-of-type(even) {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+// Scrollbar styling for light theme
+body[data-theme="light"] ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+body[data-theme="light"] ::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+body[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+  
+  &:hover {
+    background: #a8a8a8;
+  }
+}
+
+// Firefox scrollbar styling for light theme
+body[data-theme="light"] * {
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+body[data-theme="light"] .main-content {
+  background-color: #eaf7f2;
+}
+
+// Force select backgrounds to be light in light mode
+body[data-theme="light"] select.form-select,
+body[data-theme="light"] .form-select {
+  background-color: #fff !important;
+  color: #212529 !important;
+  border-color: var(--border-color) !important;
+}
+
+body[data-theme="light"] select.form-select option,
+body[data-theme="light"] .form-select option {
+  background-color: #fff !important;
+  color: #212529 !important;
+}
+
+// Improve contrast for form-check-label and label in light mode
+body[data-theme="light"] .form-check-label,
+body[data-theme="light"] label {
+  color: var(--text-primary) !important;
+  opacity: 0.85;
+}
+body[data-theme="light"] .form-check-input:disabled ~ .form-check-label,
+body[data-theme="light"] .form-check-label[disabled] {
+  color: var(--text-secondary) !important;
+  opacity: 1 !important;
+}
+
+// Light mode override for Bootstrap tooltips
+body[data-theme="light"] .tooltip-inner {
+  background-color: #f9fbfd !important;
+  color: #212529 !important;
+  border: 1px solid var(--border-color) !important;
+}
+body[data-theme="light"] .tooltip-arrow::before {
+  border-top-color: #f9fbfd !important;
+  border-bottom-color: #f9fbfd !important;
+}
+
+// Ensure comments block label and hint are visible in light mode
+body[data-theme="light"] .green-accent-panel .form-label,
+body[data-theme="light"] .green-accent-panel label,
+body[data-theme="light"] .green-accent-panel .form-text {
+  color: var(--text-primary) !important;
+  opacity: 1 !important;
+}
+
+// Choices.js styles removed 
+
+body[data-theme="light"] .btn-success {
+  --bs-btn-color: #fff !important;
+  color: #fff !important;
+}
+
+body[data-theme="light"] .feature-block,
+body[data-theme="light"] .feature-card,
+body[data-theme="light"] .feature-panel {
+  background-color: #fff !important;
+  color: #000 !important;
+}
+
+body[data-theme="light"] .features-section,
+body[data-theme="light"] .how-it-works-section {
+  background-color: #fff;
+}
+
+body[data-theme="light"] .features-section .card,
+body[data-theme="light"] .features-section .card * {
+  color: #000 !important;
+} 

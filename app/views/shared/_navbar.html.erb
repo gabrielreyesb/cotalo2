@@ -73,8 +73,7 @@
               <% end %>
 
               <% if current_user.admin? %>
-                <hr class="dropdown-divider" style="border-top: 1px solid #42b983 !important; opacity: 1 !important;">  
-                <div style="height:1px; background:#42b983; margin:0.5rem 0; opacity:0.7;"></div>
+                <hr class="dropdown-divider" style="border-top: 1px solid #42b983 !important; opacity: 1 !important;">
                 <%= link_to admin_units_path, class: "dropdown-item #{current_page?(admin_units_path) ? 'active' : ''}" do %>
                   <i class="fa fa-ruler me-1"></i> <%= t('navbar.units') %>
                 <% end %>

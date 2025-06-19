@@ -64,7 +64,7 @@
     </script>
   </head>
 
-  <body>
+  <body data-theme="<%= current_user&.get_config(AppConfig::THEME) || 'dark' %>">
     <%= render 'shared/navbar' %>
     <%= render 'shared/subnavbar' %>
     
@@ -172,5 +172,56 @@
     </script>
     
     <%= yield :page_scripts %>
+    
+    <script>
+      // Theme management functions
+      function initializeTheme() {
+        // Get theme from data-user-theme attribute (server), or localStorage, or default to dark
+        const userTheme = document.body.getAttribute('data-user-theme');
+        const savedTheme = localStorage.getItem('cotalo-theme');
+        const theme = userTheme || savedTheme || 'dark';
+        setTheme(theme);
+      }
+      
+      function setTheme(theme) {
+        // Set the theme on the body element
+        document.body.setAttribute('data-theme', theme);
+        
+        // Save to localStorage
+        localStorage.setItem('cotalo-theme', theme);
+        
+        // Update the theme selector if it exists
+        const themeSelect = document.querySelector('select[name="theme"]');
+        if (themeSelect) {
+          themeSelect.value = theme;
+        }
+      }
+      
+      function switchTheme(theme) {
+        setTheme(theme);
+        
+        // If we're on the config page, save the theme to the server
+        if (window.location.pathname.includes('/app_configs')) {
+          const form = document.querySelector('form[action*="app_configs"]');
+          if (form) {
+            const themeInput = form.querySelector('input[name="theme"]') || form.querySelector('select[name="theme"]');
+            if (themeInput) {
+              themeInput.value = theme;
+            }
+          }
+        }
+      }
+      
+      // Initialize theme on page load
+      document.addEventListener('DOMContentLoaded', initializeTheme);
+      document.addEventListener('turbo:load', initializeTheme);
+      
+      // Handle theme selector changes
+      document.addEventListener('change', function(e) {
+        if (e.target.name === 'theme') {
+          switchTheme(e.target.value);
+        }
+      });
+    </script>
   </body>
 </html>

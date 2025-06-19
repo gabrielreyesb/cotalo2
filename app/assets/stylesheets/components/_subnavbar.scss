@@ -1,8 +1,8 @@
 // Subnavbar styles
 .subnavbar {
   background-color: var(--cotalo-dark) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.85);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.85);
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
   padding: 0.3rem 1rem;
   margin-bottom: 0rem;
   min-height: unset;

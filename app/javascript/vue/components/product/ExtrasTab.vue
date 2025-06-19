@@ -6,21 +6,15 @@
           <div class="row align-items-end">
             <div class="col-md-7 mb-3 mb-md-0 me-md-2">
               <label for="extra-select" class="form-label">{{ translations.extras_tab.select_extra }}</label>
-              <select 
-                id="extra-select" 
-                v-model="selectedExtraId" 
-                class="form-select bg-dark text-white border-secondary"
+              <multiselect
+                v-model="selectedExtraId"
+                :options="availableExtras"
+                :track-by="'id'"
+                :label="'name'"
+                :placeholder="translations.extras_tab.select_extra_placeholder"
                 :disabled="!availableExtras.length"
-              >
-                <option value="" disabled>{{ translations.extras_tab.select_extra_placeholder }}</option>
-                <option 
-                  v-for="extra in availableExtras" 
-                  :key="extra.id" 
-                  :value="extra.id"
-                >
-                  {{ extra.name }}
-                </option>
-              </select>
+                :select-label="translations.extras_tab.press_enter_to_select"
+              />
             </div>
             <div class="col-md-2 mb-3 mb-md-0 me-md-2">
               <label for="extra-quantity" class="form-label">{{ translations.extras_tab.quantity }}</label>
@@ -28,7 +22,7 @@
                 id="extra-quantity" 
                 type="number" 
                 v-model.number="quantity" 
-                class="form-control bg-dark text-white border-secondary text-end" 
+                class="form-control border-secondary text-end" 
                 style="color-scheme: dark;"
                 min="1" 
                 step="1"
@@ -72,7 +66,7 @@
 
           <!-- Desktop Table -->
           <div class="d-none d-md-block">
-            <table class="table table-dark table-striped mb-0">
+            <table class="table table-striped mb-0">
               <thead>
                 <tr>
                   <th style="width: 20%">{{ translations.extras_tab.table.name }}</th>
@@ -90,7 +84,7 @@
                   <td class="text-end">
                     <input
                       type="number"
-                      class="form-control form-control-sm text-end bg-dark text-white border-secondary"
+                      class="form-control form-control-sm text-end border-secondary"
                       v-model.number="extra.unit_price"
                       @change="updateExtraPrice(index)"
                       min="0"
@@ -103,7 +97,7 @@
                     <div class="input-group input-group-sm">
                       <input 
                         type="number" 
-                        class="form-control form-control-sm text-end bg-dark text-white border-secondary"
+                        class="form-control form-control-sm text-end border-secondary"
                         v-model.number="extra.quantity"
                         min="1"
                         @change="updateExtraQuantity(index)"
@@ -162,7 +156,7 @@
                     <div class="input-group input-group-sm">
                       <input 
                         type="number" 
-                        class="form-control form-control-sm text-end bg-dark text-white border-secondary"
+                        class="form-control form-control-sm text-end border-secondary"
                         v-model.number="extra.unit_price"
                         @change="updateExtraPrice(index)"
                         min="0"
@@ -176,7 +170,7 @@
                     <div class="input-group input-group-sm">
                       <input 
                         type="number" 
-                        class="form-control form-control-sm text-end bg-dark text-white border-secondary"
+                        class="form-control form-control-sm text-end border-secondary"
                         v-model.number="extra.quantity"
                         min="1"
                         @change="updateExtraQuantity(index)"
@@ -222,7 +216,7 @@
             <label for="global-comments" class="form-label">{{ translations.extras_tab.comments_label }}</label>
             <textarea 
               id="global-comments" 
-              class="form-control bg-dark text-white border-secondary" 
+              class="form-control border-secondary" 
               v-model="globalComments" 
               rows="3"
               :placeholder="translations.extras_tab.comments_placeholder"
@@ -237,9 +231,14 @@
 
 <script>
 import { ref } from 'vue'
+import Multiselect from 'vue-multiselect'
+import 'vue-multiselect/dist/vue-multiselect.min.css'
 
 export default {
   name: 'ExtrasTab',
+  components: {
+    Multiselect,
+  },
   props: {
     productExtras: {
       type: Array,
@@ -268,7 +267,7 @@ export default {
   },
   data() {
     return {
-      selectedExtraId: '',
+      selectedExtraId: null,
       quantity: 1,
       globalComments: this.comments || '',
       includeInSubtotal: this.includeExtrasInSubtotal
@@ -279,9 +278,7 @@ export default {
       return this.selectedExtraId && this.quantity > 0;
     },
     selectedExtra() {
-      if (!this.selectedExtraId) return null;
-      const extra = this.availableExtras.find(extra => extra.id === this.selectedExtraId);
-      return extra;
+      return this.selectedExtraId;
     },
     totalCost() {
       return this.productExtras.reduce((sum, extra) => sum + extra.total, 0);
@@ -317,7 +314,6 @@ export default {
     },
     addExtra() {
       if (!this.canAdd || !this.selectedExtra) return;
-      
       const newExtra = {
         id: this.selectedExtra.id,
         name: this.selectedExtra.name,
@@ -328,13 +324,10 @@ export default {
         total: this.selectedExtra.unit_price * this.quantity,
         comments: ''
       };
-      
       const updatedExtras = [...this.productExtras, newExtra];
       this.$emit('update:product-extras', updatedExtras);
       this.$emit('update:extras-cost', this.totalCost);
-      
-      // Reset form
-      this.selectedExtraId = '';
+      this.selectedExtraId = null;
       this.quantity = 1;
     },
     removeExtra(index) {

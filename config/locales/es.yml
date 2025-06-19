@@ -57,10 +57,16 @@ es:
   config:
     title: "Configuraciones"
     general_settings: "Configuración General"
+    customer_name: "Nombre"
+    company_name: "Empresa"
     waste_percentage: "Porcentaje de desperdicio"
     width_margin: "Margen de ancho"
     length_margin: "Margen de largo"
     company_logo: "Logo de la empresa"
+    theme: "Tema"
+    theme_dark: "Modo Oscuro"
+    theme_light: "Modo Claro (en desarrollo)"
+    theme_description: "Elige tu tema preferido. Los cambios se aplicarán inmediatamente."
     no_logo_selected: "No hay logo seleccionado"
     upload: "Subir"
     accepted_formats: "Formatos aceptados: JPG, PNG o GIF. Tamaño máximo: 2MB"
@@ -95,8 +101,6 @@ es:
     logo_upload_success: "Logo actualizado correctamente"
     logo_uploading: "Subiendo..."
     select_file_first: "Por favor selecciona un archivo primero"
-    customer_name: "Nombre"
-    company_name: "Empresa"
   
   price_adjustments:
     title: "Ajuste de precios"
@@ -573,6 +577,7 @@ es:
           edit_quantity: "Editar cantidad"
           remove_extra: "Eliminar extra"
         total_extras: "Total:"
+        press_enter_to_select: "Presiona enter para seleccionar"
     extras_tab:
       select_extra: "Seleccionar extra"
       select_extra_placeholder: "Seleccionar un extra para agregar"

@@ -11,10 +11,10 @@
     align-items: center;
     height: 50px;
     font-size: 1.5rem;
-    color: white;
+    color: var(--text-primary);
     
     &:hover {
-      color: rgba(255, 255, 255, 0.8);
+      color: var(--cotalo-green);
     }
   }
 
@@ -79,4 +79,9 @@
       margin-left: 0.5rem;
     }
   }
+}
+
+body[data-theme="light"] .navbar .navbar-brand {
+  color: var(--cotalo-green-dark) !important;
+  font-weight: 700;
 } 

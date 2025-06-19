@@ -35,6 +35,15 @@ main.main-content:has(.main-view-container) {
       background-color: var(--card-bg);
     }
   }
+
+  // Feature block styling (fix dark background in light mode)
+  .feature-block, .feature-card, .feature-panel {
+    background-color: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(33, 37, 41, 0.04);
+    border: 1px solid var(--border-color);
+  }
   
   // Button styling
   .btn-success {
@@ -59,15 +68,76 @@ main.main-content:has(.main-view-container) {
   
   // Form styling
   .form-control {
-    background-color: var(--darker-bg);
-    border-color: var(--border-color);
+    background-color: var(--light-bg);
+    border-color: var(--border-color);  
     color: var(--text-primary);
     
     &:focus {
-      background-color: var(--darker-bg);
+      background-color: var(--light-bg);
       border-color: var(--cotalo-green);
       box-shadow: 0 0 0 0.25rem rgba(66, 185, 131, 0.25);
       color: var(--text-primary);
     }
+  }
+}
+
+// Flow Diagram Styles
+.flow-diagram {
+  background-color: var(--card-bg);
+  border-radius: 18px;
+  padding: 2.5rem 2rem;
+  box-shadow: 0 6px 24px rgba(33,37,41,0.10);
+  border: 2.5px solid var(--cotalo-green);
+  margin-bottom: 2.5rem;
+  max-width: 800px;
+
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 2.5rem 0 1.25rem 0;
+    padding-bottom: 0.75rem;
+    border-bottom: 2.5px solid var(--cotalo-green);
+  }
+
+  .step-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: 14px;
+    background: var(--card-bg);
+    border: 2.5px solid var(--border-color);
+    margin-bottom: 0.75rem;
+    box-shadow: 0 2px 8px rgba(33,37,41,0.06);
+    transition: box-shadow 0.2s, border-color 0.2s;
+    position: relative;
+    color: var(--text-primary);
+    &.config-step { border-left: 6px solid #6366f1; }
+    &.prep-step   { border-left: 6px solid #0ea5e9; }
+    &.quote-step  { border-left: 6px solid #14b8a6; }
+    &.final-step  { border-left: 6px solid var(--cotalo-green); }
+    &:hover {
+      box-shadow: 0 4px 16px rgba(33,37,41,0.12);
+      border-color: var(--cotalo-green);
+    }
+  }
+  .step-icon {
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+    box-shadow: 0 2px 8px rgba(33,37,41,0.08);
+    &.config-icon { background: #eef2ff; color: #6366f1; }
+    &.prep-icon   { background: #e0f2fe; color: #0ea5e9; }
+    &.quote-icon  { background: #ccfbf1; color: #14b8a6; }
+    &.final-icon  { background: #e6f9f2; color: var(--cotalo-green); }
+  }
+  .arrow {
+    text-align: center;
+    color: var(--border-color);
+    font-size: 1.5rem;
+    line-height: 1;
+    margin-bottom: 0.25rem;
   }
 } 

@@ -20,7 +20,7 @@
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
 
-  <body>
+  <body data-theme="<%= current_user&.get_config(AppConfig::THEME) || 'dark' %>">
     <header>
       <%= render 'shared/navbar' %>
       <%= render 'shared/subnavbar' %>

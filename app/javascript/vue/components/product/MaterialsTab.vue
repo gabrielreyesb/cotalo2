@@ -18,22 +18,16 @@
                   <i class="fa fa-question-circle"></i>
                 </button>
               </div>
-              <select 
-                id="material-select" 
-                v-model="materialIdForAdd" 
-                class="form-select bg-dark text-white border-secondary"
+              <multiselect
+                v-model="materialIdForAdd"
+                :options="availableMaterials"
+                :track-by="'id'"
+                :label="'description'"
+                :placeholder="translations.materials.select_material"
                 :disabled="!availableMaterials.length"
-                @change="onMaterialSelect"
-              >
-                <option value="" disabled>{{ translations.materials.select_material }}</option>
-                <option 
-                  v-for="material in availableMaterials" 
-                  :key="material.id" 
-                  :value="material.id"
-                >
-                  {{ material.description }}
-                </option>
-              </select>
+                @input="onMaterialSelect"
+                :select-label="translations.extras_tab.press_enter_to_select"
+              />
               <div v-if="validationMessage" class="text-danger mt-2">
                 {{ validationMessage }}
               </div>
@@ -65,7 +59,7 @@
         <div class="card-body p-0">
           <!-- Desktop Table -->
           <div class="d-none d-md-block">
-            <table class="table table-dark table-striped product-table mb-0">
+            <table class="table table-striped product-table mb-0">
               <thead>
                 <tr>
                   <th style="width: 32%">{{ translations.materials.description }}</th>
@@ -377,8 +371,14 @@
 </template>
 
 <script>
+import Multiselect from 'vue-multiselect'
+import 'vue-multiselect/dist/vue-multiselect.min.css'
+
 export default {
   name: 'MaterialsTab',
+  components: {
+    Multiselect,
+  },
   emits: {
     'update:product-materials': null,
     'update:comments': null,
@@ -456,7 +456,7 @@ export default {
     },
     selectedMaterialDetails() {
       if (!this.materialIdForAdd) return null;
-      return this.availableMaterials.find(m => m.id === this.materialIdForAdd);
+      return this.availableMaterials.find(m => m.id === this.materialIdForAdd.id);
     },
     totalCost() {
       return this.productMaterials.reduce((sum, material) => sum + material.totalPrice, 0);
@@ -596,54 +596,36 @@ export default {
       this.validationMessage = '';
     },
     addMaterial() {
-      if (!this.selectedMaterialDetails) {
-        this.validationMessage = 'Por favor, selecciona un material.';
+      if (!this.materialIdForAdd) return;
+      const selectedMaterial = this.materialIdForAdd;
+      if (this.productMaterials.some(mat => mat.id === selectedMaterial.id)) {
+        this.validationMessage = this.translations.materials.already_added;
         return;
       }
-
-      const material = {
-        id: this.selectedMaterialDetails.id,
-        description: this.selectedMaterialDetails.description,
-        client_description: this.selectedMaterialDetails.client_description,
-        resistance: this.selectedMaterialDetails.resistance,
-        ancho: this.selectedMaterialDetails.ancho,
-        largo: this.selectedMaterialDetails.largo,
-        price: this.selectedMaterialDetails.price,
-        piecesPerMaterial: this.calculatePiecesPerSheet(
-          this.selectedMaterialDetails.ancho,
-          this.selectedMaterialDetails.largo,
-          this.productWidth,
-          this.productLength,
-          this.widthMargin,
-          this.lengthMargin
-        ) || 1,
+      
+      // Create a new material object with all required properties
+      const newMaterial = {
+        ...selectedMaterial,
+        piecesPerMaterial: 1,
         totalSheets: 0,
         totalSquareMeters: 0,
         totalPrice: 0
       };
-
-      // Add material
-      this.productMaterials.push(material);
       
-      // Reset and emit
-      this.materialIdForAdd = '';
-      this.validationMessage = '';
-      this.$emit('update:product-materials', this.productMaterials);
-      this.$emit('material-calculation-changed', {
-        materialId: material.id,
-        totalSheets: 0,
-        totalSquareMeters: 0,
-        totalPrice: 0,
-        needsProcessRecalculation: true,
-        needsPricingRecalculation: true
-      });
+      // Add the material to the array
+      this.productMaterials.push(newMaterial);
       
-      // Calculate values
+      // Calculate the material properties
+      const materialIndex = this.productMaterials.length - 1;
       this.updateMaterialCalculations({ 
-        index: this.productMaterials.length - 1, 
+        index: materialIndex, 
         updatePiecesPerMaterial: true, 
-        material 
+        material: newMaterial 
       });
+      
+      // Reset form
+      this.materialIdForAdd = null;
+      this.validationMessage = '';
     },
     updateMaterialCalculations({ index, updatePiecesPerMaterial = false, material }) {
       if (!material) return;

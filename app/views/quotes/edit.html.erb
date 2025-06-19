@@ -13,7 +13,7 @@
 
 <div class="container-fluid">
   <!-- Vue app mount point -->
-  <div id="quote-form-app" 
+  <div id="quote-form-app" class="quote-form-root"
        data-available-products="<%= @products.to_json(methods: [:formatted_description], except: [:created_at, :updated_at]) %>"
        data-quote="<%= @quote.to_json(include: {
          quote_products: { 

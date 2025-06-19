@@ -127,7 +127,7 @@
         <div class="col-12 col-lg-3 mt-3 mt-lg-0 ps-lg-4">
           <div class="green-accent-panel pricing-panel">
             <div class="card">
-              <div class="card-header bg-dark text-white">
+              <div class="card-header text-white">
                 <h5 class="mb-0">
                   <i class="fa fa-calculator me-2"></i>{{ translations.pricing.total_price }}
                 </h5>

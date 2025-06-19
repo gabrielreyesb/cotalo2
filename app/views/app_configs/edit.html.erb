@@ -16,15 +16,15 @@
                 <div class="col-md-4">
                   <%= form.label :customer_name, t('config.customer_name'), class: "form-label" %>
                   <div class="input-group">
-                    <%= form.text_field :customer_name, value: @general_settings[:customer_name], class: "form-control bg-dark text-light border-secondary text-start" %>
-                    <span class="input-group-text bg-dark text-light border-secondary"><i class="fas fa-user"></i></span>
+                    <%= form.text_field :customer_name, value: @general_settings[:customer_name], class: "form-control border-secondary text-start" %>
+                    <span class="input-group-text border-secondary"><i class="fas fa-user"></i></span>
                   </div>
                 </div>
                 <div class="col-md-4">
                   <%= form.label :company_name, t('config.company_name'), class: "form-label" %>
                   <div class="input-group">
-                    <%= form.text_field :company_name, value: @general_settings[:company_name], class: "form-control bg-dark text-light border-secondary text-start" %>
-                    <span class="input-group-text bg-dark text-light border-secondary"><i class="fas fa-building"></i></span>
+                    <%= form.text_field :company_name, value: @general_settings[:company_name], class: "form-control border-secondary text-start" %>
+                    <span class="input-group-text border-secondary"><i class="fas fa-building"></i></span>
                   </div>
                 </div>
                 <div class="col-md-4"></div>
@@ -33,23 +33,43 @@
                 <div class="col-md-4">
                   <%= form.label :waste_percentage, t('config.waste_percentage'), class: "form-label" %>
                   <div class="input-group">
-                    <%= form.number_field :waste_percentage, value: @general_settings[:waste_percentage], class: "form-control bg-dark text-light border-secondary", min: 0, max: 100, step: 1 %>
-                    <span class="input-group-text bg-dark text-light border-secondary">%</span>
+                    <%= form.number_field :waste_percentage, value: @general_settings[:waste_percentage], class: "form-control border-secondary", min: 0, max: 100, step: 1 %>
+                    <span class="input-group-text border-secondary">%</span>
                   </div>
                 </div>
                 
                 <div class="col-md-4">
                   <%= form.label :width_margin, t('config.width_margin'), class: "form-label" %>
                   <div class="input-group">
-                    <%= form.number_field :width_margin, value: @general_settings[:width_margin], step: '0.01', class: "form-control bg-dark text-light border-secondary" %>
+                    <%= form.number_field :width_margin, value: @general_settings[:width_margin], step: '0.01', class: "form-control border-secondary" %>
                   </div>
                 </div>
                 
                 <div class="col-md-4">
                   <%= form.label :length_margin, t('config.length_margin'), class: "form-label" %>
                   <div class="input-group">
-                    <%= form.number_field :length_margin, value: @general_settings[:length_margin], step: '0.01', class: "form-control bg-dark text-light border-secondary" %>
+                    <%= form.number_field :length_margin, value: @general_settings[:length_margin], step: '0.01', class: "form-control border-secondary" %>
                   </div>
+                </div>
+              </div>
+              
+              <!-- Theme Configuration -->
+              <div class="row mt-4">
+                <div class="col-md-4 offset-md-0">
+                  <%= form.label :theme, t('config.theme'), class: "form-label" %>
+                  <div class="input-group">
+                    <%= form.select :theme, 
+                        options_for_select([
+                          [t('config.theme_dark'), 'dark'],
+                          [t('config.theme_light'), 'light']
+                        ], @general_settings[:theme]), 
+                        {}, 
+                        { class: "form-select border-secondary" } %>
+                    <span class="input-group-text border-secondary">
+                      <i class="fas fa-palette"></i>
+                    </span>
+                  </div>
+                  <small class="form-text text-muted"><%= t('config.theme_description') %></small>
                 </div>
               </div>
             </div>
@@ -108,16 +128,47 @@
     </div>
   </div>
 
-  <!-- Hidden submit button to be triggered by subnavbar button -->
-  <button type="submit" id="hidden-save-configs-btn" style="display:none"></button>
-<% end %>
+  <div class="row">
+    <div class="col-md-8 offset-md-2 mb-4">
+      <div class="settings-tab">
+        <div class="green-accent-panel">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">Logo</h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <%= form.label :company_logo, t('config.company_logo'), class: "form-label" %>
+                <div class="input-group">
+                  <%= form.file_field :company_logo, class: "form-control" %>
+                </div>
+                <small class="form-text text-muted"><%= t('config.logo_description') %></small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<% content_for :styles do %>
-<style>
-  .app-settings-container {
-    padding: 1rem;
-  }
-</style>
+  <div class="row">
+    <div class="col-md-8 offset-md-2 mb-4">
+      <div class="settings-tab">
+        <div class="green-accent-panel">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">Guardar Cambios</h5>
+            </div>
+            <div class="card-body">
+              <%= form.submit t('config.save_changes'), class: "btn btn-success px-4" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button type="submit" id="hidden-save-configs-btn" style="display:none"></button>
 <% end %>
 
 <% content_for :scripts do %>

@@ -1,176 +1,204 @@
 <template>
   <div class="quote-form">
-    <div v-if="validationErrors.length" class="alert alert-danger">
-      <ul class="mb-0">
-        <li v-for="(error, idx) in validationErrors" :key="idx">{{ error }}</li>
-      </ul>
-    </div>
-    <div class="row">
-      <div class="col-lg-7">
-        <form @submit.prevent="saveQuote">
-          <div class="green-accent-panel">
-            <div class="card mb-4">
-              <div class="card-header">
-                <h5 class="mb-0">{{ translations.quote_info }}</h5>
-              </div>
-              <div class="card-body">
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="project_name" class="form-label">{{ translations.project_name }}</label>
-                      <input type="text" class="form-control" id="project_name" v-model="form.project_name" required>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="green-accent-panel">
-            <div class="card mb-4">
-              <div class="card-header">
-                <h5 class="mb-0">{{ translations.customer_info }}</h5>
-              </div>
-              <div class="card-body">
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="customer_name" class="form-label">{{ translations.customer_name }}</label>
-                      <div class="input-group">
-                        <input type="text" class="form-control text-start" id="customer_name" v-model="form.customer_name" required>
-                        <button type="button" class="btn btn-outline-secondary" @click="searchCustomersInline" :title="'Search customer'">
-                          <i class="fas fa-search"></i>
-                        </button>
-                      </div>
-                      <small v-if="customerSearch.error" class="text-danger">{{ customerSearch.error }}</small>
-                      <small v-if="customerSearch.loading" class="text-info">{{ translations.searching_customers }}</small>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="organization" class="form-label">{{ translations.organization }}</label>
-                      <select v-if="customerSearch.results.length > 0" 
-                              class="form-select" 
-                              id="organization" 
-                              v-model="selectedCustomerId"
-                              @change="handleCustomerSelection">
-                        <option value="">{{ translations.select_organization }}</option>
-                        <option v-for="customer in customerSearch.results" 
-                                :key="customer.id" 
-                                :value="customer.id">
-                          {{ customer.org_name || translations.no_organization }}
-                        </option>
-                      </select>
-                      <input v-else type="text" class="form-control" id="organization" v-model="form.organization" required>
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="email" class="form-label">{{ translations.email }}</label>
-                      <input type="email" class="form-control" id="email" v-model="form.email">
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="telephone" class="form-label">{{ translations.telephone }}</label>
-                      <input type="text" class="form-control" id="telephone" v-model="form.telephone">
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-12">
-                    <div class="mb-3">
-                      <label for="comments" class="form-label">{{ translations.comments }}</label>
-                      <textarea rows="3" class="form-control" id="comments" v-model="form.comments"></textarea>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </form>
+    <div class="product-form-container">
+      <div v-if="validationErrors.length" class="alert alert-danger">
+        <ul class="mb-0">
+          <li v-for="(error, idx) in validationErrors" :key="idx">{{ error }}</li>
+        </ul>
       </div>
-
-      <div class="col-lg-5">
-        <div class="green-accent-panel">
-          <div class="card mb-4">
-            <div class="card-header">
-              <h5 class="mb-0">{{ translations.add_product }}</h5>
+      <div class="row">
+        <div class="col-lg-7">
+          <form @submit.prevent="saveQuote">
+            <div class="green-accent-panel">
+              <div class="card mb-4">
+                <div class="card-header">
+                  <h5 class="mb-0">{{ translations.quote_info }}</h5>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="mb-3">
+                        <label for="project_name" class="form-label">{{ translations.project_name }}</label>
+                        <input type="text" class="form-control" id="project_name" v-model="form.project_name" required>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="card-body">
-              <div class="mb-3">
-                <label for="product-search" class="form-label">{{ translations.search_product }}</label>
-                <input 
-                  type="text" 
-                  id="product-search" 
-                  class="form-control" 
-                  v-model="productSearch" 
-                  :placeholder="translations.search_by_description"
-                />
+
+            <div class="green-accent-panel">
+              <div class="card mb-4">
+                <div class="card-header">
+                  <h5 class="mb-0">{{ translations.customer_info }}</h5>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="mb-3">
+                        <label for="customer_name" class="form-label">{{ translations.customer_name }}</label>
+                        <div class="input-group">
+                          <input type="text" class="form-control text-start" id="customer_name" v-model="form.customer_name" required>
+                          <button type="button" class="btn btn-outline-secondary" @click="searchCustomersInline" :title="'Search customer'">
+                            <i class="fas fa-search"></i>
+                          </button>
+                        </div>
+                        <small v-if="customerSearch.error" class="text-danger">{{ customerSearch.error }}</small>
+                        <small v-if="customerSearch.loading" class="text-info">{{ translations.searching_customers }}</small>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="mb-3">
+                        <label for="organization" class="form-label">{{ translations.organization }}</label>
+                        <select v-if="customerSearch.results.length > 0" 
+                                class="form-select" 
+                                id="organization" 
+                                v-model="selectedCustomerId"
+                                @change="handleCustomerSelection">
+                          <option value="">{{ translations.select_organization }}</option>
+                          <option v-for="customer in customerSearch.results" 
+                                  :key="customer.id" 
+                                  :value="customer.id">
+                            {{ customer.org_name || translations.no_organization }}
+                          </option>
+                        </select>
+                        <input v-else type="text" class="form-control" id="organization" v-model="form.organization" required>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="mb-3">
+                        <label for="email" class="form-label">{{ translations.email }}</label>
+                        <input type="email" class="form-control" id="email" v-model="form.email">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="mb-3">
+                        <label for="telephone" class="form-label">{{ translations.telephone }}</label>
+                        <input type="text" class="form-control" id="telephone" v-model="form.telephone">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="mb-3">
+                        <label for="comments" class="form-label">{{ translations.comments }}</label>
+                        <textarea rows="3" class="form-control" id="comments" v-model="form.comments"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              
-              <div class="mb-3">
-                <label for="product-select" class="form-label">{{ translations.select_product }}</label>
-                <select 
-                  id="product-select" 
-                  class="form-select" 
-                  v-model="selectedProductId"
-                >
-                  <option value="">-- {{ translations.select_product }} --</option>
-                  <option 
-                    v-for="product in filteredProducts" 
-                    :key="product.id" 
-                    :value="product.id"
+            </div>
+          </form>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="green-accent-panel">
+            <div class="card mb-4">
+              <div class="card-header">
+                <h5 class="mb-0">{{ translations.add_product }}</h5>
+              </div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <label for="product-search" class="form-label">{{ translations.search_product }}</label>
+                  <input 
+                    type="text" 
+                    id="product-search" 
+                    class="form-control" 
+                    v-model="productSearch" 
+                    :placeholder="translations.search_by_description"
+                  />
+                </div>
+                
+                <div class="mb-3">
+                  <label for="product-select" class="form-label">{{ translations.select_product }}</label>
+                  <select 
+                    id="product-select" 
+                    class="form-select" 
+                    v-model="selectedProductId"
                   >
-                    {{ product.description }} - {{ formatCurrency(product.data && product.data.pricing && product.data.pricing.total_price || 0) }}
-                  </option>
-                </select>
-              </div>
-              
-              <div class="d-grid">
-                <button 
-                  type="button" 
-                  class="btn btn-primary" 
-                  @click="addSelectedProduct()" 
-                  :disabled="!selectedProductId"
-                >
-                  <i class="fas fa-plus"></i> {{ translations.add_to_quote }}
-                </button>
+                    <option value="">-- {{ translations.select_product }} --</option>
+                    <option 
+                      v-for="product in filteredProducts" 
+                      :key="product.id" 
+                      :value="product.id"
+                    >
+                      {{ product.description }} - {{ formatCurrency(product.data && product.data.pricing && product.data.pricing.total_price || 0) }}
+                    </option>
+                  </select>
+                </div>
+                
+                <div class="d-grid">
+                  <button 
+                    type="button" 
+                    class="btn btn-primary" 
+                    @click="addSelectedProduct()" 
+                    :disabled="!selectedProductId"
+                  >
+                    <i class="fas fa-plus"></i> {{ translations.add_to_quote }}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        
-        <div class="green-accent-panel">
-        <!-- Selected Products Card - Now in the middle -->
-          <div class="card mb-4">
-            <div class="card-header">
-              <h5 class="mb-0">{{ translations.selected_products }}</h5>
-            </div>
-            <div class="card-body">
-              <div v-if="selectedProducts.length === 0" class="alert alert-info">
-                {{ translations.no_selected_products }}
+          
+          <div class="green-accent-panel">
+            <div class="card mb-4">
+              <div class="card-header">
+                <h5 class="mb-0">{{ translations.selected_products }}</h5>
               </div>
-              <div v-else>
-                <table class="table table-sm">
-                  <thead>
-                    <tr>
-                      <th style="width: 70%">{{ translations.product }}</th>
-                      <th>{{ translations.price }}</th>
-                      <th style="width: 40px"></th>
-                    </tr>
-                  </thead>
+              <div class="card-body">
+                <div v-if="selectedProducts.length === 0" class="alert alert-info">
+                  {{ translations.no_selected_products }}
+                </div>
+                <div v-else>
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th style="width: 70%">{{ translations.product }}</th>
+                        <th>{{ translations.price }}</th>
+                        <th style="width: 40px"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(product, index) in selectedProducts" :key="product.id">
+                        <td class="text-wrap">{{ product.name }}</td>
+                        <td>{{ formatCurrency(product.price) }}</td>
+                        <td>
+                          <button type="button" class="btn btn-sm btn-danger" @click="removeProduct(index)">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Totals Card - Still at the bottom -->
+          <div class="green-accent-panel" v-if="selectedProducts.length > 0">
+            <div class="card mb-4">
+              <div class="card-header">
+                <h5 class="mb-0">{{ translations.price_summary }}</h5>
+              </div>
+              <div class="card-body">
+                <table class="table table-hover">
                   <tbody>
-                    <tr v-for="(product, index) in selectedProducts" :key="product.id">
-                      <td class="text-wrap">{{ product.name }}</td>
-                      <td>{{ formatCurrency(product.price) }}</td>
-                      <td>
-                        <button type="button" class="btn btn-sm btn-danger" @click="removeProduct(index)">
-                          <i class="fas fa-trash"></i>
-                        </button>
-                      </td>
+                    <tr>
+                      <th>{{ translations.subtotal }}</th>
+                      <td class="text-end">{{ formatCurrency(totals.subtotal) }}</td>
+                    </tr>
+                    <tr>
+                      <th>{{ translations.tax }} ({{ totals.taxPercentage }}%):</th>
+                      <td class="text-end">{{ formatCurrency(totals.tax) }}</td>
+                    </tr>
+                    <tr class="fw-bold">
+                      <th>{{ translations.total }}</th>
+                      <td class="text-end">{{ formatCurrency(totals.total) }}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -178,98 +206,71 @@
             </div>
           </div>
         </div>
-        
-        <!-- Totals Card - Still at the bottom -->
-        <div class="green-accent-panel" v-if="selectedProducts.length > 0">
-          <div class="card mb-4">
-            <div class="card-header">
-              <h5 class="mb-0">{{ translations.price_summary }}</h5>
-            </div>
-            <div class="card-body">
-              <table class="table table-sm">
-                <tbody>
-                  <tr>
-                    <th>{{ translations.subtotal }}</th>
-                    <td class="text-end">{{ formatCurrency(totals.subtotal) }}</td>
-                  </tr>
-                  <tr>
-                    <th>{{ translations.tax }} ({{ totals.taxPercentage }}%):</th>
-                    <td class="text-end">{{ formatCurrency(totals.tax) }}</td>
-                  </tr>
-                  <tr class="fw-bold">
-                    <th>{{ translations.total }}</th>
-                    <td class="text-end">{{ formatCurrency(totals.total) }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
       </div>
-    </div>
 
-    <!-- Customer Search Modal -->
-    <div class="modal" tabindex="-1" v-if="showCustomerSearchModal">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content bg-dark text-light">
-          <div class="modal-header border-secondary">
-            <h5 class="modal-title">{{ translations.search_customer }}</h5>
-            <button type="button" class="btn-close btn-close-white" @click="showCustomerSearchModal = false"></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label for="customerSearchQuery" class="form-label">{{ translations.customer_name }}</label>
-              <div class="input-group">
-                <input type="text" class="form-control bg-dark text-light border-secondary" id="customerSearchQuery" v-model="customerSearch.query" :placeholder="translations.enter_at_least_3_chars">
-                <button class="btn btn-primary" @click="searchCustomers" :disabled="customerSearch.loading || customerSearch.query.length < 3" :title="'Search customer'">{{ translations.search }}</button>
+      <!-- Customer Search Modal -->
+      <div class="modal" tabindex="-1" v-if="showCustomerSearchModal">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content bg-dark text-light">
+            <div class="modal-header border-secondary">
+              <h5 class="modal-title">{{ translations.search_customer }}</h5>
+              <button type="button" class="btn-close btn-close-white" @click="showCustomerSearchModal = false"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="customerSearchQuery" class="form-label">{{ translations.customer_name }}</label>
+                <div class="input-group">
+                  <input type="text" class="form-control bg-dark text-light border-secondary" id="customerSearchQuery" v-model="customerSearch.query" :placeholder="translations.enter_at_least_3_chars">
+                  <button class="btn btn-primary" @click="searchCustomers" :disabled="customerSearch.loading || customerSearch.query.length < 3" :title="'Search customer'">{{ translations.search }}</button>
+                </div>
+                <small class="form-text text-muted">{{ translations.enter_at_least_3_chars }}</small>
+                <small v-if="customerSearch.error" class="text-danger">{{ customerSearch.error }}</small>
               </div>
-              <small class="form-text text-muted">{{ translations.enter_at_least_3_chars }}</small>
-              <small v-if="customerSearch.error" class="text-danger">{{ customerSearch.error }}</small>
-            </div>
-            
-            <div v-if="customerSearch.loading" class="d-flex justify-content-center my-3">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">{{ translations.loading }}</span>
+              
+              <div v-if="customerSearch.loading" class="d-flex justify-content-center my-3">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">{{ translations.loading }}</span>
+                </div>
+              </div>
+              
+              <div v-if="customerSearch.error" class="alert alert-danger bg-dark text-danger border-danger">
+                {{ customerSearch.error }}
+              </div>
+              
+              <div v-if="customerSearch.noResults" class="alert alert-info bg-dark text-light border-secondary">
+                {{ translations.no_customers_found }}
+              </div>
+              
+              <div v-if="customerSearch.results.length > 0" class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>{{ translations.name }}</th>
+                      <th>{{ translations.organization }}</th>
+                      <th>{{ translations.email }}</th>
+                      <th>{{ translations.telephone }}</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="customer in customerSearch.results" :key="customer.id">
+                      <td>{{ customer.name || 'N/A' }}</td>
+                      <td>{{ customer.org_name || 'N/A' }}</td>
+                      <td>{{ customer.email || 'N/A' }}</td>
+                      <td>{{ customer.phone || 'N/A' }}</td>
+                      <td>
+                        <button type="button" class="btn btn-sm btn-primary" @click="selectCustomer(customer)">
+                          {{ translations.select }}
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
-            
-            <div v-if="customerSearch.error" class="alert alert-danger bg-dark text-danger border-danger">
-              {{ customerSearch.error }}
+            <div class="modal-footer border-secondary">
+              <button type="button" class="btn btn-secondary" @click="showCustomerSearchModal = false">{{ translations.close }}</button>
             </div>
-            
-            <div v-if="customerSearch.noResults" class="alert alert-info bg-dark text-light border-secondary">
-              {{ translations.no_customers_found }}
-            </div>
-            
-            <div v-if="customerSearch.results.length > 0" class="table-responsive">
-              <table class="table table-hover table-dark">
-                <thead>
-                  <tr>
-                    <th>{{ translations.name }}</th>
-                    <th>{{ translations.organization }}</th>
-                    <th>{{ translations.email }}</th>
-                    <th>{{ translations.telephone }}</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="customer in customerSearch.results" :key="customer.id">
-                    <td>{{ customer.name || 'N/A' }}</td>
-                    <td>{{ customer.org_name || 'N/A' }}</td>
-                    <td>{{ customer.email || 'N/A' }}</td>
-                    <td>{{ customer.phone || 'N/A' }}</td>
-                    <td>
-                      <button type="button" class="btn btn-sm btn-primary" @click="selectCustomer(customer)">
-                        {{ translations.select }}
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div class="modal-footer border-secondary">
-            <button type="button" class="btn btn-secondary" @click="showCustomerSearchModal = false">{{ translations.close }}</button>
           </div>
         </div>
       </div>
@@ -337,7 +338,9 @@ export default {
       selectedCustomerId: '',
       selectedProductId: '',
       pipedriveApiConfigured: false,
-      validationErrors: []
+      validationErrors: [],
+      debugTheme: document.body.getAttribute('data-theme'),
+      debugCardBg: getComputedStyle(document.body).getPropertyValue('--card-bg')
     }
   },
   
@@ -706,7 +709,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .quote-form {
   position: relative;
   height: auto;
@@ -760,10 +763,5 @@ export default {
 
 .quote-form {
   padding: 2rem;
-}
-.quote-form .card {
-  border-left: none !important;
-  border: none !important;
-  box-shadow: none !important;
 }
 </style> 

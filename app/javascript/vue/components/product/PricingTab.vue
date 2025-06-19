@@ -1,6 +1,6 @@
 <template>
   <div class="pricing-tab">
-    <table class="table table-dark mb-0">
+    <table class="table mb-0">
       <tbody>
         <tr>
           <th style="width: 50%">{{ translations.pricing.materials_cost }}</th>
@@ -214,6 +214,12 @@ export default {
         font-size: 1rem;
       }
     }
+  }
+
+  .pricing-tab .table th,
+  .pricing-tab .table td {
+    background-color: var(--card-bg) !important;
+    color: var(--text-primary) !important;
   }
 }
 </style>
