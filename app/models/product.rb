@@ -55,6 +55,7 @@ class Product < ApplicationRecord
       "client_description" => "",      # Description shown to clients
       "resistance" => "",             # Material resistance
       "price" => 0,                    # Unit price
+      "weight" => 0,                   # Weight in grams per square meter (grs/m²)
       "unit" => nil,                   # Unit information (id, name, abbreviation)
       "width" => 0,                    # Width in cm
       "length" => 0,                   # Length in cm
@@ -62,6 +63,7 @@ class Product < ApplicationRecord
       "pieces_per_material" => 0,      # How many pieces can be cut from one sheet
       "total_sheets" => 0,             # Total sheets needed
       "total_square_meters" => 0,      # Total area in square meters
+      "total_weight" => 0,             # Total weight in grams
       "subtotal_price" => 0,           # Subtotal for this material
       "comments" => ""                 # Additional comments about this material
     }
@@ -394,6 +396,7 @@ class Product < ApplicationRecord
     material_price = material_record.price || 0
     material_width = material_record.ancho || 0
     material_length = material_record.largo || 0
+    material_weight = material_record.weight || 0
     material_unit = material_record.unit
     
     width = material["width"].to_f || 0
@@ -404,10 +407,16 @@ class Product < ApplicationRecord
     # Calculate totals based on unit type
     total_sheets = 0
     total_square_meters = 0
+    total_weight = 0
     subtotal_price = 0
     
-    if material_unit && material_unit.name.downcase.include?("m2")
-      # For materials measured in square meters
+    if material_record.weight_based_pricing?
+      # For materials measured in grams per square meter (grs/m²)
+      total_square_meters = (width * length * quantity) / 10000.0  # cm² to m²
+      total_weight = total_square_meters * material_weight  # grams
+      subtotal_price = total_weight * material_price  # price per gram
+    elsif material_record.area_based_pricing?
+      # For materials measured in square meters (m²)
       total_square_meters = (width * length * quantity) / 10000.0  # cm² to m²
       subtotal_price = total_square_meters * material_price
     elsif pieces_per_material > 0
@@ -425,6 +434,7 @@ class Product < ApplicationRecord
       "resistance" => material_record.resistance,
       "client_description" => material_record.client_description,
       "price" => material_price,
+      "weight" => material_weight,
       "unit" => material_unit ? {
         "id" => material_unit.id,
         "name" => material_unit.name,
@@ -435,6 +445,7 @@ class Product < ApplicationRecord
       "pieces_per_material" => pieces_per_material,
       "total_sheets" => total_sheets,
       "total_square_meters" => total_square_meters,
+      "total_weight" => total_weight,
       "subtotal_price" => subtotal_price
     )
     

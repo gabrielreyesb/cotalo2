@@ -591,6 +591,7 @@ export default {
         piecesPerMaterial: 1,
         totalSheets: 0,
         totalSquareMeters: 0,
+        totalWeight: 0,
         totalPrice: 0
       };
       
@@ -670,8 +671,22 @@ export default {
       const materialLength = parseFloat(material.largo) || 0;
       const totalSquareMeters = totalSheets * (materialWidth * materialLength) / 10000; // convert cm² to m²
 
-      // Calculate total price
-      const totalPrice = totalSquareMeters * (material.price || 0);
+      // Calculate total price based on unit type
+      let totalPrice = 0;
+      let totalWeight = 0;
+      
+      if (material.unit && (material.unit.toLowerCase().includes('grs/m2') || material.unit.toLowerCase().includes('grs/m²'))) {
+        // Weight-based pricing (grs/m²)
+        const materialWeight = parseFloat(material.weight) || 0;
+        totalWeight = totalSquareMeters * materialWeight; // grams
+        totalPrice = totalWeight * (material.price || 0); // price per gram
+      } else if (material.unit && material.unit.toLowerCase().includes('m2')) {
+        // Area-based pricing (m²)
+        totalPrice = totalSquareMeters * (material.price || 0);
+      } else {
+        // Default calculation
+        totalPrice = totalSheets * (material.price || 0);
+      }
 
       // Update the material with new calculations
       const updatedMaterial = {
@@ -679,6 +694,7 @@ export default {
         piecesPerMaterial,
         totalSheets,
         totalSquareMeters,
+        totalWeight,
         totalPrice
       };
 
@@ -687,6 +703,7 @@ export default {
         materialId: material.id,
         totalSheets,
         totalSquareMeters,
+        totalWeight,
         totalPrice,
         needsProcessRecalculation: true,
         needsPricingRecalculation: true

@@ -527,18 +527,33 @@ export default {
           // Calculate total square meters
           const totalSquareMeters = totalSheets * (materialWidth * materialLength) / 10000; // convert cm² to m²
           
-          // Calculate total price - based on square meters, not sheets
-          const totalPrice = totalSquareMeters * (material.price || 0);
+          // Calculate total price based on unit type
+          let totalPrice = 0;
+          let totalWeight = 0;
           
-          return {
-            ...material,
-            quantity: totalSheets,
-            piecesPerMaterial,
-            totalSheets,
-            totalSquareMeters,
-            totalPrice,
-            _needsRecalculation: undefined
-          };
+          if (material.unit && (material.unit.toLowerCase().includes('grs/m2') || material.unit.toLowerCase().includes('grs/m²'))) {
+            // Weight-based pricing (grs/m²)
+            const materialWeight = parseFloat(material.weight) || 0;
+            totalWeight = totalSquareMeters * materialWeight; // grams
+            totalPrice = totalWeight * (material.price || 0); // price per gram
+          } else if (material.unit && material.unit.toLowerCase().includes('m2')) {
+            // Area-based pricing (m²)
+            totalPrice = totalSquareMeters * (material.price || 0);
+          } else {
+            // Default calculation
+            totalPrice = totalSheets * (material.price || 0);
+          }
+          
+                      return {
+              ...material,
+              quantity: totalSheets,
+              piecesPerMaterial,
+              totalSheets,
+              totalSquareMeters,
+              totalWeight,
+              totalPrice,
+              _needsRecalculation: undefined
+            };
         });
       }
       
@@ -1087,6 +1102,7 @@ export default {
           ...this.product.data.materials[materialIndex],
           totalSheets: eventData.totalSheets,
           totalSquareMeters: eventData.totalSquareMeters,
+          totalWeight: eventData.totalWeight,
           totalPrice: eventData.totalPrice
         };
       }

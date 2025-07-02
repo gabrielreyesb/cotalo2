@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_20_232211) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_02_221807) do
   create_table "app_configs", force: :cascade do |t|
     t.string "key", null: false
     t.text "value"
@@ -94,6 +94,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_20_232211) do
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "weight", precision: 10, scale: 2
     t.index ["unit_id"], name: "index_materials_on_unit_id"
     t.index ["user_id"], name: "index_materials_on_user_id"
   end

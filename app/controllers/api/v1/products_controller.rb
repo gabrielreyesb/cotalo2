@@ -224,6 +224,7 @@ class Api::V1::ProductsController < ApplicationController
       ancho: material.ancho,
       largo: material.largo,
       price: material.price || 0,
+      weight: material.weight || 0,
       resistance: material.resistance,
       unit: material.unit ? material.unit.name : 'unidad',
       unit_object: material.unit ? {

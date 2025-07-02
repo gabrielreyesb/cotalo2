@@ -30,7 +30,7 @@
     
     <div class="col-md-6 mb-3">
       <%= form.label :unit_id, t('materials.form.unit'), class: "form-label" %>
-      <%= form.collection_select :unit_id, Unit.all.order(:name), :id, :name, { prompt: t('materials.form.select_unit') }, { class: "form-select", required: true } %>
+      <%= form.collection_select :unit_id, Unit.all.order(:name), :id, :name, { prompt: t('materials.form.select_unit') }, { class: "form-select", required: true, id: "material_unit_id" } %>
     </div>
   </div>
   
@@ -46,6 +46,14 @@
     </div>
   </div>
   
+  <div class="row" id="weight_field_row" style="display: none;">
+    <div class="col-md-6 mb-3">
+      <%= form.label :weight, "Peso (grs/m²)", class: "form-label" %>
+      <%= form.number_field :weight, class: "form-control", step: "0.01", min: 0, id: "material_weight" %>
+      <small class="form-text text-muted">Peso en gramos por metro cuadrado</small>
+    </div>
+  </div>
+  
   <div class="mb-3">
     <%= form.label :resistance, t('materials.form.resistance'), class: "form-label" %>
     <%= form.text_field :resistance, class: "form-control" %>
@@ -55,4 +63,31 @@
     <%= form.label :comments, t('materials.form.comments'), class: "form-label" %>
     <%= form.text_area :comments, class: "form-control", rows: 3 %>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const unitSelect = document.getElementById('material_unit_id');
+      const weightRow = document.getElementById('weight_field_row');
+      const weightField = document.getElementById('material_weight');
+      
+      function toggleWeightField() {
+        const selectedOption = unitSelect.options[unitSelect.selectedIndex];
+        const unitName = selectedOption ? selectedOption.text.toLowerCase() : '';
+        
+        if (unitName.includes('grs/m2') || unitName.includes('grs/m²')) {
+          weightRow.style.display = 'block';
+          weightField.required = true;
+        } else {
+          weightRow.style.display = 'none';
+          weightField.required = false;
+        }
+      }
+      
+      // Initial check
+      toggleWeightField();
+      
+      // Listen for changes
+      unitSelect.addEventListener('change', toggleWeightField);
+    });
+  </script>
 <% end %> 
