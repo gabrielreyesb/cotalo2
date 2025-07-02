@@ -1,13 +1,10 @@
-<%= form_with(model: customer, class: "customer-form", id: "customer-form") do |form| %>
+<%= form_with(model: customer, class: "customer-form", id: "customer-form", html: { novalidate: true }) do |form| %>
   <% if customer.errors.any? %>
-    <div class="alert alert-danger">
-      <h4><%= t('customers.form.errors', count: customer.errors.count) %></h4>
-      <ul>
-        <% customer.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        window.showError('<%= j(customer.errors.first.message) %>');
+      });
+    </script>
   <% end %>
 
   <div class="row">

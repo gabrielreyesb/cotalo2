@@ -1,50 +1,47 @@
-<div class="row">
-  <div class="col-12 mb-4">
-    <div class="d-flex justify-content-between align-items-center">
-      <h1><%= @product.description %></h1>
-      <div>
-        <%= link_to edit_product_path(@product), class: "btn btn-outline-primary me-2" do %>
-          <i class="fa fa-edit me-1"></i> Edit
-        <% end %>
-        <%= button_to duplicate_product_path(@product), method: :post, class: "btn btn-outline-secondary me-2" do %>
-          <i class="fa fa-copy me-1"></i> Duplicate
-        <% end %>
-        <%= link_to products_path, class: "btn btn-outline-secondary" do %>
-          <i class="fa fa-arrow-left me-1"></i> Back
-        <% end %>
-      </div>
-    </div>
-  </div>
-</div>
+<% content_for :page_title do %>
+  <%= t('products.show.title') %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to edit_product_path(@product), class: "btn btn-outline-light me-2" do %>
+    <i class="fas fa-edit me-1"></i> <%= t('products.show.edit') %>
+  <% end %>
+  <%= button_to duplicate_product_path(@product), method: :post, class: "btn btn-outline-light me-2" do %>
+    <i class="fas fa-copy me-1"></i> <%= t('products.show.duplicate') %>
+  <% end %>
+  <%= link_to products_path, class: "btn btn-outline-light" do %>
+    <i class="fas fa-arrow-left me-1"></i> <%= t('products.show.back') %>
+  <% end %>
+<% end %>
 
 <div class="row">
   <div class="col-md-6 mb-4">
     <div class="card">
       <div class="card-header">
-        <h5>General Information</h5>
+        <h5><%= t('products.show.general_information') %></h5>
       </div>
       <div class="card-body">
         <div class="row mb-3">
           <div class="col-md-4">
-            <strong>Width:</strong>
+            <strong><%= t('products.show.width') %>:</strong>
           </div>
           <div class="col-md-8">
-            <%= @product.general_info["width"] || "Not specified" %>
+            <%= @product.general_info["width"] || t('products.show.not_specified') %>
           </div>
         </div>
         
         <div class="row mb-3">
           <div class="col-md-4">
-            <strong>Length:</strong>
+            <strong><%= t('products.show.length') %>:</strong>
           </div>
           <div class="col-md-8">
-            <%= @product.general_info["length"] || "Not specified" %>
+            <%= @product.general_info["length"] || t('products.show.not_specified') %>
           </div>
         </div>
         
         <div class="row mb-3">
           <div class="col-md-4">
-            <strong>Quantity:</strong>
+            <strong><%= t('products.show.quantity') %>:</strong>
           </div>
           <div class="col-md-8">
             <%= @product.general_info["quantity"] || 1 %>
@@ -53,10 +50,10 @@
         
         <div class="row mb-3">
           <div class="col-md-4">
-            <strong>Notes:</strong>
+            <strong><%= t('products.show.notes') %>:</strong>
           </div>
           <div class="col-md-8">
-            <%= @product.general_info["notes"].present? ? simple_format(@product.general_info["notes"]) : "No notes" %>
+            <%= @product.general_info["notes"].present? ? simple_format(@product.general_info["notes"]) : t('products.show.no_notes') %>
           </div>
         </div>
       </div>
@@ -66,12 +63,12 @@
   <div class="col-md-6 mb-4">
     <div class="card">
       <div class="card-header">
-        <h5>Pricing Information</h5>
+        <h5><%= t('products.show.pricing_information') %></h5>
       </div>
       <div class="card-body">
         <div class="row mb-3">
           <div class="col-md-6">
-            <strong>Materials Cost:</strong>
+            <strong><%= t('products.show.materials_cost') %>:</strong>
           </div>
           <div class="col-md-6">
             <%= number_to_currency(@product.pricing["materials_cost"] || 0) %>
@@ -80,7 +77,7 @@
         
         <div class="row mb-3">
           <div class="col-md-6">
-            <strong>Processes Cost:</strong>
+            <strong><%= t('products.show.processes_cost') %>:</strong>
           </div>
           <div class="col-md-6">
             <%= number_to_currency(@product.pricing["processes_cost"] || 0) %>
@@ -89,7 +86,7 @@
         
         <div class="row mb-3">
           <div class="col-md-6">
-            <strong>Extras Cost:</strong>
+            <strong><%= t('products.show.extras_cost') %>:</strong>
           </div>
           <div class="col-md-6">
             <%= number_to_currency(@product.pricing["extras_cost"] || 0) %>
@@ -98,7 +95,7 @@
         
         <div class="row mb-3">
           <div class="col-md-6">
-            <strong>Total Cost:</strong>
+            <strong><%= t('products.show.total_cost') %>:</strong>
           </div>
           <div class="col-md-6">
             <%= number_to_currency(@product.pricing["total_cost"] || 0) %>
@@ -107,7 +104,7 @@
         
         <div class="row mb-3">
           <div class="col-md-6">
-            <strong>Margin:</strong>
+            <strong><%= t('products.show.margin') %>:</strong>
           </div>
           <div class="col-md-6">
             <%= number_to_percentage((@product.pricing["margin_percentage"] || 0) * 100, precision: 1) %>
@@ -116,7 +113,7 @@
         
         <div class="row mb-3">
           <div class="col-md-6">
-            <strong>Sale Price:</strong>
+            <strong><%= t('products.show.sale_price') %>:</strong>
           </div>
           <div class="col-md-6 fw-bold">
             <%= number_to_currency(@product.pricing["sale_price"] || 0) %>
@@ -131,23 +128,23 @@
   <div class="col-md-4 mb-4">
     <div class="card">
       <div class="card-header">
-        <h5>Materials (<%= @product.materials.size %>)</h5>
+        <h5><%= t('products.show.materials') %> (<%= @product.materials.size %>)</h5>
       </div>
       <div class="card-body">
         <% if @product.materials.any? %>
           <ul class="list-group">
             <% @product.materials.each do |material| %>
               <li class="list-group-item">
-                <div><strong>Material ID:</strong> <%= material["material_id"] %></div>
-                <div><strong>Quantity:</strong> <%= material["quantity"] %></div>
+                <div><strong><%= t('products.show.material_id') %>:</strong> <%= material["material_id"] %></div>
+                <div><strong><%= t('products.show.quantity') %>:</strong> <%= material["quantity"] %></div>
                 <% if material["notes"].present? %>
-                  <div><strong>Notes:</strong> <%= material["notes"] %></div>
+                  <div><strong><%= t('products.show.notes') %>:</strong> <%= material["notes"] %></div>
                 <% end %>
               </li>
             <% end %>
           </ul>
         <% else %>
-          <p class="text-muted">No materials added to this product.</p>
+          <p class="text-muted"><%= t('products.show.no_materials_added') %></p>
         <% end %>
       </div>
     </div>
@@ -156,23 +153,23 @@
   <div class="col-md-4 mb-4">
     <div class="card">
       <div class="card-header">
-        <h5>Processes (<%= @product.processes.size %>)</h5>
+        <h5><%= t('products.show.processes') %> (<%= @product.processes.size %>)</h5>
       </div>
       <div class="card-body">
         <% if @product.processes.any? %>
           <ul class="list-group">
             <% @product.processes.each do |process| %>
               <li class="list-group-item">
-                <div><strong>Process ID:</strong> <%= process["process_id"] %></div>
-                <div><strong>Quantity:</strong> <%= process["quantity"] %></div>
+                <div><strong><%= t('products.show.process_id') %>:</strong> <%= process["process_id"] %></div>
+                <div><strong><%= t('products.show.quantity') %>:</strong> <%= process["quantity"] %></div>
                 <% if process["notes"].present? %>
-                  <div><strong>Notes:</strong> <%= process["notes"] %></div>
+                  <div><strong><%= t('products.show.notes') %>:</strong> <%= process["notes"] %></div>
                 <% end %>
               </li>
             <% end %>
           </ul>
         <% else %>
-          <p class="text-muted">No processes added to this product.</p>
+          <p class="text-muted"><%= t('products.show.no_processes_added') %></p>
         <% end %>
       </div>
     </div>
@@ -181,23 +178,23 @@
   <div class="col-md-4 mb-4">
     <div class="card">
       <div class="card-header">
-        <h5>Extras (<%= @product.extras.size %>)</h5>
+        <h5><%= t('products.show.extras') %> (<%= @product.extras.size %>)</h5>
       </div>
       <div class="card-body">
         <% if @product.extras.any? %>
           <ul class="list-group">
             <% @product.extras.each do |extra| %>
               <li class="list-group-item">
-                <div><strong>Extra ID:</strong> <%= extra["extra_id"] %></div>
-                <div><strong>Quantity:</strong> <%= extra["quantity"] %></div>
+                <div><strong><%= t('products.show.extra_id') %>:</strong> <%= extra["extra_id"] %></div>
+                <div><strong><%= t('products.show.quantity') %>:</strong> <%= extra["quantity"] %></div>
                 <% if extra["notes"].present? %>
-                  <div><strong>Notes:</strong> <%= extra["notes"] %></div>
+                  <div><strong><%= t('products.show.notes') %>:</strong> <%= extra["notes"] %></div>
                 <% end %>
               </li>
             <% end %>
           </ul>
         <% else %>
-          <p class="text-muted">No extras added to this product.</p>
+          <p class="text-muted"><%= t('products.show.no_extras_added') %></p>
         <% end %>
       </div>
     </div>

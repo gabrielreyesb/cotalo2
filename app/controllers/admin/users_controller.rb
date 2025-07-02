@@ -28,8 +28,11 @@ class Admin::UsersController < ApplicationController
   end
 
   def destroy
-    @user.destroy
-    redirect_to admin_users_path, notice: t('admin.users.destroy.success')
+    if @user.destroy
+      redirect_to admin_users_path, notice: t('admin.users.destroy.success')
+    else
+      redirect_to admin_users_path, alert: @user.errors.full_messages.join(', ')
+    end
   end
 
   def toggle_disabled

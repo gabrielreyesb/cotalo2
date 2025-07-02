@@ -1,4 +1,4 @@
-<%= form_with(model: [:admin, news], local: true) do |f| %>
+<%= form_with(model: [:admin, news], local: true, html: { id: 'news-form' }) do |f| %>
   <% if news.errors.any? %>
     <div class="alert alert-danger">
       <h4><%= pluralize(news.errors.count, t('common.error')) %> <%= t('admin.news.form.errors') %>:</h4>
@@ -18,10 +18,5 @@
   <div class="mb-3">
     <%= f.label :content, t('admin.news.form.content'), class: "form-label" %>
     <%= f.text_area :content, class: "form-control", rows: 10, placeholder: t('admin.news.form.content_placeholder') %>
-  </div>
-
-  <div class="d-flex gap-2">
-    <%= f.submit news.new_record? ? t('admin.news.form.create') : t('admin.news.form.update'), class: "btn btn-success" %>
-    <%= link_to t('admin.news.form.cancel'), admin_news_index_path, class: "btn btn-secondary" %>
   </div>
 <% end %> 

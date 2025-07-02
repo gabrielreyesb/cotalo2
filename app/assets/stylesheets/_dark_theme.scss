@@ -117,15 +117,10 @@ body[data-theme="dark"] .btn.btn-primary {
   }
 }
 
-// Ensure "Agregar Material/Proceso/Extra" buttons are consistently green
-body[data-theme="dark"] .btn.btn-primary[class*="Agregar"],
-body[data-theme="dark"] button[class*="Agregar"].btn-primary {
-  background-color: var(--cotalo-green) !important;
-  border-color: var(--cotalo-green) !important;
-  
-  &:hover, &:focus, &:active {
-    background-color: var(--cotalo-green-dark) !important;
-    border-color: var(--cotalo-green-dark) !important;
+// Custom styles for action buttons to ensure icon colors match
+body[data-theme="dark"] .btn[class*="btn-outline-"] {
+  .fas, .far, .fab, .fa {
+    color: currentColor !important;
   }
 }
 
@@ -472,6 +467,28 @@ body[data-theme="dark"] .multiselect__tags {
 }
 
 // Dark mode for form controls in green-accent-panel (Extras, Materials, Processes)
+body[data-theme="dark"] .green-accent-panel {
+  border: 1.5px solid var(--border-color);
+  border-left: 4px solid var(--cotalo-green);
+  border-radius: 6px;
+  background: var(--card-bg);
+  margin-bottom: 1rem;
+  padding-left: 0;
+  margin-left: 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+
+  > .card,
+  > .table {
+    border-left: none;
+    border-right: none;
+    border-radius: 0 6px 6px 0;
+    margin: 0;
+    padding-left: 0;
+    margin-left: 0;
+    margin-bottom: 0;
+  }
+}
+
 body[data-theme="dark"] .green-accent-panel .form-control,
 body[data-theme="dark"] .green-accent-panel .input-group-text {
   background-color: var(--card-bg) !important;
@@ -505,4 +522,14 @@ body[data-theme="dark"] .choices__inner {
 body[data-theme="dark"] .btn-success {
   --bs-btn-color: #fff !important;
   color: #fff !important;
+}
+
+// Custom styles for action buttons to ensure icon colors match
+body[data-theme="dark"] .btn-outline-primary i,
+body[data-theme="dark"] .btn-outline-secondary i,
+body[data-theme="dark"] .btn-outline-success i,
+body[data-theme="dark"] .btn-outline-danger i,
+body[data-theme="dark"] .btn-outline-warning i,
+body[data-theme="dark"] .btn-outline-info i {
+    color: currentColor;
 }

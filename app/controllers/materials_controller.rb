@@ -31,7 +31,7 @@ class MaterialsController < ApplicationController
 
     respond_to do |format|
       if @material.save
-        format.html { redirect_to materials_path }
+        format.html { redirect_to materials_path, notice: t('materials.create.success') }
         format.json { render :show, status: :created, location: @material }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -43,7 +43,7 @@ class MaterialsController < ApplicationController
   def update
     respond_to do |format|
       if @material.update(material_params)
-        format.html { redirect_to materials_path }
+        format.html { redirect_to materials_path, notice: t('materials.update.success') }
         format.json { render :show, status: :ok, location: @material }
       else
         format.html { render :edit, status: :unprocessable_entity }

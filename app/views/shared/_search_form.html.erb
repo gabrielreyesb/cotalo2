@@ -2,12 +2,47 @@
 <%# Usage: render_search_form(placeholder: "Search products…", extra_class: "my-custom-class") %>
 <% extra_class ||= "" %>
 <div class="d-flex mt-0 mb-2 justify-content-start <%= extra_class %>" style="max-width: 500px;">
-  <%= form_tag(request.path, method: :get, class: "d-flex w-100 justify-content-start", data: { turbo_frame: "search_results" }) do %>
+  <%= form_tag(request.path, method: :get, class: "d-flex w-100 justify-content-start", id: "search-form") do %>
     <div class="input-group w-100">
-      <%= text_field_tag(:q, params[:q], class: "form-control text-start", placeholder: placeholder) %>
-      <button type="submit" class="btn btn-outline-primary">
+      <%= text_field_tag(:q, nil, class: "form-control text-start", placeholder: placeholder, id: "search-input") %>
+      <button type="submit" class="btn btn-outline-primary" id="search-button">
          <i class="fa fa-search"></i>
       </button>
+      <% if params[:q].present? %>
+        <%= link_to request.path, class: "btn btn-outline-secondary", title: "Clear search" do %>
+          <i class="fa fa-times"></i>
+        <% end %>
+      <% end %>
     </div>
   <% end %>
-</div> 
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const searchForm = document.getElementById('search-form');
+  const searchInput = document.getElementById('search-input');
+  const searchButton = document.getElementById('search-button');
+  
+  if (searchForm && searchInput && searchButton) {
+    // Clear the input field when the page loads (after a search)
+    searchInput.value = '';
+    
+    // Also clear on button click and Enter key
+    searchButton.addEventListener('click', function(e) {
+      // Clear the input field after a short delay
+      setTimeout(function() {
+        searchInput.value = '';
+      }, 50);
+    });
+    
+    searchInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        // Clear the input field after a short delay
+        setTimeout(function() {
+          searchInput.value = '';
+        }, 50);
+      }
+    });
+  }
+});
+</script> 

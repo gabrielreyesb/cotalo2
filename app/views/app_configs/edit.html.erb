@@ -69,7 +69,6 @@
                       <i class="fas fa-palette"></i>
                     </span>
                   </div>
-                  <small class="form-text text-muted"><%= t('config.theme_description') %></small>
                 </div>
               </div>
             </div>
@@ -128,72 +127,20 @@
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-md-8 offset-md-2 mb-4">
-      <div class="settings-tab">
-        <div class="green-accent-panel">
-          <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-              <h5 class="mb-0">Logo</h5>
-            </div>
-            <div class="card-body">
-              <div class="mb-3">
-                <%= form.label :company_logo, t('config.company_logo'), class: "form-label" %>
-                <div class="input-group">
-                  <%= form.file_field :company_logo, class: "form-control" %>
-                </div>
-                <small class="form-text text-muted"><%= t('config.logo_description') %></small>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-8 offset-md-2 mb-4">
-      <div class="settings-tab">
-        <div class="green-accent-panel">
-          <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-              <h5 class="mb-0">Guardar Cambios</h5>
-            </div>
-            <div class="card-body">
-              <%= form.submit t('config.save_changes'), class: "btn btn-success px-4" %>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <button type="submit" id="hidden-save-configs-btn" style="display:none"></button>
 <% end %>
 
 <% content_for :scripts do %>
   <script>
-    console.log('Script section loaded');
-    
     // Function to initialize the test button
     function initializeTestButton() {
-      console.log('Initializing test button...');
       const testButton = document.getElementById('test_facturama_api');
       const createProductButton = document.getElementById('test_create_product');
       const resultsDiv = document.getElementById('results');
       const contentDiv = document.getElementById('content');
 
-      console.log('Elements found:', {
-        testButton: testButton ? 'Yes' : 'No',
-        createProductButton: createProductButton ? 'Yes' : 'No',
-        resultsDiv: resultsDiv ? 'Yes' : 'No',
-        contentDiv: contentDiv ? 'Yes' : 'No'
-      });
-
       if (testButton) {
-        console.log('Adding click event listener to test button');
         testButton.addEventListener('click', function(e) {
-          console.log('Test button clicked!');
           e.preventDefault();
           
           // Show loading state
@@ -202,7 +149,6 @@
           resultsDiv.classList.remove('d-none');
           contentDiv.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Testing API connection...</div>';
 
-          console.log('Making API request to /app_configs/test_facturama_api');
           // Make the API request
           fetch('/app_configs/test_facturama_api', {
             method: 'POST',
@@ -213,11 +159,9 @@
             }
           })
           .then(response => {
-            console.log('API Response received:', response);
             return response.json();
           })
           .then(data => {
-            console.log('API Data:', data);
             if (data.success) {
               let html = `
                 <div class="alert alert-success">
@@ -263,7 +207,6 @@
             }
           })
           .catch(error => {
-            console.error('API Error:', error);
             contentDiv.innerHTML = `
               <div class="alert alert-danger">
                 <h6 class="mb-2">Error</h6>
@@ -272,7 +215,6 @@
             `;
           })
           .finally(() => {
-            console.log('API request completed');
             // Reset button state
             testButton.disabled = false;
             testButton.innerHTML = '<i class="fas fa-vial"></i> Test Facturama API Connection';
@@ -281,9 +223,7 @@
       }
 
       if (createProductButton) {
-        console.log('Adding click event listener to create product button');
         createProductButton.addEventListener('click', function(e) {
-          console.log('Create product button clicked!');
           e.preventDefault();
           
           // Get form data
@@ -314,7 +254,6 @@
             price: productPrice
           };
 
-          console.log('Making API request to /app_configs/test_create_product with data:', productData);
           // Make the API request
           fetch('/app_configs/test_create_product', {
             method: 'POST',
@@ -326,11 +265,9 @@
             body: JSON.stringify(productData)
           })
           .then(response => {
-            console.log('API Response received:', response);
             return response.json();
           })
           .then(data => {
-            console.log('API Data:', data);
             if (data.success) {
               contentDiv.innerHTML = `
                 <div class="alert alert-success">
@@ -350,7 +287,6 @@
             }
           })
           .catch(error => {
-            console.error('API Error:', error);
             contentDiv.innerHTML = `
               <div class="alert alert-danger">
                 <h6 class="mb-2">Error</h6>
@@ -359,7 +295,6 @@
             `;
           })
           .finally(() => {
-            console.log('API request completed');
             // Reset button state
             createProductButton.disabled = false;
             createProductButton.innerHTML = '<i class="fas fa-plus"></i> Create Product';
@@ -370,12 +305,10 @@
 
     // Initialize on both DOMContentLoaded and turbo:load
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('DOM Content Loaded');
       initializeTestButton();
     });
 
     document.addEventListener('turbo:load', function() {
-      console.log('Turbo Loaded');
       initializeTestButton();
     });
 
@@ -384,8 +317,6 @@
       var pipedriveForm = document.getElementById('pipedrive_api_key_form');
       if (pipedriveForm) {
         pipedriveForm.addEventListener('submit', function(e) {
-          console.log('Pipedrive API Key form is being submitted!');
-          alert('Pipedrive API Key form is being submitted!');
         });
       }
     });
@@ -407,12 +338,6 @@
       // Function to handle file selection
       logoInput.addEventListener('change', function() {
         const file = this.files[0];
-        console.log('File selected:', file ? {
-          name: file.name,
-          type: file.type,
-          size: file.size,
-          lastModified: new Date(file.lastModified).toISOString()
-        } : 'No file');
         
         if (file) {
           // More permissive file type checking
@@ -425,23 +350,17 @@
           );
 
           if (!hasValidType && !hasValidExtension) {
-            console.error('Invalid file type or extension:', file.type, file.name);
-            alert('Por favor selecciona una imagen en formato JPG, PNG o GIF');
             logoInput.value = ''; // Clear the input
             return;
           }
 
           // Validate file size
           if (file.size === 0) {
-            console.error('File size is 0 bytes');
-            alert('El archivo está vacío. Por favor selecciona una imagen válida.');
             logoInput.value = ''; // Clear the input
             return;
           }
 
           if (file.size > 2 * 1024 * 1024) { // 2MB in bytes
-            console.error('File too large:', file.size);
-            alert('El archivo es demasiado grande. El tamaño máximo es 2MB.');
             logoInput.value = ''; // Clear the input
             return;
           }
@@ -457,16 +376,8 @@
             const img = new Image();
             
             img.onload = function() {
-              console.log('Image loaded successfully:', {
-                width: img.width,
-                height: img.height,
-                naturalWidth: img.naturalWidth,
-                naturalHeight: img.naturalHeight
-              });
 
               if (img.width === 0 || img.height === 0) {
-                console.error('Invalid image dimensions');
-                alert('La imagen no tiene dimensiones válidas. Por favor intenta con otra.');
                 logoInput.value = '';
                 URL.revokeObjectURL(objectUrl);
                 return;
@@ -494,7 +405,6 @@
             };
             
             img.onerror = function(error) {
-              console.error('Image loading error:', error);
               
               // Fallback to FileReader if URL.createObjectURL fails
               const reader = new FileReader();
@@ -509,8 +419,6 @@
               };
               
               reader.onerror = function() {
-                console.error('FileReader error:', reader.error);
-                alert('Error al cargar la vista previa. Por favor intenta con otra imagen.');
                 logoInput.value = '';
               };
               
@@ -519,8 +427,6 @@
             
             img.src = objectUrl;
           } catch (error) {
-            console.error('Error creating preview:', error);
-            alert('Error al crear la vista previa. Por favor intenta con otra imagen.');
             logoInput.value = '';
           }
         } else {
@@ -543,7 +449,6 @@
       // Handle upload
       uploadButton.addEventListener('click', function() {
         if (!logoInput.files[0]) {
-          alert('Por favor selecciona un archivo primero');
           return;
         }
 
@@ -581,8 +486,6 @@
           }
         })
         .catch(error => {
-          console.error('Error:', error);
-          alert('Error al subir el logo: ' + error.message);
           // Reset button state
           uploadButton.disabled = false;
           uploadButton.innerHTML = '<i class="fa fa-upload"></i> Subir';
@@ -607,8 +510,8 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= link_to t('common.cancel'), dashboard_path, class: 'btn btn-outline-secondary me-2' %>
-  <button class="btn btn-success" id="save-configs-btn" type="button" onclick="document.getElementById('hidden-save-configs-btn').click()">
+  <%= link_to t('common.cancel'), dashboard_path, class: 'btn btn-outline-light me-2' %>
+  <button class="btn btn-outline-light" id="save-configs-btn" type="button" onclick="document.getElementById('hidden-save-configs-btn').click()">
     <i class="fas fa-save"></i> <%= t('common.save') %>
   </button>
 <% end %>

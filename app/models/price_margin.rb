@@ -1,9 +1,10 @@
 class PriceMargin < ApplicationRecord
   belongs_to :user
   
-  validates :min_price, :max_price, :margin_percentage, presence: true
-  validates :min_price, :max_price, :margin_percentage, numericality: { greater_than_or_equal_to: 0 }
-  validates :margin_percentage, numericality: { less_than_or_equal_to: 100 }
+  validates :min_price, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :max_price, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :margin_percentage, presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
+  
   validate :max_price_greater_than_min_price
   validate :no_overlapping_ranges
   
@@ -13,7 +14,7 @@ class PriceMargin < ApplicationRecord
     return if min_price.blank? || max_price.blank?
     
     if max_price <= min_price
-      errors.add(:max_price, "debe ser mayor que el precio mínimo")
+      errors.add(:max_price, :greater_than_min_price)
     end
   end
   
@@ -26,7 +27,7 @@ class PriceMargin < ApplicationRecord
     )
     
     if overlapping.exists?
-      errors.add(:base, "Los rangos de precios no pueden solaparse")
+      errors.add(:base, :overlapping_ranges)
     end
   end
 end

@@ -125,82 +125,82 @@
         <h2 class="text-center mb-0 me-2"><%= t('home.how_title') %></h2>
         <i id="flowChevron" class="fas fa-chevron-down" style="transition: transform 0.3s;"></i>
       </div>
-      <span id="flowHelperText" class="text-secondary small mt-2">Haz clic aquí para ver el flujo de trabajo.</span>
+      <span id="flowHelperText" class="text-secondary small mt-2"><%= t('home.flow.helper_text_show') %></span>
     </div>
     <div id="flowSection" style="width:100%; transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1); overflow: hidden; max-height: 0px;">
       <div class="flow-diagram w-100 mx-auto" style="max-width: 800px; display: block;">
         <!-- 1. Configuración del Sistema -->
-        <h4 class="section-title">1. Configuración del Sistema</h4>
+        <h4 class="section-title"><%= t('home.flow.section1_title') %></h4>
         <div class="mb-3">
           <div class="step-card config-step">
             <div class="step-icon config-icon"><i class="fas fa-user fa-lg"></i></div>
             <div>
-              <div class="fw-semibold" style="color: var(--text-primary);">Crea tu cuenta</div>
-              <div class="small" style="color: var(--text-secondary);">El primer paso para acceder al sistema y guardar tu información de forma segura.</div>
+              <div class="fw-semibold" style="color: var(--text-primary);"><%= t('home.flow.step1_title') %></div>
+              <div class="small" style="color: var(--text-secondary);"><%= t('home.flow.step1_desc') %></div>
             </div>
           </div>
           <div class="arrow"><i class="fas fa-arrow-down"></i></div>
           <div class="step-card config-step">
             <div class="step-icon config-icon"><i class="fas fa-sliders-h fa-lg"></i></div>
             <div>
-              <div class="fw-semibold" style="color: var(--text-primary);">Personaliza catálogos</div>
-              <div class="small" style="color: var(--text-secondary);">Define tus materiales, procesos y costos indirectos para que los cálculos sean precisos.</div>
+              <div class="fw-semibold" style="color: var(--text-primary);"><%= t('home.flow.step2_title') %></div>
+              <div class="small" style="color: var(--text-secondary);"><%= t('home.flow.step2_desc') %></div>
             </div>
           </div>
           <div class="arrow"><i class="fas fa-arrow-down"></i></div>
           <div class="step-card config-step">
             <div class="step-icon config-icon"><i class="fas fa-percentage fa-lg"></i></div>
             <div>
-              <div class="fw-semibold" style="color: var(--text-primary);">Define márgenes y mermas</div>
-              <div class="small" style="color: var(--text-secondary);">Establece tus reglas de negocio: márgenes de ganancia, porcentajes de merma y más.</div>
+              <div class="fw-semibold" style="color: var(--text-primary);"><%= t('home.flow.step3_title') %></div>
+              <div class="small" style="color: var(--text-secondary);"><%= t('home.flow.step3_desc') %></div>
             </div>
           </div>
         </div>
 
         <!-- 2. Preparación de la Cotización -->
-        <h4 class="section-title">2. Preparación de la cotización</h4>
+        <h4 class="section-title"><%= t('home.flow.section2_title') %></h4>
         <div class="mb-3">
           <div class="step-card prep-step">
             <div class="step-icon prep-icon"><i class="fas fa-users fa-lg"></i></div>
             <div>
-              <div class="fw-semibold" style="color: var(--text-primary);">Captura datos de clientes</div>
-              <div class="small" style="color: var(--text-secondary);">Crea tu base de datos de clientes, ya sea manualmente o importando desde una plantilla.</div>
+              <div class="fw-semibold" style="color: var(--text-primary);"><%= t('home.flow.step4_title') %></div>
+              <div class="small" style="color: var(--text-secondary);"><%= t('home.flow.step4_desc') %></div>
             </div>
           </div>
           <div class="arrow"><i class="fas fa-arrow-down"></i></div>
           <div class="step-card prep-step">
             <div class="step-icon prep-icon"><i class="fas fa-file-alt fa-lg"></i></div>
             <div>
-              <div class="fw-semibold" style="color: var(--text-primary);">Captura datos para cotización</div>
-              <div class="small" style="color: var(--text-secondary);">Define los detalles específicos del documento: logo, condiciones de venta, contacto, etc.</div>
+              <div class="fw-semibold" style="color: var(--text-primary);"><%= t('home.flow.step5_title') %></div>
+              <div class="small" style="color: var(--text-secondary);"><%= t('home.flow.step5_desc') %></div>
             </div>
           </div>
         </div>
 
         <!-- 3. Calculo de productos y envío de cotización -->
-        <h4 class="section-title">3. Calculo de productos y envío de cotización</h4>
+        <h4 class="section-title"><%= t('home.flow.section3_title') %></h4>
         <div>
           <div class="step-card quote-step">
             <div class="step-icon quote-icon"><i class="fas fa-cube fa-lg"></i></div>
             <div>
-              <div class="fw-semibold" style="color: var(--text-primary);">Crea producto y calcula costo</div>
-              <div class="small" style="color: var(--text-secondary);">Selecciona materiales y procesos para tu producto. Cotalo calculará el costo de manufactura.</div>
+              <div class="fw-semibold" style="color: var(--text-primary);"><%= t('home.flow.step6_title') %></div>
+              <div class="small" style="color: var(--text-secondary);"><%= t('home.flow.step6_desc') %></div>
             </div>
           </div>
           <div class="arrow"><i class="fas fa-arrow-down"></i></div>
           <div class="step-card quote-step">
             <div class="step-icon quote-icon"><i class="fas fa-plus fa-lg"></i></div>
             <div>
-              <div class="fw-semibold" style="color: var(--text-primary);">Crea cotización y agrega producto</div>
-              <div class="small" style="color: var(--text-secondary);">Genera un nuevo documento de cotización y añade los productos calculados.</div>
+              <div class="fw-semibold" style="color: var(--text-primary);"><%= t('home.flow.step7_title') %></div>
+              <div class="small" style="color: var(--text-secondary);"><%= t('home.flow.step7_desc') %></div>
             </div>
           </div>
           <div class="arrow"><i class="fas fa-arrow-down"></i></div>
           <div class="step-card final-step">
             <div class="step-icon final-icon"><i class="fas fa-envelope fa-lg"></i></div>
             <div>
-              <div class="fw-semibold" style="color: var(--text-primary);">Imprime o envía cotización</div>
-              <div class="small" style="color: var(--text-secondary);">Finaliza el proceso generando un PDF profesional o enviando la cotización por correo electrónico.</div>
+              <div class="fw-semibold" style="color: var(--text-primary);"><%= t('home.flow.step8_title') %></div>
+              <div class="small" style="color: var(--text-secondary);"><%= t('home.flow.step8_desc') %></div>
             </div>
           </div>
         </div>
@@ -316,7 +316,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('flowChevron').style.transform = 'rotate(-90deg)';
-  document.getElementById('flowHelperText').textContent = 'Haz clic aquí para ver el flujo de trabajo.';
+  document.getElementById('flowHelperText').textContent = '<%= t('home.flow.helper_text_show') %>';
 });
 function toggleFlowSection() {
   const section = document.getElementById('flowSection');
@@ -325,11 +325,11 @@ function toggleFlowSection() {
   if (section.style.maxHeight && section.style.maxHeight !== '0px') {
     section.style.maxHeight = '0px';
     chevron.style.transform = 'rotate(-90deg)';
-    helper.textContent = 'Haz clic aquí para ver el flujo de trabajo.';
+    helper.textContent = '<%= t('home.flow.helper_text_show') %>';
   } else {
     section.style.maxHeight = '2000px';
     chevron.style.transform = 'rotate(0deg)';
-    helper.textContent = 'Haz clic aquí para ocultar el flujo de trabajo.';
+    helper.textContent = '<%= t('home.flow.helper_text_hide') %>';
   }
 }
 </script>

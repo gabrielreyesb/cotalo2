@@ -96,32 +96,8 @@ document.addEventListener('DOMContentLoaded', () => {
       translations,
       onSave: async (formData) => {
         try {
-          // Clear previous errors using event bus
-          window.quoteFormEventBus.emit('clear-validation-errors');
+          // The validation is now handled inside QuoteForm.vue, so we can proceed.
           
-          // Validate required fields before submission
-          const validationErrors = [];
-          if (!formData.form.project_name?.trim()) {
-            validationErrors.push('El nombre del proyecto es requerido');
-          }
-          if (!formData.form.customer_name?.trim()) {
-            validationErrors.push('El nombre del cliente es requerido');
-          }
-          if (!formData.form.organization?.trim()) {
-            validationErrors.push('La organización es requerida');
-          }
-          if (!formData.form.email?.trim()) {
-            validationErrors.push('El correo electrónico es requerido');
-          }
-          if (formData.selectedProducts.length === 0) {
-            validationErrors.push('Debe agregar al menos un producto a la cotización');
-          }
-
-          if (validationErrors.length > 0) {
-            window.quoteFormEventBus.emit('set-validation-errors', validationErrors);
-            return;
-          }
-
           // Create a data object with the form data and selected products
           const quoteData = {
             ...formData.form,
@@ -165,8 +141,11 @@ document.addEventListener('DOMContentLoaded', () => {
           }
 
           if (response.ok) {
-            // If successful, redirect to quotes index
-            window.location.href = '/quotes';
+            // If successful, show a success message and then redirect
+            window.quoteFormEventBus.emit('quote-success', 'Cotización guardada exitosamente');
+            setTimeout(() => {
+              window.location.href = '/quotes';
+            }, 3000); // 3-second delay
           } else {
             // Handle validation errors using event bus
             if (data.errors) {

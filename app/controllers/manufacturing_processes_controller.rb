@@ -41,7 +41,7 @@ class ManufacturingProcessesController < ApplicationController
 
     respond_to do |format|
       if @manufacturing_process.save
-        format.html { redirect_to manufacturing_processes_path }
+        format.html { redirect_to manufacturing_processes_path, notice: t('processes.create.success') }
         format.json { render :show, status: :created, location: @manufacturing_process }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -59,7 +59,7 @@ class ManufacturingProcessesController < ApplicationController
     respond_to do |format|
       if @manufacturing_process.update(manufacturing_process_params)
         puts "AFTER UPDATE - PROCESS UNIT ID: #{@manufacturing_process.unit_id}"
-        format.html { redirect_to manufacturing_processes_path }
+        format.html { redirect_to manufacturing_processes_path, notice: t('processes.update.success') }
         format.json { render :show, status: :ok, location: @manufacturing_process }
       else
         puts "UPDATE FAILED - ERRORS: #{@manufacturing_process.errors.full_messages}"

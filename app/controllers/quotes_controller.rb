@@ -7,15 +7,29 @@ class QuotesController < ApplicationController
   
   def index
     @quotes = current_user.quotes.order(created_at: :desc)
-    if params[:q].present?
-      query = "%#{params[:q]}%"
+    
+    # Use a sanitized search term to avoid issues with whitespace
+    search_term = params[:q].is_a?(String) ? params[:q].strip : nil
+
+    # Only perform search if search_term is present and not empty after stripping
+    if search_term.present? && search_term.length > 0
+      query = "%#{search_term}%"
       adapter = ActiveRecord::Base.connection.adapter_name.downcase
-      if adapter.include?("sqlite")
-        @quotes = @quotes.where("project_name LIKE ? OR quote_number LIKE ?", query, query)
+      
+      search_results = if adapter.include?("sqlite")
+        @quotes.where("project_name LIKE ? OR quote_number LIKE ?", query, query)
       else
-        @quotes = @quotes.where("project_name ILIKE ? OR quote_number ILIKE ?", query, query)
+        @quotes.where("project_name ILIKE ? OR quote_number ILIKE ?", query, query)
+      end
+
+      if search_results.empty?
+        flash.now[:warning] = "No se encontraron cotizaciones con ese criterio."
+        # If search fails, we show the full list, so we don't re-assign @quotes
+      else
+        @quotes = search_results
       end
     end
+    
     @quotes = @quotes.page(params[:page]).per(10)
   end
   
@@ -50,12 +64,13 @@ class QuotesController < ApplicationController
       # Validate all required fields in order
       @quote.valid? # Populate errors
       ordered_errors = []
-      ordered_errors << "El nombre del proyecto es requerido" if @quote.errors[:project_name].present?
-      ordered_errors << "El nombre del cliente es requerido" if @quote.errors[:customer_name].present?
-      ordered_errors << "La organización es requerida" if @quote.errors[:organization].present?
-      ordered_errors << "El correo electrónico es requerido" if @quote.errors[:email].present?
+      ordered_errors << t('activerecord.errors.models.quote.attributes.project_name.blank') if @quote.errors[:project_name].present?
+      ordered_errors << t('activerecord.errors.models.quote.attributes.customer_name.blank') if @quote.errors[:customer_name].present?
+      ordered_errors << t('activerecord.errors.models.quote.attributes.organization.blank') if @quote.errors[:organization].present?
+      ordered_errors << t('activerecord.errors.models.quote.attributes.email.blank') if @quote.errors[:email].any? { |e| e.include?("can't be blank") }
+      ordered_errors << t('activerecord.errors.models.quote.attributes.email.invalid') if @quote.errors[:email].any? { |e| e.include?("is invalid") }
       if quote_data['selected_products'].blank?
-        ordered_errors << "Debe agregar al menos un producto a la cotización"
+        ordered_errors << t('activerecord.errors.models.quote.errors.at_least_one_product')
       end
       if ordered_errors.any?
         @products = current_user.products
@@ -130,12 +145,13 @@ class QuotesController < ApplicationController
       # Validate all required fields in order (update)
       @quote.valid?
       ordered_errors = []
-      ordered_errors << "El nombre del proyecto es requerido" if @quote.errors[:project_name].present?
-      ordered_errors << "El nombre del cliente es requerido" if @quote.errors[:customer_name].present?
-      ordered_errors << "La organización es requerida" if @quote.errors[:organization].present?
-      ordered_errors << "El correo electrónico es requerido" if @quote.errors[:email].present?
+      ordered_errors << t('activerecord.errors.models.quote.attributes.project_name.blank') if @quote.errors[:project_name].present?
+      ordered_errors << t('activerecord.errors.models.quote.attributes.customer_name.blank') if @quote.errors[:customer_name].present?
+      ordered_errors << t('activerecord.errors.models.quote.attributes.organization.blank') if @quote.errors[:organization].present?
+      ordered_errors << t('activerecord.errors.models.quote.attributes.email.blank') if @quote.errors[:email].any? { |e| e.include?("can't be blank") }
+      ordered_errors << t('activerecord.errors.models.quote.attributes.email.invalid') if @quote.errors[:email].any? { |e| e.include?("is invalid") }
       if quote_data['selected_products'].blank?
-        ordered_errors << "Debe agregar al menos un producto a la cotización"
+        ordered_errors << t('activerecord.errors.models.quote.errors.at_least_one_product')
       end
       if ordered_errors.any?
         @products = current_user.products

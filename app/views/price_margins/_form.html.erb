@@ -1,13 +1,10 @@
-<%= form_with(model: price_margin, id: "price-margin-form") do |form| %>
+<%= form_with(model: price_margin, id: "price-margin-form", html: { novalidate: true }) do |form| %>
   <% if price_margin.errors.any? %>
-    <div class="alert alert-danger">
-      <h4><%= t('price_margins.form.errors', count: price_margin.errors.count) %></h4>
-      <ul>
-        <% price_margin.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        window.showError('<%= j(price_margin.errors.first.message) %>');
+      });
+    </script>
   <% end %>
 
   <div class="row">

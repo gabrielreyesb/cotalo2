@@ -15,7 +15,11 @@ Rails.application.routes.draw do
     resources :impersonations, only: [:create]
     delete 'impersonations', to: 'impersonations#destroy', as: :impersonations_destroy
     resources :units
-    resources :news
+    resources :news do
+      member do
+        post :send_email
+      end
+    end
     resources :suggestions, only: [:index, :update]
   end
   

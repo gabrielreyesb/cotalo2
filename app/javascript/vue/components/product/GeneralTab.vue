@@ -18,6 +18,7 @@
                       v-model="form.description" 
                       @input="debouncedEmitFormChanges"
                       required
+                      autocomplete="off"
                     />
                   </div>
 

@@ -123,19 +123,22 @@
 
 // Single source of truth for .green-accent-panel styles. Used app-wide.
 .green-accent-panel {
-  border-left: 4px solid #42b983;
-  border-right: none !important;
-  border-bottom: none !important;
+  border-left: 4px solid var(--cotalo-green, #42b983);
+  border: 1.5px solid #b7cfc3;
+  border-left-width: 4px;
   border-radius: 6px;
+  background: var(--card-bg);
+  margin-bottom: 0;
   padding-left: 0;
   margin-left: 0;
-  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
 
-  // Remove duplicate borders from nested elements
   > .card,
   > .table {
     border-left: none;
     border-right: none;
+    border-radius: 0 6px 6px 0;
+    margin: 0;
     padding-left: 0;
     margin-left: 0;
     margin-bottom: 0;
@@ -364,6 +367,7 @@ input[type="file"].form-control {
 
 // General tab styles
 .general-tab {
+  min-height: 520px;
   .card {
     background-color: #1a1e21;
     border: 1px solid #32383e;
@@ -433,4 +437,25 @@ body[data-theme="dark"] .quote-form-root .green-accent-panel {
   border-right: 1.5px solid var(--border-color) !important;
   border-bottom: 1.5px solid var(--border-color) !important;
   border-radius: 6px;
+}
+
+.material-process-list {
+  margin-top: 1rem;
+  margin-bottom: 0;
+}
+
+.material-process-list:first-of-type {
+  margin-top: 1rem;
+}
+
+.processes-tab .card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  overflow: visible;
+}
+
+.processes-tab > .green-accent-panel:first-of-type {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
 } 

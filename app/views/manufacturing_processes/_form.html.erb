@@ -1,13 +1,10 @@
-<%= form_with(model: manufacturing_process, id: "manufacturing-process-form") do |form| %>
+<%= form_with(model: manufacturing_process, id: "manufacturing-process-form", html: { novalidate: true }) do |form| %>
   <% if manufacturing_process.errors.any? %>
-    <div class="alert alert-danger mb-3">
-      <h5><%= t('processes.form.errors', count: manufacturing_process.errors.count) %></h5>
-      <ul>
-        <% manufacturing_process.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        window.showError('<%= j(manufacturing_process.errors.first.message) %>');
+      });
+    </script>
   <% end %>
 
   <div class="mb-3">

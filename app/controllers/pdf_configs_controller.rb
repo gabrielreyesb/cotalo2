@@ -9,7 +9,7 @@ class PdfConfigsController < ApplicationController
   def update
     @pdf_config = current_user.pdf_config || current_user.build_pdf_config
     if @pdf_config.update(pdf_config_params)
-      redirect_to edit_pdf_config_path, notice: 'Configuración de PDF actualizada correctamente.'
+      redirect_to edit_pdf_config_path, notice: t('pdf_configs.update.success')
     else
       render :edit
     end

@@ -54,6 +54,10 @@ es:
       highest_value: "Productos de mayor valor"
       highest_value_desc: "Top 5 productos por valor"
   
+  app_configs:
+    update:
+      update_success: "Configuraciones actualizadas correctamente"
+
   config:
     title: "Configuraciones"
     general_settings: "Configuración General"
@@ -79,7 +83,7 @@ es:
     pdf_config_title: "Configuración de PDF"
     price_adjustment_percentage: "Último ajuste de precios"
     price_adjustment_title: "Ajuste de precios"
-    price_adjustment_description: "Aplica un porcentaje de ajuste a todos los precios de materiales, procesos y extras. Usa valores positivos para aumentar los precios y negativos para disminuirlos."
+    price_adjustment_description: "Aplica un porcentaje de ajuste a todos los precios de materiales, procesos y costos indirectos. Usa valores positivos para aumentar los precios y negativos para disminuirlos."
     adjustment_percentage: "Porcentaje de ajuste"
     apply_price_adjustment: "Aplicar ajuste de precios"
     pdf_footer_label: "Texto de pie de página para PDF"
@@ -106,7 +110,7 @@ es:
     title: "Ajuste de precios"
     last_adjustment: "Último ajuste aplicado"
     adjustment_title: "Ajuste de precios"
-    adjustment_description: "Aplica un porcentaje de ajuste a todos los precios de materiales, procesos y extras. Usa valores positivos para aumentar los precios y negativos para disminuirlos."
+    adjustment_description: "Aplica un porcentaje de ajuste a todos los precios de materiales, procesos e indirectos. Usa valores positivos para aumentar los precios y negativos para disminuirlos."
     adjustment_percentage: "Porcentaje de ajuste"
     apply_adjustment: "Aplicar ajuste de precios"
   
@@ -117,7 +121,7 @@ es:
     catalogs: "Catálogos"
     materials: "Materiales"
     processes: "Procesos"
-    extras: "Extras"
+    extras: "Indirectos"
     price_margins: "Márgenes de precio"
     units: "Unidades"
     news: "Noticias"
@@ -133,6 +137,7 @@ es:
     general_settings: "Generales"
     price_adjustment: "Ajuste de precios"
     pdf: "PDF"
+    users: "Usuarios"
   
   home:
     hero_title: "Calcula el costo de fabricación de productos para las artes gráficas en minutos"
@@ -167,6 +172,28 @@ es:
     how3_desc: "Observa el cálculo instantáneo del costo de fabricación"
     how4_title: "Genera la cotización"
     how4_desc: "Crea una cotización profesional para tu cliente en un instante"
+    flow:
+      helper_text_show: "Haz clic aquí para ver el flujo de trabajo."
+      helper_text_hide: "Haz clic aquí para ocultar el flujo de trabajo."
+      section1_title: "1. Configuración del Sistema"
+      section2_title: "2. Preparación de la cotización"
+      section3_title: "3. Cálculo de productos y envío de cotización"
+      step1_title: "Crea tu cuenta"
+      step1_desc: "El primer paso para acceder al sistema y guardar tu información de forma segura."
+      step2_title: "Personaliza catálogos"
+      step2_desc: "Define tus materiales, procesos y costos indirectos para que los cálculos sean precisos."
+      step3_title: "Define márgenes y mermas"
+      step3_desc: "Establece tus reglas de negocio: márgenes de ganancia, porcentajes de merma y más."
+      step4_title: "Captura datos de clientes"
+      step4_desc: "Crea tu base de datos de clientes, ya sea manualmente o importando desde una plantilla."
+      step5_title: "Captura datos para cotización"
+      step5_desc: "Define los detalles específicos del documento: logo, condiciones de venta, contacto, etc."
+      step6_title: "Crea producto y calcula costo"
+      step6_desc: "Selecciona materiales y procesos para tu producto. Cotalo calculará el costo de manufactura."
+      step7_title: "Crea cotización y agrega producto"
+      step7_desc: "Genera un nuevo documento de cotización y añade los productos calculados."
+      step8_title: "Imprime o envía cotización"
+      step8_desc: "Finaliza el proceso generando un PDF profesional o enviando la cotización por correo electrónico."
     tutorial_video_title: "Video detallado de uso de Cotalo"
     demo_request_title: "¿Te gustaría ver una demostración personalizada?"
     demo_request_subtitle: "Nuestro equipo te mostrará cómo Cotalo puede optimizar tu proceso de costeo"
@@ -182,7 +209,7 @@ es:
       new_material: "Nuevo material"
       name: "Nombre"
       client_description: "Descripción cliente"
-      price: "Precio"
+      price: "Costo"
       unit: "Unidad"
       dimensions: "Dimensiones"
       actions: "Acciones"
@@ -197,12 +224,16 @@ es:
       details: "Detalles del material"
     edit:
       title: "Editar material"
+    create:
+      success: "Material guardado exitosamente."
+    update:
+      success: "Material actualizado exitosamente."
     show:
       title: "Detalles del Material"
       back_to_materials: "Volver"
       client_description: "Descripción para cliente"
       unit: "Unidad"
-      price: "Precio"
+      price: "Costo"
       dimensions: "Dimensiones"
       width: "Ancho"
       length: "Largo"
@@ -218,7 +249,7 @@ es:
         other: "%{count} errores impidieron que este material se guardara:"
       description: "Descripción"
       client_description: "Descripción para cliente"
-      price: "Precio"
+      price: "Costo"
       unit: "Unidad"
       select_unit: "Seleccionar unidad"
       width: "Ancho"
@@ -243,9 +274,14 @@ es:
     new:
       title: "Nuevo proceso"
       details: "Detalles del proceso"
+      material: "Material"
     edit:
       title: "Editar proceso"
       details: "Detalles del proceso"
+    create:
+      success: "Proceso guardado exitosamente."
+    update:
+      success: "Proceso actualizado exitosamente."
     show:
       title: "Detalles del Proceso"
       back_to_processes: "Volver"
@@ -262,8 +298,8 @@ es:
       errors:
         one: "Un error impidió que este proceso se guardara:"
         other: "%{count} errores impidieron que este proceso se guardara:"
-      name: "Nombre"
-      description: "Descripción"
+      name: "Descripción"
+      description: "Comentarios"
       cost: "Precio"
       unit: "Unidad"
       unit_help: "La unidad determina cómo se medirá el proceso durante la cotización."
@@ -271,6 +307,8 @@ es:
     select_material: "Seleccionar material"
     comments_label: "Comentarios sobre los procesos"
     comments_placeholder: "Agregar notas o comentarios generales sobre los procesos de este producto"
+    process: "Proceso"
+    total_general: "Total procesos:"
   
   devise:
     sessions:
@@ -295,37 +333,37 @@ es:
   
   extras:
     index:
-      title: "Extras"
-      new_extra: "Nuevo extra"
+      title: "Indirectos"
+      new_extra: "Nuevo indirecto"
       name: "Nombre"
       description: "Descripción"
       cost: "Costo"
       unit: "Unidad"
       actions: "Acciones"
       no_unit: "Sin unidad"
-      no_extras_html: "No hay extras. %{link}."
-      create_first: "Crea tu primer extra"
-      search_placeholder: "Buscar extras…"
+      no_extras_html: "No hay indirectos. %{link}."
+      create_first: "Crea tu primer indirecto"
+      search_placeholder: "Buscar indirectos…"
     new:
-      title: "Nuevo extra"
+      title: "Nuevo indirecto"
     edit:
-      title: "Editar extra"
+      title: "Editar indirecto"
     show:
-      title: "Detalles del Extra"
+      title: "Detalles del Indirecto"
       back_to_extras: "Volver"
-      extra_details: "Detalles del Extra"
+      extra_details: "Detalles del Indirecto"
       name: "Nombre"
       cost: "Costo"
       unit: "Unidad"
       description: "Descripción"
       edit: "Editar"
       delete: "Eliminar"
-      delete_confirm: "¿Estás seguro de que quieres eliminar este extra?"
+      delete_confirm: "¿Estás seguro de que quieres eliminar este indirecto?"
       not_specified: "No especificado"
     form:
       errors:
-        one: "Un error impidió que este extra se guardara:"
-        other: "%{count} errores impidieron que este extra se guardara:"
+        one: "Un error impidió que este indirecto se guardara:"
+        other: "%{count} errores impidieron que este indirecto se guardara:"
       name: "Nombre"
       unit: "Unidad"
       select_unit: "Seleccionar unidad"
@@ -349,6 +387,12 @@ es:
       title: "Nuevo margen de precio"
     edit:
       title: "Editar margen de precio"
+    create:
+      success: "Margen de precio creado exitosamente."
+    update:
+      success: "Margen de precio actualizado exitosamente."
+    destroy:
+      success: "Margen de precio eliminado exitosamente."
     form:
       errors:
         one: "Un error impidió que este margen se guardara:"
@@ -362,6 +406,7 @@ es:
       title: "Cotizaciones"
       new_quote: "Nueva cotización"
       project: "Proyecto"
+      products: "Productos"
       date: "Fecha"
       number: "Número"
       customer: "Cliente"
@@ -374,6 +419,7 @@ es:
       create_invoice: "Crear Factura"
       view: "Ver"
       no_quotes: "No hay cotizaciones creadas aún."
+      no_products: "Sin productos"
       create_new: "Crear nueva cotización"
       search_placeholder: "Buscar cotizaciones…"
     form:
@@ -458,7 +504,7 @@ es:
       unit_price: "Precio unit."
       currency_symbol: "$"
       tax_note: "IVA NO INCLUIDO"
-      extras: "Extras"
+      extras: "Indirectos"
       sales_conditions: "Condiciones de Venta:"
       sustainable_message: "Fabricamos con materiales sustentables que protegen el medio ambiente..."
       whatsapp_label: "WhatsApp: %{number}"
@@ -470,7 +516,7 @@ es:
       description: "Descripción"
       materials: "Materiales"
       processes: "Procesos"
-      extras: "Extras"
+      extras: "Indirectos"
       total_price: "Precio total"
       price_per_piece: "Precio por pieza"
       actions: "Acciones"
@@ -490,12 +536,40 @@ es:
       title: "Nuevo producto"
     edit:
       title: "Editar producto"
+    show:
+      title: "Detalles del Producto"
+      edit: "Editar"
+      duplicate: "Duplicar"
+      back: "Volver"
+      general_information: "Información General"
+      width: "Ancho"
+      length: "Largo"
+      quantity: "Cantidad"
+      notes: "Notas"
+      not_specified: "No especificado"
+      no_notes: "Sin notas"
+      pricing_information: "Información de Precios"
+      materials_cost: "Costo de Materiales"
+      processes_cost: "Costo de Procesos"
+      extras_cost: "Costo de Indirectos"
+      total_cost: "Costo Total"
+      margin: "Margen"
+      sale_price: "Precio de Venta"
+      materials: "Materiales"
+      processes: "Procesos"
+      extras: "Indirectos"
+      material_id: "ID del Material"
+      process_id: "ID del Proceso"
+      extra_id: "ID del Indirecto"
+      no_materials_added: "No hay materiales agregados a este producto."
+      no_processes_added: "No hay procesos agregados a este producto."
+      no_extras_added: "No hay indirectos agregados a este producto."
     form:
       tabs:
         general: "Información general"
         materials: "Materiales"
         processes: "Procesos"
-        extras: "Extras"
+        extras: "Indirectos"
       description: "Descripción del producto"
       quantity: "Cantidad de piezas"
       width: "Ancho (cm)"
@@ -525,17 +599,17 @@ es:
       unit_price: "Precio unitario"
       process_total_price: "Precio total"
       process_comments: "Comentarios sobre procesos"
-      select_extra: "Seleccionar extra"
-      add_extra: "Agregar extra"
-      no_extras: "No hay extras agregados. Selecciona un extra y agrégalo al producto."
+      select_extra: "Seleccionar indirecto"
+      add_extra: "Agregar indirecto"
+      no_extras: "No hay indirectos agregados. Selecciona un indirecto y agrégalo al producto."
       extra_name: "Nombre"
       extra_description: "Descripción"
       extra_unit_price: "Precio unitario"
       extra_quantity: "Cantidad"
-      include_in_subtotal: "Incluir extras en el valor del producto"
+      include_in_subtotal: "Incluir indirectos en el valor del producto"
       materials_cost: "Costo de materiales:"
       processes_cost: "Costo de procesos:"
-      extras_cost: "Costo de extras:"
+      extras_cost: "Costo de indirectos:"
       subtotal: "Subtotal:"
       waste: "Desperdicio:"
       subtotal_with_waste: "Subtotal con desperdicio:"
@@ -556,13 +630,13 @@ es:
       processes_calculation_tooltip: "<strong>Cómo se calculan los costos de procesos:</strong><br>• <u>Precio unitario</u>: El costo por unidad del proceso<br>• <u>Aplicado a</u>: El material o parte a la que se aplica el proceso<br>• <u>Precio total</u>: El costo total de este proceso en el producto"
       processes_material_tooltip: "<strong>Selección de material:</strong><br>• Selecciona el material al que se aplicará el proceso<br>• El proceso se calculará basado en las dimensiones y cantidad del material seleccionado<br>• Asegúrate de que el material tenga las dimensiones correctas configuradas"
       extras_tab:
-        select_extra: "Seleccionar extra"
-        select_extra_placeholder: "Seleccionar un extra para agregar"
+        select_extra: "Seleccionar indirecto"
+        select_extra_placeholder: "Seleccionar un indirecto para agregar"
         quantity: "Cantidad"
-        add_extra: "Agregar Extra"
-        no_extras: "No hay extras agregados. Selecciona un extra y agrégalo al producto."
-        include_in_subtotal: "Incluir extras al valor del producto"
-        include_in_subtotal_mobile: "Incluir extras en el subtotal del producto"
+        add_extra: "Agregar Indirecto"
+        no_extras: "No hay indirectos agregados. Selecciona un indirecto y agrégalo al producto."
+        include_in_subtotal: "Incluir indirectos al valor del producto"
+        include_in_subtotal_mobile: "Incluir indirectos en el subtotal del producto"
         table:
           name: "Nombre"
           description: "Descripción"
@@ -570,22 +644,22 @@ es:
           quantity: "Cantidad"
           total: "Total"
           actions: "Acciones"
-        comments_label: "Comentarios sobre los extras"
-        comments_placeholder: "Agregar notas o comentarios generales sobre los extras de este producto"
+        comments_label: "Comentarios sobre los costos indirectos"
+        comments_placeholder: "Agregar notas o comentarios generales sobre los costos indirectos de este producto"
         tooltips:
-          edit_price: "Editar precio del extra"
+          edit_price: "Editar precio del indirecto"
           edit_quantity: "Editar cantidad"
-          remove_extra: "Eliminar extra"
+          remove_extra: "Eliminar indirecto"
         total_extras: "Total:"
         press_enter_to_select: "Presiona enter para seleccionar"
     extras_tab:
       select_extra: "Seleccionar extra"
       select_extra_placeholder: "Seleccionar un extra para agregar"
       quantity: "Cantidad"
-      add_extra: "Agregar Extra"
-      no_extras: "No hay extras agregados. Selecciona un extra y agrégalo al producto."
-      include_in_subtotal: "Incluir extras al valor del producto"
-      include_in_subtotal_mobile: "Incluir extras en el subtotal del producto"
+      add_extra: "Agregar Indirecto"
+      no_extras: "No hay indirectos agregados. Selecciona un indirecto y agrégalo al producto."
+      include_in_subtotal: "Incluir indirectos al valor del producto"
+      include_in_subtotal_mobile: "Incluir indirectos en el subtotal del producto"
       table:
         name: "Nombre"
         description: "Descripción"
@@ -593,13 +667,13 @@ es:
         quantity: "Cantidad"
         total: "Total"
         actions: "Acciones"
-      comments_label: "Comentarios sobre los extras"
-      comments_placeholder: "Agregar notas o comentarios generales sobre los extras de este producto"
+      comments_label: "Comentarios sobre los indirectos"
+      comments_placeholder: "Agregar notas o comentarios generales sobre los indirectos de este producto"
       tooltips:
-        edit_price: "Editar precio del extra"
+        edit_price: "Editar precio del indirecto"
         edit_quantity: "Editar cantidad"
-        remove_extra: "Eliminar extra"
-      total_extras: "Total:"
+        remove_extra: "Eliminar indirecto"
+      total_extras: "Total indirectos:"
     materials:
       comments: "Comentarios sobre los materiales"
       comments_placeholder: "Agregar notas o comentarios generales sobre los materiales de este producto"
@@ -658,6 +732,14 @@ es:
       actions: "Acciones"
       create_first: "Crea tu primera noticia"
       no_news_html: "No hay noticias configuradas. %{link}."
+      email_status: "Estado Email"
+      sent: "Enviado"
+      pending: "Pendiente"
+      send_email: "Enviar por Email"
+      send_email_confirm: "¿Estás seguro de que quieres enviar esta noticia por email a todos los usuarios?"
+      email_sent_success: "Noticia enviada exitosamente a %{count} usuarios."
+      email_sent_error: "Error al enviar la noticia por email."
+      no_active_users: "No hay usuarios activos para enviar el email."
       show:
         title: "Detalles de la Noticia"
         back: "Volver a Noticias"
@@ -668,7 +750,7 @@ es:
         title: "Editar Noticia"
         back: "Volver a Noticias"
       new:
-        title: "Nueva Noticia"
+        title: "Agregar noticias"
         back: "Volver a Noticias"
       form:
         title: "Título"
@@ -872,3 +954,76 @@ es:
       back_home: "Volver al inicio"
       another_request: "Nueva solicitud"
  
+  activerecord:
+    errors:
+      models:
+        material:
+          attributes:
+            description:
+              blank: "La descripción es requerida"
+            price:
+              blank: "El precio es requerido"
+              not_a_number: "El precio debe ser un número"
+              greater_than_or_equal_to: "El precio debe ser mayor o igual a 0"
+            unit:
+              blank: "La unidad es requerida"
+            ancho:
+              blank: "El ancho es requerido"
+              greater_than: "El ancho debe ser mayor que 0"
+            largo:
+              blank: "El largo es requerido"
+              greater_than: "El largo debe ser mayor que 0"
+        manufacturing_process:
+          attributes:
+            name:
+              blank: "La descripción es requerida"
+            cost:
+              blank: "El costo es requerido"
+              not_a_number: "El costo debe ser un número"
+              greater_than_or_equal_to: "El costo debe ser mayor o igual a 0"
+            unit:
+              blank: "La unidad es requerida"
+        quote:
+          attributes:
+            project_name:
+              blank: "El nombre del proyecto es requerido"
+            customer_name:
+              blank: "El nombre del cliente es requerido"
+            organization:
+              blank: "La organización es requerida"
+            email:
+              blank: "El correo electrónico es requerido"
+              invalid: "Por favor ingresa un correo electrónico válido"
+          errors:
+            at_least_one_product: "Debe agregar al menos un producto a la cotización"
+        price_margin:
+          attributes:
+            min_price:
+              blank: "El precio mínimo es requerido"
+              not_a_number: "El precio mínimo debe ser un número"
+              greater_than_or_equal_to: "El precio mínimo debe ser mayor o igual a 0"
+            max_price:
+              blank: "El precio máximo es requerido"
+              not_a_number: "El precio máximo debe ser un número"
+              greater_than_or_equal_to: "El precio máximo debe ser mayor o igual a 0"
+              greater_than_min_price: "El precio máximo debe ser mayor que el precio mínimo"
+            margin_percentage:
+              blank: "El margen es requerido"
+              not_a_number: "El margen debe ser un número"
+              greater_than_or_equal_to: "El margen debe ser mayor o igual a 0"
+              less_than_or_equal_to: "El margen no puede ser mayor a 100"
+          errors:
+            overlapping_ranges: "Los rangos de precios no pueden solaparse con un margen existente"
+        customer:
+          attributes:
+            name:
+              blank: "El nombre es requerido"
+            email:
+              blank: "El correo electrónico es requerido"
+              invalid: "Por favor ingresa un correo electrónico válido"
+            phone:
+              blank: "El teléfono es requerido"
+
+  pdf_configs:
+    update:
+      success: "Configuración de PDF actualizada correctamente."

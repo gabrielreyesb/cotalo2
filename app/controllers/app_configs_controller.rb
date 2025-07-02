@@ -134,7 +134,8 @@ class AppConfigsController < ApplicationController
       current_user.set_config(AppConfig::THEME, params[:theme])
     end
     
-    redirect_to edit_app_configs_path, notice: "Configuraciones actualizadas exitosamente."
+    flash[:notice] = t('.update_success')
+    redirect_to edit_app_configs_path
   end
   
   # Method to update API keys

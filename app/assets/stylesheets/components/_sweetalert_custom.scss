@@ -1,0 +1,132 @@
+/*
+ * Custom SweetAlert2 Styles to Match App Theme
+ */
+
+// General Toast Styling (Dark Theme)
+body[data-theme="dark"] .swal2-toast {
+  &.swal2-popup {
+    background-color: var(--card-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  .swal2-title {
+    color: var(--text-primary) !important;
+  }
+
+  .swal2-html-container {
+    color: var(--text-secondary) !important;
+  }
+
+  // --- Icon & Progress Bar Colors ---
+
+  // Success (Green)
+  &.swal2-success {
+    .swal2-success-ring {
+      border-color: rgba(66, 185, 131, 0.3) !important;
+    }
+    .swal2-success-line-tip,
+    .swal2-success-line-long {
+      background-color: var(--cotalo-green) !important;
+    }
+    .swal2-timer-progress-bar {
+      background-color: var(--cotalo-green) !important;
+    }
+  }
+  
+  // Error (Red)
+  &.swal2-error {
+    .swal2-x-mark-line-left,
+    .swal2-x-mark-line-right {
+      background-color: #dc3545 !important;
+    }
+    .swal2-timer-progress-bar {
+      background-color: #dc3545 !important;
+    }
+  }
+
+  // Warning (Yellow)
+  &.swal2-warning {
+    .swal2-icon-content {
+      color: #ffc107 !important;
+    }
+    .swal2-timer-progress-bar {
+      background-color: #ffc107 !important;
+    }
+  }
+}
+
+// General Toast Styling (Light Theme)
+body[data-theme="light"] .swal2-toast {
+  &.swal2-popup {
+    background-color: #ffffff !important;
+    border: 1px solid #dee2e6 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .swal2-title {
+    color: #212529 !important;
+  }
+
+  // Success (Green)
+  &.swal2-success {
+    .swal2-timer-progress-bar {
+      background-color: var(--cotalo-green) !important;
+    }
+  }
+  
+  // Error (Red)
+  &.swal2-error {
+    .swal2-timer-progress-bar {
+      background-color: #dc3545 !important;
+    }
+  }
+
+  // Warning (Yellow)
+  &.swal2-warning {
+    .swal2-timer-progress-bar {
+      background-color: #ffc107 !important;
+    }
+  }
+}
+
+// Custom styles for SweetAlert in dark mode
+body[data-theme="dark"] .swal2-popup {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+body[data-theme="dark"] .swal2-title {
+  color: var(--text-primary) !important;
+}
+
+body[data-theme="dark"] .swal2-html-container {
+  color: var(--text-secondary) !important;
+}
+
+body[data-theme="dark"] .swal2-confirm {
+  background-color: var(--cotalo-green) !important;
+  border-color: var(--cotalo-green) !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+
+body[data-theme="dark"] .swal2-confirm:hover {
+  background-color: var(--cotalo-green-dark) !important;
+}
+
+body[data-theme="dark"] .swal2-cancel {
+  background-color: var(--hover-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+body[data-theme="dark"] .swal2-cancel:hover {
+  background-color: var(--border-color) !important;
+}
+
+.badge.bg-pending {
+  background-color: var(--border-gray) !important;
+  color: var(--text-primary) !important;
+} 

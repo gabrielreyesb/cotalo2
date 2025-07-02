@@ -5,15 +5,18 @@
         <div class="card-body">
           <div class="row align-items-end">
             <div class="col-md-7 mb-3 mb-md-0 me-md-2">
-              <label for="extra-select" class="form-label">{{ translations.extras_tab.select_extra }}</label>
+              <div class="d-flex align-items-center mb-2">
+                <label for="extra-select" class="form-label mb-0 me-2">{{ translations.extras_tab.select_extra }}</label>
+              </div>
               <multiselect
                 v-model="selectedExtraId"
                 :options="availableExtras"
                 :track-by="'id'"
                 :label="'name'"
-                :placeholder="translations.extras_tab.select_extra_placeholder"
+                :placeholder="''"
                 :disabled="!availableExtras.length"
                 :select-label="translations.extras_tab.press_enter_to_select"
+                @select="onExtraSelect"
               />
             </div>
             <div class="col-md-2 mb-3 mb-md-0 me-md-2">
@@ -83,10 +86,11 @@
                   <td class="text-truncate" style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" :title="extra.description">{{ extra.description }}</td>
                   <td class="text-end">
                     <input
-                      type="number"
+                      type="text"
                       class="form-control form-control-sm text-end border-secondary"
-                      v-model.number="extra.unit_price"
-                      @change="updateExtraPrice(index)"
+                      :value="extra._unit_price_edit"
+                      @input="e => onUnitPriceInput(index, e.target.value)"
+                      @blur="() => onUnitPriceBlur(index)"
                       min="0"
                       step="0.01"
                       :title="translations.extras_tab.tooltips.edit_price"
@@ -155,10 +159,11 @@
                   <div class="col-6">
                     <div class="input-group input-group-sm">
                       <input 
-                        type="number" 
+                        type="text" 
                         class="form-control form-control-sm text-end border-secondary"
-                        v-model.number="extra.unit_price"
-                        @change="updateExtraPrice(index)"
+                        :value="extra._unit_price_edit"
+                        @input="e => onUnitPriceInput(index, e.target.value)"
+                        @blur="() => onUnitPriceBlur(index)"
                         min="0"
                         step="0.01"
                         :title="translations.extras_tab.tooltips.edit_price"
@@ -219,7 +224,7 @@
               class="form-control border-secondary" 
               v-model="globalComments" 
               rows="3"
-              :placeholder="translations.extras_tab.comments_placeholder"
+              :placeholder="''"
               @change="updateGlobalComments"
             ></textarea>
           </div>
@@ -286,9 +291,11 @@ export default {
   },
   methods: {
     formatCurrency(value) {
-      return new Intl.NumberFormat('es-AR', {
+      return new Intl.NumberFormat('es-MX', {
         style: 'currency',
-        currency: 'ARS'
+        currency: 'MXN',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
       }).format(value);
     },
     calculateExtraTotal(extra) {
@@ -302,6 +309,9 @@ export default {
       extra.total = extra.unit_price * extra.quantity;
       this.$emit('update:product-extras', this.productExtras);
       this.$emit('update:extras-cost', this.totalCost);
+      
+      // Show info notification for quantity update
+      window.showInfo(`Cantidad del extra "${extra.name}" actualizada`);
     },
     updateExtraPrice(index) {
       const extra = this.productExtras[index];
@@ -311,9 +321,24 @@ export default {
       extra.total = extra.unit_price * extra.quantity;
       this.$emit('update:product-extras', this.productExtras);
       this.$emit('update:extras-cost', this.totalCost);
+      
+      // Show info notification for price update
+      window.showInfo(`Precio del extra "${extra.name}" actualizado`);
     },
     addExtra() {
-      if (!this.canAdd || !this.selectedExtra) return;
+      if (!this.selectedExtraId) {
+        window.showWarning(this.translations.extras_tab.select_extra || 'Por favor, selecciona un extra');
+        return;
+      }
+      if (!this.quantity || this.quantity <= 0) {
+        window.showWarning('Por favor, especifica una cantidad válida');
+        return;
+      }
+      if (!this.canAdd || !this.selectedExtra) {
+        window.showWarning('No se puede agregar el extra. Verifica que todos los campos requeridos estén completos.');
+        return;
+      }
+      
       const newExtra = {
         id: this.selectedExtra.id,
         name: this.selectedExtra.name,
@@ -322,21 +347,30 @@ export default {
         unit: this.selectedExtra.unit,
         quantity: this.quantity,
         total: this.selectedExtra.unit_price * this.quantity,
-        comments: ''
+        comments: '',
+        _unit_price_edit: Number(this.selectedExtra.unit_price).toFixed(2)
       };
       const updatedExtras = [...this.productExtras, newExtra];
       this.$emit('update:product-extras', updatedExtras);
       this.$emit('update:extras-cost', this.totalCost);
+      
       this.selectedExtraId = null;
       this.quantity = 1;
     },
     removeExtra(index) {
+      const extraToRemove = this.productExtras[index];
       const updatedExtras = [...this.productExtras];
       updatedExtras.splice(index, 1);
       this.$emit('update:product-extras', updatedExtras);
+      
+      // Show success notification
+      window.showSuccess(`Extra "${extraToRemove.name}" eliminado exitosamente`);
     },
     updateGlobalComments() {
       this.$emit('update:comments', this.globalComments);
+      
+      // Show info notification for comments update
+      window.showInfo('Comentarios de extras actualizados');
     },
     updateExtrasCalculations() {      
       // For now, just emit the current extras to ensure pricing gets updated
@@ -344,6 +378,34 @@ export default {
     },
     updateIncludeInSubtotal() {
       this.$emit('update:include-extras-in-subtotal', this.includeInSubtotal);
+      
+      // Show info notification for subtotal setting update
+      const message = this.includeInSubtotal 
+        ? 'Extras incluidos en el subtotal' 
+        : 'Extras excluidos del subtotal';
+      window.showInfo(message);
+    },
+    onExtraSelect(selectedOption) {
+      if (!selectedOption) {
+        return;
+      }
+
+      // Check if the extra is already added
+      if (this.productExtras.some(extra => extra.id === selectedOption.id)) {
+        window.showWarning('Este extra ya ha sido agregado. Selecciona otro extra o modifica la cantidad del existente.');
+        return;
+      }
+    },
+    onUnitPriceInput(index, value) {
+      this.productExtras[index]._unit_price_edit = value;
+    },
+    onUnitPriceBlur(index) {
+      let value = this.productExtras[index]._unit_price_edit;
+      let parsed = parseFloat(value.replace(/[^0-9.]/g, ''));
+      if (isNaN(parsed)) parsed = 0;
+      this.productExtras[index]._unit_price_edit = parsed.toFixed(2);
+      this.productExtras[index].unit_price = parsed;
+      this.updateExtraPrice(index);
     }
   },
   watch: {
@@ -351,10 +413,35 @@ export default {
     productQuantity() {
       this.updateExtrasCalculations();
     },
+    productExtras: {
+      handler(newVal) {
+        newVal.forEach(extra => {
+          if (typeof extra._unit_price_edit === 'undefined') {
+            extra._unit_price_edit = extra.unit_price != null ? Number(extra.unit_price).toFixed(2) : '';
+          }
+        });
+      },
+      deep: true,
+      immediate: true
+    }
   },
   mounted() {
     // Need to import Bootstrap Modal JS
     import('bootstrap/js/dist/modal');
+    
+    // Emit initial extras cost when component mounts
+    const initialCost = this.productExtras.reduce((sum, extra) => sum + (parseFloat(extra.total) || 0), 0);
+    this.$emit('update:extras-cost', initialCost);
+    
+    // Show info notification if there are existing extras
+    if (this.productExtras.length > 0) {
+      window.showInfo(`${this.productExtras.length} extra(s) cargado(s) - Total: ${this.formatCurrency(initialCost)}`);
+    }
+
+    // Initialize _unit_price_edit for each extra
+    this.productExtras.forEach(extra => {
+      extra._unit_price_edit = extra.unit_price != null ? Number(extra.unit_price).toFixed(2) : '';
+    });
   }
 }
 </script>

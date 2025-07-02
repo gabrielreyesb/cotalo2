@@ -1,14 +1,18 @@
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><%= t('admin.news.edit.title') %></h2>
-    <%= link_to admin_news_index_path, class: "btn btn-outline-secondary" do %>
-      <i class="fas fa-arrow-left me-1"></i> <%= t('admin.news.edit.back') %>
-    <% end %>
-  </div>
+<% content_for :page_title do %>
+  <%= t('admin.news.edit.title') %>
+<% end %>
 
-  <div class="card bg-dark text-white">
-    <div class="card-body">
-      <%= render 'form', news: @news %>
-    </div>
+<% content_for :page_actions do %>
+  <%= link_to admin_news_index_path, class: "btn btn-secondary" do %>
+    <i class="fas fa-arrow-left me-1"></i> <%= t('admin.news.edit.back') %>
+  <% end %>
+  <button type="submit" form="news-form" class="btn btn-outline-light">
+    <i class="fas fa-save me-1"></i> <%= t('admin.news.form.update') %>
+  </button>
+<% end %>
+
+<div class="card bg-dark text-white">
+  <div class="card-body">
+    <%= render 'form', news: @news %>
   </div>
 </div> 

@@ -39,6 +39,11 @@
         background-color: var(--hover-bg);
         color: var(--text-primary);
       }
+
+      &.active, &:active {
+        background-color: var(--cotalo-green);
+        color: var(--white);
+      }
     }
 
     .dropdown-divider {

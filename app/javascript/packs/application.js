@@ -6,19 +6,54 @@
 //
 // To reference this file, add <%= javascript_pack_tag 'application' %> to the appropriate
 // layout file, like app/views/layouts/application.html.erb
-// Force recompile timestamp: <%= Time.current.to_i %>
-
-
-// Uncomment to copy all static images under ../images to the output folder and reference
-// them with the image_pack_tag helper in views (e.g <%= image_pack_tag 'rails.png' %>)
-// or the `imagePath` JavaScript helper below.
-//
-// const images = require.context('../images', true)
-// const imagePath = (name) => images(name, true)
 
 import * as bootstrap from 'bootstrap'
 import '@popperjs/core'
+import 'sweetalert2/src/sweetalert2.scss'
+import Swal from 'sweetalert2'
+
 window.bootstrap = bootstrap
+
+// Global notification utilities
+const Toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 5000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.addEventListener('mouseenter', Swal.stopTimer);
+    toast.addEventListener('mouseleave', Swal.resumeTimer);
+  }
+});
+
+window.showSuccess = (message) => {
+  Toast.fire({
+    icon: 'success',
+    title: message
+  });
+};
+
+window.showError = (message) => {
+  Toast.fire({
+    icon: 'error',
+    title: message
+  });
+};
+
+window.showWarning = (message) => {
+  Toast.fire({
+    icon: 'warning',
+    title: message
+  });
+};
+
+window.showInfo = (message) => {
+  Toast.fire({
+    icon: 'info',
+    title: message
+  });
+};
 
 // Initialize all Bootstrap dropdowns
 document.addEventListener('DOMContentLoaded', function() {
@@ -44,11 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Only try to import Stimulus controllers if actually being used in the page
 try {
   // Import Stimulus controllers conditionally
-  import("../controllers").catch(e => {
-    console.log("Stimulus not loaded, continuing without it");
-  });
+  import("../controllers")
 } catch (e) {
-  console.log("Stimulus not available, continuing without it");
+  // Stimulus not available, continuing without it
 }
-
-// Initialize Webpacker

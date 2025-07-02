@@ -1,24 +1,21 @@
-<%= form_with(model: material, class: "material-form", id: "material-form") do |form| %>
+<%= form_with(model: material, class: "material-form", id: "material-form", html: { novalidate: true }) do |form| %>
   <% if material.errors.any? %>
-    <div class="alert alert-danger">
-      <h4><%= t('materials.form.errors', count: material.errors.count) %></h4>
-      <ul>
-        <% material.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        window.showError('<%= j(material.errors.first.message) %>');
+      });
+    </script>
   <% end %>
 
   <div class="row">
     <div class="col-md-6 mb-3">
       <%= form.label :description, t('materials.form.description'), class: "form-label" %>
-      <%= form.text_field :description, class: "form-control", required: true %>
+      <%= form.text_field :description, class: "form-control", required: true, autocomplete: "off" %>
     </div>
     
     <div class="col-md-6 mb-3">
       <%= form.label :client_description, t('materials.form.client_description'), class: "form-label" %>
-      <%= form.text_field :client_description, class: "form-control", required: true %>
+      <%= form.text_field :client_description, class: "form-control" %>
     </div>
   </div>
   
@@ -40,12 +37,12 @@
   <div class="row">
     <div class="col-md-6 mb-3">
       <%= form.label :ancho, t('materials.form.width'), class: "form-label" %>
-      <%= form.number_field :ancho, class: "form-control", step: "0.01", min: 0 %>
+      <%= form.number_field :ancho, class: "form-control", step: "0.01", min: 0, required: true %>
     </div>
     
     <div class="col-md-6 mb-3">
       <%= form.label :largo, t('materials.form.length'), class: "form-label" %>
-      <%= form.number_field :largo, class: "form-control", step: "0.01", min: 0 %>
+      <%= form.number_field :largo, class: "form-control", step: "0.01", min: 0, required: true %>
     </div>
   </div>
   

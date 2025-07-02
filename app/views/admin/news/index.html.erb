@@ -4,7 +4,7 @@
 
 <% content_for :page_actions do %>
   <%= link_to new_admin_news_path, class: "btn btn-outline-light" do %>
-    <i class="fa fa-plus me-1"></i> <%= t('admin.news.new') %>
+    <i class="fa fa-plus me-1"></i> <%= t('admin.news.new.title') %>
   <% end %>
 <% end %>
 
@@ -19,6 +19,7 @@
               <tr>
                 <th class="index-table-header"><%= t('admin.news.title') %></th>
                 <th class="index-table-header"><%= t('admin.news.published_at') %></th>
+                <th class="index-table-header"><%= t('admin.news.email_status') %></th>
                 <th class="index-table-header text-end"><%= t('admin.news.actions') %></th>
               </tr>
             </thead>
@@ -27,16 +28,36 @@
                 <tr>
                   <td><%= news.title %></td>
                   <td><%= news.published_at.strftime('%d/%m/%Y %H:%M') %></td>
+                  <td>
+                    <% if news.sent_via_email? %>
+                      <span class="badge bg-success">
+                        <i class="fa fa-envelope me-1"></i><%= t('admin.news.sent') %>
+                        <% if news.sent_at %>
+                          <br><small><%= news.sent_at.strftime('%d/%m/%Y %H:%M') %></small>
+                        <% end %>
+                      </span>
+                    <% else %>
+                      <span class="badge bg-pending">
+                        <i class="fa fa-clock me-1"></i><%= t('admin.news.pending') %>
+                      </span>
+                    <% end %>
+                  </td>
                   <td class="text-end">
-                    <%= link_to admin_news_path(news), class: "btn btn-sm btn-outline-info me-1" do %>
-                      <i class="fa fa-eye"></i>
+                    <%= link_to admin_news_path(news), class: "btn btn-sm btn-outline-secondary me-1" do %><i class="fa fa-eye"></i><% end %>
+                    <%= link_to edit_admin_news_path(news), class: "btn btn-sm btn-outline-primary me-1" do %><i class="fa fa-edit"></i><% end %>
+                    <% unless news.sent_via_email? %>
+                      <%= button_to send_email_admin_news_path(news), 
+                          method: :post,
+                          class: "btn btn-sm btn-outline-success me-1",
+                          form: { style: 'display: inline-block;', data: { turbo_confirm: t('admin.news.send_email_confirm') } },
+                          title: t('admin.news.send_email') do %>
+                        <i class="fa fa-envelope"></i>
+                      <% end %>
                     <% end %>
-                    <%= link_to edit_admin_news_path(news), class: "btn btn-sm btn-outline-primary me-1" do %>
-                      <i class="fa fa-edit"></i>
-                    <% end %>
-                    <%= link_to admin_news_path(news), 
-                        data: { turbo_method: :delete, turbo_confirm: t('common.confirm_delete') }, 
-                        class: "btn btn-sm btn-outline-danger" do %>
+                    <%= button_to admin_news_path(news), method: :delete, 
+                        class: "btn btn-sm btn-outline-danger", 
+                        form: { style: 'display: inline-block;', data: { turbo_confirm: t('common.confirm_delete') } },
+                        title: t('common.delete') do %>
                       <i class="fa fa-trash"></i>
                     <% end %>
                   </td>
@@ -53,30 +74,48 @@
           <div class="card mb-4 border-0 shadow-lg" style="border-bottom: 3px solid #28a745 !important;">
             <div class="card-body p-2">
               <div class="d-flex justify-content-between align-items-center mb-1">
-                <h6 class="card-title mb-0 fw-bold text-truncate" style="width: 30%">
+                <h6 class="card-title mb-0 fw-bold text-truncate" style="width: 25%">
                   <%= news.title %>
                 </h6>
-                <div class="d-flex justify-content-evenly align-items-center" style="width: 40%">
-                  <span class="badge bg-primary">
+                <div class="d-flex flex-column align-items-center" style="width: 35%">
+                  <span class="badge bg-primary mb-1">
                     <%= news.published_at.strftime('%d/%m/%Y') %>
                   </span>
+                  <% if news.sent_via_email? %>
+                    <span class="badge bg-success">
+                      <i class="fa fa-envelope me-1"></i><%= t('admin.news.sent') %>
+                    </span>
+                  <% else %>
+                    <span class="badge bg-pending">
+                      <i class="fa fa-clock me-1"></i><%= t('admin.news.pending') %>
+                    </span>
+                  <% end %>
                 </div>
                 <div class="d-flex">
-                  <%= link_to admin_news_path(news), class: "btn btn-sm btn-outline-info me-1" do %>
-                    <i class="fa fa-eye fa-sm"></i>
+                  <%= link_to admin_news_path(news), class: "btn btn-sm btn-outline-secondary me-1" do %><i class="fa fa-eye fa-sm"></i><% end %>
+                  <%= link_to edit_admin_news_path(news), class: "btn btn-sm btn-outline-primary me-1" do %><i class="fa fa-edit fa-sm"></i><% end %>
+                  <% unless news.sent_via_email? %>
+                    <%= button_to send_email_admin_news_path(news), 
+                        method: :post,
+                        class: "btn btn-sm btn-outline-success me-1",
+                        form: { style: 'display: inline-block;', data: { turbo_confirm: t('admin.news.send_email_confirm') } },
+                        title: t('admin.news.send_email') do %>
+                      <i class="fa fa-envelope fa-sm"></i>
+                    <% end %>
                   <% end %>
-                  <%= link_to edit_admin_news_path(news), class: "btn btn-sm btn-outline-primary me-1" do %>
-                    <i class="fa fa-edit fa-sm"></i>
-                  <% end %>
-                  <%= link_to admin_news_path(news), 
-                      data: { turbo_method: :delete, turbo_confirm: t('common.confirm_delete') }, 
-                      class: "btn btn-sm btn-outline-danger" do %>
+                  <%= button_to admin_news_path(news), method: :delete, 
+                      class: "btn btn-sm btn-outline-danger", 
+                      form: { class: "d-inline", data: { turbo_confirm: t('common.confirm_delete') } },
+                      title: t('common.delete') do %>
                     <i class="fa fa-trash fa-sm"></i>
                   <% end %>
                 </div>
               </div>
               <div class="small text-muted">
                 <%= news.published_at.strftime('%H:%M') %>
+                <% if news.sent_via_email? && news.sent_at %>
+                  • <%= t('admin.news.sent') %>: <%= news.sent_at.strftime('%d/%m/%Y %H:%M') %>
+                <% end %>
               </div>
             </div>
           </div>

@@ -2,8 +2,13 @@
 // Controller files must be named *_controller.js.
 
 import { Application } from "@hotwired/stimulus"
-import { definitionsFromContext } from "@hotwired/stimulus-webpack-helpers"
+
+import FlashController from "./flash_controller.js"
+import CustomerSearchController from "./customer_search_controller.js"
+import QuoteProductsController from "./quote_products_controller.js"
 
 const application = Application.start()
-const context = require.context("controllers", true, /_controller\.js$/)
-application.load(definitionsFromContext(context)) 
+
+application.register("flash", FlashController)
+application.register("customer-search", CustomerSearchController)
+application.register("quote-products", QuoteProductsController) 

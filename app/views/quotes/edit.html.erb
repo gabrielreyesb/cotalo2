@@ -58,7 +58,15 @@
          no_customers_found: t("quotes.form.no_customers_found"),
          name: t("quotes.form.name"),
          select: t("quotes.form.select"),
-         close: t("quotes.form.close")
+         close: t("quotes.form.close"),
+         validations: {
+           project_name_required: t('activerecord.errors.models.quote.attributes.project_name.blank'),
+           customer_name_required: t('activerecord.errors.models.quote.attributes.customer_name.blank'),
+           organization_required: t('activerecord.errors.models.quote.attributes.organization.blank'),
+           email_required: t('activerecord.errors.models.quote.attributes.email.blank'),
+           email_invalid: t('activerecord.errors.models.quote.attributes.email.invalid'),
+           at_least_one_product: t('activerecord.errors.models.quote.errors.at_least_one_product')
+         }
        }.to_json.html_safe %>'>
   </div>
 </div>

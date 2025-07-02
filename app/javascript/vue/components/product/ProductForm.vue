@@ -7,13 +7,6 @@
       <p class="mt-2">Loading product data...</p>
     </div>
     
-    <div v-else-if="error" class="alert alert-danger my-5">
-      <h4 class="alert-heading">Error loading form</h4>
-      <p>{{ error }}</p>
-      <hr>
-      <p class="mb-0">Please try refreshing the page or contact support if the problem persists.</p>
-    </div>
-    
     <div v-else class="product-form-container">
       <div class="d-none">
         <button id="save-product-button" @click="savePricingProduct"></button>
@@ -86,8 +79,8 @@
                   
                   <!-- Processes Tab -->
                   <div v-if="activeTab === 'processes' && product" class="tab-pane active">
-                    <processes-tab 
-                      :product-processes="product && product.data && product.data.processes ? product.data.processes : []"
+                    <processes-tab
+                      :product-processes-by-material="productProcessesByMaterial"
                       :available-processes="availableProcesses"
                       :comments="product && product.data && product.data.processes_comments ? product.data.processes_comments : ''"
                       :product-quantity="product && product.data && product.data.general_info ? product.data.general_info.quantity : 1"
@@ -97,7 +90,7 @@
                       :total-square-meters="calculateTotalSquareMeters()"
                       :product-materials="product && product.data && product.data.materials ? product.data.materials : []"
                       :translations="translations"
-                      @update:product-processes="updateProcesses"
+                      @update:product-processes-by-material="val => productProcessesByMaterial = val"
                       @update:comments="updateProcessesComments"
                       @update:processes-cost="updateProcessesCost"
                     />
@@ -184,7 +177,6 @@ export default {
       loading: true,
       activeTab: 'general',
       saving: false,
-      error: null,
       availableExtras: [],
       availableProcesses: [],
       availableMaterials: [],
@@ -208,7 +200,8 @@ export default {
         final_price_per_piece: 0
       },
       translations: JSON.parse(document.getElementById('product-form-app').dataset.translations),
-      manualMarginOverride: false
+      manualMarginOverride: false,
+      productProcessesByMaterial: {},
     };
   },
   computed: {
@@ -239,6 +232,24 @@ export default {
       } else {
         this.activeTab = tab;
       }
+    },
+    groupProcessesByMaterial(processes) {
+      const grouped = {};
+      if (!Array.isArray(processes)) return grouped;
+      
+      processes.forEach(process => {
+        // Try different possible property names for materialId
+        const materialId = process.materialId || process.material_id;
+        
+        if (!materialId) {
+          return;
+        }
+        
+        if (!grouped[materialId]) grouped[materialId] = [];
+        grouped[materialId].push(process);
+      });
+      
+      return grouped;
     },
     async fetchProduct() {
       if (!this.productId) {
@@ -289,11 +300,13 @@ export default {
         } else {
           this.suggestedMargin = this.product.data.pricing.margin_percentage;
         }
+        // After loading product, group processes by material
+        this.productProcessesByMaterial = this.groupProcessesByMaterial(this.product.data.processes);
         // Do NOT call recalculatePricing or ensurePricingUpdated here
         // Let the UI show the backend value first
       } catch (error) {
         console.error('Error loading product:', error);
-        this.error = error.message;
+        window.showError(error.message);
       } finally {
         this.loading = false;
       }
@@ -356,7 +369,7 @@ export default {
         this.loading = false;
       } catch (error) {
         console.error('Error initializing new product:', error);
-        this.error = error.message;
+        window.showError(error.message);
       }
     },
     async createProduct(productData) {
@@ -382,8 +395,14 @@ export default {
         
         const createdProduct = await response.json();
         
-        // Redirect to the products index page instead of edit
-        window.location.href = '/products';
+        // Show success message and redirect to products index after successful save
+        window.showSuccess(`Producto ${this.isNew ? 'creado' : 'actualizado'} exitosamente`);
+        
+        // Wait for a short duration to allow the user to see the toast notification
+        setTimeout(() => {
+          window.location.href = '/products';
+        }, 3000); // 3 second delay
+
       } catch (error) {
         console.error('Error creating product:', error);
         this.error = error.message;
@@ -889,12 +908,15 @@ export default {
       try {
         this.saving = true;
         
+        // Convert grouped processes back to flat array before saving
+        this.convertGroupedProcessesToFlat();
+        
         // Validate product data before submission
         const validationErrors = this.validateProduct();
         if (validationErrors.length > 0) {
-          // Show all validation errors using alert for now
+          // Show all validation errors using toast
           const errorMessage = validationErrors.join('\n');
-          alert(errorMessage);
+          window.showError(errorMessage);
           return;
         }
         
@@ -947,16 +969,21 @@ export default {
           );
         }
 
-        // Redirect to products index after successful save
-        window.location.href = '/products';
+        // Show success message and redirect to products index after successful save
+        window.showSuccess(`Producto ${this.isNew ? 'creado' : 'actualizado'} exitosamente`);
+        
+        // Wait for a short duration to allow the user to see the toast notification
+        setTimeout(() => {
+          window.location.href = '/products';
+        }, 3000); // 3 second delay
 
       } catch (error) {
         console.error(`Error ${this.isNew ? 'creating' : 'updating'} product:`, error);
         
-        // Show error message using alert
+        // Show error message using toast
         const errorMessage = error.message || 
           `Error al ${this.isNew ? 'crear' : 'guardar'} el producto. Por favor, intente de nuevo.`;
-        alert(errorMessage);
+        window.showError(errorMessage);
       } finally {
         this.saving = false;
       }
@@ -1173,6 +1200,24 @@ export default {
         }
       }
     },
+    convertGroupedProcessesToFlat() {
+      if (!this.product || !this.product.data) return;
+      
+      // Convert from grouped format (productProcessesByMaterial) to flat array
+      const flatProcesses = [];
+      
+      for (const materialId in this.productProcessesByMaterial) {
+        const processes = this.productProcessesByMaterial[materialId];
+        for (const process of processes) {
+          flatProcesses.push({
+            ...process,
+            materialId: parseInt(materialId)
+          });
+        }
+      }
+      
+      this.product.data.processes = flatProcesses;
+    },
   },
   // Add the created hook to initialize the component
   async created() {
@@ -1192,7 +1237,7 @@ export default {
       
     } catch (error) {
       console.error('Error initializing product form:', error);
-      this.error = 'Failed to initialize the form. Please try refreshing the page.';
+      window.showError('Failed to initialize the form. Please try refreshing the page.');
     } finally {
       // Ensure loading is set to false when all initialization is complete
       this.loading = false;

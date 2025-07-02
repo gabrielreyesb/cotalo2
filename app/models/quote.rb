@@ -4,29 +4,16 @@ class Quote < ApplicationRecord
   has_many :products, through: :quote_products
   has_many :invoices, dependent: :destroy
   
-  # Override the default error message generation to use our hardcoded messages
   def self.human_attribute_name(attr, options = {})
-    case attr.to_s
-    when 'quote_number'
-      'Número de cotización'
-    when 'project_name'
-      'Nombre del proyecto'
-    when 'customer_name'
-      'Nombre del cliente'
-    when 'organization'
-      'Organización'
-    when 'email'
-      'Correo electrónico'
-    else
-      attr.to_s.humanize
-    end
+    # This can be removed if you are using I18n for attribute names
+    super
   end
   
-  validates :quote_number, presence: { message: "El número de cotización es requerido" }, uniqueness: true
-  validates :project_name, presence: { message: "El nombre del proyecto es requerido" }
-  validates :customer_name, presence: { message: "El nombre del cliente es requerido" }
-  validates :organization, presence: { message: "La organización es requerida" }
-  validates :email, presence: { message: "El correo electrónico es requerido" }, format: { with: URI::MailTo::EMAIL_REGEXP, message: "Por favor ingresa un correo electrónico válido" }
+  validates :quote_number, presence: true, uniqueness: true
+  validates :project_name, presence: true
+  validates :customer_name, presence: true
+  validates :organization, presence: true
+  validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   
   before_validation :generate_quote_number, on: :create
   
@@ -82,6 +69,11 @@ class Quote < ApplicationRecord
     
     # Save the changes
     save
+  end
+  
+  # Get product names for display
+  def product_names
+    products.pluck(:description).join(", ")
   end
   
   private

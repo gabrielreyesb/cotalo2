@@ -43,7 +43,7 @@
     <%# <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> %>
     
     <%# Load application JavaScript %>
-    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag 'application', 'data-turbo-track': 'reload' %>
     
     <%# Load page-specific scripts %>
     <%= yield :scripts %>
@@ -62,30 +62,18 @@
         d.getElementsByTagName("head")[0].appendChild(s);
       })();
     </script>
+
+    <% if flash.any? %>
+      <div data-controller="flash" data-flash-messages="<%= flash.to_a.to_json %>"></div>
+    <% end %>
   </head>
 
-  <body data-theme="<%= current_user&.get_config(AppConfig::THEME) || 'dark' %>">
+  <body data-theme="<%= session[:theme] || 'dark' %>">
     <%= render 'shared/navbar' %>
     <%= render 'shared/subnavbar' %>
     
     <main class="main-content">
       <div class="container-fluid">
-        <% unless controller_name == 'customers' && action_name == 'import' %>
-          <% if notice %>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-              <%= notice %>
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          <% end %>
-        <% end %>
-        
-        <% if alert %>
-          <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <%= alert %>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-        <% end %>
-        
         <%= yield %>
       </div>
     </main>

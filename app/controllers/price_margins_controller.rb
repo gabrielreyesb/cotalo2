@@ -19,7 +19,7 @@ class PriceMarginsController < ApplicationController
     @price_margin = current_user.price_margins.build(price_margin_params)
     
     if @price_margin.save
-      redirect_to price_margins_path, notice: "Margen de precio creado exitosamente."
+      redirect_to price_margins_path, notice: t('price_margins.create.success')
     else
       render :new, status: :unprocessable_entity
     end
@@ -30,7 +30,7 @@ class PriceMarginsController < ApplicationController
   
   def update
     if @price_margin.update(price_margin_params)
-      redirect_to price_margins_path, notice: "Margen de precio actualizado exitosamente."
+      redirect_to price_margins_path, notice: t('price_margins.update.success')
     else
       render :edit, status: :unprocessable_entity
     end
@@ -38,7 +38,7 @@ class PriceMarginsController < ApplicationController
   
   def destroy
     @price_margin.destroy
-    redirect_to price_margins_path, notice: "Margen de precio eliminado exitosamente."
+    redirect_to price_margins_path, notice: t('price_margins.destroy.success')
   end
   
   def calculate

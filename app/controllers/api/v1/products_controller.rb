@@ -4,7 +4,11 @@ class Api::V1::ProductsController < ApplicationController
 
   # GET /api/v1/products/:id
   def show
-    render json: @product
+    render json: {
+      id: @product.id,
+      description: @product.description,
+      data: @product.data
+    }
   end
 
   # POST /api/v1/products

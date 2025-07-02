@@ -26,7 +26,7 @@
                 <div class="input-group input-group-sm">
                   <input 
                     type="number" 
-                    class="form-control form-control-sm text-end" 
+                    class="form-control form-control-sm text-end waste-input" 
                     v-model.number="localWastePercentage" 
                     min="0"
                     step="0.1"
@@ -57,7 +57,7 @@
                 <div class="input-group input-group-sm">
                   <input 
                     type="number" 
-                    class="form-control form-control-sm text-end" 
+                    class="form-control form-control-sm text-end margin-input" 
                     v-model.number="localMarginPercentage" 
                     min="0"
                     step="0.1"
@@ -220,6 +220,13 @@ export default {
   .pricing-tab .table td {
     background-color: var(--card-bg) !important;
     color: var(--text-primary) !important;
+  }
+
+  .waste-input, .margin-input {
+    width: 50px !important;
+    min-width: 50px;
+    max-width: 60px;
+    text-align: right;
   }
 }
 </style>

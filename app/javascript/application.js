@@ -27,13 +27,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Initialize Bootstrap components (tooltips and modals)
 function initializeBootstrapComponents() {
-  // Initialize tooltips
-  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-  tooltipTriggerList.forEach(tooltipTriggerEl => {
-    new bootstrap.Tooltip(tooltipTriggerEl, {
-      html: true,
-      placement: tooltipTriggerEl.dataset.bsPlacement || 'bottom'
-    });
+  // Remove any existing tooltips
+  document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+    const tooltip = bootstrap.Tooltip.getInstance(el);
+    if (tooltip) tooltip.dispose();
+    el.removeAttribute('data-bs-original-title');
+    el.removeAttribute('aria-describedby');
+    el.classList.remove('show');
+    el.removeAttribute('title');
+  });
+
+  // Only add title and initialize tooltip if text is truncated
+  document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+    const fullText = el.dataset.fulltext;
+    if (!fullText) return;
+
+    // Remove the title attribute by default
+    el.removeAttribute('title');
+
+    // Check if text is truncated
+    if (el.offsetWidth < el.scrollWidth) {
+      el.setAttribute('title', fullText);
+      new bootstrap.Tooltip(el, {
+        html: true,
+        placement: el.dataset.bsPlacement || 'bottom'
+      });
+    }
   });
 
   // Initialize modals

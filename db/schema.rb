@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_10_145839) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_20_232211) do
   create_table "app_configs", force: :cascade do |t|
     t.string "key", null: false
     t.text "value"
@@ -104,6 +104,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_10_145839) do
     t.datetime "published_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "sent_via_email"
+    t.datetime "sent_at"
   end
 
   create_table "pdf_configs", force: :cascade do |t|

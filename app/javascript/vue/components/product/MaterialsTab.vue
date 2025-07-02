@@ -5,7 +5,7 @@
         <div class="card-body">
           <div class="row align-items-end">
             <div class="col-md-9 mb-3 mb-md-0">
-              <div class="d-flex align-items-center">
+              <div class="d-flex align-items-center mb-2">
                 <label for="material-select" class="form-label mb-0 me-2">{{ translations.materials.select_material }}</label>
                 <button 
                   type="button" 
@@ -23,14 +23,11 @@
                 :options="availableMaterials"
                 :track-by="'id'"
                 :label="'description'"
-                :placeholder="translations.materials.select_material"
+                :placeholder="''"
                 :disabled="!availableMaterials.length"
-                @input="onMaterialSelect"
+                @select="onMaterialSelect"
                 :select-label="translations.extras_tab.press_enter_to_select"
               />
-              <div v-if="validationMessage" class="text-danger mt-2">
-                {{ validationMessage }}
-              </div>
             </div>
             
             <div class="col-md-3 d-grid">
@@ -38,7 +35,6 @@
                 class="btn btn-primary w-100" 
                 @click="addMaterial" 
                 :disabled="!canAdd"
-                :title="validationMessage"
               >
                 <i class="fa fa-plus me-1"></i> {{ translations.materials.add_material }}
               </button>
@@ -54,8 +50,8 @@
     </div>
 
     <!-- Materials Table/Cards -->
-    <div class="green-accent-panel mt-4">
-      <div class="card" v-if="productMaterials.length">
+    <div class="green-accent-panel mt-4" v-if="productMaterials.length">
+      <div class="card">
         <div class="card-body p-0">
           <!-- Desktop Table -->
           <div class="d-none d-md-block">
@@ -260,7 +256,7 @@
               class="form-control" 
               v-model="globalComments" 
               rows="3"
-              :placeholder="translations.materials_tab.comments_placeholder"
+              :placeholder="''"
               @change="updateGlobalComments"
             ></textarea>
           </div>
@@ -424,12 +420,10 @@ export default {
     }
   },
   data() {
-    console.log('Initializing MaterialsTab component');
     return {
       visualizationMaterial: null,
       materialIdForAdd: '',
       globalComments: this.comments,
-      validationMessage: '',
     };
   },
   created() {
@@ -437,26 +431,7 @@ export default {
   },
   computed: {
     canAdd() {
-      if (!this.materialIdForAdd) {
-        this.validationMessage = '';
-        return false;
-      }
-
-      // Validate product dimensions and quantity
-      if (!this.productQuantity || this.productQuantity <= 0) {
-        this.validationMessage = 'Por favor, especifica la cantidad de piezas del producto en la pestaña de información general';
-        return false;
-      }
-      if (!this.productWidth || this.productWidth <= 0 || !this.productLength || this.productLength <= 0) {
-        this.validationMessage = 'Por favor, especifica el ancho y largo del producto en la pestaña de información general';
-        return false;
-      }
-
-      return this.materialIdForAdd && this.selectedMaterialDetails;
-    },
-    selectedMaterialDetails() {
-      if (!this.materialIdForAdd) return null;
-      return this.availableMaterials.find(m => m.id === this.materialIdForAdd.id);
+      return !!this.materialIdForAdd;
     },
     totalCost() {
       return this.productMaterials.reduce((sum, material) => sum + material.totalPrice, 0);
@@ -574,32 +549,39 @@ export default {
     formatCurrency(value) {
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: 'USD'
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
       }).format(value || 0);
     },
-    onMaterialSelect() {
-      if (!this.materialIdForAdd) {
-        this.validationMessage = '';
+    onMaterialSelect(selectedOption) {
+      if (!selectedOption) {
         return;
       }
 
       // Validate product dimensions and quantity
       if (!this.productQuantity || this.productQuantity <= 0) {
-        this.validationMessage = 'Por favor, especifica la cantidad de piezas del producto en la pestaña de información general';
+        window.showWarning('Por favor, especifica la cantidad de piezas del producto en la pestaña de información general');
+        this.materialIdForAdd = null; // Reset selector
         return;
       }
       if (!this.productWidth || this.productWidth <= 0 || !this.productLength || this.productLength <= 0) {
-        this.validationMessage = 'Por favor, especifica el ancho y largo del producto en la pestaña de información general';
+        window.showWarning('Por favor, especifica el ancho y largo del producto en la pestaña de información general');
+        this.materialIdForAdd = null; // Reset selector
+        return;
+      }
+    },
+    addMaterial() {
+      if (!this.productWidth || this.productWidth <= 0 || !this.productLength || this.productLength <= 0) {
+        window.showWarning('Por favor, especifica el ancho y largo del producto en la pestaña de información general');
         return;
       }
 
-      this.validationMessage = '';
-    },
-    addMaterial() {
       if (!this.materialIdForAdd) return;
+
       const selectedMaterial = this.materialIdForAdd;
       if (this.productMaterials.some(mat => mat.id === selectedMaterial.id)) {
-        this.validationMessage = this.translations.materials.already_added;
+        window.showWarning(this.translations.materials.already_added);
         return;
       }
       
@@ -625,7 +607,6 @@ export default {
       
       // Reset form
       this.materialIdForAdd = null;
-      this.validationMessage = '';
     },
     updateMaterialCalculations({ index, updatePiecesPerMaterial = false, material }) {
       if (!material) return;
@@ -794,7 +775,7 @@ export default {
     },
     productMaterials: {
       handler(newVal) {
-        console.log('productMaterials changed:', newVal);
+        // console.log('productMaterials changed:', newVal);
       },
       immediate: true
     },

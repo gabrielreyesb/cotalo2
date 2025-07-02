@@ -29,19 +29,25 @@
               <table class="table table-striped table-hover">
                 <thead>
                   <tr>
-                    <th class="index-table-header" style="width: 30%;"><%= t('quotes.index.project') %></th>
+                    <th class="index-table-header" style="width: 25%;"><%= t('quotes.index.project') %></th>
+                    <th class="index-table-header" style="width: 20%;"><%= t('quotes.index.products') %></th>
                     <th class="index-table-header" style="width: 15%;"><%= t('quotes.index.customer') %></th>
                     <th class="index-table-header" style="width: 10%;"><%= t('quotes.index.date') %></th>
-                    <th class="index-table-header" style="width: 15%;"><%= t('quotes.index.number') %></th>
+                    <th class="index-table-header" style="width: 10%;"><%= t('quotes.index.number') %></th>
                     <th class="index-table-header text-end" style="width: 10%;"><%= t('quotes.index.total') %></th>
-                    <th class="index-table-header text-center" style="width: 20%;"><%= t('quotes.index.actions') %></th>
+                    <th class="index-table-header text-center" style="width: 10%;"><%= t('quotes.index.actions') %></th>
                   </tr>
                 </thead>
                 <tbody>
                   <% @quotes.each do |quote| %>
                     <tr>
                       <td class="project-column">
-                        <%= link_to quote.project_name, quote_path(quote), class: "project-link", title: quote.project_name %>
+                        <%= link_to quote.project_name, quote_path(quote), class: "project-link", 'data-bs-toggle': 'tooltip', 'data-bs-placement': 'bottom', 'data-fulltext': quote.project_name %>
+                      </td>
+                      <td class="products-column">
+                        <span class="product-tooltip" data-bs-toggle="tooltip" data-bs-placement="bottom" data-fulltext="<%= quote.product_names %>">
+                          <%= quote.product_names.present? ? quote.product_names : t('quotes.index.no_products') %>
+                        </span>
                       </td>
                       <td><%= quote.customer_name %></td>
                       <td><%= quote.created_at.strftime("%d/%m/%Y") %></td>
@@ -95,6 +101,16 @@
                   <%= link_to quote.project_name, quote_path(quote), class: "project-link" %>
                 </h5>
               </div>
+              
+              <!-- Products row -->
+              <% if quote.product_names.present? %>
+                <div class="mb-3">
+                  <small class="text-muted">
+                    <i class="fas fa-box me-1"></i>
+                    <%= quote.product_names %>
+                  </small>
+                </div>
+              <% end %>
               
               <!-- Third row: customer name and organization -->
               <div class="d-flex mb-3 bg-dark text-white p-2 rounded">
@@ -172,14 +188,27 @@
 }
 
 .table-container {
-  min-height: 0; /* Allow container to shrink */
-  overflow: visible;
+  min-height: 0;
+  overflow-x: unset !important; /* Remove horizontal scroll */
+}
+
+.table-responsive {
+  overflow-x: unset !important; /* Remove horizontal scroll */
 }
 
 /* Fix for project name column width */
 .project-column {
-  max-width: 300px; /* Adjust this value as needed */
-  width: 30%;
+  max-width: 180px;
+  width: 20%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Fix for products column width */
+.products-column {
+  max-width: 180px;
+  width: 20%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -202,7 +231,8 @@
 
 /* Fix table layout to prevent wrapping */
 .table {
-  table-layout: fixed;
+  table-layout: auto;
+  width: 100%;
 }
 
 .table th, .table td {
@@ -213,5 +243,15 @@
 /* Light gray text that is visible in dark mode */
 .text-light-gray {
   color: #adb5bd !important;
+}
+
+/* Tooltip pointer for truncated text */
+.project-tooltip, .product-tooltip {
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

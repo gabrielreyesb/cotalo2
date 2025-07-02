@@ -1,11 +1,6 @@
 <template>
   <div class="quote-form">
     <div class="product-form-container">
-      <div v-if="validationErrors.length" class="alert alert-danger">
-        <ul class="mb-0">
-          <li v-for="(error, idx) in validationErrors" :key="idx">{{ error }}</li>
-        </ul>
-      </div>
       <div class="row">
         <div class="col-lg-7">
           <form @submit.prevent="saveQuote">
@@ -19,7 +14,7 @@
                     <div class="col-md-6">
                       <div class="mb-3">
                         <label for="project_name" class="form-label">{{ translations.project_name }}</label>
-                        <input type="text" class="form-control" id="project_name" v-model="form.project_name" required>
+                        <input type="text" class="form-control" id="project_name" v-model="form.project_name" required autocomplete="off">
                       </div>
                     </div>
                   </div>
@@ -38,12 +33,11 @@
                       <div class="mb-3">
                         <label for="customer_name" class="form-label">{{ translations.customer_name }}</label>
                         <div class="input-group">
-                          <input type="text" class="form-control text-start" id="customer_name" v-model="form.customer_name" required>
+                          <input type="text" class="form-control text-start" id="customer_name" v-model="form.customer_name" required autocomplete="off">
                           <button type="button" class="btn btn-outline-secondary" @click="searchCustomersInline" :title="'Search customer'">
                             <i class="fas fa-search"></i>
                           </button>
                         </div>
-                        <small v-if="customerSearch.error" class="text-danger">{{ customerSearch.error }}</small>
                         <small v-if="customerSearch.loading" class="text-info">{{ translations.searching_customers }}</small>
                       </div>
                     </div>
@@ -62,7 +56,7 @@
                             {{ customer.org_name || translations.no_organization }}
                           </option>
                         </select>
-                        <input v-else type="text" class="form-control" id="organization" v-model="form.organization" required>
+                        <input v-else type="text" class="form-control" id="organization" v-model="form.organization" required autocomplete="off">
                       </div>
                     </div>
                   </div>
@@ -70,13 +64,13 @@
                     <div class="col-md-6">
                       <div class="mb-3">
                         <label for="email" class="form-label">{{ translations.email }}</label>
-                        <input type="email" class="form-control" id="email" v-model="form.email">
+                        <input type="email" class="form-control" id="email" v-model="form.email" autocomplete="off">
                       </div>
                     </div>
                     <div class="col-md-6">
                       <div class="mb-3">
                         <label for="telephone" class="form-label">{{ translations.telephone }}</label>
-                        <input type="text" class="form-control" id="telephone" v-model="form.telephone">
+                        <input type="text" class="form-control" id="telephone" v-model="form.telephone" autocomplete="off">
                       </div>
                     </div>
                   </div>
@@ -84,7 +78,7 @@
                     <div class="col-12">
                       <div class="mb-3">
                         <label for="comments" class="form-label">{{ translations.comments }}</label>
-                        <textarea rows="3" class="form-control" id="comments" v-model="form.comments"></textarea>
+                        <textarea rows="3" class="form-control" id="comments" v-model="form.comments" autocomplete="off"></textarea>
                       </div>
                     </div>
                   </div>
@@ -224,17 +218,12 @@
                   <button class="btn btn-primary" @click="searchCustomers" :disabled="customerSearch.loading || customerSearch.query.length < 3" :title="'Search customer'">{{ translations.search }}</button>
                 </div>
                 <small class="form-text text-muted">{{ translations.enter_at_least_3_chars }}</small>
-                <small v-if="customerSearch.error" class="text-danger">{{ customerSearch.error }}</small>
               </div>
               
               <div v-if="customerSearch.loading" class="d-flex justify-content-center my-3">
                 <div class="spinner-border text-primary" role="status">
                   <span class="visually-hidden">{{ translations.loading }}</span>
                 </div>
-              </div>
-              
-              <div v-if="customerSearch.error" class="alert alert-danger bg-dark text-danger border-danger">
-                {{ customerSearch.error }}
               </div>
               
               <div v-if="customerSearch.noResults" class="alert alert-info bg-dark text-light border-secondary">
@@ -338,7 +327,6 @@ export default {
       selectedCustomerId: '',
       selectedProductId: '',
       pipedriveApiConfigured: false,
-      validationErrors: [],
       debugTheme: document.body.getAttribute('data-theme'),
       debugCardBg: getComputedStyle(document.body).getPropertyValue('--card-bg')
     }
@@ -476,7 +464,7 @@ export default {
     searchCustomers() {
       // Validate query
       if (this.customerSearch.query.length < 3) {
-        this.customerSearch.error = 'Ingrese al menos 3 caracteres para buscar';
+        window.showWarning('Ingrese al menos 3 caracteres para buscar');
         return;
       }
       
@@ -535,7 +523,53 @@ export default {
       this.showCustomerSearchModal = false;
     },
     
+    validateQuote() {
+      const { project_name, customer_name, organization, email, telephone } = this.form;
+      
+      if (!project_name || !project_name.trim()) {
+        window.showWarning(this.translations.validations.project_name_required);
+        return false;
+      }
+      
+      if (!customer_name || !customer_name.trim()) {
+        window.showWarning(this.translations.validations.customer_name_required);
+        return false;
+      }
+      
+      if (!organization || !organization.trim()) {
+        window.showWarning(this.translations.validations.organization_required);
+        return false;
+      }
+
+      if (!email || !email.trim()) {
+        window.showWarning(this.translations.validations.email_required);
+        return false;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        window.showWarning(this.translations.validations.email_invalid);
+        return false;
+      }
+
+      if (!telephone || !telephone.trim()) {
+        window.showWarning(this.translations.validations.telephone_required);
+        return false;
+      }
+
+      if (this.selectedProducts.length === 0) {
+        window.showWarning(this.translations.validations.at_least_one_product);
+        return false;
+      }
+      
+      return true; // All validations passed
+    },
+
     saveQuote() {
+      if (!this.validateQuote()) {
+        return;
+      }
+
       // Create a form data object to submit
       const formData = {
         form: this.form,
@@ -555,7 +589,7 @@ export default {
     searchCustomersInline() {
       // Validate query
       if (!this.form.customer_name || this.form.customer_name.length < 3) {
-        this.customerSearch.error = 'Ingrese al menos 3 caracteres para buscar';
+        window.showWarning('Ingrese al menos 3 caracteres para buscar');
         return;
       }
       
@@ -655,14 +689,6 @@ export default {
         console.error('Error checking Pipedrive API status:', error);
         this.pipedriveApiConfigured = false;
       });
-    },
-    
-    setValidationErrors(errors) {
-      this.validationErrors = errors;
-    },
-    
-    clearValidationErrors() {
-      this.validationErrors = [];
     }
   },
   
@@ -673,13 +699,18 @@ export default {
         this.addProduct(product);
       });
 
-      // Listen for validation error events
+      // Listen for validation error events and display them as toasts
       window.quoteFormEventBus.on('set-validation-errors', (errors) => {
-        this.setValidationErrors(errors);
+        if (Array.isArray(errors)) {
+          errors.forEach(error => window.showError(error));
+        } else if (typeof errors === 'object') {
+          Object.values(errors).flat().forEach(error => window.showError(error));
+        }
       });
 
-      window.quoteFormEventBus.on('clear-validation-errors', () => {
-        this.clearValidationErrors();
+      // Listen for a success event
+      window.quoteFormEventBus.on('quote-success', (message) => {
+        window.showSuccess(message);
       });
     }
 
@@ -698,7 +729,7 @@ export default {
     if (window.quoteFormEventBus) {
       window.quoteFormEventBus.events['add-product'] = [];
       window.quoteFormEventBus.events['set-validation-errors'] = [];
-      window.quoteFormEventBus.events['clear-validation-errors'] = [];
+      window.quoteFormEventBus.events['quote-success'] = [];
     }
 
     const saveButton = document.getElementById('save-quote-button');
