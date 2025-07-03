@@ -6,6 +6,7 @@ window.bootstrap = bootstrap;
 import "bootstrap/dist/css/bootstrap.min.css"
 import { createApp } from 'vue'
 import LanguageSwitcher from './components/LanguageSwitcher.vue'
+import 'vue-multiselect/dist/vue-multiselect.min.css';
 
 import i18n from './i18n'
 

@@ -11,6 +11,7 @@ import * as bootstrap from 'bootstrap'
 import '@popperjs/core'
 import 'sweetalert2/src/sweetalert2.scss'
 import Swal from 'sweetalert2'
+import 'vue-multiselect/dist/vue-multiselect.min.css'
 
 window.bootstrap = bootstrap
 
