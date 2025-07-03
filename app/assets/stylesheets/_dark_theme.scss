@@ -466,6 +466,29 @@ body[data-theme="dark"] .multiselect__tags {
   background: var(--card-bg) !important;
 }
 
+// Footer styles for dark theme
+body[data-theme="dark"] .footer {
+  background-color: var(--darker-bg);
+  border-top: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  
+  h5 {
+    color: var(--cotalo-green);
+  }
+  
+  a {
+    color: var(--text-secondary);
+    
+    &:hover {
+      color: var(--cotalo-green);
+    }
+  }
+  
+  .text-muted {
+    color: var(--text-secondary) !important;
+  }
+}
+
 // Dark mode for form controls in green-accent-panel (Extras, Materials, Processes)
 body[data-theme="dark"] .green-accent-panel {
   border: 1.5px solid var(--border-color);

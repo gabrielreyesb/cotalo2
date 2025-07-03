@@ -66,6 +66,16 @@
     <% if flash.any? %>
       <div data-controller="flash" data-flash-messages="<%= flash.to_a.to_json %>"></div>
     <% end %>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17109856947"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'AW-17109856947');
+    </script>
   </head>
 
   <body data-theme="<%= session[:theme] || 'dark' %>">

@@ -1,5 +1,52 @@
-<footer class="footer text-center">
+<footer class="footer mt-auto py-4" style="background-color: var(--darker-bg); border-top: 1px solid var(--border-color);">
   <div class="container">
-    <p>&copy; <%= Date.today.year %> Cotalo - Todos los derechos reservados</p>
+    <div class="row">
+      <!-- Contact Information -->
+      <div class="col-md-4 mb-3">
+        <h5 class="text-success mb-3"><%= t('footer.contact.title') %></h5>
+        <div class="d-flex align-items-center mb-2">
+          <i class="fas fa-envelope me-2 text-success"></i>
+          <span><%= t('footer.contact.email') %></span>
+        </div>
+      </div>
+
+      <!-- More Information -->
+      <div class="col-md-4 mb-3">
+        <h5 class="text-success mb-3"><%= t('footer.info.title') %></h5>
+        <ul class="list-unstyled">
+          <li class="mb-2">
+            <%= link_to t('footer.info.about'), about_path, class: "text-decoration-none" %>
+          </li>
+          <li class="mb-2">
+            <%= link_to t('footer.info.pricing'), '#', class: "text-decoration-none" %>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Company Information -->
+      <div class="col-md-4 mb-3">
+        <h5 class="text-success mb-3"><%= t('footer.company.title') %></h5>
+        <div class="d-flex align-items-center mb-2">
+          <i class="fas fa-map-marker-alt me-2 text-success"></i>
+          <span><%= t('footer.company.address') %></span>
+        </div>
+        <div class="d-flex align-items-center mb-2">
+          <i class="fas fa-globe me-2 text-success"></i>
+          <span><%= t('footer.company.website') %></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="row mt-3">
+      <div class="col-12">
+        <hr style="border-color: var(--border-color);">
+        <div class="text-center">
+          <small class="text-muted">
+            © <%= Date.current.year %> Cotalo. <%= t('footer.copyright') %>
+          </small>
+        </div>
+      </div>
+    </div>
   </div>
 </footer> 

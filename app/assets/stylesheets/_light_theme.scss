@@ -449,4 +449,27 @@ body[data-theme="light"] .how-it-works-section {
 body[data-theme="light"] .features-section .card,
 body[data-theme="light"] .features-section .card * {
   color: #000 !important;
+}
+
+// Footer styles for light theme
+body[data-theme="light"] .footer {
+  background-color: var(--lighter-bg);
+  border-top: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  
+  h5 {
+    color: var(--cotalo-green);
+  }
+  
+  a {
+    color: var(--text-secondary);
+    
+    &:hover {
+      color: var(--cotalo-green);
+    }
+  }
+  
+  .text-muted {
+    color: var(--text-secondary) !important;
+  }
 } 

@@ -18,6 +18,66 @@ es:
     no: "No"
     confirm_delete: "¿Estás seguro?"
 
+  footer:
+    contact:
+      title: "Contáctanos"
+      email: "gabriel@cotalo.app"
+    info:
+      title: "Más Información"
+      about: "Acerca de Nosotros"
+      features: "Características"
+      pricing: "Precios (en desarrollo)"
+      support: "Soporte"
+    company:
+      title: "Empresa"
+      address: "Zapopan, Jalisco, México"
+      website: "www.cotalo.app"
+    copyright: "Todos los derechos reservados."
+
+  about:
+    page_title: "Acerca de Nosotros"
+    hero_title: "Acerca de Cotalo"
+    hero_subtitle: "Una empresa mexicana con décadas de experiencia en desarrollo de software y consultoría empresarial, creando soluciones innovadoras para la industria de las artes gráficas."
+    company:
+      title: "Nuestra Empresa"
+      description: "Cotalo es una empresa mexicana dedicada a proporcionar soluciones de vanguardia para la industria de las artes gráficas. Combinamos experiencia técnica con profundo conocimiento de la industria para entregar productos que realmente marcan la diferencia."
+      mexican_product: "Empresa y producto mexicano"
+      saas_web: "Aplicación web SaaS"
+      confidentiality: "Confidencialidad total de la información"
+    philosophy:
+      title: "Nuestra Filosofía"
+      description: "Cotalo fue creado con tres principios fundamentales en mente, asegurando que nuestras soluciones satisfagan las necesidades reales de nuestros usuarios."
+      simplicity: "Simplicidad"
+      speed: "Velocidad"
+      accuracy: "Precisión"
+    team:
+      title: "Nuestro Equipo"
+      developers:
+        title: "Equipo de Desarrollo"
+        description: "Nuestro equipo de desarrollo reúne más de 40 años de experiencia combinada en desarrollo de software, tecnologías web y diseño de experiencia de usuario."
+        experience: "40+ años de experiencia"
+      consulting:
+        title: "Equipo de Consultoría"
+        description: "Nuestro equipo de consultoría del mundo real tiene más de 30 años de experiencia en la industria de las artes gráficas, proporcionando valiosos conocimientos y soluciones prácticas."
+        experience: "30+ años de experiencia"
+    features:
+      title: "Características Principales"
+      saas:
+        title: "Plataforma SaaS"
+        description: "Aplicación web moderna accesible desde cualquier lugar, en cualquier momento, con actualizaciones automáticas y sin necesidad de instalación."
+      security:
+        title: "Seguridad de Datos"
+        description: "Medidas de seguridad de nivel empresarial que garantizan la confidencialidad total y protección de su información empresarial."
+      accessibility:
+        title: "Acceso Web"
+        description: "Acceda a sus datos y genere cotizaciones desde cualquier dispositivo con conexión a internet, incluyendo teléfonos móviles y tabletas."
+    cta:
+      title: "¿Listo para Experimentar Cotalo?"
+      subtitle: "Únase a miles de profesionales que confían en Cotalo para sus cálculos de costos de fabricación."
+      dashboard: "Ir al Tablero"
+      register: "Registrarse Gratis"
+      login: "Iniciar Sesión"
+
   dashboard:
     title: "Tablero"
     products: "Productos"
@@ -200,7 +260,7 @@ es:
     request_demo: "Solicitar demostración"
     demo_request_info: "Agenda una sesión personalizada de 30 minutos"
     cta_title: "¿Listo para optimizar tu cálculo de costos de fabricación?"
-    cta_subtitle: "Comienza a usar Cotalo hoy mismo. Es completamente gratis."
+    cta_subtitle: "Comienza a usar Cotalo hoy mismo"
     suggestions_info: "¿Tienes sugerencias o comentarios? ¡Envíanos tus sugerencias aquí!"
   
   materials:

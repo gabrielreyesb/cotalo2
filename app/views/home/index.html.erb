@@ -127,6 +127,13 @@
       </div>
       <span id="flowHelperText" class="text-secondary small mt-2"><%= t('home.flow.helper_text_show') %></span>
     </div>
+    
+    <!-- Demo Request Button -->
+    <div class="text-center mb-4">
+      <%= link_to new_demo_request_path, class: "btn btn-outline-success btn-lg" do %>
+        <i class="fas fa-play-circle me-2"></i><%= t('home.request_demo') %>
+      <% end %>
+    </div>
     <div id="flowSection" style="width:100%; transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1); overflow: hidden; max-height: 0px;">
       <div class="flow-diagram w-100 mx-auto" style="max-width: 800px; display: block;">
         <!-- 1. Configuración del Sistema -->
@@ -230,6 +237,9 @@
     </div>
   </div>
 </div>
+
+<%# Footer - Only show on homepage %>
+<%= render 'shared/footer' %>
 
 <%# Add custom styles %>
 <style>

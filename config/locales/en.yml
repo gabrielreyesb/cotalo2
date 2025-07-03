@@ -47,6 +47,64 @@ en:
     no: "No"
     confirm_delete: "Are you sure?"
   hello: "Hello world"
+  footer:
+    contact:
+      title: "Contact Us"
+      email: "gabriel@cotalo.app"
+    info:
+      title: "More Information"
+      about: "About Us"
+      features: "Features"
+      pricing: "Pricing (coming soon)"
+      support: "Support"
+    company:
+      title: "Company"
+      address: "Zapopan, Jalisco, México"
+      website: "www.cotalo.app"
+    copyright: "All rights reserved."
+  about:
+    page_title: "About Us"
+    hero_title: "About Cotalo"
+    hero_subtitle: "A Mexican company with decades of experience in software development and business consulting, creating innovative solutions for the graphic arts industry."
+    company:
+      title: "Our Company"
+      description: "Cotalo is a Mexican company dedicated to providing cutting-edge solutions for the graphic arts industry. We combine technical expertise with deep industry knowledge to deliver products that truly make a difference."
+      mexican_product: "Mexican company and product"
+      saas_web: "SaaS web application"
+      confidentiality: "Total confidentiality of information"
+    philosophy:
+      title: "Our Philosophy"
+      description: "Cotalo was created with three core principles in mind, ensuring that our solutions meet the real needs of our users."
+      simplicity: "Simplicity"
+      speed: "Speed"
+      accuracy: "Accuracy"
+    team:
+      title: "Our Team"
+      developers:
+        title: "Development Team"
+        description: "Our development team brings together more than 40 years of combined experience in software development, web technologies, and user experience design."
+        experience: "40+ years experience"
+      consulting:
+        title: "Consulting Team"
+        description: "Our real-world consulting team has over 30 years of experience in the graphic arts industry, providing valuable insights and practical solutions."
+        experience: "30+ years experience"
+    features:
+      title: "Key Features"
+      saas:
+        title: "SaaS Platform"
+        description: "Modern web-based application accessible from anywhere, anytime, with automatic updates and no installation required."
+      security:
+        title: "Data Security"
+        description: "Enterprise-grade security measures ensuring total confidentiality and protection of your business information."
+      accessibility:
+        title: "Web Accessible"
+        description: "Access your data and generate quotes from any device with an internet connection, including mobile phones and tablets."
+    cta:
+      title: "Ready to Experience Cotalo?"
+      subtitle: "Join thousands of professionals who trust Cotalo for their manufacturing cost calculations."
+      dashboard: "Go to Dashboard"
+      register: "Register for Free"
+      login: "Log In"
   dashboard:
     title: "Dashboard"
     subscription:
@@ -229,7 +287,7 @@ en:
     request_demo: "Request demonstration"
     demo_request_info: "Schedule a personalized 30-minute session"
     cta_title: "Ready to optimize your manufacturing cost estimate?"
-    cta_subtitle: "Start using Cotalo today. It's completely free."
+    cta_subtitle: "Start using Cotalo today."
     suggestions_info: "Have suggestions or comments? Send us your suggestions here!"
   materials:
     index:

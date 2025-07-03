@@ -53,3 +53,32 @@
   - Code is saved in GitHub under the project name: `cotalo2`.
 - **Production Environment:**
   - The production environment is hosted on Heroku.
+
+## 🛠️ Integrating Third-Party CSS (e.g., vue-multiselect) with Sprockets and Webpacker
+
+### Problem
+Some third-party Vue components (like `vue-multiselect`) provide their CSS in `node_modules`, but Sprockets (Rails' asset pipeline) does **not** process CSS imports from `node_modules` by default. This can cause missing styles in production, even if everything works in development.
+
+### Solution
+
+**To include third-party CSS in your Sprockets-managed styles:**
+
+1. **Copy the CSS file from `node_modules` to your assets:**
+   ```sh
+   cp node_modules/vue-multiselect/dist/vue-multiselect.min.css app/assets/stylesheets/_vue_multiselect.scss
+   ```
+   - Rename it with a leading underscore and `.scss` extension to make it a Sprockets partial.
+
+2. **Import the partial in your main SCSS file:**
+   ```scss
+   // In app/assets/stylesheets/application.scss
+   @import "vue_multiselect";
+   ```
+
+3. **Commit and deploy as usual.**
+   - Sprockets will now include the styles in your main CSS bundle, and they will work in production.
+
+### Troubleshooting
+
+- If styles are still missing, make sure the file is present in `app/assets/stylesheets/` and the import path matches the filename (without the underscore or extension).
+- After copying and importing, always commit and push to Heroku, then check the compiled CSS in production.

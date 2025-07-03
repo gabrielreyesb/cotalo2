@@ -1,0 +1,221 @@
+<% content_for :page_title do %>
+  <%= t('about.page_title') %>
+<% end %>
+
+<%# Hero Section %>
+<div class="hero-section py-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-8 mx-auto text-center">
+        <h1 class="display-4 fw-bold mb-4"><%= t('about.hero_title') %></h1>
+        <p class="lead mb-4">
+          <%= t('about.hero_subtitle') %>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# Company Information Section %>
+<div class="company-section py-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 mb-4">
+        <div class="card h-100 border-0">
+          <div class="card-body p-4">
+            <div class="text-center mb-4">
+              <i class="fas fa-flag fa-3x mb-3" style="color: var(--cotalo-green);"></i>
+              <h3 class="card-title"><%= t('about.company.title') %></h3>
+            </div>
+            <p class="card-text">
+              <%= t('about.company.description') %>
+            </p>
+            <ul class="list-unstyled">
+              <li class="mb-2">
+                <i class="fas fa-check-circle me-2 text-success"></i>
+                <%= t('about.company.mexican_product') %>
+              </li>
+              <li class="mb-2">
+                <i class="fas fa-check-circle me-2 text-success"></i>
+                <%= t('about.company.saas_web') %>
+              </li>
+              <li class="mb-2">
+                <i class="fas fa-check-circle me-2 text-success"></i>
+                <%= t('about.company.confidentiality') %>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-6 mb-4">
+        <div class="card h-100 border-0 bg-darker">
+          <div class="card-body p-4">
+            <div class="text-center mb-4">
+              <i class="fas fa-lightbulb fa-3x mb-3" style="color: var(--cotalo-green);"></i>
+              <h3 class="card-title"><%= t('about.philosophy.title') %></h3>
+            </div>
+            <p class="card-text">
+              <%= t('about.philosophy.description') %>
+            </p>
+            <div class="row text-center">
+              <div class="col-md-4 mb-3">
+                <i class="fas fa-rocket fa-2x mb-2" style="color: var(--cotalo-green);"></i>
+                <h6><%= t('about.philosophy.simplicity') %></h6>
+              </div>
+              <div class="col-md-4 mb-3">
+                <i class="fas fa-tachometer-alt fa-2x mb-2" style="color: var(--cotalo-green);"></i>
+                <h6><%= t('about.philosophy.speed') %></h6>
+              </div>
+              <div class="col-md-4 mb-3">
+                <i class="fas fa-bullseye fa-2x mb-2" style="color: var(--cotalo-green);"></i>
+                <h6><%= t('about.philosophy.accuracy') %></h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# Team Experience Section %>
+<div class="team-section py-5">
+  <div class="container">
+    <h2 class="text-center mb-5"><%= t('about.team.title') %></h2>
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="card h-100 border-0">
+          <div class="card-body p-4 text-center">
+            <i class="fas fa-code fa-3x mb-3" style="color: var(--cotalo-green);"></i>
+            <h4 class="card-title mb-3"><%= t('about.team.developers.title') %></h4>
+            <p class="card-text">
+              <%= t('about.team.developers.description') %>
+            </p>
+            <div class="mt-3">
+              <span class="badge bg-success fs-6">
+                <i class="fas fa-clock me-1"></i>
+                <%= t('about.team.developers.experience') %>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="card h-100 border-0 bg-darker">
+          <div class="card-body p-4 text-center">
+            <i class="fas fa-users fa-3x mb-3" style="color: var(--cotalo-green);"></i>
+            <h4 class="card-title mb-3"><%= t('about.team.consulting.title') %></h4>
+            <p class="card-text">
+              <%= t('about.team.consulting.description') %>
+            </p>
+            <div class="mt-3">
+              <span class="badge bg-success fs-6">
+                <i class="fas fa-clock me-1"></i>
+                <%= t('about.team.consulting.experience') %>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# Features Section %>
+<div class="features-section py-5">
+  <div class="container">
+    <h2 class="text-center mb-5"><%= t('about.features.title') %></h2>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card h-100 border-0">
+          <div class="card-body p-4 text-center">
+            <i class="fas fa-cloud fa-3x mb-3" style="color: var(--cotalo-green);"></i>
+            <h5 class="card-title mb-3"><%= t('about.features.saas.title') %></h5>
+            <p class="card-text">
+              <%= t('about.features.saas.description') %>
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="card h-100 border-0 bg-darker">
+          <div class="card-body p-4 text-center">
+            <i class="fas fa-shield-alt fa-3x mb-3" style="color: var(--cotalo-green);"></i>
+            <h5 class="card-title mb-3"><%= t('about.features.security.title') %></h5>
+            <p class="card-text">
+              <%= t('about.features.security.description') %>
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="card h-100 border-0">
+          <div class="card-body p-4 text-center">
+            <i class="fas fa-mobile-alt fa-3x mb-3" style="color: var(--cotalo-green);"></i>
+            <h5 class="card-title mb-3"><%= t('about.features.accessibility.title') %></h5>
+            <p class="card-text">
+              <%= t('about.features.accessibility.description') %>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# CTA Section %>
+<div class="cta-section py-5">
+  <div class="container text-center">
+    <h2 class="mb-4"><%= t('about.cta.title') %></h2>
+    <p class="lead mb-4"><%= t('about.cta.subtitle') %></p>
+    <div class="d-flex gap-3 justify-content-center">
+      <% if user_signed_in? %>
+        <%= link_to dashboard_path, class: "btn btn-success btn-lg" do %>
+          <i class="fas fa-tachometer-alt me-2"></i><%= t('about.cta.dashboard') %>
+        <% end %>
+      <% else %>
+        <%= link_to new_user_registration_path, class: "btn btn-success btn-lg" do %>
+          <i class="fas fa-rocket me-2"></i><%= t('about.cta.register') %>
+        <% end %>
+        <%= link_to new_user_session_path, class: "btn btn-outline-success btn-lg" do %>
+          <i class="fas fa-sign-in-alt me-2"></i><%= t('about.cta.login') %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<%# Add custom styles %>
+<style>
+.hero-section {
+  background-color: var(--dark-bg);
+  min-height: 40vh; 
+  display: flex;
+  align-items: center;
+}
+
+.company-section, .team-section, .features-section, .cta-section {
+  background-color: var(--dark-bg);
+}
+
+.bg-darker {
+  background-color: var(--darker-bg);
+}
+
+.card {
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.badge {
+  font-size: 0.9rem !important;
+  padding: 0.5rem 1rem !important;
+}
+</style> 

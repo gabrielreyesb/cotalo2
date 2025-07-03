@@ -27,4 +27,7 @@ class HomeController < ApplicationController
       .reverse
       .first(5)
   end
+
+  def about
+  end
 end

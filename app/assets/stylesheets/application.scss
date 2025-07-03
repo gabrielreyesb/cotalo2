@@ -92,11 +92,46 @@ a {
 .footer {
   position: relative;
   width: 100%;
-  background-color: var(--nav-bg);
+  background-color: var(--darker-bg);
   border-top: 1px solid var(--border-color);
   padding: 1rem 0;
   color: var(--text-secondary);
   margin-top: auto;
+  
+  h5 {
+    color: var(--cotalo-green);
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  a {
+    color: var(--text-secondary);
+    transition: color 0.2s ease;
+    
+    &:hover {
+      color: var(--cotalo-green);
+      text-decoration: none;
+    }
+  }
+  
+  .text-success {
+    color: var(--cotalo-green) !important;
+  }
+  
+  .text-muted {
+    color: var(--text-secondary) !important;
+  }
+  
+  hr {
+    border-color: var(--border-color);
+    margin: 1.5rem 0 1rem 0;
+  }
+  
+  @media (max-width: 768px) {
+    .col-md-4 {
+      margin-bottom: 1.5rem;
+    }
+  }
 }
 
 // Hide debugging containers
