@@ -1,10 +1,10 @@
 <% content_for :page_title do %>
-  Solicitar Demostración
+  <%= t('demo_requests.title') %>
 <% end %>
 
 <% content_for :page_actions do %>
   <%= link_to root_path, class: "btn btn-outline-light" do %>
-    <i class="fas fa-arrow-left"></i> Volver
+    <i class="fas fa-arrow-left"></i> <%= t('common.back') %>
   <% end %>
 <% end %>
 
@@ -13,10 +13,10 @@
     <div class="col-md-8 col-lg-6">
       <div class="green-accent-panel">
         <div class="card shadow-lg border-0">
-          <div class="card-body p-5">
-            <div class="text-center mb-4">
-              <h2 class="fw-bold mb-2"><%= t('demo_requests.title') %></h2>
-              <p class="text-muted"><%= t('demo_requests.subtitle') %></p>
+          <div class="card-body p-3" style="padding-top: 1rem !important; padding-bottom: 1rem !important;">
+            <div class="text-center mb-2" style="margin-bottom: 0.5rem !important;">
+              <h2 class="fw-bold mb-1" style="margin-bottom: 0.25rem !important; font-size: 1.6rem;"> <%= t('demo_requests.title') %></h2>
+              <p class="text-muted" style="margin-bottom: 0.25rem !important; font-size: 1rem;"> <%= t('demo_requests.subtitle') %></p>
             </div>
 
             <%= form_with(model: @demo_request, local: true, class: "demo-request-form") do |f| %>
@@ -32,13 +32,13 @@
               <% end %>
 
               <div class="row">
-                <div class="col-md-6 mb-3">
-                  <%= f.label :name, t('demo_requests.form.name'), class: "form-label text-start" %>
-                  <div class="input-group">
+                <div class="col-md-6 mb-1">
+                  <%= f.label :name, t('demo_requests.form.name'), class: "form-label text-start", style: "margin-bottom: 0.1rem !important; font-size: 1rem;" %>
+                  <div class="input-group" style="margin-bottom: 0.1rem !important;">
                     <span class="input-group-text">
                       <i class="fa fa-user"></i>
                     </span>
-                    <%= f.text_field :name, class: "form-control text-start", placeholder: t('demo_requests.form.name_placeholder') %>
+                    <%= f.text_field :name, class: "form-control text-start", placeholder: t('demo_requests.form.name_placeholder'), style: "padding-top: 0.3rem; padding-bottom: 0.3rem; font-size: 1rem;" %>
                   </div>
                 </div>
 

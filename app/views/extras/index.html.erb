@@ -75,8 +75,8 @@
           <div class="card green-accent-panel mb-4 border-0 shadow-lg" style="border-bottom: 3px solid #28a745 !important;">
             <div class="card-body p-2">
               <div class="d-flex justify-content-between align-items-center mb-1">
-                <h6 class="card-title mb-0 fw-bold text-truncate" style="width: 30%"><%= extra.name %></h6>
-                <div class="d-flex justify-content-evenly align-items-center" style="width: 40%">
+                <h6 class="card-title mb-0 fw-bold text-truncate" style="max-width: 60%"><%= extra.name %></h6>
+                <div class="d-flex align-items-center" style="gap: 0.5rem;">
                   <span class="badge bg-secondary">
                     <% if extra.unit %>
                       <%= extra.unit.abbreviation %>
@@ -88,28 +88,28 @@
                     <%= number_to_currency(extra.cost) %>
                   </span>
                 </div>
-                <div class="d-flex">
-                  <%= link_to extra_path(extra), class: "btn btn-sm btn-outline-secondary px-2 py-1 me-1" do %>
-                    <i class="fa fa-eye fa-sm"></i>
-                  <% end %>
-                  <%= link_to edit_extra_path(extra), class: "btn btn-sm btn-outline-primary px-2 py-1 me-1" do %>
-                    <i class="fa fa-edit fa-sm"></i>
-                  <% end %>
-                  <%= button_to duplicate_extra_path(extra), 
-                      method: :post,
-                      class: "btn btn-sm btn-outline-secondary px-2 py-1 me-1",
-                      form: { style: 'display: inline-block;' } do %>
-                    <i class="fa fa-copy fa-sm"></i>
-                  <% end %>
-                  <%= button_to extra_path(extra), method: :delete, 
-                      class: "btn btn-sm btn-outline-danger px-2 py-1", 
-                      form: { class: "d-inline", data: { turbo_confirm: t('common.confirm') } } do %>
-                    <i class="fa fa-trash fa-sm"></i>
-                  <% end %>
-                </div>
               </div>
-              <div class="small text-muted">
+              <div class="small text-muted mb-2">
                 <%= truncate(extra.description, length: 60) %>
+              </div>
+              <div class="d-flex justify-content-end align-items-center" style="gap: 0.5rem;">
+                <%= link_to extra_path(extra), class: "btn btn-sm btn-outline-secondary px-2 py-1" do %>
+                  <i class="fa fa-eye fa-sm"></i>
+                <% end %>
+                <%= link_to edit_extra_path(extra), class: "btn btn-sm btn-outline-primary px-2 py-1" do %>
+                  <i class="fa fa-edit fa-sm"></i>
+                <% end %>
+                <%= button_to duplicate_extra_path(extra), 
+                    method: :post,
+                    class: "btn btn-sm btn-outline-secondary px-2 py-1",
+                    form: { style: 'display: inline-block;' } do %>
+                  <i class="fa fa-copy fa-sm"></i>
+                <% end %>
+                <%= button_to extra_path(extra), method: :delete, 
+                    class: "btn btn-sm btn-outline-danger px-2 py-1", 
+                    form: { class: "d-inline", data: { turbo_confirm: t('common.confirm') } } do %>
+                  <i class="fa fa-trash fa-sm"></i>
+                <% end %>
               </div>
             </div>
           </div>

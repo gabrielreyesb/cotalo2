@@ -207,7 +207,7 @@ es:
     login: "Iniciar sesión"
     features_title: "Características principales"
     feature1_title: "Diseño altamente personalizable"
-    feature1_desc: "Crea productos de artes gráficas con dimensiones, materiales y acabados personalizados según tus necesidades específicas."
+    feature1_desc: "Crea productos de artes gráficas con dimensiones, materiales y acabados personalizados, aplicando múltiples procesos por material según tu flujo de trabajo."
     feature2_title: "Estimación instantánea"
     feature2_desc: "Obtén el costo de fabricación en tiempo real mientras ajustas los parámetros de tu diseño."
     feature3_title: "Cotizaciones profesionales"
@@ -988,7 +988,7 @@ es:
         success: "Cliente eliminado exitosamente"
  
   demo_requests:
-    title: "Solicitar Demostración"
+    title: "Solicitar demostración"
     subtitle: "Agenda una sesión personalizada de 30 minutos para conocer cómo Cotalo puede optimizar tu proceso de cotización"
     form:
       name: "Nombre completo"
@@ -1087,3 +1087,12 @@ es:
   pdf_configs:
     update:
       success: "Configuración de PDF actualizada correctamente."
+
+  suggestions:
+    title: "Sugerencias"
+    send: "Enviar"
+    new_suggestion: "Nueva sugerencia"
+    suggestion: "Sugerencia"
+    admin_comment: "Comentario admin"
+    pending: "Pendiente"
+    reviewed: "Revisada"
