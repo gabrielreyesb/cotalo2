@@ -198,24 +198,16 @@ export default {
     
     .subtotal-row, .subtotal-with-waste-row, .price-before-margin-row {
       th, td {
-        border-top: 2px solid #42b983;
-        font-weight: 600;
       }
     }
     
     .total-row {
       th, td {
-        border-top: 2px solid var(--cotalo-green);
-        font-weight: 700;
-        font-size: 1rem;
       }
     }
     
     .final-price-row {
       th, td {
-        font-weight: 700;
-        color: #42b983;
-        font-size: 1rem;
       }
     }
   }
