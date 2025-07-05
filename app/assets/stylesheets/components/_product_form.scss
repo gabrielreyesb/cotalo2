@@ -48,14 +48,6 @@ main.main-content:has(.product-form-container) {
     }
   }
 
-  // Specific styling for form-select dropdown arrow (if needed)
-  .form-select {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23#{rgba(var(--text-primary-rgb), 0.7)}' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    background-size: 16px 12px;
-  }
-
   // Style labels
   .form-label {
     color: var(--text-secondary);
@@ -114,4 +106,37 @@ main.main-content:has(.product-form-container) {
     overflow: hidden;
     text-overflow: ellipsis;
   }
+}
+
+/* PricingTab table row separators and spacing */
+.subtotal-row th, .subtotal-row td,
+.subtotal-with-waste-row th, .subtotal-with-waste-row td,
+.price-before-margin-row th, .price-before-margin-row td {
+  border-top: 2px solid #42b983;
+  font-weight: 600;
+}
+.total-row th, .total-row td {
+  border-top: 2px solid var(--cotalo-green, #42b983);
+  font-weight: 700;
+  font-size: 1rem;
+}
+.final-price-row th, .final-price-row td {
+  font-weight: 700;
+  color: #42b983;
+  font-size: 1rem;
+}
+.percentage-group {
+  width: 140px;
+  margin-right: 10px;
+}
+.calculated-value {
+  width: 120px;
+  text-align: right;
+  white-space: nowrap;
+}
+.waste-input, .margin-input {
+  width: 50px !important;
+  min-width: 50px;
+  max-width: 60px;
+  text-align: right;
 } 
