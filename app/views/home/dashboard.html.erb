@@ -78,23 +78,37 @@
               <table class="table table-striped table-hover">
                 <thead>
                   <tr>
-                    <th style="width: 20%;">
+                    <!-- Project name for small screens only -->
+                    <th class="d-table-cell d-md-none" style="width: 60%;">
+                      <span class="nowrap"><%= t('quotes.index.project') %></span>
+                    </th>
+                    <th class="d-table-cell d-md-none text-end" style="width: 40%;">
+                      <span class="nowrap"><%= t('dashboard.total') %></span>
+                    </th>
+                    <!-- Quote number and customer for md+ screens only -->
+                    <th class="d-none d-md-table-cell" style="width: 20%;">
                       <span class="nowrap"><%= t('dashboard.number') %></span>
                     </th>
-                    <th style="width: 50%;">
+                    <th class="d-none d-md-table-cell" style="width: 50%;">
                       <span class="nowrap"><%= t('dashboard.customer') %></span>
-                    </th>
-                    <th style="width: 30%;" class="text-end">
-                      <span class="nowrap"><%= t('dashboard.total') %></span>
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   <% current_user.quotes.order(created_at: :desc).limit(5).each do |quote| %>
                     <tr>
-                      <td><%= link_to quote.quote_number, quote_path(quote), class: "product-link" %></td>
-                      <td class="text-truncate" style="max-width: 0;" title="<%= quote.customer_name %>"><%= quote.customer_name %></td>
-                      <td class="text-end"><%= number_to_currency(quote.data && quote.data.dig('totals', 'total') || 0) %></td>
+                      <!-- Project name for small screens only -->
+                      <td class="d-table-cell d-md-none" style="width: 60%;">
+                        <%= link_to quote.project_name, quote_path(quote), class: "product-link" %>
+                      </td>
+                      <td class="d-table-cell d-md-none text-end" style="width: 40%;">
+                        <%= number_to_currency(quote.data && quote.data.dig('totals', 'total') || 0) %>
+                      </td>
+                      <!-- Quote number and customer for md+ screens only -->
+                      <td class="d-none d-md-table-cell">
+                        <%= link_to quote.quote_number, quote_path(quote), class: "product-link" %>
+                      </td>
+                      <td class="d-none d-md-table-cell text-truncate" style="max-width: 0;" title="<%= quote.customer_name %>"><%= quote.customer_name %></td>
                     </tr>
                   <% end %>
                 </tbody>

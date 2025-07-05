@@ -172,7 +172,7 @@ es:
     adjustment_title: "Ajuste de precios"
     adjustment_description: "Aplica un porcentaje de ajuste a todos los precios de materiales, procesos e indirectos. Usa valores positivos para aumentar los precios y negativos para disminuirlos."
     adjustment_percentage: "Porcentaje de ajuste"
-    apply_adjustment: "Aplicar ajuste de precios"
+    apply_adjustment: "Aplicar"
   
   navbar:
     dashboard: "Tablero"
@@ -590,7 +590,7 @@ es:
       no_products: "No hay productos creados aún."
       create_new: "Crear nuevo producto"
       create_first_product: "Crea tu primer producto"
-      save_product: "Guardar producto"
+      save_product: "Guardar"
       search_placeholder: "Buscar productos…"
     new:
       title: "Nuevo producto"
@@ -677,7 +677,7 @@ es:
       margin: "Margen:"
       total_price: "Precio total:"
       final_price_per_piece: "Precio final por pieza:"
-      save_product: "Guardar producto"
+      save_product: "Guardar"
       materials_tab:
         comments_label: "Comentarios sobre los materiales"
         comments_placeholder: "Agregar notas o comentarios generales sobre los materiales de este producto"
@@ -712,6 +712,7 @@ es:
           remove_extra: "Eliminar indirecto"
         total_extras: "Total:"
         press_enter_to_select: "Presiona enter para seleccionar"
+      include_in_subtotal_mobile: "Incluir indirectos en el subtotal del producto"
     extras_tab:
       select_extra: "Seleccionar extra"
       select_extra_placeholder: "Seleccionar un extra para agregar"
@@ -868,8 +869,8 @@ es:
     customers:
       index:
         title: "Clientes"
-        new_customer: "Nuevo Cliente"
-        import_customers: "Importar Clientes"
+        new_customer: "Nuevo"
+        import_customers: "Importar"
         search_placeholder: "Buscar clientes…"
         name: "Nombre"
         company: "Empresa"
@@ -1096,3 +1097,10 @@ es:
     admin_comment: "Comentario admin"
     pending: "Pendiente"
     reviewed: "Revisada"
+
+  products_tab:
+    extras_tab:
+      include_in_subtotal_mobile: "Incluir indirectos en el subtotal del producto"
+
+  extras_tab:
+    include_in_subtotal_mobile: "Incluir indirectos en el subtotal del producto"

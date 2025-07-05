@@ -200,6 +200,7 @@ en:
     logo_upload_success: "Logo updated successfully"
     logo_uploading: "Uploading..."
     select_file_first: "Please select a file first"
+    apply_adjustment: "Apply"
   navbar:
     dashboard: "Dashboard"
     products: "Products"
@@ -699,6 +700,7 @@ en:
           remove_extra: "Remove indirect"
         total_extras: "Total indirects:"
         press_enter_to_select: "Press enter to select"
+      include_in_subtotal_mobile: "Include indirects in product subtotal"
     new:
       title: "New product"
     edit:
@@ -838,8 +840,8 @@ en:
     customers:
       index:
         title: "Customers"
-        new_customer: "New Customer"
-        import_customers: "Import Customers"
+        new_customer: "New"
+        import_customers: "Import"
         search_placeholder: "Search customers…"
         name: "Name"
         company: "Company"
@@ -1073,3 +1075,10 @@ en:
     admin_comment: "Admin comment"
     pending: "Pending"
     reviewed: "Reviewed"
+
+products_tab:
+  extras_tab:
+    include_in_subtotal_mobile: "Include indirects in product subtotal"
+
+extras_tab:
+  include_in_subtotal_mobile: "Include indirects in product subtotal"

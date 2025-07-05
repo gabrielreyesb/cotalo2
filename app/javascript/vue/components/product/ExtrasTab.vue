@@ -15,7 +15,7 @@
                 :label="'name'"
                 :placeholder="''"
                 :disabled="!availableExtras.length"
-                :select-label="translations.extras_tab.press_enter_to_select"
+                :select-label="''"
                 @select="onExtraSelect"
               />
             </div>
@@ -54,7 +54,8 @@
     <div class="green-accent-panel mt-4" v-if="productExtras.length">
       <div class="card">
         <div class="card-body p-0">
-          <div class="form-check px-4 py-3 border-bottom border-secondary extras-checkbox-padding">
+          <!-- Desktop: Include in subtotal checkbox -->
+          <div class="form-check px-4 py-3 border-bottom border-secondary extras-checkbox-padding d-none d-md-block">
             <input 
               class="form-check-input" 
               type="checkbox" 
@@ -64,6 +65,20 @@
             >
             <label class="form-check-label ms-2" for="include-extras-subtotal">
               {{ translations.extras_tab.include_in_subtotal }}
+            </label>
+          </div>
+
+          <!-- Mobile: Include in subtotal checkbox -->
+          <div class="form-check px-4 py-3 border-bottom border-secondary d-md-none">
+            <input 
+              class="form-check-input" 
+              type="checkbox" 
+              id="include-extras-subtotal-mobile" 
+              v-model="includeInSubtotal"
+              @change="updateIncludeInSubtotal"
+            >
+            <label class="form-check-label ms-2" for="include-extras-subtotal-mobile">
+              {{ translations.extras_tab.include_in_subtotal_mobile }}
             </label>
           </div>
 
@@ -136,69 +151,59 @@
 
           <!-- Mobile Cards -->
           <div class="d-md-none">
-            <div class="form-check px-4 py-3 border-bottom border-secondary">
-              <input 
-                class="form-check-input" 
-                type="checkbox" 
-                id="include-extras-subtotal-mobile" 
-                v-model="includeInSubtotal"
-                @change="updateIncludeInSubtotal"
-              >
-              <label class="form-check-label ms-2" for="include-extras-subtotal-mobile">
-                {{ translations.extras_tab.include_in_subtotal_mobile }}
-              </label>
-            </div>
             <div v-for="(extra, index) in productExtras" :key="index" class="card mb-3 shadow-sm mx-2 mt-3">
               <div class="card-body p-2">
-                <!-- First row: Extra name and description -->
-                <h6 class="card-title mb-2">{{ extra.name }}</h6>
-                <p class="text-muted small mb-2">{{ extra.description }}</p>
-                
-                <!-- Second row: Price and quantity -->
-                <div class="row g-2 mb-2">
-                  <div class="col-6">
-                    <div class="input-group input-group-sm">
+                <!-- Extra name -->
+                <h6 class="card-title mb-2"><i class="fa fa-cube me-1"></i>{{ extra.name }}</h6>
+                <!-- Icon-value-unit grid -->
+                <div class="row g-2 mb-2 text-center">
+                  <div class="col-6 d-flex flex-column align-items-center">
+                    <span><i class="fa fa-dollar-sign me-1"></i>
                       <input 
                         type="text" 
-                        class="form-control form-control-sm text-end border-secondary"
+                        class="form-control form-control-sm text-center p-2 w-100 editable-badge d-inline-block"
                         :value="extra._unit_price_edit"
                         @input="e => onUnitPriceInput(index, e.target.value)"
                         @blur="() => onUnitPriceBlur(index)"
                         min="0"
                         step="0.01"
                         :title="translations.extras_tab.tooltips.edit_price"
-                      />
-                      <span class="input-group-text">$</span>
-                    </div>
+                        style="max-width: 70px; display: inline-block;"
+                      /> <span class="text-muted">$</span>
+                    </span>
                   </div>
-                  <div class="col-6">
-                    <div class="input-group input-group-sm">
+                  <div class="col-6 d-flex flex-column align-items-center">
+                    <span><i class="fa fa-hashtag me-1"></i>
                       <input 
                         type="number" 
-                        class="form-control form-control-sm text-end border-secondary"
+                        class="form-control form-control-sm text-center p-2 w-100 editable-badge d-inline-block"
                         v-model.number="extra.quantity"
                         min="1"
                         @change="updateExtraQuantity(index)"
                         :title="translations.extras_tab.tooltips.edit_quantity"
-                      />
-                    </div>
+                        style="max-width: 70px; display: inline-block;"
+                      /> <span class="text-muted">x</span>
+                    </span>
                   </div>
                 </div>
-                
-                <!-- Third row: Total price and delete button -->
-                <div class="d-flex justify-content-between align-items-center">
-                  <span class="badge bg-success fs-5">{{ formatCurrency(calculateExtraTotal(extra)) }}</span>
-                  <button 
-                    class="btn btn-sm btn-outline-danger px-2 py-1" 
-                    @click="removeExtra(index)"
-                    :title="translations.extras_tab.tooltips.remove_extra"
-                  >
-                    <i class="fa fa-trash fa-sm"></i>
-                  </button>
+                <div class="row g-2 mb-2 text-center">
+                  <div class="col-6 d-flex flex-column align-items-center">
+                    <span><i class="fa fa-calculator me-1"></i>
+                      <span class="fw-bold">{{ formatCurrency(calculateExtraTotal(extra)) }}</span> <span class="text-muted">$</span>
+                    </span>
+                  </div>
+                  <div class="col-6 d-flex flex-column align-items-center">
+                    <button 
+                      class="btn btn-sm btn-outline-danger" 
+                      @click="removeExtra(index)"
+                      :title="translations.extras_tab.tooltips.remove_extra"
+                    >
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-            
             <!-- Total cost for small screens -->
             <div class="card bg-dark text-white mx-2 mb-3">
               <div class="card-body py-2">

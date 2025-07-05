@@ -5,7 +5,7 @@
         <div class="card-body">
           <div class="row align-items-end">
             <!-- Material Selector FIRST -->
-            <div class="col-md-4">
+            <div class="col-md-4 mb-2">
               <div class="d-flex align-items-center mb-2">
                 <label for="material-select" class="form-label mb-0 me-2">{{ translations.processes.select_material }}</label>
                 <button 
@@ -26,13 +26,13 @@
                 :label="'description'"
                 :placeholder="''"
                 :disabled="!productMaterials.length"
-                :select-label="translations.extras_tab.press_enter_to_select"
+                :select-label="''"
               />
             </div>
 
             <!-- Process Selector SECOND -->
-            <div class="col-md-4">
-              <div class="d-flex align-items-center">
+            <div class="col-md-4 mb-2">
+              <div class="d-flex align-items-center mb-2">
                 <label for="process-select" class="form-label mb-0 me-2">{{ translations.processes.select_process }}</label>
                 <button 
                   type="button" 
@@ -52,17 +52,17 @@
                 :label="'description'"
                 :placeholder="''"
                 :disabled="!availableProcesses.length"
-                :select-label="translations.extras_tab.press_enter_to_select"
+                :select-label="''"
                 @select="onProcessSelect"
               />
             </div>
 
             <!-- Veces Input THIRD -->
-            <div class="col-md-2">
+            <div class="col-md-4 mb-2">
               <label class="form-label mb-0">{{ translations.processes.times || 'Veces' }}</label>
               <input
                 type="number"
-                class="form-control"
+                class="form-control text-end"
                 v-model.number="veces"
                 min="1"
                 step="1"
@@ -71,7 +71,7 @@
             </div>
 
             <!-- Add Process Button FOURTH -->
-            <div class="col-md-2 d-flex align-items-end">
+            <div class="col-12 mb-2">
               <button 
                 class="btn btn-primary w-100" 
                 @click="addProcess" 
@@ -103,7 +103,7 @@
                 <strong>{{ translations.processes.material || 'Material' }}: {{ getMaterialDescription(materialId) }}</strong>
               </div>
               <!-- Table for this material -->
-              <div class="table-responsive">
+              <div class="table-responsive d-none d-md-block">
                 <table class="table table-striped table-hover mb-0">
                   <thead>
                     <tr>
@@ -166,6 +166,75 @@
                     </tr>
                   </tfoot>
                 </table>
+              </div>
+              <!-- Mobile card layout -->
+              <div class="d-block d-md-none">
+                <div v-for="(process, index) in processes" :key="index" class="card mb-3 shadow-sm">
+                  <div class="card-body p-2">
+                    <!-- Process name and unit -->
+                    <h6 class="card-title mb-2">
+                      <i class="fa fa-cogs me-1"></i>{{ process.description }}
+                      <span class="text-secondary">({{ process.unit }})</span>
+                    </h6>
+                    <!-- Editable fields grid -->
+                    <div class="row g-2 mb-2 text-center">
+                      <div class="col-4 d-flex flex-column align-items-center">
+                        <span>
+                          <i class="fa fa-redo me-1"></i>
+                          <input 
+                            type="number" 
+                            class="form-control form-control-sm text-center p-2 w-100 editable-badge d-inline-block"
+                            v-model.number="process.veces" 
+                            min="1"
+                            step="1"
+                            @change="updateProcessField(materialId, index, 'veces', process.veces)"
+                            style="max-width: 70px; display: inline-block;"
+                          /> <span class="text-muted">x</span>
+                        </span>
+                      </div>
+                      <div class="col-4 d-flex flex-column align-items-center">
+                        <span>
+                          <i class="fa fa-dollar-sign me-1"></i>
+                          <input 
+                            type="number" 
+                            class="form-control form-control-sm text-center p-2 w-100 editable-badge d-inline-block"
+                            v-model.number="process.unitPrice" 
+                            min="0"
+                            step="0.01"
+                            @change="updateProcessField(materialId, index, 'unitPrice', process.unitPrice)"
+                            style="max-width: 70px; display: inline-block;"
+                          /> <span class="text-muted">$</span>
+                        </span>
+                      </div>
+                      <div class="col-4 d-flex flex-column align-items-center">
+                        <span>
+                          <i class="fa fa-calculator me-1"></i>
+                          {{ formatCurrency(process.price) }} <span class="text-muted">$</span>
+                        </span>
+                      </div>
+                    </div>
+                    <!-- Delete button row -->
+                    <div class="row g-2 mb-2 text-center">
+                      <div class="col-12 d-flex justify-content-end align-items-center">
+                        <button 
+                          class="btn btn-sm btn-outline-danger" 
+                          @click="removeProcess(materialId, index)"
+                          :title="translations.processes.remove"
+                        >
+                          <i class="fa fa-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card bg-dark text-white">
+                  <div class="card-body py-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span class="fw-bold">{{ translations.processes.total }}:</span>
+                      <span class="fs-5">{{ formatCurrency(processes.reduce((sum, p) => sum + (parseFloat(p.price) || 0), 0)) }}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

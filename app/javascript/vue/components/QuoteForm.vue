@@ -1,8 +1,9 @@
 <template>
   <div class="quote-form">
     <div class="product-form-container">
-      <div class="row">
-        <div class="col-lg-7">
+      <div class="row g-0">
+        <!-- Main Form Column -->
+        <div class="col-12 col-lg-9">
           <form @submit.prevent="saveQuote">
             <div class="green-accent-panel">
               <div class="card mb-4">
@@ -44,18 +45,20 @@
                     <div class="col-md-6">
                       <div class="mb-3">
                         <label for="organization" class="form-label">{{ translations.organization }}</label>
-                        <select v-if="customerSearch.results.length > 0" 
-                                class="form-select" 
-                                id="organization" 
-                                v-model="selectedCustomerId"
-                                @change="handleCustomerSelection">
-                          <option value="">{{ translations.select_organization }}</option>
-                          <option v-for="customer in customerSearch.results" 
-                                  :key="customer.id" 
-                                  :value="customer.id">
-                            {{ customer.org_name || translations.no_organization }}
-                          </option>
-                        </select>
+                        <multiselect
+                          v-if="customerSearch.results.length > 0"
+                          v-model="selectedCustomerId"
+                          :options="customerSearch.results"
+                          :track-by="'id'"
+                          :label="'org_name'"
+                          :placeholder="translations.select_organization"
+                          :searchable="true"
+                          :allow-empty="true"
+                          :clear-on-select="true"
+                          :close-on-select="true"
+                          :show-labels="false"
+                          @input="handleCustomerSelection"
+                        />
                         <input v-else type="text" class="form-control" id="organization" v-model="form.organization" required autocomplete="off">
                       </div>
                     </div>
@@ -87,8 +90,8 @@
             </div>
           </form>
         </div>
-
-        <div class="col-lg-5">
+        <!-- Sidebar Column -->
+        <div class="col-12 col-lg-3 mt-3 mt-lg-0 ps-lg-4">
           <div class="green-accent-panel">
             <div class="card mb-4">
               <div class="card-header">
@@ -108,20 +111,18 @@
                 
                 <div class="mb-3">
                   <label for="product-select" class="form-label">{{ translations.select_product }}</label>
-                  <select 
-                    id="product-select" 
-                    class="form-select" 
+                  <multiselect
                     v-model="selectedProductId"
-                  >
-                    <option value="">-- {{ translations.select_product }} --</option>
-                    <option 
-                      v-for="product in filteredProducts" 
-                      :key="product.id" 
-                      :value="product.id"
-                    >
-                      {{ product.description }} - {{ formatCurrency(product.data && product.data.pricing && product.data.pricing.total_price || 0) }}
-                    </option>
-                  </select>
+                    :options="filteredProducts"
+                    :track-by="'id'"
+                    :label="'description'"
+                    :placeholder="translations.select_product"
+                    :searchable="true"
+                    :allow-empty="true"
+                    :clear-on-select="true"
+                    :close-on-select="true"
+                    :show-labels="false"
+                  />
                 </div>
                 
                 <div class="d-grid">
@@ -148,26 +149,50 @@
                   {{ translations.no_selected_products }}
                 </div>
                 <div v-else>
-                  <table class="table table-hover">
-                    <thead>
-                      <tr>
-                        <th style="width: 70%">{{ translations.product }}</th>
-                        <th>{{ translations.price }}</th>
-                        <th style="width: 40px"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="(product, index) in selectedProducts" :key="product.id">
-                        <td class="text-wrap">{{ product.name }}</td>
-                        <td>{{ formatCurrency(product.price) }}</td>
-                        <td>
-                          <button type="button" class="btn btn-sm btn-danger" @click="removeProduct(index)">
+                  <!-- Desktop Table -->
+                  <div class="d-none d-md-block">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th style="width: 70%">{{ translations.product }}</th>
+                          <th class="text-end">{{ translations.price }}</th>
+                          <th style="width: 72px"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="(product, index) in selectedProducts" :key="product.id">
+                          <td class="text-wrap">{{ product.name }}</td>
+                          <td class="text-end align-middle" style="white-space: nowrap; overflow: hidden;">{{ formatCurrency(product.price) }}</td>
+                          <td class="align-middle ps-3">
+                            <button type="button" class="btn btn-sm btn-danger ms-2" @click="removeProduct(index)">
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <!-- Mobile Cards -->
+                  <div class="d-md-none">
+                    <div v-for="(product, index) in selectedProducts" :key="product.id" class="card mb-3 shadow-sm mx-2 mt-3" style="overflow: hidden;">
+                      <div class="card-body p-3">
+                        <!-- Product name -->
+                        <h6 class="card-title mb-2 d-flex align-items-center">
+                          <i class="fa fa-box me-1"></i>
+                          <span class="fw-bold">{{ product.name }}</span>
+                        </h6>
+                        <div class="d-flex align-items-center justify-content-between">
+                          <div class="d-flex align-items-center">
+                            <i class="fa fa-dollar-sign me-1"></i>
+                            <span class="fs-6">{{ formatCurrency(product.price) }}</span>
+                          </div>
+                          <button type="button" class="btn btn-sm btn-danger ms-2" @click="removeProduct(index)">
                             <i class="fas fa-trash"></i>
                           </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -268,9 +293,14 @@
 </template>
 
 <script>
+import Multiselect from 'vue-multiselect'
+import 'vue-multiselect/dist/vue-multiselect.min.css'
+
 export default {
   name: 'QuoteForm',
-  
+  components: {
+    Multiselect,
+  },
   props: {
     availableProducts: {
       type: Array,
@@ -662,15 +692,9 @@ export default {
       if (!this.selectedProductId) {
         return;
       }
-      
-      // Find the selected product from the availableProducts array
-      const selectedProduct = this.availableProducts.find(product => product.id === this.selectedProductId);
-      
-      if (selectedProduct) {
-        this.addProduct(selectedProduct);
-        // Reset the selection after adding
-        this.selectedProductId = '';
-      }
+      // selectedProductId is now the product object
+      this.addProduct(this.selectedProductId);
+      this.selectedProductId = '';
     },
     
     checkPipedriveApiStatus() {
@@ -745,17 +769,7 @@ export default {
   position: relative;
   height: auto;
   overflow: visible;
-}
-
-.row {
-  margin-right: -15px;
-  margin-left: -15px;
-}
-
-.col-lg-7,
-.col-lg-5 {
-  padding-right: 15px;
-  padding-left: 15px;
+  padding: 0;
 }
 
 /* Form controls with dark theme */
@@ -792,7 +806,10 @@ export default {
   background-color: rgba(66, 185, 131, 0.1) !important;
 }
 
-.quote-form {
-  padding: 2rem;
+.form-select {
+  font-size: 1rem !important;
+  padding: 0.375rem 0.75rem !important;
+  line-height: 1.5 !important;
+  min-width: 0;
 }
 </style> 

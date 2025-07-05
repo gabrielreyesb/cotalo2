@@ -25,7 +25,7 @@ class ApplicationController < ActionController::Base
   end
   
   def skip_authentication?
-    devise_controller? || (controller_name == 'home' && action_name == 'index')
+    devise_controller? || (controller_name == 'home' && action_name == 'index') || controller_name == 'demo_requests'
   end
   
   # Add CORS headers for Vue/API interactions

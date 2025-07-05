@@ -2,7 +2,7 @@ es:
   customers:
     index:
       title: "Clientes"
-      new_customer: "Nuevo Cliente"
+      new_customer: "Nuevo"
       name: "Nombre"
       company: "Empresa"
       email: "Correo"

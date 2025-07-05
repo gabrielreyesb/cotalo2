@@ -224,3 +224,10 @@ body[data-theme="light"] select.form-select option {
   background-color: #fff !important;
   color: #212529 !important;
 }
+
+select.form-select,
+select.form-select option,
+option {
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+}

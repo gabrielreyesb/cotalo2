@@ -108,8 +108,12 @@ export default {
   },
   data() {
     return {
-      localWastePercentage: this.pricing.waste_percentage || 0,
-      localMarginPercentage: this.pricing.margin_percentage || 0
+      localWastePercentage: this.pricing.waste_percentage !== undefined && this.pricing.waste_percentage !== null
+        ? this.pricing.waste_percentage
+        : 0,
+      localMarginPercentage: this.pricing.margin_percentage !== undefined && this.pricing.margin_percentage !== null
+        ? this.pricing.margin_percentage
+        : 0
     };
   },
   methods: {
@@ -227,6 +231,40 @@ export default {
     min-width: 50px;
     max-width: 60px;
     text-align: right;
+  }
+
+  @media (max-width: 600px) {
+    /* Only for waste and margin rows: input+% left, value right */
+    ::v-deep .pricing-tab .table td .d-flex {
+      flex-direction: row !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 0.5rem !important;
+    }
+    ::v-deep .pricing-tab .table td .percentage-group {
+      width: auto !important;
+      margin-right: 0.5rem !important;
+      text-align: left !important;
+      flex-shrink: 0;
+    }
+    ::v-deep .pricing-tab .table td .percentage-group .input-group {
+      width: auto !important;
+      min-width: 80px;
+    }
+    ::v-deep .pricing-tab .table td .waste-input,
+    ::v-deep .pricing-tab .table td .margin-input {
+      width: 50px !important;
+      min-width: 40px !important;
+      max-width: 60px !important;
+      text-align: right;
+    }
+    ::v-deep .pricing-tab .table td .calculated-value {
+      width: auto !important;
+      min-width: 80px;
+      text-align: right !important;
+      white-space: nowrap;
+      flex-grow: 1;
+    }
   }
 }
 </style>
