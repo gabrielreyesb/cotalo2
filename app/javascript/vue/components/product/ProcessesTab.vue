@@ -57,8 +57,8 @@
               />
             </div>
 
-            <!-- Veces Input THIRD -->
-            <div class="col-md-4 mb-2">
+            <!-- Veces Input THIRD (narrower) -->
+            <div class="col-md-2 mb-2">
               <label class="form-label mb-0">{{ translations.processes.times || 'Veces' }}</label>
               <input
                 type="number"
@@ -66,16 +66,17 @@
                 v-model.number="veces"
                 min="1"
                 step="1"
-                style="width: 100%;"
+                style="width: 80px; max-width: 100%;"
               />
             </div>
 
-            <!-- Add Process Button FOURTH -->
-            <div class="col-12 mb-2">
+            <!-- Add Process Button FOURTH (same row) -->
+            <div class="col-md-2 mb-2 d-flex align-items-end">
               <button 
                 class="btn btn-primary w-100" 
                 @click="addProcess" 
                 :disabled="!canAdd"
+                style="min-width: 100px;"
               >
                 <i class="fa fa-plus me-1"></i> {{ translations.processes.add_process }}
               </button>
@@ -553,5 +554,20 @@ export default {
 }
 .material-process-list:last-child {
   margin-bottom: 0;
+}
+
+/* Override for disabled vue-multiselect in dark theme to match enabled style exactly */
+::v-deep .multiselect--disabled .multiselect__tags {
+  border: 1px solid #495057 !important;
+  border-radius: 4px !important;
+  background: #2c3136 !important;
+  color: #aaa !important;
+  cursor: not-allowed;
+}
+::v-deep .multiselect--disabled .multiselect__select,
+::v-deep .multiselect--disabled .multiselect__single {
+  background: #2c3136 !important;
+  color: #aaa !important;
+  cursor: not-allowed;
 }
 </style>
