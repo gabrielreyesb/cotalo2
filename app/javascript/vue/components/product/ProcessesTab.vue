@@ -846,25 +846,25 @@ export default {
 
 /* Custom toggle styling for process type */
 .btn-outline-primary {
-  color: #42b983;
-  border-color: #42b983;
-  background: #23272b;
+  color: #42b983 !important;
+  border-color: #42b983 !important;
+  background: #23272b !important;
   transition: background 0.2s, color 0.2s, border 0.2s;
 }
 .btn-outline-primary:hover, .btn-outline-primary:focus {
-  background: #2d3a36;
-  color: #fff;
-  border-color: #42b983;
+  background: #2d3a36 !important;
+  color: #fff !important;
+  border-color: #42b983 !important;
 }
 .btn-check:checked + .btn-outline-primary,
 .btn-outline-primary.active, .btn-outline-primary:active, .show > .btn-outline-primary.dropdown-toggle {
-  color: #fff;
-  background-color: #42b983;
-  border-color: #42b983;
-  box-shadow: none;
+  color: #fff !important;
+  background-color: #42b983 !important;
+  border-color: #42b983 !important;
+  box-shadow: none !important;
 }
 .btn-check:focus + .btn-outline-primary, .btn-outline-primary:focus {
-  box-shadow: 0 0 0 0.15rem rgba(66,185,131,0.25);
+  box-shadow: 0 0 0 0.15rem rgba(66,185,131,0.25) !important;
 }
 
 /* Make sure toggle buttons have rounded corners and spacing */
