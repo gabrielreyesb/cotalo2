@@ -62,16 +62,17 @@
                   <th style="width: 12%" class="text-end">{{ translations.materials.width }}</th>
                   <th style="width: 12%" class="text-end">{{ translations.materials.length }}</th>
                   <th style="width: 12%" class="text-end">{{ translations.materials.price }}</th>
-                  <th style="width: 12%" class="text-end">{{ translations.materials.pieces_per_material }}</th>
-                  <th style="width: 12%" class="text-end">{{ translations.materials.total_sheets }}</th>
-                  <th style="width: 12%" class="text-end">{{ translations.materials.total_square_meters }}</th>
+                  <th style="width: 12%" class="text-end">Pzas</th>
+                  <th style="width: 12%" class="text-end">Pliegos</th>
+                  <th style="width: 12%" class="text-end">Peso</th>
+                  <th style="width: 12%" class="text-end">m²</th>
                   <th style="width: 12%" class="text-end">{{ translations.materials.total_price }}</th>
                   <th style="width: 16%" class="text-center">{{ translations.materials.actions }}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="(material, index) in productMaterials" :key="index">
-                  <td class="text-truncate" style="max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" :title="material.description">{{ material.description }}</td>
+                  <td class="text-truncate" style="max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" :title="material.displayName || material.description">{{ material.displayName || material.description }}</td>
                   <td class="text-end">
                     <input 
                       type="number" 
@@ -115,12 +116,19 @@
                       v-model.number="material.piecesPerMaterial" 
                       min="1"
                       @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
-                      :title="translations.materials.pieces_per_material"
+                      title="Pzas"
                       data-toggle="tooltip"
                     />
                   </td>
                   <td class="text-end">{{ material.totalSheets }}</td>
-                  <td class="text-end">{{ material.totalSquareMeters.toFixed(2) }}</td>
+                  <td class="text-end">
+                    <span v-if="material.totalWeight && material.totalWeight > 0">{{ (material.totalWeight / 1000).toFixed(2) }} kg</span>
+                    <span v-else>-</span>
+                  </td>
+                  <td class="text-end">
+                    <span v-if="!isWeightBased(material)">{{ material.totalSquareMeters.toFixed(2) }}</span>
+                    <span v-else>-</span>
+                  </td>
                   <td class="text-end">{{ formatCurrency(material.totalPrice) }}</td>
                   <td class="text-center" style="min-width: 140px;">
                     <div class="d-flex align-items-center justify-content-center gap-2">
@@ -144,7 +152,7 @@
               </tbody>
               <tfoot>
                 <tr>
-                  <th colspan="7" class="text-end">{{ translations.materials.total }}:</th>
+                  <th :colspan="productMaterials.length ? 8 : 1" class="text-end">Total:</th>
                   <th class="text-end">{{ formatCurrency(totalCost) }}</th>
                   <th></th>
                 </tr>
@@ -157,7 +165,7 @@
             <div v-for="(material, index) in productMaterials" :key="index" class="card mb-3 shadow-sm">
               <div class="card-body p-2">
                 <!-- Material name -->
-                <h6 class="card-title mb-2"><i class="fa fa-box me-1"></i>{{ material.description }}</h6>
+                <h6 class="card-title mb-2"><i class="fa fa-box me-1"></i>{{ material.displayName || material.description }}</h6>
                 <!-- Icon-value-unit grid -->
                 <div class="row g-2 mb-2 text-center">
                   <div class="col-4 d-flex flex-column align-items-center">
@@ -275,7 +283,7 @@
         <button class="btn-close float-end" @click="visualizationMaterial = null" aria-label="Cerrar" style="font-size: 1.5rem; opacity: 0.8;">×</button>
         <h4>{{ translations.materials.visualization_title }}</h4>
         <div v-if="visualizationMaterial">
-          <p><strong>{{ visualizationMaterial.description }}</strong> ({{ Number(visualizationMaterial.ancho).toFixed(1) }}cm x {{ Number(visualizationMaterial.largo).toFixed(1) }}cm)</p>
+          <p><strong>{{ visualizationMaterial.displayName || visualizationMaterial.description }}</strong> ({{ Number(visualizationMaterial.ancho).toFixed(1) }}cm x {{ Number(visualizationMaterial.largo).toFixed(1) }}cm)</p>
           <svg
             :width="550"
             :height="400"
@@ -433,6 +441,8 @@ export default {
   },
   created() {
     // Remove the initial material selection since we don't need it anymore
+    // Ensure backward compatibility for existing materials
+    this.ensureMaterialInstanceIds();
   },
   computed: {
     canAdd() {
@@ -575,6 +585,7 @@ export default {
         this.materialIdForAdd = null; // Reset selector
         return;
       }
+      console.log('MATERIAL SELECTED:', JSON.stringify(selectedOption));
     },
     addMaterial() {
       if (!this.productWidth || this.productWidth <= 0 || !this.productLength || this.productLength <= 0) {
@@ -585,14 +596,20 @@ export default {
       if (!this.materialIdForAdd) return;
 
       const selectedMaterial = this.materialIdForAdd;
-      if (this.productMaterials.some(mat => mat.id === selectedMaterial.id)) {
-        window.showWarning(this.translations.materials.already_added);
-        return;
-      }
+      
+      // Count how many times this material has been added
+      const existingMaterialsOfSameType = this.productMaterials.filter(mat => mat.id === selectedMaterial.id);
+      const materialInstanceNumber = existingMaterialsOfSameType.length + 1;
+      
+      // Create a unique identifier for this material instance
+      const materialInstanceId = `${selectedMaterial.id}_${materialInstanceNumber}`;
       
       // Create a new material object with all required properties
       const newMaterial = {
         ...selectedMaterial,
+        materialInstanceId, // Unique identifier for this instance
+        materialInstanceNumber, // Instance number for display
+        displayName: `${selectedMaterial.description} (${materialInstanceNumber})`, // Display name with number
         piecesPerMaterial: 1,
         totalSheets: 0,
         totalSquareMeters: 0,
@@ -679,19 +696,33 @@ export default {
       // Calculate total price based on unit type
       let totalPrice = 0;
       let totalWeight = 0;
-      
-      if (material.unit && (material.unit.toLowerCase().includes('grs/m2') || material.unit.toLowerCase().includes('grs/m²'))) {
+      // Fix: always extract unit string for detection
+      const unitStr = typeof material.unit === 'string'
+        ? material.unit
+        : (material.unit?.name || material.unit?.abbreviation || '');
+      console.log('--- MATERIAL CALCULATION START ---');
+      console.log('Material:', JSON.stringify(material));
+      console.log('Unit string:', unitStr);
+      console.log('Width:', material.ancho, 'Length:', material.largo, 'Price:', material.price);
+      console.log('Pieces per sheet:', piecesPerMaterial, 'Sheets needed:', totalSheets);
+      console.log('Total m2:', totalSquareMeters);
+      if (unitStr.toLowerCase().includes('grs/m2') || unitStr.toLowerCase().includes('grs/m²')) {
         // Weight-based pricing (grs/m²)
         const materialWeight = parseFloat(material.weight) || 0;
         totalWeight = totalSquareMeters * materialWeight; // grams
-        totalPrice = totalWeight * (material.price || 0); // price per gram
-      } else if (material.unit && material.unit.toLowerCase().includes('m2')) {
+        totalPrice = (totalWeight / 1000) * (material.price || 0); // price per kg
+        console.log('Weight-based: totalWeight (g):', totalWeight, 'price per kg:', material.price, 'totalPrice:', totalPrice);
+      } else if (unitStr.toLowerCase().includes('m2')) {
         // Area-based pricing (m²)
         totalPrice = totalSquareMeters * (material.price || 0);
+        console.log('Area-based: totalSquareMeters:', totalSquareMeters, 'price:', material.price, 'totalPrice:', totalPrice);
       } else {
-        // Default calculation
+        // Default: per sheet
         totalPrice = totalSheets * (material.price || 0);
+        console.log('Sheet-based: sheetsNeeded:', totalSheets, 'price:', material.price, 'totalPrice:', totalPrice);
       }
+      material.totalPrice = totalPrice;
+      console.log('--- MATERIAL CALCULATION END ---');
 
       // Update the material with new calculations
       const updatedMaterial = {
@@ -789,6 +820,33 @@ export default {
       this.$nextTick(() => {
         this.initializeTooltips();
       });
+    },
+    isWeightBased(material) {
+      const unitStr = typeof material.unit === 'string'
+        ? material.unit
+        : (material.unit?.name || material.unit?.abbreviation || '');
+      return unitStr.toLowerCase().includes('grs/m2') || unitStr.toLowerCase().includes('grs/m²');
+    },
+    ensureMaterialInstanceIds() {
+      // Ensure all materials have the required properties for backward compatibility
+      this.productMaterials.forEach((material, index) => {
+        if (!material.materialInstanceId) {
+          // For existing materials without instance IDs, create them
+          const existingMaterialsOfSameType = this.productMaterials.filter(m => m.id === material.id);
+          const materialInstanceNumber = existingMaterialsOfSameType.indexOf(material) + 1;
+          const materialInstanceId = `${material.id}_${materialInstanceNumber}`;
+          
+          // Update the material with the new properties
+          const updatedMaterial = {
+            ...material,
+            materialInstanceId,
+            materialInstanceNumber,
+            displayName: material.displayName || `${material.description} (${materialInstanceNumber})`
+          };
+          
+          this.productMaterials[index] = updatedMaterial;
+        }
+      });
     }
   },
   watch: {
@@ -797,7 +855,8 @@ export default {
     },
     productMaterials: {
       handler(newVal) {
-        // console.log('productMaterials changed:', newVal);
+        // Ensure material instance IDs are set for all materials
+        this.ensureMaterialInstanceIds();
       },
       immediate: true
     },

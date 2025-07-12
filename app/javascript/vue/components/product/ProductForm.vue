@@ -89,6 +89,7 @@
                       :total-sheets="calculateTotalSheets()"
                       :total-square-meters="calculateTotalSquareMeters()"
                       :product-materials="product && product.data && product.data.materials ? product.data.materials : []"
+                      :product-description="product ? product.description : ''"
                       :translations="translations"
                       @update:product-processes-by-material="val => productProcessesByMaterial = val"
                       @update:comments="updateProcessesComments"

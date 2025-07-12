@@ -57,7 +57,6 @@
                           :clear-on-select="true"
                           :close-on-select="true"
                           :show-labels="false"
-                          @input="handleCustomerSelection"
                         />
                         <input v-else type="text" class="form-control" id="organization" v-model="form.organization" required autocomplete="off">
                       </div>
@@ -430,6 +429,9 @@ export default {
         }
       },
       immediate: true
+    },
+    selectedCustomerId(newVal, oldVal) {
+      this.handleCustomerSelection();
     }
   },
   
@@ -673,16 +675,11 @@ export default {
       if (!this.selectedCustomerId) {
         return;
       }
-      
-      // Find the selected customer from the results
-      const selectedCustomer = this.customerSearch.results.find(
-        customer => customer.id == this.selectedCustomerId
-      );
-      
+      // selectedCustomerId is the full customer object
+      const selectedCustomer = this.selectedCustomerId;
       if (selectedCustomer) {
-        // Populate the form with customer information
         this.form.customer_name = selectedCustomer.name || '';
-        this.form.organization = selectedCustomer.org_name || '';
+        this.form.organization = selectedCustomer.org_name || selectedCustomer.company || selectedCustomer.organization || '';
         this.form.email = selectedCustomer.email || '';
         this.form.telephone = selectedCustomer.phone || '';
       }
@@ -717,6 +714,7 @@ export default {
   },
   
   mounted() {
+    console.log('QuoteForm.vue script loaded');
     // Listen for the external event to add products
     if (window.quoteFormEventBus) {
       window.quoteFormEventBus.on('add-product', (product) => {
