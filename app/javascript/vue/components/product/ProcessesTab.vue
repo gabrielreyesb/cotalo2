@@ -45,9 +45,6 @@
                 :disabled="!productMaterials.length || processType === 'product'"
                 :select-label="''"
               />
-              <small v-if="processType === 'product'" class="text-muted">
-                <i class="fa fa-info-circle me-1"></i>{{ translations.processes.product_process_info || 'Este proceso se aplicará al producto completo' }}
-              </small>
             </div>
 
             <!-- Process Selector -->
@@ -75,9 +72,6 @@
                 :select-label="''"
                 @select="onProcessSelect"
               />
-              <small v-if="processType === 'product' && !filteredProcesses.length" class="text-muted">
-                <i class="fa fa-info-circle me-1"></i>{{ translations.processes.no_product_processes || 'No hay procesos de piezas disponibles para aplicar al producto' }}
-              </small>
             </div>
 
             <!-- Veces Input THIRD (narrower) -->
@@ -108,6 +102,8 @@
         </div>
       </div>
     </div>
+
+      <!-- Info message removed as per user request -->
 
       <div v-if="!Object.keys(productProcessesByMaterial).length" class="text-center my-1">
         <p class="text-muted">{{ translations.processes.no_processes }}</p>
@@ -536,7 +532,8 @@ export default {
       }
       
       this.selectedProcessId = null;
-      this.selectedMaterialId = null;
+      // Keep the material selected for convenience when adding multiple processes to the same material
+      // this.selectedMaterialId = null;
       this.veces = 1;
     },
     removeProcess(materialId, index) {
