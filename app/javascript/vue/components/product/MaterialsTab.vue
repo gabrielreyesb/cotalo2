@@ -912,42 +912,4 @@ export default {
 .product-table input[type='number'] {
   text-align: right !important;
 }
-
-.custom-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.6);
-  z-index: 2000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.custom-overlay-content {
-  background: #23272b;
-  color: #fff;
-  padding: 2rem;
-  border-radius: 8px;
-  min-width: 600px;
-  max-width: 98vw;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-  position: relative;
-}
-.btn-close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  color: #fff;
-  background: transparent;
-  border: none;
-  font-size: 1.7rem;
-  opacity: 0.7;
-  transition: opacity 0.2s;
-  box-shadow: none;
-  outline: none;
-}
-.btn-close:hover, .btn-close:focus {
-  opacity: 1;
-  color: #fff;
-  background: #23272b;
-}
 </style>

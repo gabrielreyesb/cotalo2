@@ -43,3 +43,24 @@ $body-color: #e9ecef;
   border-color: #42b983 !important;
   box-shadow: none !important;
 } 
+
+// Global modal overlay styles for MaterialsTab.vue
+.custom-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.custom-overlay-content {
+  background: #23272b;
+  color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  min-width: 600px;
+  max-width: 98vw;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  position: relative;
+} 
