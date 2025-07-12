@@ -32,3 +32,14 @@ $body-color: #e9ecef;
 
 // Utilities
 @import "bootstrap/utilities/api"; 
+
+// Custom override: Make active toggle buttons green instead of blue
+.btn-check:checked + .btn-outline-primary,
+.btn-outline-primary.active, 
+.btn-outline-primary:active, 
+.show > .btn-outline-primary.dropdown-toggle {
+  color: #fff !important;
+  background-color: #42b983 !important;
+  border-color: #42b983 !important;
+  box-shadow: none !important;
+} 
