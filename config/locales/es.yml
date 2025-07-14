@@ -202,7 +202,7 @@ es:
   home:
     hero_title: "Calcula el costo de fabricación de productos para las artes gráficas en minutos"
     hero_subtitle: "Cotalo te permite diseñar y cotizar productos de artes gráficas de manera rápida y precisa. Optimiza tus costos de producción con nuestra herramienta intuitiva."
-          go_to_dashboard: "Ir a Inicio"
+    go_to_dashboard: "Ir a Inicio"
     register_free: "Regístrate gratis"
     login: "Iniciar sesión"
     features_title: "Características principales"

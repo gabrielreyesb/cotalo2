@@ -231,7 +231,7 @@ en:
   home:
     hero_title: "Calculate the manufacturing cost for custom graphic arts products in minutes"
     hero_subtitle: "Cotalo lets you design and quote graphic arts products quickly and accurately. Optimize your production costs with our intuitive tool."
-          go_to_dashboard: "Go to Inicio"
+    go_to_dashboard: "Go to Inicio"
     register_free: "Register for free"
     login: "Log in"
     features_title: "Main Features"
