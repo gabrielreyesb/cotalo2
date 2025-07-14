@@ -92,6 +92,11 @@ es:
       materials: "Materiales"
       processes: "Procesos"
       extras: "Costos indirectos"
+    account:
+      title: "Personaliza tu cuenta"
+      subtitle: "Puedes personalizar tu cuenta para hacer más simple y rápido el costeo de tu producto y personalizar el contenido de tu cotización."
+      app_configs: "Configuración general"
+      pdf_configs: "Configuración de PDF"
     products: "Productos"
     view_all: "Ver todos"
     add_new: "Agregar nuevo"

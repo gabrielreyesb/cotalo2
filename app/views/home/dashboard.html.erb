@@ -69,6 +69,33 @@
     </div>
   </div>
 
+  <!-- Account Customization Block -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="green-accent-panel">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-start">
+            <div class="me-3">
+              <span style="font-size: 2.5rem;">👤</span>
+            </div>
+            <div class="flex-grow-1">
+              <h4 class="mb-2"><%= t('dashboard.account.title') %></h4>
+              <p class="text-light-gray mb-3"><%= t('dashboard.account.subtitle') %></p>
+              <div class="d-flex flex-wrap gap-2">
+                <%= link_to edit_app_configs_path, class: "btn btn-outline-primary" do %>
+                  <i class="fa fa-cog me-1"></i> <%= t('dashboard.account.app_configs') %>
+                <% end %>
+                <%= link_to edit_pdf_configs_path, class: "btn btn-outline-success" do %>
+                  <i class="fa fa-file-pdf me-1"></i> <%= t('dashboard.account.pdf_configs') %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="row">
     <!-- Recent Quotes Section -->
     <div class="col-md-6 mb-4">

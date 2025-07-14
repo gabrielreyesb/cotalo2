@@ -119,6 +119,11 @@ en:
       materials: "Materials"
       processes: "Processes"
       extras: "Indirect costs"
+    account:
+      title: "Customize your account"
+      subtitle: "You can customize your account to make product costing simpler and faster, and personalize your quote content."
+      app_configs: "General settings"
+      pdf_configs: "PDF settings"
     subscription:
       status_title: "Subscription Status"
       trial_status: "Trial Period"
