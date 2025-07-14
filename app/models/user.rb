@@ -330,4 +330,8 @@ class User < ApplicationRecord
   def set_default_subscription_status
     self.subscription_status ||= 'trial'
   end
+
+  def example_product
+    products.find_by(description: "Producto de prueba")
+  end
 end
