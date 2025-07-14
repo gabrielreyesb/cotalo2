@@ -12,6 +12,12 @@ class ApplicationController < ActionController::Base
     dashboard_path
   end
 
+  # Redirect to dashboard after sign up (new account creation)
+  def after_sign_up_path_for(resource)
+    flash.delete(:notice)
+    dashboard_path
+  end
+
   def after_sign_out_path_for(resource_or_scope)
     flash.delete(:notice)
     root_path
