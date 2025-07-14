@@ -161,10 +161,12 @@
           </div>
         </div>
       <% else %>
-        <div class="card green-accent-panel shadow-lg border-0">
-          <div class="card-body p-4">
-            <div class="alert alert-info">
-              <%= t('dashboard.no_products_html', link: link_to(t('dashboard.create_first_product'), new_product_path)) %>.
+        <div class="green-accent-panel">
+          <div class="card shadow-lg border-0">
+            <div class="card-body p-4">
+              <div class="alert alert-info">
+                <%= t('dashboard.no_products_html', link: link_to(t('dashboard.create_first_product'), new_product_path)) %>.
+              </div>
             </div>
           </div>
         </div>
