@@ -140,6 +140,27 @@ class User < ApplicationRecord
     products.find_by(description: "Producto de prueba")
   end
 
+  def dashboard_preferences
+    JSON.parse(self[:dashboard_preferences] || '{}')
+  rescue JSON::ParserError
+    {}
+  end
+
+  def dashboard_preferences=(preferences)
+    self[:dashboard_preferences] = preferences.to_json
+  end
+
+  def block_closed?(block_name)
+    dashboard_preferences[block_name.to_s] == true
+  end
+
+  def close_block(block_name)
+    prefs = dashboard_preferences
+    prefs[block_name.to_s] = true
+    self.dashboard_preferences = prefs
+    save
+  end
+
   private
 
   def setup_initial_data

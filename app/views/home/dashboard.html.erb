@@ -4,97 +4,112 @@
 
 <div class="scrollable-view-container">
   <!-- Welcome Message Block -->
-  <div class="row mb-4">
-    <div class="col-12">
-      <div class="green-accent-panel">
-        <div class="card-body p-4">
-          <div class="d-flex align-items-start">
-            <div class="me-3">
-              <span style="font-size: 2.5rem;">👋</span>
-            </div>
-            <div class="flex-grow-1">
-              <h3 class="mb-2"><%= t('dashboard.welcome.greeting', name: current_user.email.split('@').first) %></h3>
-              <p class="text-light-gray mb-3"><%= t('dashboard.welcome.subtitle') %></p>
-              <div class="d-flex flex-wrap gap-2">
-                <% if current_user.example_product %>
-                  <%= link_to edit_product_path(current_user.example_product), class: "btn btn-outline-primary" do %>
-                    <i class="fa fa-eye me-1"></i> <%= t('dashboard.welcome.review_example') %>
+  <% unless current_user.block_closed?('welcome') %>
+    <div class="row mb-4" id="welcome-block">
+      <div class="col-12">
+        <div class="green-accent-panel position-relative">
+          <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" 
+                  onclick="closeBlock('welcome')" aria-label="Close">
+          </button>
+          <div class="card-body p-4">
+            <div class="d-flex align-items-start">
+              <div class="me-3">
+                <span style="font-size: 2.5rem;">👋</span>
+              </div>
+              <div class="flex-grow-1">
+                <h3 class="mb-2"><%= t('dashboard.welcome.greeting', name: current_user.email.split('@').first) %></h3>
+                <p class="text-light-gray mb-3"><%= t('dashboard.welcome.subtitle') %></p>
+                <div class="d-flex flex-wrap gap-2">
+                  <% if current_user.example_product %>
+                    <%= link_to edit_product_path(current_user.example_product), class: "btn btn-outline-primary" do %>
+                      <i class="fa fa-eye me-1"></i> <%= t('dashboard.welcome.review_example') %>
+                    <% end %>
+                  <% else %>
+                    <%= link_to products_path, class: "btn btn-outline-primary" do %>
+                      <i class="fa fa-eye me-1"></i> <%= t('dashboard.welcome.review_example') %>
+                    <% end %>
                   <% end %>
-                <% else %>
-                  <%= link_to products_path, class: "btn btn-outline-primary" do %>
-                    <i class="fa fa-eye me-1"></i> <%= t('dashboard.welcome.review_example') %>
+                  <%= link_to new_product_path, class: "btn btn-primary" do %>
+                    <i class="fa fa-plus me-1"></i> <%= t('dashboard.welcome.create_first') %>
                   <% end %>
-                <% end %>
-                <%= link_to new_product_path, class: "btn btn-primary" do %>
-                  <i class="fa fa-plus me-1"></i> <%= t('dashboard.welcome.create_first') %>
-                <% end %>
-                <%= link_to new_quote_path, class: "btn btn-success" do %>
-                  <i class="fa fa-file-invoice-dollar me-1"></i> <%= t('dashboard.welcome.create_quote') %>
-                <% end %>
+                  <%= link_to new_quote_path, class: "btn btn-success" do %>
+                    <i class="fa fa-file-invoice-dollar me-1"></i> <%= t('dashboard.welcome.create_quote') %>
+                  <% end %>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  <% end %>
 
   <!-- Customization Block -->
-  <div class="row mb-4">
-    <div class="col-12">
-      <div class="green-accent-panel">
-        <div class="card-body p-4">
-          <div class="d-flex align-items-start">
-            <div class="me-3">
-              <span style="font-size: 2.5rem;">⚙️</span>
-            </div>
-            <div class="flex-grow-1">
-              <h4 class="mb-2"><%= t('dashboard.customization.title') %></h4>
-              <p class="text-light-gray mb-3"><%= t('dashboard.customization.subtitle') %></p>
-              <div class="d-flex flex-wrap gap-2">
-                <%= link_to materials_path, class: "btn btn-outline-info" do %>
-                  <i class="fa fa-layer-group me-1"></i> <%= t('dashboard.customization.materials') %>
-                <% end %>
-                <%= link_to manufacturing_processes_path, class: "btn btn-outline-warning" do %>
-                  <i class="fa fa-cogs me-1"></i> <%= t('dashboard.customization.processes') %>
-                <% end %>
-                <%= link_to extras_path, class: "btn btn-outline-secondary" do %>
-                  <i class="fa fa-tools me-1"></i> <%= t('dashboard.customization.extras') %>
-                <% end %>
+  <% unless current_user.block_closed?('customization') %>
+    <div class="row mb-4" id="customization-block">
+      <div class="col-12">
+        <div class="green-accent-panel position-relative">
+          <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" 
+                  onclick="closeBlock('customization')" aria-label="Close">
+          </button>
+          <div class="card-body p-4">
+            <div class="d-flex align-items-start">
+              <div class="me-3">
+                <span style="font-size: 2.5rem;">⚙️</span>
+              </div>
+              <div class="flex-grow-1">
+                <h4 class="mb-2"><%= t('dashboard.customization.title') %></h4>
+                <p class="text-light-gray mb-3"><%= t('dashboard.customization.subtitle') %></p>
+                <div class="d-flex flex-wrap gap-2">
+                  <%= link_to materials_path, class: "btn btn-outline-info" do %>
+                    <i class="fa fa-layer-group me-1"></i> <%= t('dashboard.customization.materials') %>
+                  <% end %>
+                  <%= link_to manufacturing_processes_path, class: "btn btn-outline-warning" do %>
+                    <i class="fa fa-cogs me-1"></i> <%= t('dashboard.customization.processes') %>
+                  <% end %>
+                  <%= link_to extras_path, class: "btn btn-outline-secondary" do %>
+                    <i class="fa fa-tools me-1"></i> <%= t('dashboard.customization.extras') %>
+                  <% end %>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  <% end %>
 
   <!-- Account Customization Block -->
-  <div class="row mb-4">
-    <div class="col-12">
-      <div class="green-accent-panel">
-        <div class="card-body p-4">
-          <div class="d-flex align-items-start">
-            <div class="me-3">
-              <span style="font-size: 2.5rem;">👤</span>
-            </div>
-            <div class="flex-grow-1">
-              <h4 class="mb-2"><%= t('dashboard.account.title') %></h4>
-              <p class="text-light-gray mb-3"><%= t('dashboard.account.subtitle') %></p>
-              <div class="d-flex flex-wrap gap-2">
-                <%= link_to edit_app_configs_path, class: "btn btn-outline-primary" do %>
-                  <i class="fa fa-cog me-1"></i> <%= t('dashboard.account.app_configs') %>
-                <% end %>
-                <%= link_to edit_pdf_config_path, class: "btn btn-outline-success" do %>
-                  <i class="fa fa-file-pdf me-1"></i> <%= t('dashboard.account.pdf_configs') %>
-                <% end %>
+  <% unless current_user.block_closed?('account') %>
+    <div class="row mb-4" id="account-block">
+      <div class="col-12">
+        <div class="green-accent-panel position-relative">
+          <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" 
+                  onclick="closeBlock('account')" aria-label="Close">
+          </button>
+          <div class="card-body p-4">
+            <div class="d-flex align-items-start">
+              <div class="me-3">
+                <span style="font-size: 2.5rem;">👤</span>
+              </div>
+              <div class="flex-grow-1">
+                <h4 class="mb-2"><%= t('dashboard.account.title') %></h4>
+                <p class="text-light-gray mb-3"><%= t('dashboard.account.subtitle') %></p>
+                <div class="d-flex flex-wrap gap-2">
+                  <%= link_to edit_app_configs_path, class: "btn btn-outline-primary" do %>
+                    <i class="fa fa-cog me-1"></i> <%= t('dashboard.account.app_configs') %>
+                  <% end %>
+                  <%= link_to edit_pdf_config_path, class: "btn btn-outline-success" do %>
+                    <i class="fa fa-file-pdf me-1"></i> <%= t('dashboard.account.pdf_configs') %>
+                  <% end %>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  <% end %>
 
   <div class="row">
     <!-- Recent Quotes Section -->
@@ -228,6 +243,35 @@
     </div>
   </div>
 </div>
+
+<script>
+function closeBlock(blockName) {
+  fetch('<%= close_dashboard_block_path %>', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    },
+    body: JSON.stringify({ block_name: blockName })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      const blockElement = document.getElementById(blockName + '-block');
+      if (blockElement) {
+        blockElement.style.transition = 'opacity 0.3s ease-out';
+        blockElement.style.opacity = '0';
+        setTimeout(() => {
+          blockElement.remove();
+        }, 300);
+      }
+    }
+  })
+  .catch(error => {
+    console.error('Error closing block:', error);
+  });
+}
+</script>
 
 
 <style>

@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   
   # Dashboard route
   get 'dashboard', to: 'home#dashboard', as: 'dashboard'
+  post 'dashboard/close_block', to: 'home#close_block', as: 'close_dashboard_block'
   
   # News routes
   resources :news

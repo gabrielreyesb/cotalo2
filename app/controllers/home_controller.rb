@@ -13,6 +13,15 @@ class HomeController < ApplicationController
     end
   end
 
+  def close_block
+    block_name = params[:block_name]
+    if current_user.close_block(block_name)
+      render json: { success: true }
+    else
+      render json: { success: false }, status: :unprocessable_entity
+    end
+  end
+
   def about
   end
 end
