@@ -97,40 +97,49 @@ class InvoicesController < ApplicationController
   end
   
   def prepare_invoice_data(invoice)
+    receiver_rfc = "XAXX010101000"
+    receiver_fiscal_regime = "616"
+    cfdi_use = (receiver_fiscal_regime == "616" || receiver_rfc == "XAXX010101000") ? "S01" : "G03"
     {
       "Serie" => "F",
       "Folio" => invoice.id.to_s,
       "CfdiType" => "I", # Ingreso (income)
-      "ExpeditionPlace" => "64000", # Replace with your postal code
-      "PaymentForm" => "01", # Efectivo (cash), adjust as needed
-      "PaymentMethod" => "PUE", # Pago en una sola exhibición
+      "ExpeditionPlace" => "64000",
+      "PaymentForm" => "01",
+      "PaymentMethod" => "PUE",
       "Issuer" => {
-        "Rfc" => "REBG66125A60",
-        "Name" => "Gabriel Arturo Reyes Barredo",
-        "FiscalRegime" => "605"
+        "Rfc" => "EKU9003173C9", # Facturama sandbox RFC
+        "Name" => "ESCUELA KEMPER URGATE",
+        "FiscalRegime" => "601" # General de Ley Personas Morales
       },
       "Receiver" => {
-        "Rfc" => invoice.data["customer_tax_id"] || "XAXX010101000",
-        "Name" => invoice.data["customer_name"] || "Publico en General",
-        "CfdiUse" => "G03",
-        "FiscalRegime" => "601", # TODO: Replace or make dynamic as needed
-        "TaxZipCode" => "64000"  # TODO: Replace or make dynamic as needed
+        "Rfc" => receiver_rfc, # Publico en General
+        "Name" => "Publico en General",
+        "CfdiUse" => cfdi_use,
+        "FiscalRegime" => receiver_fiscal_regime, # Sin obligaciones fiscales
+        "TaxZipCode" => "64000"
       },
       "Items" => invoice.data["products"].map do |product|
+        quantity = product["quantity"].to_f
+        unit_price = product["unit_price"].to_f.round(6)
+        subtotal = (unit_price * quantity).round(6)
+        tax_total = (subtotal * 0.16).round(6)
+        total = (subtotal + tax_total).round(6)
         {
-          "Quantity" => product["quantity"],
-          "ProductCode" => "84111506", # SAT code, adjust as needed
-          "UnitCode" => "ACT",         # SAT unit code, adjust as needed
-          "Unit" => "Actividad",       # Unit name, adjust as needed
+          "Quantity" => quantity,
+          "ProductCode" => "84111506",
+          "UnitCode" => "ACT",
+          "Unit" => "Actividad",
           "Description" => product["description"],
-          "UnitPrice" => product["unit_price"],
-          "Subtotal" => product["unit_price"] * product["quantity"],
-          "Total" => product["unit_price"] * product["quantity"],
+          "UnitPrice" => unit_price,
+          "Subtotal" => subtotal,
+          "Total" => total,
+          "TaxObject" => "02", # Required by SAT
           "Taxes" => [
             {
-              "Total" => product["unit_price"] * product["quantity"] * 0.16,
+              "Total" => tax_total,
               "Name" => "IVA",
-              "Base" => product["unit_price"] * product["quantity"],
+              "Base" => subtotal,
               "Rate" => 0.16,
               "IsRetention" => false
             }

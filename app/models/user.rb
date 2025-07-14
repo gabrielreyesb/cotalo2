@@ -94,39 +94,39 @@ class User < ApplicationRecord
   end
 
   # Subscription-related methods
-  # def trial?
-  #   subscription_status == SUBSCRIPTION_STATUS_TRIAL
-  # end
+  def trial?
+    subscription_status == SUBSCRIPTION_STATUS_TRIAL
+  end
 
-  # def active_subscription?
-  #   subscription_status == SUBSCRIPTION_STATUS_ACTIVE
-  # end
+  def active_subscription?
+    subscription_status == SUBSCRIPTION_STATUS_ACTIVE
+  end
 
-  # def subscription_active?
-  #   return true if trial? && trial_ends_at > Time.current
-  #   return true if active_subscription? && subscription_ends_at > Time.current
-  #   false
-  # end
+  def subscription_active?
+    return true if trial? && trial_ends_at.present? && trial_ends_at > Time.current
+    return true if active_subscription? && subscription_ends_at.present? && subscription_ends_at > Time.current
+    false
+  end
 
-  # def trial_days_remaining
-  #   return 0 unless trial?
-  #   return 0 if trial_ends_at.nil?
-  #   [(trial_ends_at - Time.current).to_i / 1.day, 0].max
-  # end
+  def trial_days_remaining
+    return 0 unless trial?
+    return 0 if trial_ends_at.nil?
+    [(trial_ends_at - Time.current).to_i / 1.day, 0].max
+  end
 
-  # def subscription_days_remaining
-  #   return 0 unless active_subscription?
-  #   return 0 if subscription_ends_at.nil?
-  #   [(subscription_ends_at - Time.current).to_i / 1.day, 0].max
-  # end
+  def subscription_days_remaining
+    return 0 unless active_subscription?
+    return 0 if subscription_ends_at.nil?
+    [(subscription_ends_at - Time.current).to_i / 1.day, 0].max
+  end
 
-  # def trial_percentage_completed
-  #   return 0 unless trial?
-  #   return 0 if trial_ends_at.nil?
-  #   total_days = TRIAL_PERIOD_DAYS
-  #   days_used = total_days - trial_days_remaining
-  #   (days_used.to_f / total_days * 100).round(2)
-  # end
+  def trial_percentage_completed
+    return 0 unless trial?
+    return 0 if trial_ends_at.nil?
+    total_days = TRIAL_PERIOD_DAYS
+    days_used = total_days - trial_days_remaining
+    (days_used.to_f / total_days * 100).round(2)
+  end
 
   def setup_trial_period
     return unless trial_ends_at.nil?

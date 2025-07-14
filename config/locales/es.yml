@@ -750,10 +750,10 @@ es:
   admin:
     dashboard:
       title: "Tablero de Administrador"
-      total_users: "Total de Usuarios"
+      total_users: "Usuarios Activos"
       total_products: "Total de Productos"
       total_quotes: "Total de Cotizaciones"
-      recent_users: "Usuarios Recientes"
+      recent_users: "Usuarios Activos Recientes"
       manage_users: "Administrar Usuarios"
     access_denied: "No tienes permiso para acceder a esta área."
     users:

@@ -745,10 +745,10 @@ en:
   admin:
     dashboard:
       title: "Admin Dashboard"
-      total_users: "Total Users"
+      total_users: "Active Users"
       total_products: "Total Products"
       total_quotes: "Total Quotes"
-      recent_users: "Recent Users"
+      recent_users: "Recent Active Users"
       manage_users: "Manage Users"
     access_denied: "You don't have permission to access this area."
     users:

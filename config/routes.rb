@@ -160,7 +160,13 @@ Rails.application.routes.draw do
   # Stripe webhook endpoint
   post 'stripe/webhook', to: 'stripe_webhooks#create'
 
-  get 'subscribe', to: 'subscriptions#new', as: :subscribe
+  # Subscription routes
+  resource :subscription, only: [:new, :create, :show, :update, :destroy] do
+    collection do
+      get 'subscribe', to: 'subscriptions#new', as: :subscribe
+      post 'create_checkout_session', to: 'subscriptions#create_checkout_session'
+    end
+  end
 
   # Customers import-related routes (move these above resources :customers)
   get 'customers/import', to: 'customers#import', as: :import_customers

@@ -17,9 +17,9 @@
       data: { turbo_method: :delete, turbo_confirm: t('common.confirm_delete') } do %>
     <i class="fas fa-trash me-1"></i> <%= t('common.delete') %>
   <% end %>
-  <button class="btn btn-outline-light me-2" disabled title="Próximamente">
+  <%= button_to quote_invoices_path(@quote), method: :post, class: "btn btn-outline-light me-2", title: t('quotes.show.invoice'), form: { class: "d-inline-block m-0" } do %>
     <i class="fas fa-file-invoice me-1"></i> <%= t('quotes.show.invoice') %>
-  </button>
+  <% end %>
   <%= link_to quotes_path, class: "btn btn-secondary" do %>
     <i class="fas fa-arrow-left"></i> <%= t('quotes.show.back') %>
   <% end %>

@@ -115,7 +115,7 @@ module StripeSubscription
   end
 
   def trial?
-    false
+    subscription_status == 'trial'
   end
 
   def active_subscription?
@@ -123,7 +123,9 @@ module StripeSubscription
   end
 
   def subscription_active?
-    true
+    return true if trial? && trial_ends_at.present? && trial_ends_at > Time.current
+    return true if active_subscription? && subscription_ends_at.present? && subscription_ends_at > Time.current
+    false
   end
 
   def trial_days_remaining

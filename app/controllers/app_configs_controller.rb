@@ -33,7 +33,8 @@ class AppConfigsController < ApplicationController
   end
   
   def test_facturama_api
-    api_key = AppConfig.get_facturama_api_key(current_user)
+    # Get API key from request body first, then fall back to stored config
+    api_key = params[:api_key].presence || AppConfig.get_facturama_api_key(current_user)
     if api_key.blank?
       render json: { success: false, error: "Facturama API key is not configured" }, status: :unprocessable_entity
       return

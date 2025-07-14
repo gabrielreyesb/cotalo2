@@ -18,42 +18,106 @@
         </div>
       </div>
     </div>
+    
     <!-- Subscription Form -->
     <div class="col-md-6">
       <div class="green-accent-panel">
         <div class="card shadow-sm h-100">
           <div class="card-body">
             <h2 class="mb-4">Suscríbete</h2>
-            <form>
-              <div class="mb-3">
-                <label for="subscription_name" class="form-label">Nombre</label>
-                <input type="text" class="form-control" id="subscription_name" placeholder="Tu nombre completo">
+            
+            <!-- Subscription Plan Details -->
+            <div class="mb-4">
+              <div class="card border-primary">
+                <div class="card-body text-center">
+                  <h4 class="card-title text-primary">Plan Anual</h4>
+                  <h2 class="text-primary mb-2">$3,000 MXN</h2>
+                  <p class="text-muted mb-3">por año</p>
+                  <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-success me-2"></i>Acceso ilimitado a Cotalo</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Mejoras continuas sin costo</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Soporte técnico prioritario</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Cancelación en cualquier momento</li>
+                  </ul>
+                </div>
               </div>
-              <div class="mb-3">
-                <label for="subscription_address" class="form-label">Dirección</label>
-                <input type="text" class="form-control" id="subscription_address" placeholder="Dirección">
+            </div>
+
+            <!-- Stripe Checkout Button -->
+            <div class="text-center">
+              <button id="checkout-button" class="btn btn-primary btn-lg w-100">
+                <i class="fas fa-credit-card me-2"></i>
+                Suscribirse Ahora
+              </button>
+              <p class="small text-muted mt-2">
+                Al hacer clic en "Suscribirse Ahora", serás redirigido a Stripe para completar tu pago de forma segura.
+              </p>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loading-state" class="text-center mt-3" style="display: none;">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando...</span>
               </div>
-              <div class="mb-3">
-                <label for="subscription_city" class="form-label">Ciudad</label>
-                <input type="text" class="form-control" id="subscription_city" placeholder="Ciudad">
-              </div>
-              <div class="mb-3">
-                <label for="subscription_state" class="form-label">Estado</label>
-                <input type="text" class="form-control" id="subscription_state" placeholder="Estado">
-              </div>
-              <div class="mb-3">
-                <label for="subscription_card" class="form-label">Número de tarjeta</label>
-                <input type="text" class="form-control" id="subscription_card" placeholder="•••• •••• •••• ••••">
-              </div>
-              <div class="mb-3">
-                <label for="subscription_expiry" class="form-label">Fecha de expiración</label>
-                <input type="text" class="form-control" id="subscription_expiry" placeholder="MM/AA">
-              </div>
-              <button type="submit" class="btn btn-primary w-100" disabled>Suscribirse</button>
-            </form>
+              <p class="mt-2">Procesando tu suscripción...</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div> 
+</div>
+
+<!-- Stripe Script -->
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const stripe = Stripe('<%= Rails.configuration.stripe[:publishable_key] %>');
+    const checkoutButton = document.getElementById('checkout-button');
+    const loadingState = document.getElementById('loading-state');
+
+    checkoutButton.addEventListener('click', function() {
+      // Show loading state
+      checkoutButton.style.display = 'none';
+      loadingState.style.display = 'block';
+
+      // Create checkout session
+      fetch('/subscription/create_checkout_session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+      })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(session) {
+        if (session.error) {
+          // Show error and restore button
+          alert('Error: ' + session.error);
+          checkoutButton.style.display = 'block';
+          loadingState.style.display = 'none';
+          return;
+        }
+        
+        // Redirect to Stripe Checkout
+        return stripe.redirectToCheckout({ sessionId: session.id });
+      })
+      .then(function(result) {
+        if (result.error) {
+          // Show error and restore button
+          alert('Error: ' + result.error.message);
+          checkoutButton.style.display = 'block';
+          loadingState.style.display = 'none';
+        }
+      })
+      .catch(function(error) {
+        console.error('Error:', error);
+        alert('Error inesperado. Por favor, inténtalo de nuevo.');
+        checkoutButton.style.display = 'block';
+        loadingState.style.display = 'none';
+      });
+    });
+  });
+</script> 

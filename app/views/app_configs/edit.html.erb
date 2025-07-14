@@ -149,14 +149,31 @@
           resultsDiv.classList.remove('d-none');
           contentDiv.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Testing API connection...</div>';
 
-          // Make the API request
+          // Get the current API key from the form field
+          const apiKeyInput = document.getElementById('facturama_api_key_input');
+          const apiKey = apiKeyInput ? apiKeyInput.value : '';
+          
+          if (!apiKey) {
+            contentDiv.innerHTML = `
+              <div class="alert alert-warning">
+                <h6 class="mb-2">No API Key Entered</h6>
+                <p class="mb-0">Please enter your Facturama API key before testing the connection.</p>
+              </div>
+            `;
+            testButton.disabled = false;
+            testButton.innerHTML = '<i class="fas fa-vial"></i> Test Facturama API Connection';
+            return;
+          }
+          
+          // Make the API request with the current form value
           fetch('/app_configs/test_facturama_api', {
             method: 'POST',
             headers: {
               'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
               'Accept': 'application/json',
               'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify({ api_key: apiKey })
           })
           .then(response => {
             return response.json();

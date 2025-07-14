@@ -72,6 +72,12 @@
                 <i class="fa fa-percentage me-1"></i> <%= t('navbar.price_adjustment') %>
               <% end %>
 
+              <hr class="dropdown-divider" style="border-top: 1px solid #42b983 !important; opacity: 1 !important;">
+
+              <%= link_to subscription_path, class: "dropdown-item #{current_page?(subscription_path) ? 'active' : ''}" do %>
+                <i class="fa fa-credit-card me-1"></i> Mi Suscripción
+              <% end %>
+
               <% if current_user.admin? %>
                 <hr class="dropdown-divider" style="border-top: 1px solid #42b983 !important; opacity: 1 !important;">
                 <%= link_to admin_units_path, class: "dropdown-item #{current_page?(admin_units_path) ? 'active' : ''}" do %>

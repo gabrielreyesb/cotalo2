@@ -4,15 +4,15 @@ class Admin::DashboardController < ApplicationController
 
   def index
     Rails.logger.info "Admin Dashboard accessed by user: #{current_user.email}"
-    @users = User.all
-    @total_users = User.count
+    @users = User.where(disabled: false)
+    @total_users = User.where(disabled: false).count
     @total_products = Product.count
     @total_quotes = Quote.count
   end
 
   def users
     Rails.logger.info "Admin Users list accessed by user: #{current_user.email}"
-    @users = User.all.order(created_at: :desc)
+    @users = User.where(disabled: false).order(created_at: :desc)
   end
 
   private
