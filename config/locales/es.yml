@@ -86,6 +86,12 @@ es:
       review_example: "Revisar o editar el producto de ejemplo"
       create_first: "Crear tu primer producto real"
       create_quote: "Generar una cotización nueva"
+    customization:
+      title: "Personaliza tus catálogos"
+      subtitle: "Puedes personalizar tus materiales, procesos y costos indirectos para el tipo específico de proyecto que realizas. ¿Quieres personalizar tus catálogos?"
+      materials: "Materiales"
+      processes: "Procesos"
+      extras: "Costos indirectos"
     products: "Productos"
     view_all: "Ver todos"
     add_new: "Agregar nuevo"

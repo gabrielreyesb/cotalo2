@@ -113,6 +113,12 @@ en:
       review_example: "Review or edit the example product"
       create_first: "Create your first real product"
       create_quote: "Generate a new quote"
+    customization:
+      title: "Customize your catalogs"
+      subtitle: "You can customize your materials, processes, and indirect costs for the specific type of project you work on. Would you like to customize your catalogs?"
+      materials: "Materials"
+      processes: "Processes"
+      extras: "Indirect costs"
     subscription:
       status_title: "Subscription Status"
       trial_status: "Trial Period"
