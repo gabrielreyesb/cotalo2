@@ -74,12 +74,12 @@ es:
     cta:
       title: "¿Listo para Experimentar Cotalo?"
       subtitle: "Únase a miles de profesionales que confían en Cotalo para sus cálculos de costos de fabricación."
-      dashboard: "Ir al Tablero"
+      dashboard: "Ir a Inicio"
       register: "Registrarse Gratis"
       login: "Iniciar Sesión"
 
   dashboard:
-    title: "Tablero"
+    title: "Inicio"
     products: "Productos"
     view_all: "Ver todos"
     add_new: "Agregar nuevo"
@@ -175,7 +175,7 @@ es:
     apply_adjustment: "Aplicar"
   
   navbar:
-    dashboard: "Tablero"
+    dashboard: "Inicio"
     products: "Productos"
     quotes: "Cotizaciones"
     catalogs: "Catálogos"
@@ -202,7 +202,7 @@ es:
   home:
     hero_title: "Calcula el costo de fabricación de productos para las artes gráficas en minutos"
     hero_subtitle: "Cotalo te permite diseñar y cotizar productos de artes gráficas de manera rápida y precisa. Optimiza tus costos de producción con nuestra herramienta intuitiva."
-    go_to_dashboard: "Ir al tablero"
+          go_to_dashboard: "Ir a Inicio"
     register_free: "Regístrate gratis"
     login: "Iniciar sesión"
     features_title: "Características principales"
@@ -758,7 +758,7 @@ es:
     access_denied: "No tienes permiso para acceder a esta área."
     users:
       title: "Gestión de Usuarios"
-      back_to_dashboard: "Volver al tablero"
+      back_to_dashboard: "Volver a Inicio"
       show:
         title: "Detalles del Usuario"
       edit:

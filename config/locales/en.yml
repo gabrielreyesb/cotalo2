@@ -102,11 +102,11 @@ en:
     cta:
       title: "Ready to Experience Cotalo?"
       subtitle: "Join thousands of professionals who trust Cotalo for their manufacturing cost calculations."
-      dashboard: "Go to Dashboard"
+      dashboard: "Go to Inicio"
       register: "Register for Free"
       login: "Log In"
   dashboard:
-    title: "Dashboard"
+    title: "Inicio"
     subscription:
       status_title: "Subscription Status"
       trial_status: "Trial Period"
@@ -202,7 +202,7 @@ en:
     select_file_first: "Please select a file first"
     apply_adjustment: "Apply"
   navbar:
-    dashboard: "Dashboard"
+    dashboard: "Inicio"
     products: "Products"
     quotes: "Quotes"
     catalogs: "Catalogs"
@@ -231,7 +231,7 @@ en:
   home:
     hero_title: "Calculate the manufacturing cost for custom graphic arts products in minutes"
     hero_subtitle: "Cotalo lets you design and quote graphic arts products quickly and accurately. Optimize your production costs with our intuitive tool."
-    go_to_dashboard: "Go to Dashboard"
+          go_to_dashboard: "Go to Inicio"
     register_free: "Register for free"
     login: "Log in"
     features_title: "Main Features"
@@ -753,7 +753,7 @@ en:
     access_denied: "You don't have permission to access this area."
     users:
       title: "User Management"
-      back_to_dashboard: "Back to Dashboard"
+      back_to_dashboard: "Back to Inicio"
       show:
         title: "User Details"
       edit:
