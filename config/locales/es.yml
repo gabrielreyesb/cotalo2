@@ -80,6 +80,12 @@ es:
 
   dashboard:
     title: "Inicio"
+    welcome:
+      greeting: "¡Bienvenido a Cotalo, %{name}!"
+      subtitle: "Te hemos preparado un producto de ejemplo para que veas cómo funciona la plataforma. ¿Qué quieres hacer ahora?"
+      review_example: "Revisar o editar el producto de ejemplo"
+      create_first: "Crear tu primer producto real"
+      create_quote: "Generar una cotización nueva"
     products: "Productos"
     view_all: "Ver todos"
     add_new: "Agregar nuevo"

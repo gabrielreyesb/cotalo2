@@ -3,6 +3,36 @@
 <% end %>
 
 <div class="scrollable-view-container">
+  <!-- Welcome Message Block -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="green-accent-panel">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-start">
+            <div class="me-3">
+              <span style="font-size: 2.5rem;">👋</span>
+            </div>
+            <div class="flex-grow-1">
+              <h3 class="mb-2"><%= t('dashboard.welcome.greeting', name: current_user.name || current_user.email.split('@').first) %></h3>
+              <p class="text-light-gray mb-3"><%= t('dashboard.welcome.subtitle') %></p>
+              <div class="d-flex flex-wrap gap-2">
+                <%= link_to products_path, class: "btn btn-outline-primary" do %>
+                  <i class="fa fa-eye me-1"></i> <%= t('dashboard.welcome.review_example') %>
+                <% end %>
+                <%= link_to new_product_path, class: "btn btn-primary" do %>
+                  <i class="fa fa-plus me-1"></i> <%= t('dashboard.welcome.create_first') %>
+                <% end %>
+                <%= link_to new_quote_path, class: "btn btn-success" do %>
+                  <i class="fa fa-file-invoice-dollar me-1"></i> <%= t('dashboard.welcome.create_quote') %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="row">
     <!-- Quote Metrics Section -->
     <div class="col-md-6 mb-4">

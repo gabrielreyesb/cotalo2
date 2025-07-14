@@ -107,6 +107,12 @@ en:
       login: "Log In"
   dashboard:
     title: "Inicio"
+    welcome:
+      greeting: "Welcome to Cotalo, %{name}!"
+      subtitle: "We've prepared an example product for you to see how the platform works. What would you like to do now?"
+      review_example: "Review or edit the example product"
+      create_first: "Create your first real product"
+      create_quote: "Generate a new quote"
     subscription:
       status_title: "Subscription Status"
       trial_status: "Trial Period"
