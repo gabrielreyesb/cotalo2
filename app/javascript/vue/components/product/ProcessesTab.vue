@@ -31,7 +31,7 @@
                   data-bs-toggle="tooltip"
                   data-bs-placement="right"
                   data-bs-html="true"
-                  :title="translations.processes_material_tooltip || 'Selecciona el material al que se aplicará el proceso'"
+                  :title="translations.processes_material_tooltip || 'Selección de material<br>• Selecciona el material al que se aplicará el proceso<br>• El costo se calculará según las dimensiones totales del material y su cantidad<br>• Asegúrate de que el material tenga las dimensiones configuradas correctamente<br>• Si el proceso cobra por m², se basará en el área total usada del material'"
                 >
                   <i class="fa fa-question-circle"></i>
                 </button>
@@ -57,7 +57,7 @@
                   data-bs-toggle="tooltip"
                   data-bs-placement="right"
                   data-bs-html="true"
-                  :title="translations.processes_calculation_tooltip"
+                  :title="translations.processes_calculation_tooltip || '¿Cómo se calculan los costos de procesos?<br>• Precio unitario: Costo por unidad de medida del proceso (por millar, por pieza, etc.)<br>• Aplicado a: El producto completo o una parte específica<br>• Precio total: Resultado de aplicar el precio unitario al volumen definido del producto'"
                 >
                   <i class="fa fa-question-circle"></i>
                 </button>

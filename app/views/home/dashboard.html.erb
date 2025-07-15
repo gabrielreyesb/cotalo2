@@ -3,116 +3,126 @@
 <% end %>
 
 <div class="scrollable-view-container">
-  <!-- Welcome Message Block -->
-  <% unless current_user.block_closed?('welcome') %>
-    <div class="row mb-4" id="welcome-block">
-      <div class="col-12">
-        <div class="green-accent-panel position-relative">
+  <!-- Welcome and Demo Blocks Row -->
+  <div class="row mb-4">
+    <!-- Welcome and Setup Block -->
+    <% unless current_user.block_closed?('welcome') %>
+      <div class="col-md-8 mb-3" id="welcome-block">
+        <div class="green-accent-panel position-relative h-100">
           <button type="button" class="btn btn-sm btn-outline-success position-absolute top-0 end-0 m-3" 
                   onclick="closeBlock('welcome')" aria-label="Close" style="z-index: 10;">
             <i class="fa fa-times"></i>
           </button>
-          <div class="card-body p-4">
-            <div class="d-flex align-items-start">
+          <div class="card-body p-4 d-flex flex-column h-100">
+            <!-- Welcome Section -->
+            <div class="d-flex align-items-start mb-4">
               <div class="me-3">
                 <span style="font-size: 2.5rem;">👋</span>
               </div>
               <div class="flex-grow-1">
-                <h3 class="mb-2"><%= t('dashboard.welcome.greeting', name: current_user.email.split('@').first) %></h3>
-                <p class="text-light-gray mb-3"><%= t('dashboard.welcome.subtitle') %></p>
-                <div class="d-flex flex-wrap gap-2">
-                  <% if current_user.example_product %>
-                    <%= link_to edit_product_path(current_user.example_product), class: "btn btn-outline-primary" do %>
-                      <i class="fa fa-eye me-1"></i> <%= t('dashboard.welcome.review_example') %>
+                <h4 class="mb-2"><%= t('dashboard.welcome.greeting', name: current_user.email.split('@').first) %></h4>
+                <p class="text-light-gray mb-3"><%= t('dashboard.welcome.new_subtitle') %></p>
+                <p class="text-light-gray mb-3"><%= t('dashboard.welcome.customization_text') %></p>
+                <p class="text-light-gray mb-4"><%= t('dashboard.welcome.suggested_steps') %></p>
+              </div>
+            </div>
+            
+            <!-- Guided Process Steps -->
+            <div class="guided-process flex-grow-1">
+              <!-- Step 1: Review Example Product -->
+              <div class="step-item mb-3">
+                <span class="step-number">1</span>
+                <%= link_to products_path, class: "btn btn-sm btn-outline-success" do %>
+                  <%= t('dashboard.welcome.review_example') %>
+                <% end %>
+              </div>
+
+              <!-- Step 2: Create Product -->
+              <div class="step-item mb-3">
+                <span class="step-number">2</span>
+                <%= link_to new_product_path, class: "btn btn-sm btn-outline-success" do %>
+                  <%= t('dashboard.welcome.create_first') %>
+                <% end %>
+              </div>
+
+              <!-- Step 3: Create Quote -->
+              <div class="step-item mb-3">
+                <span class="step-number">3</span>
+                <%= link_to new_quote_path, class: "btn btn-sm btn-outline-success" do %>
+                  <%= t('dashboard.welcome.create_quote') %>
+                <% end %>
+              </div>
+
+              <!-- Step 4: Customize Catalogs and Configurations -->
+              <div class="step-item mb-3">
+                <span class="step-number">4</span>
+                <div class="d-flex flex-column flex-wrap gap-1">
+                  <div>
+                    <span class="step-label">Catálogos:</span>
+                    <%= link_to materials_path, class: "btn btn-sm btn-outline-success" do %>
+                      <%= t('dashboard.customization.materials') %>
                     <% end %>
-                  <% else %>
-                    <%= link_to products_path, class: "btn btn-outline-primary" do %>
-                      <i class="fa fa-eye me-1"></i> <%= t('dashboard.welcome.review_example') %>
+                    <span class="vertical-separator">|</span>
+                    <%= link_to manufacturing_processes_path, class: "btn btn-sm btn-outline-success" do %>
+                      <%= t('dashboard.customization.processes') %>
                     <% end %>
-                  <% end %>
-                  <%= link_to new_product_path, class: "btn btn-primary" do %>
-                    <i class="fa fa-plus me-1"></i> <%= t('dashboard.welcome.create_first') %>
-                  <% end %>
-                  <%= link_to new_quote_path, class: "btn btn-success" do %>
-                    <i class="fa fa-file-invoice-dollar me-1"></i> <%= t('dashboard.welcome.create_quote') %>
-                  <% end %>
+                    <span class="vertical-separator">|</span>
+                    <%= link_to extras_path, class: "btn btn-sm btn-outline-success" do %>
+                      <%= t('dashboard.customization.extras') %>
+                    <% end %>
+                    <span class="vertical-separator">|</span>
+                    <%= link_to price_margins_path, class: "btn btn-sm btn-outline-success" do %>
+                      <%= t('navbar.price_margins') %>
+                    <% end %>
+                  </div>
+                  <div>
+                    <span class="step-label">Configuraciones:</span>
+                    <%= link_to edit_app_configs_path, class: "btn btn-sm btn-outline-success" do %>
+                      <%= t('dashboard.account.app_configs') %>
+                    <% end %>
+                    <span class="vertical-separator">|</span>
+                    <%= link_to edit_pdf_config_path, class: "btn btn-sm btn-outline-success" do %>
+                      <%= t('dashboard.account.pdf_configs') %>
+                    <% end %>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  <% end %>
+    <% end %>
 
-  <!-- Customization Block -->
-  <% unless current_user.block_closed?('customization') %>
-    <div class="row mb-4" id="customization-block">
-      <div class="col-12">
-        <div class="green-accent-panel position-relative">
+    <!-- Demo Request Block -->
+    <% unless current_user.block_closed?('demo') %>
+      <div class="col-md-4 mb-3" id="demo-block">
+        <div class="green-accent-panel position-relative h-100">
           <button type="button" class="btn btn-sm btn-outline-success position-absolute top-0 end-0 m-3" 
-                  onclick="closeBlock('customization')" aria-label="Close" style="z-index: 10;">
+                  onclick="closeBlock('demo')" aria-label="Close" style="z-index: 10;">
             <i class="fa fa-times"></i>
           </button>
-          <div class="card-body p-4">
-            <div class="d-flex align-items-start">
+          <div class="card-body p-4 d-flex flex-column h-100">
+            <div class="d-flex align-items-start mb-3">
               <div class="me-3">
-                <span style="font-size: 2.5rem;">⚙️</span>
+                <span style="font-size: 2.5rem;">🎯</span>
               </div>
               <div class="flex-grow-1">
-                <h4 class="mb-2"><%= t('dashboard.customization.title') %></h4>
-                <p class="text-light-gray mb-3"><%= t('dashboard.customization.subtitle') %></p>
-                <div class="d-flex flex-wrap gap-2">
-                  <%= link_to materials_path, class: "btn btn-outline-info" do %>
-                    <i class="fa fa-layer-group me-1"></i> <%= t('dashboard.customization.materials') %>
-                  <% end %>
-                  <%= link_to manufacturing_processes_path, class: "btn btn-outline-warning" do %>
-                    <i class="fa fa-cogs me-1"></i> <%= t('dashboard.customization.processes') %>
-                  <% end %>
-                  <%= link_to extras_path, class: "btn btn-outline-secondary" do %>
-                    <i class="fa fa-tools me-1"></i> <%= t('dashboard.customization.extras') %>
-                  <% end %>
-                </div>
+                <h4 class="mb-2"><%= t('dashboard.demo.title') %></h4>
+                <p class="text-light-gray mb-0"><%= t('dashboard.demo.subtitle') %></p>
+              </div>
+            </div>
+            <div class="mt-auto">
+              <div class="d-flex flex-wrap gap-2">
+                <%= link_to new_demo_request_path, class: "btn btn-sm btn-success" do %>
+                  <i class="fa fa-play me-1"></i> <%= t('dashboard.demo.request_demo') %>
+                <% end %>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  <% end %>
-
-  <!-- Account Customization Block -->
-  <% unless current_user.block_closed?('account') %>
-    <div class="row mb-4" id="account-block">
-      <div class="col-12">
-        <div class="green-accent-panel position-relative">
-          <button type="button" class="btn btn-sm btn-outline-success position-absolute top-0 end-0 m-3" 
-                  onclick="closeBlock('account')" aria-label="Close" style="z-index: 10;">
-            <i class="fa fa-times"></i>
-          </button>
-          <div class="card-body p-4">
-            <div class="d-flex align-items-start">
-              <div class="me-3">
-                <span style="font-size: 2.5rem;">👤</span>
-              </div>
-              <div class="flex-grow-1">
-                <h4 class="mb-2"><%= t('dashboard.account.title') %></h4>
-                <p class="text-light-gray mb-3"><%= t('dashboard.account.subtitle') %></p>
-                <div class="d-flex flex-wrap gap-2">
-                  <%= link_to edit_app_configs_path, class: "btn btn-outline-primary" do %>
-                    <i class="fa fa-cog me-1"></i> <%= t('dashboard.account.app_configs') %>
-                  <% end %>
-                  <%= link_to edit_pdf_config_path, class: "btn btn-outline-success" do %>
-                    <i class="fa fa-file-pdf me-1"></i> <%= t('dashboard.account.pdf_configs') %>
-                  <% end %>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  <% end %>
+    <% end %>
+  </div>
 
   <div class="row">
     <!-- Recent Products Section -->
@@ -122,7 +132,7 @@
           <h3><%= t('dashboard.recent_products') %></h3>
           <p class="text-light-gray small mb-0"><%= t('dashboard.showing_recent_products') %></p>
         </div>
-        <%= link_to new_product_path, class: "btn btn-sm btn-primary" do %>
+        <%= link_to new_product_path, class: "btn btn-sm btn-success" do %>
           <i class="fa fa-plus me-1"></i> <%= t('dashboard.new_product') %>
         <% end %>
       </div>
@@ -156,7 +166,7 @@
             </div>
             
             <div class="text-end mt-4">
-              <%= link_to t('dashboard.view_all_products'), products_path, class: "btn btn-outline-primary" %>
+              <%= link_to t('dashboard.view_all_products'), products_path, class: "btn btn-outline-success" %>
             </div>
           </div>
         </div>
@@ -164,7 +174,7 @@
         <div class="green-accent-panel">
           <div class="card shadow-lg border-0">
             <div class="card-body p-4">
-              <div class="alert alert-info">
+              <div class="alert alert-success">
                 <%= t('dashboard.no_products_html', link: link_to(t('dashboard.create_first_product'), new_product_path)) %>.
               </div>
             </div>
@@ -180,7 +190,7 @@
           <h3><%= t('dashboard.recent_quotes') %></h3>
           <p class="text-light-gray small mb-0"><%= t('dashboard.showing_recent_quotes') %></p>
         </div>
-        <%= link_to new_quote_path, class: "btn btn-sm btn-primary" do %>
+        <%= link_to new_quote_path, class: "btn btn-sm btn-success" do %>
           <i class="fa fa-plus me-1"></i> <%= t('dashboard.new_quote') %>
         <% end %>
       </div>
@@ -230,7 +240,7 @@
             </div>
             
             <div class="text-end mt-4">
-              <%= link_to t('dashboard.view_all_quotes_full'), quotes_path, class: "btn btn-outline-primary" %>
+              <%= link_to t('dashboard.view_all_quotes_full'), quotes_path, class: "btn btn-outline-success" %>
             </div>
           </div>
         </div>
@@ -238,7 +248,7 @@
         <div class="green-accent-panel">
           <div class="card shadow-lg border-0">
             <div class="card-body p-4">
-              <div class="alert alert-info">
+              <div class="alert alert-success">
                 <%= t('dashboard.no_quotes_html', link: link_to(t('dashboard.create_first_quote'), new_quote_path)) %>.
               </div>
             </div>
@@ -313,5 +323,62 @@ function closeBlock(blockName) {
     /* Prevent text wrapping in table headers */
     .nowrap {
       white-space: nowrap;
+    }
+    
+    /* Guided Process Styles */
+    .guided-process {
+      padding-left: 1rem;
+    }
+    
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .step-number {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2rem;
+      height: 2rem;
+      background-color: var(--cotalo-green);
+      color: white;
+      border-radius: 50%;
+      font-weight: bold;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+    
+    .step-link {
+      color: var(--cotalo-green) !important;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.5rem 0;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+    
+    .step-link:hover {
+      color: var(--cotalo-green-dark) !important;
+      text-decoration: underline;
+      transform: translateX(0.25rem);
+    }
+
+    .step-label {
+      font-weight: 600;
+      margin-right: 0.5rem;
+      color: var(--cotalo-green-dark);
+    }
+
+    .vertical-separator {
+      display: inline-block;
+      margin: 0 0.5rem;
+      color: var(--cotalo-green-dark);
+      font-weight: bold;
+      font-size: 1.1em;
+      vertical-align: middle;
+      opacity: 0.7;
     }
   </style>

@@ -7,6 +7,16 @@
             <div class="col-md-7 mb-3 mb-md-0 me-md-2">
               <div class="d-flex align-items-center mb-2">
                 <label for="extra-select" class="form-label mb-0 me-2">{{ translations.extras_tab.select_extra }}</label>
+                <button 
+                  type="button" 
+                  class="btn btn-outline-success btn-sm"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="right"
+                  data-bs-html="true"
+                  :title="translations.extras_tab.indirect_costs_tooltip || '¿Qué son los costos indirectos?<br>Son costos adicionales que no dependen directamente de los materiales o procesos, pero que son necesarios para producir el producto.<br>Incluyen cosas como la fabricación de troqueles, placas offset, calibraciones o desarrollo de muestras físicas.'"
+                >
+                  <i class="fa fa-question-circle"></i>
+                </button>
               </div>
               <multiselect
                 v-model="selectedExtraId"
@@ -411,6 +421,34 @@ export default {
       this.productExtras[index]._unit_price_edit = parsed.toFixed(2);
       this.productExtras[index].unit_price = parsed;
       this.updateExtraPrice(index);
+    },
+    initializeTooltips() {
+      // Dispose existing tooltips first
+      this.disposeTooltips();
+      
+      // Initialize new tooltips
+      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      tooltipTriggerList.forEach(tooltipTriggerEl => {
+        new bootstrap.Tooltip(tooltipTriggerEl, {
+          html: true,
+          placement: tooltipTriggerEl.dataset.bsPlacement || 'bottom'
+        });
+      });
+    },
+    disposeTooltips() {
+      const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+      tooltips.forEach(element => {
+        const tooltip = bootstrap.Tooltip.getInstance(element);
+        if (tooltip) {
+          tooltip.dispose();
+        }
+      });
+    },
+    handleLanguageChange() {
+      // Reinitialize tooltips when language changes
+      this.$nextTick(() => {
+        this.initializeTooltips();
+      });
     }
   },
   watch: {
@@ -425,6 +463,10 @@ export default {
             extra._unit_price_edit = extra.unit_price != null ? Number(extra.unit_price).toFixed(2) : '';
           }
         });
+        // Reinitialize tooltips when extras change
+        this.$nextTick(() => {
+          this.initializeTooltips();
+        });
       },
       deep: true,
       immediate: true
@@ -433,6 +475,12 @@ export default {
   mounted() {
     // Need to import Bootstrap Modal JS
     import('bootstrap/js/dist/modal');
+    
+    // Initialize tooltips
+    this.initializeTooltips();
+
+    // Listen for language changes
+    window.addEventListener('languageChanged', this.handleLanguageChange);
     
     // Emit initial extras cost when component mounts
     const initialCost = this.productExtras.reduce((sum, extra) => sum + (parseFloat(extra.total) || 0), 0);
@@ -447,6 +495,13 @@ export default {
     this.productExtras.forEach(extra => {
       extra._unit_price_edit = extra.unit_price != null ? Number(extra.unit_price).toFixed(2) : '';
     });
+  },
+  beforeUnmount() {
+    // Clean up event listener
+    window.removeEventListener('languageChanged', this.handleLanguageChange);
+    
+    // Clean up tooltips
+    this.disposeTooltips();
   }
 }
 </script>

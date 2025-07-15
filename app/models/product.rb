@@ -76,7 +76,7 @@ class Product < ApplicationRecord
       "description" => "",             # Process description
       "price" => 0,                    # Unit price
       "unit" => nil,                   # Unit information (id, name, abbreviation)
-      "quantity" => 0,                 # Number of units/times needed
+      "veces" => 1,                    # Number of times the process is applied
       "subtotal_price" => 0,           # Subtotal for this process
       "comments" => ""                 # Additional comments about this process
     }
@@ -165,14 +165,20 @@ class Product < ApplicationRecord
   
   # Calculate totals based on materials, processes, and extras
   def calculate_totals
-    # Calculate materials cost
-    materials_cost = materials.sum { |m| m["subtotal_price"].to_f }
+    # Calculate materials cost - handle both old and new field names
+    materials_cost = materials.sum do |m| 
+      m["subtotal_price"].to_f + m["totalPrice"].to_f
+    end
     
-    # Calculate processes cost
-    processes_cost = processes.sum { |p| p["subtotal_price"].to_f }
+    # Calculate processes cost - handle both old and new field names
+    processes_cost = processes.sum do |p| 
+      p["subtotal_price"].to_f + p["price"].to_f
+    end
     
-    # Calculate extras cost
-    extras_cost = extras.sum { |e| e["subtotal_price"].to_f }
+    # Calculate extras cost - handle both old and new field names
+    extras_cost = extras.sum do |e| 
+      e["subtotal_price"].to_f + e["total"].to_f
+    end
     
     # Calculate subtotal based on whether extras should be included
     include_extras_in_subtotal = data["include_extras_in_subtotal"] != false
@@ -287,7 +293,7 @@ class Product < ApplicationRecord
   # Helper method to update a material
   def update_material(material_id, options = {})
     # Find the material index
-    material_index = materials.index { |m| m["material_id"] == material_id }
+    material_index = materials.index { |m| (m["material_id"] || m["id"]) == material_id }
     return self unless material_index
     
     # Update the material with the new options
@@ -305,7 +311,7 @@ class Product < ApplicationRecord
   # Helper method to update a process
   def update_process(process_id, options = {})
     # Find the process index
-    process_index = processes.index { |p| p["process_id"] == process_id }
+    process_index = processes.index { |p| (p["process_id"] || p["id"]) == process_id }
     return self unless process_index
     
     # Update the process with the new options
@@ -323,7 +329,7 @@ class Product < ApplicationRecord
   # Helper method to update an extra
   def update_extra(extra_id, options = {})
     # Find the extra index
-    extra_index = extras.index { |e| e["extra_id"] == extra_id }
+    extra_index = extras.index { |e| (e["extra_id"] || e["id"]) == extra_id }
     return self unless extra_index
     
     # Update the extra with the new options
@@ -340,21 +346,21 @@ class Product < ApplicationRecord
   
   # Helper method to remove a material
   def remove_material(material_id)
-    new_materials = materials.reject { |m| m["material_id"] == material_id }
+    new_materials = materials.reject { |m| (m["material_id"] || m["id"]) == material_id }
     self.materials = new_materials
     self
   end
   
   # Helper method to remove a process
   def remove_process(process_id)
-    new_processes = processes.reject { |p| p["process_id"] == process_id }
+    new_processes = processes.reject { |p| (p["process_id"] || p["id"]) == process_id }
     self.processes = new_processes
     self
   end
   
   # Helper method to remove an extra
   def remove_extra(extra_id)
-    new_extras = extras.reject { |e| e["extra_id"] == extra_id }
+    new_extras = extras.reject { |e| (e["extra_id"] || e["id"]) == extra_id }
     self.extras = new_extras
     self
   end
@@ -387,9 +393,10 @@ class Product < ApplicationRecord
   
   # Calculate cost for a material based on its properties and quantity
   def calculate_material_cost(material)
-    return 0 unless material["material_id"]
+    material_id = material["material_id"] || material["id"]
+    return 0 unless material_id
     
-    material_record = user.materials.find_by(id: material["material_id"])
+    material_record = user.materials.find_by(id: material_id)
     return 0 unless material_record
     
     # Get values or defaults
@@ -450,7 +457,7 @@ class Product < ApplicationRecord
     )
     
     # Replace the material in the materials array
-    material_index = materials.index { |m| m["material_id"] == material["material_id"] }
+    material_index = materials.index { |m| (m["material_id"] || m["id"]) == material_id }
     if material_index
       new_materials = materials.dup
       new_materials[material_index] = updated_material
@@ -462,21 +469,23 @@ class Product < ApplicationRecord
   
   # Calculate cost for a process based on its properties
   def calculate_process_cost(process)
-    return 0 unless process["process_id"]
+    process_id = process["process_id"] || process["id"]
+    return 0 unless process_id
     
-    process_record = user.manufacturing_processes.find_by(id: process["process_id"])
+    process_record = user.manufacturing_processes.find_by(id: process_id)
     return 0 unless process_record
     
     # Get values or defaults
     process_price = process_record.cost || 0
     process_unit = process_record.unit
-    quantity = process["quantity"].to_f || 0
+    veces = process["veces"].to_f || 1
     
     # Calculate subtotal
-    subtotal_price = process_price * quantity
+    subtotal_price = process_price * veces
     
     # Update the process with calculated values
     updated_process = process.merge(
+      "process_id" => process_id,
       "description" => process_record.name,
       "price" => process_price,
       "unit" => process_unit ? {
@@ -484,11 +493,12 @@ class Product < ApplicationRecord
         "name" => process_unit.name,
         "abbreviation" => process_unit.abbreviation
       } : nil,
+      "veces" => veces,
       "subtotal_price" => subtotal_price
     )
     
     # Replace the process in the processes array
-    process_index = processes.index { |p| p["process_id"] == process["process_id"] }
+    process_index = processes.index { |p| (p["process_id"] || p["id"]) == process_id }
     if process_index
       new_processes = processes.dup
       new_processes[process_index] = updated_process
@@ -500,9 +510,10 @@ class Product < ApplicationRecord
   
   # Calculate cost for an extra based on its properties
   def calculate_extra_cost(extra)
-    return 0 unless extra["extra_id"]
+    extra_id = extra["extra_id"] || extra["id"]
+    return 0 unless extra_id
     
-    extra_record = user.extras.find_by(id: extra["extra_id"])
+    extra_record = user.extras.find_by(id: extra_id)
     return 0 unless extra_record
     
     # Get values or defaults
@@ -514,6 +525,7 @@ class Product < ApplicationRecord
     
     # Update the extra with calculated values
     updated_extra = extra.merge(
+      "extra_id" => extra_id,
       "description" => extra_record.name,
       "price" => extra_price,
       "quantity" => quantity,
@@ -521,7 +533,7 @@ class Product < ApplicationRecord
     )
     
     # Replace the extra in the extras array
-    extra_index = extras.index { |e| e["extra_id"] == extra["extra_id"] }
+    extra_index = extras.index { |e| (e["extra_id"] || e["id"]) == extra_id }
     if extra_index
       new_extras = extras.dup
       new_extras[extra_index] = updated_extra

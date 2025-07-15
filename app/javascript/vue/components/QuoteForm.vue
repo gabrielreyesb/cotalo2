@@ -149,27 +149,25 @@
                 </div>
                 <div v-else>
                   <!-- Desktop Table -->
-                  <div class="d-none d-md-block">
-                    <table class="table table-hover">
-                      <thead>
-                        <tr>
-                          <th style="width: 70%">{{ translations.product }}</th>
-                          <th class="text-end">{{ translations.price }}</th>
-                          <th style="width: 72px"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="(product, index) in selectedProducts" :key="product.id">
-                          <td class="text-wrap">{{ product.name }}</td>
-                          <td class="text-end align-middle" style="white-space: nowrap; overflow: hidden;">{{ formatCurrency(product.price) }}</td>
-                          <td class="align-middle ps-3">
-                            <button type="button" class="btn btn-sm btn-danger ms-2" @click="removeProduct(index)">
-                              <i class="fas fa-trash"></i>
-                            </button>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                  <div class="selected-products-list d-none d-md-block">
+                    <div
+                      v-for="(product, index) in selectedProducts"
+                      :key="product.id"
+                      class="d-flex align-items-center justify-content-between border-bottom py-2"
+                      style="gap: 1rem;"
+                    >
+                      <div class="flex-grow-1 text-wrap fw-bold" style="min-width: 0;">
+                        {{ product.name }}
+                      </div>
+                      <div class="flex-shrink-0 text-end" style="min-width: 120px;">
+                        {{ formatCurrency(product.price) }}
+                      </div>
+                      <div class="flex-shrink-0 ps-3">
+                        <button type="button" class="btn btn-sm btn-danger ms-2" @click="removeProduct(index)">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                   <!-- Mobile Cards -->
                   <div class="d-md-none">
@@ -762,7 +760,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped lang="scss">
 .quote-form {
   position: relative;
   height: auto;
@@ -809,5 +807,12 @@ export default {
   padding: 0.375rem 0.75rem !important;
   line-height: 1.5 !important;
   min-width: 0;
+}
+
+.selected-products-list {
+  .fw-bold {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
 }
 </style> 

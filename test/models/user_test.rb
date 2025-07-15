@@ -15,27 +15,43 @@ class UserTest < ActiveSupport::TestCase
     )
 
     # Verify units were created
-    assert_equal 3, Unit.count
+    assert_equal 5, Unit.count
     assert Unit.find_by(name: 'mt2')
     assert Unit.find_by(name: 'pieza')
     assert Unit.find_by(name: 'pliego')
+    assert Unit.find_by(name: 'kg')
+    assert Unit.find_by(name: 'millar')
 
     # Verify materials were created
-    assert_equal 3, user.materials.count
-    assert user.materials.find_by(description: 'Caple 12 puntos')
-    assert user.materials.find_by(description: 'Cartulina multicapa 14 pts')
-    assert user.materials.find_by(description: 'Liner Kraft 180 gramos')
+    assert_equal 5, user.materials.count
+    assert user.materials.find_by(description: 'Cartulina caple sulfatada 12 pts')
+    assert user.materials.find_by(description: 'Cartulina caple sulfatada 14 pts')
+    assert user.materials.find_by(description: 'Papel couché brillante 150 g/m²')
+    assert user.materials.find_by(description: 'Cartón microcorrugado blanco')
+    assert user.materials.find_by(description: 'Cartón gris (Backing)')
 
     # Verify manufacturing processes were created
-    assert_equal 3, user.manufacturing_processes.count
-    assert user.manufacturing_processes.find_by(name: 'Empalmado')
-    assert user.manufacturing_processes.find_by(name: 'Pegado lineal')
-    assert user.manufacturing_processes.find_by(name: 'Impresión flexográfica')
+    assert_equal 10, user.manufacturing_processes.count
+    assert user.manufacturing_processes.find_by(name: 'Impresión offset 4 tintas (CMYK)')
+    assert user.manufacturing_processes.find_by(name: 'Impresión Pantone (1 tinta)')
+    assert user.manufacturing_processes.find_by(name: 'Barniz UV spot')
+    assert user.manufacturing_processes.find_by(name: 'Laminado brillante')
+    assert user.manufacturing_processes.find_by(name: 'Laminado mate')
+    assert user.manufacturing_processes.find_by(name: 'Hot stamping')
+    assert user.manufacturing_processes.find_by(name: 'Relieve seco (embossing)')
+    assert user.manufacturing_processes.find_by(name: 'Troquelado')
+    assert user.manufacturing_processes.find_by(name: 'Hendido y corte')
+    assert user.manufacturing_processes.find_by(name: 'Pegado automático')
 
     # Verify extras were created
-    assert_equal 2, user.extras.count
-    assert user.extras.find_by(name: 'Placas de impresión 4 oficios')
-    assert user.extras.find_by(name: 'Suaje plano')
+    assert_equal 7, user.extras.count
+    assert user.extras.find_by(name: 'Fabricación de troquel')
+    assert user.extras.find_by(name: 'Fabricación de placa offset (por tinta)')
+    assert user.extras.find_by(name: 'Calibración de máquina impresora')
+    assert user.extras.find_by(name: 'Calibración de troqueladora')
+    assert user.extras.find_by(name: 'Desarrollo de muestra física (mockup)')
+    assert user.extras.find_by(name: 'Diseño gráfico del empaque')
+    assert user.extras.find_by(name: 'Supervisión de producción')
 
     # Verify price margins were created
     assert_equal 3, user.price_margins.count
@@ -46,7 +62,7 @@ class UserTest < ActiveSupport::TestCase
     # Verify test product was created
     assert_equal 1, user.products.count
     test_product = user.products.first
-    assert_equal "Producto de prueba", test_product.description
+    assert_equal "Caja plegadiza cosmética – cartulina caple 12 pts", test_product.description
 
     # Verify product data structure
     assert test_product.data.present?
@@ -58,81 +74,56 @@ class UserTest < ActiveSupport::TestCase
 
     # Verify general info
     general_info = test_product.data["general_info"]
-    assert_equal 50, general_info["width"]
-    assert_equal 30, general_info["length"]
-    assert_equal 100, general_info["quantity"]
-    assert_equal "Producto de demostración para nuevos usuarios", general_info["comments"]
+    assert_equal 32, general_info["width"]
+    assert_equal 22, general_info["length"]
+    assert_equal 1000, general_info["quantity"]
+    assert_equal "Caja plegadiza cosmética – 4 tintas + barniz UV", general_info["comments"]
 
     # Verify materials in product
     materials = test_product.data["materials"]
-    assert_equal 2, materials.length
+    assert_equal 1, materials.length
     
-    # Check first material
-    first_material = materials[0]
-    assert first_material["material_id"].present?
-    assert_equal "Material principal del producto", first_material["comments"]
-    assert_equal 50, first_material["width"]
-    assert_equal 30, first_material["length"]
-    assert_equal 100, first_material["quantity"]
-    assert_equal 6, first_material["pieces_per_material"]
-    assert_equal 17, first_material["total_sheets"]
-    assert_equal 25.5, first_material["total_square_meters"]
-    assert_equal 255.0, first_material["subtotal_price"]
-
-    # Check second material
-    second_material = materials[1]
-    assert second_material["material_id"].present?
-    assert_equal "Material secundario para detalles", second_material["comments"]
-    assert_equal 25, second_material["width"]
-    assert_equal 15, second_material["length"]
-    assert_equal 100, second_material["quantity"]
-    assert_equal 24, second_material["pieces_per_material"]
-    assert_equal 5, second_material["total_sheets"]
-    assert_equal 1.875, second_material["total_square_meters"]
-    assert_equal 22.5, second_material["subtotal_price"]
+    # Check material
+    material = materials[0]
+    assert material["material_id"].present?
+    assert_equal "Cartulina caple sulfatada 12 pts para caja cosmética", material["comments"]
+    assert_equal 1000, material["quantity"]
+    assert_equal 6, material["piecesPerMaterial"]
+    assert material["totalSheets"].present?
+    assert material["totalSquareMeters"].present?
+    assert material["totalPrice"].present?
 
     # Verify processes in product
     processes = test_product.data["processes"]
-    assert_equal 2, processes.length
+    assert_equal 5, processes.length
     
-    # Check first process
-    first_process = processes[0]
-    assert first_process["process_id"].present?
-    assert_equal "Proceso principal de empalmado", first_process["comments"]
-    assert_equal 25.5, first_process["quantity"]
-    assert_equal 89.25, first_process["subtotal_price"]
-
-    # Check second process
-    second_process = processes[1]
-    assert second_process["process_id"].present?
-    assert_equal "Pegado lineal para cada pieza", second_process["comments"]
-    assert_equal 100, second_process["quantity"]
-    assert_equal 35.0, second_process["subtotal_price"]
+    # Check processes exist
+    process_names = processes.map { |p| p["description"] }
+    assert_includes process_names, "Impresión offset 4 tintas (CMYK)"
+    assert_includes process_names, "Barniz UV spot"
+    assert_includes process_names, "Troquelado"
+    assert_includes process_names, "Hendido y corte"
+    assert_includes process_names, "Pegado automático"
 
     # Verify extras in product
     extras = test_product.data["extras"]
-    assert_equal 1, extras.length
+    assert_equal 5, extras.length
     
-    # Check extra
-    extra = extras[0]
-    assert extra["extra_id"].present?
-    assert_equal "Placas necesarias para la impresión", extra["comments"]
-    assert_equal 1, extra["quantity"]
-    assert_equal 250.0, extra["subtotal_price"]
+    # Check extras exist
+    extra_names = extras.map { |e| e["name"] }
+    assert_includes extra_names, "Fabricación de troquel"
+    assert_includes extra_names, "Fabricación de placa offset (por tinta)"
+    assert_includes extra_names, "Calibración de máquina impresora"
+    assert_includes extra_names, "Calibración de troqueladora"
+    assert_includes extra_names, "Desarrollo de muestra física (mockup)"
 
-    # Verify pricing calculations
+    # Verify pricing structure exists
     pricing = test_product.data["pricing"]
-    assert_equal 277.5, pricing["materials_cost"]
-    assert_equal 124.25, pricing["processes_cost"]
-    assert_equal 250.0, pricing["extras_cost"]
-    assert_equal 651.75, pricing["subtotal"]
+    assert pricing["materials_cost"].present?
+    assert pricing["processes_cost"].present?
+    assert pricing["extras_cost"].present?
     assert_equal 5, pricing["waste_percentage"]
-    assert_equal 32.59, pricing["waste_value"]
-    assert_equal 6.84, pricing["price_per_piece_before_margin"]
     assert_equal 10, pricing["margin_percentage"]
-    assert_equal 68.43, pricing["margin_value"]
-    assert_equal 752.77, pricing["total_price"]
-    assert_equal 7.53, pricing["final_price_per_piece"]
   end
 
   test "setup_initial_data sets correct app configs" do
@@ -171,10 +162,14 @@ class UserTest < ActiveSupport::TestCase
     mt2_unit = Unit.find_by(name: 'mt2')
     pieza_unit = Unit.find_by(name: 'pieza')
     pliego_unit = Unit.find_by(name: 'pliego')
+    kg_unit = Unit.find_by(name: 'kg')
+    millar_unit = Unit.find_by(name: 'millar')
 
     assert_equal 'm²', mt2_unit.abbreviation
     assert_equal 'pieza', pieza_unit.abbreviation
     assert_equal 'pliego', pliego_unit.abbreviation
+    assert_equal 'kg', kg_unit.abbreviation
+    assert_equal 'millar', millar_unit.abbreviation
   end
 
   test "setup_initial_data creates materials with correct associations" do

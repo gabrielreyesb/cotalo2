@@ -13,7 +13,7 @@
                   data-bs-toggle="tooltip"
                   data-bs-placement="right"
                   data-bs-html="true"
-                  :title="translations.materials_calculation_tooltip"
+                  :title="translations.materials_calculation_tooltip || '¿Cómo se calculan los costos de materiales?<br>• Piezas por material: Número de piezas que se pueden obtener de un pliego de material<br>• Total de pliegos: Cantidad estimada de pliegos necesarios para producir el producto<br>• Total en m²: Metros cuadrados totales de material requeridos (basado en tamaño y cantidad)<br>• Precio total: Costo total del material, calculado por área o peso, según corresponda'"
                 >
                   <i class="fa fa-question-circle"></i>
                 </button>
@@ -129,7 +129,17 @@
                     <span v-if="!isWeightBased(material)">{{ material.totalSquareMeters.toFixed(2) }}</span>
                     <span v-else>-</span>
                   </td>
-                  <td class="text-end">{{ formatCurrency(material.totalPrice) }}</td>
+                  <td class="text-end">
+                    <span 
+                      :title="' El costo del material se calcula automáticamente según el tipo de unidad configurada: por metro cuadrado (m²) o por peso (g/m²). La cantidad de pliegos se muestra solo como referencia visual.'"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="left"
+                      style="cursor: help;"
+                    >
+                      {{ formatCurrency(material.totalPrice) }}
+                      <i class="fa fa-info-circle ms-1 text-info tooltip-icon" style="font-size: 0.9em; opacity: 0.8;"></i>
+                    </span>
+                  </td>
                   <td class="text-center" style="min-width: 140px;">
                     <div class="d-flex align-items-center justify-content-center gap-2">
                       <button 
@@ -225,7 +235,15 @@
                     <span><i class="fa fa-file-alt me-1"></i>{{ material.totalSheets }} <span class="text-muted">pgs</span></span>
                   </div>
                   <div class="col-4 d-flex flex-column align-items-center">
-                    <span><i class="fa fa-dollar-sign me-1"></i>{{ formatCurrency(material.totalPrice) }} <span class="text-muted">$</span></span>
+                    <span 
+                      :title="'El costo del material se calcula con base en el área total usada (en m²), no por pliegos completos. La cantidad de pliegos mostrada es solo una referencia visual.'"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="top"
+                      style="cursor: help;"
+                    >
+                      <i class="fa fa-dollar-sign me-1"></i>{{ formatCurrency(material.totalPrice) }} <span class="text-muted">$</span>
+                      <i class="fa fa-info-circle ms-1 text-info tooltip-icon" style="font-size: 0.9em; opacity: 0.8;"></i>
+                    </span>
                   </div>
                 </div>
                 <div class="row g-2 mb-2 text-center">
@@ -857,6 +875,10 @@ export default {
       handler(newVal) {
         // Ensure material instance IDs are set for all materials
         this.ensureMaterialInstanceIds();
+        // Reinitialize tooltips when materials change
+        this.$nextTick(() => {
+          this.initializeTooltips();
+        });
       },
       immediate: true
     },
@@ -911,5 +933,26 @@ export default {
 // Force right alignment for all number inputs in the product-table
 .product-table input[type='number'] {
   text-align: right !important;
+}
+
+// Tooltip icon styling
+.tooltip-icon {
+  color: #17a2b8 !important; // Bootstrap info color
+  transition: all 0.2s ease;
+  
+  &:hover {
+    color: #138496 !important; // Darker info color on hover
+    opacity: 1 !important;
+    transform: scale(1.1);
+  }
+}
+
+// Ensure tooltip icon is visible in dark themes
+[data-bs-theme="dark"] .tooltip-icon {
+  color: #6ea8fe !important; // Light blue for dark theme
+  
+  &:hover {
+    color: #93c5fd !important;
+  }
 }
 </style>

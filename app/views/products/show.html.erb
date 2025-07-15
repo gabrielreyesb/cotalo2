@@ -161,7 +161,7 @@
             <% @product.processes.each do |process| %>
               <li class="list-group-item">
                 <div><strong><%= t('products.show.process_id') %>:</strong> <%= process["process_id"] %></div>
-                <div><strong><%= t('products.show.quantity') %>:</strong> <%= process["quantity"] %></div>
+                <div><strong><%= t('products.show.quantity') %>:</strong> <%= process["veces"] %></div>
                 <% if process["notes"].present? %>
                   <div><strong><%= t('products.show.notes') %>:</strong> <%= process["notes"] %></div>
                 <% end %>

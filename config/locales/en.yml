@@ -109,7 +109,9 @@ en:
     title: "Inicio"
     welcome:
       greeting: "Welcome to Cotalo, %{name}!"
-      subtitle: "We've prepared an example product for you to see how the platform works. What would you like to do now?"
+      new_subtitle: "We've prepared an example product and quote for you to see how the platform works."
+      customization_text: "You can customize your materials, processes, and indirect costs for the specific type of project you work on. And you can also customize your account to make product costing simpler and faster and personalize your quote content."
+      suggested_steps: "I suggest you follow these steps:"
       review_example: "Review or edit the example product"
       create_first: "Create your first real product"
       create_quote: "Generate a new quote"
@@ -124,6 +126,11 @@ en:
       subtitle: "You can customize your account to make product costing simpler and faster, and personalize your quote content."
       app_configs: "General settings"
       pdf_configs: "PDF settings"
+    demo:
+      title: "Need help getting started?"
+      subtitle: "Our team can show you how to optimize your costing process with a personalized demonstration."
+      request_demo: "Request demo"
+      schedule_call: "Schedule call"
     subscription:
       status_title: "Subscription Status"
       trial_status: "Trial Period"

@@ -95,7 +95,7 @@ user.products.each do |product|
   puts "    Processes (#{product.processes.length}):"
   product.processes.each_with_index do |process, index|
     puts "      #{index + 1}. #{process['description']}"
-    puts "         - Quantity: #{process['quantity']} #{process['unit']['abbreviation']}"
+    puts "         - Veces: #{process['veces']} #{process['unit']['abbreviation']}"
     puts "         - Subtotal: $#{process['subtotal_price']}"
     puts "         - Comments: #{process['comments']}"
   end

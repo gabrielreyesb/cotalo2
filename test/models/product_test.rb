@@ -15,18 +15,18 @@ class ProductTest < ActiveSupport::TestCase
     
     # Create test materials
     @material1 = @user.materials.create!(
-      description: 'Caple 12 puntos',
-      client_description: 'Caple',
-      price: 10,
+      description: 'Cartulina caple sulfatada 12 pts',
+      client_description: 'Cartulina caple sulfatada 12 pts',
+      price: 9.5,
       unit: @mt2_unit,
       ancho: 100,
       largo: 100
     )
     
     @material2 = @user.materials.create!(
-      description: 'Cartulina multicapa 14 pts',
-      client_description: 'Cartulina multicapa',
-      price: 12,
+      description: 'Cartulina caple sulfatada 14 pts',
+      client_description: 'Cartulina caple sulfatada 14 pts',
+      price: 11,
       unit: @mt2_unit,
       ancho: 100,
       largo: 100
@@ -34,23 +34,23 @@ class ProductTest < ActiveSupport::TestCase
     
     # Create test processes
     @process1 = @user.manufacturing_processes.create!(
-      name: 'Empalmado',
-      description: '',
-      cost: 3.50,
+      name: 'Impresión offset 4 tintas (CMYK)',
+      description: 'Impresión a color estándar en cartulina caple, ideal para tirajes medianos y altos.',
+      cost: 4.00,
       unit: @mt2_unit
     )
     
     @process2 = @user.manufacturing_processes.create!(
-      name: 'Pegado lineal',
-      description: '',
-      cost: 0.35,
-      unit: @pieza_unit
+      name: 'Impresión Pantone (1 tinta)',
+      description: 'Impresión con tinta directa Pantone para colores especiales o logotipos.',
+      cost: 2.50,
+      unit: @mt2_unit
     )
     
     # Create test extras
     @extra1 = @user.extras.create!(
-      name: 'Placas de impresión 4 oficios',
-      description: '',
+      name: 'Fabricación de placa offset (por tinta)',
+      description: 'Placa de aluminio necesaria para cada tinta en impresión offset. Se requiere una por tinta utilizada.',
       cost: 250,
       unit: @pieza_unit
     )
@@ -189,7 +189,7 @@ class ProductTest < ActiveSupport::TestCase
               name: @process1.unit.name,
               abbreviation: @process1.unit.abbreviation
             },
-            quantity: 25.5,
+            veces: 1,
             subtotal_price: 89.25,
             comments: "Main process"
           }
@@ -248,7 +248,7 @@ class ProductTest < ActiveSupport::TestCase
     product = @user.products.create!(description: "Test Product")
     
     product.add_process(@process1.id, {
-      quantity: 25.5,
+      veces: 1,
       comments: "Added process"
     })
     

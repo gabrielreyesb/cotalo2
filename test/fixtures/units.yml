@@ -1,11 +1,21 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  name: MyString
-  abbreviation: MyString
-  user: one
+  name: mt2
+  abbreviation: m²
 
 two:
-  name: MyString
-  abbreviation: MyString
-  user: two
+  name: pieza
+  abbreviation: pieza
+
+three:
+  name: pliego
+  abbreviation: pliego
+
+four:
+  name: kg
+  abbreviation: kg
+
+five:
+  name: millar
+  abbreviation: millar
