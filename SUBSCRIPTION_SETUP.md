@@ -10,7 +10,7 @@ Add the following environment variables to your `.env` file:
 ```bash
 # Stripe Configuration
 STRIPE_PUBLISHABLE_KEY=pk_live_51RiJHVByovk24eSGDDFt6bWsGRwFMe0M3TX4J3xB0f2eIeq6enRGKr7jyPOoNTV257aoni3jtUrfLP5yfXrA4bXZ00MLxUdH4I
-STRIPE_SECRET_KEY=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
+STRIPE_SECRET_KEY=sk_test_your_stripe_test_key_here
 STRIPE_WEBHOOK_SECRET=whsec_gtf6Z8rgt17AZfI13qneKAgaedn9o6oN
 
 # Stripe Price ID for the subscription
