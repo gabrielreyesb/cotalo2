@@ -22,10 +22,11 @@
         </div>
       </div>
       <!-- Table view for medium and large screens -->
-      <div class="card green-accent-panel d-none d-md-block shadow-sm mb-4">
-        <div class="card-body p-4">
-          <div class="table-responsive">
-            <table class="table table-striped table-hover">
+      <div class="green-accent-panel d-none d-md-block mb-4">
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <div class="table-responsive">
+              <table class="table table-striped table-hover">
               <thead>
                 <tr>
                   <th class="index-table-header" style="width: 25%;"><%= t('products.index.description') %></th>
@@ -88,13 +89,15 @@
             </table>
           </div>
         </div>
+        </div>
       </div>
       
       <!-- Card view for small screens and mobile -->
       <div class="d-md-none px-1">
         <% @products.each do |product| %>
-          <div class="card green-accent-panel mb-4 border-0 shadow-lg" style="border-bottom: 3px solid #28a745 !important;">
-            <div class="card-body p-2">
+          <div class="green-accent-panel mb-4">
+            <div class="card border-0 shadow-lg" style="border-bottom: 3px solid #28a745 !important;">
+              <div class="card-body p-2">
               <!-- Product description - first row -->
               <div class="mb-1">
                 <h6 class="card-title mb-0 fw-bold text-truncate" title="<%= product.description %>">
@@ -145,6 +148,7 @@
                   <% end %>
                 </div>
               </div>
+            </div>
             </div>
           </div>
         <% end %>

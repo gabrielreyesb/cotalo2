@@ -25,9 +25,10 @@
         </div>
       </div>
       <!-- Table view for medium and large screens -->
-      <div class="card green-accent-panel d-none d-md-block shadow-sm mb-4">
-        <div class="card-body p-4">
-          <table class="table table-striped table-hover">
+      <div class="green-accent-panel d-none d-md-block mb-4">
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <table class="table table-striped table-hover">
             <thead>
               <tr>
                 <th class="index-table-header"><%= t('customers.index.name') %></th>
@@ -57,16 +58,18 @@
                   </td>
                 </tr>
               <% end %>
-            </tbody>
-          </table>
+                          </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+        </div>
 
       <!-- Mobile Cards -->
       <div class="d-md-none">
         <% @customers.each do |customer| %>
-          <div class="card mb-3 shadow-sm">
-            <div class="card-body">
+          <div class="green-accent-panel mb-3">
+            <div class="card shadow-sm">
+              <div class="card-body">
               <h5 class="card-title"><%= link_to customer.name, customer_path(customer) %></h5>
               <% if customer.company.present? %>
                 <p class="card-text mb-1">
@@ -94,6 +97,7 @@
                   <i class="fa fa-trash"></i>
                 <% end %>
               </div>
+            </div>
             </div>
           </div>
         <% end %>

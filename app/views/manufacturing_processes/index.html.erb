@@ -22,9 +22,10 @@
         </div>
       </div>
       <!-- Table view for medium and large screens -->
-      <div class="card green-accent-panel d-none d-md-block shadow-sm mb-4">
-        <div class="card-body p-4">
-          <table class="table table-striped table-hover">
+      <div class="green-accent-panel d-none d-md-block mb-4">
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <table class="table table-striped table-hover">
             <thead>
               <tr>
                 <th class="index-table-header"><%= t('processes.index.name') %></th>
@@ -63,16 +64,18 @@
                   </td>
                 </tr>
               <% end %>
-            </tbody>
-          </table>
+                          </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+        </div>
       
       <!-- Card view for small screens and mobile -->
       <div class="d-md-none px-1">
         <% @manufacturing_processes.each do |process| %>
-          <div class="card green-accent-panel mb-4 border-0 shadow-lg" style="border-bottom: 3px solid #28a745 !important;">
-            <div class="card-body p-2">
+          <div class="green-accent-panel mb-4">
+            <div class="card border-0 shadow-lg" style="border-bottom: 3px solid #28a745 !important;">
+              <div class="card-body p-2">
               <div class="d-flex justify-content-between align-items-center mb-1">
                 <h6 class="card-title mb-0 fw-bold text-truncate" style="max-width: 60%"><%= process.name %></h6>
                 <div class="d-flex align-items-center" style="gap: 0.5rem;">
@@ -110,6 +113,7 @@
               <div class="small text-muted mt-1">
                 <%= truncate(process.description, length: 60) %>
               </div>
+            </div>
             </div>
           </div>
         <% end %>
