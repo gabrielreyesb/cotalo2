@@ -135,6 +135,24 @@ class User < ApplicationRecord
     products.find_by(description: "Caja plegadiza cosmética – cartulina caple 12 pts")
   end
 
+  def has_real_products?
+    # Count products excluding the example product
+    real_products_count = products.where.not(description: "Caja plegadiza cosmética – cartulina caple 12 pts").count
+    real_products_count > 0
+  end
+
+  def should_show_reminder?
+    # Show reminder if:
+    # 1. User has no real products
+    # 2. Account is older than 3 days
+    # 3. Reminder block is not closed
+    return false if has_real_products?
+    return false if block_closed?('reminder')
+    return false if created_at > 3.days.ago
+    
+    true
+  end
+
   def dashboard_preferences
     JSON.parse(self[:dashboard_preferences] || '{}')
   rescue JSON::ParserError

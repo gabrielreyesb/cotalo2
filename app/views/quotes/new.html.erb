@@ -13,6 +13,42 @@
 
 <div class="main-content">
   <div class="container-fluid h-100 overflow-auto py-4">
+    <!-- Info Block -->
+    <% unless current_user.block_closed?('new_quote_info') %>
+      <div class="mb-4" id="new-quote-info-block">
+        <div class="green-accent-panel position-relative">
+          <button type="button" class="btn btn-sm btn-outline-success position-absolute top-0 end-0 m-3" 
+                  id="close-new-quote-info-btn" aria-label="Close" style="z-index: 10;">
+            <i class="fa fa-times"></i>
+          </button>
+          <div class="card-body p-4">
+            <div class="d-flex align-items-start">
+              <div class="me-3">
+                <span style="font-size: 2rem;">🧾</span>
+              </div>
+              <div class="flex-grow-1">
+                <h5 class="mb-3"><%= t('quotes.new.info.title') %></h5>
+                <p class="text-light-gray mb-3"><%= t('quotes.new.info.description') %></p>
+                <div class="mb-3">
+                  <p class="text-light-gray mb-2"><strong><%= t('quotes.new.info.step1_title') %></strong></p>
+                  <p class="text-light-gray mb-2 ms-3"><strong>🏷️</strong> <%= t('quotes.new.info.step1_text') %></p>
+                </div>
+                <div class="mb-3">
+                  <p class="text-light-gray mb-2"><strong><%= t('quotes.new.info.step2_title') %></strong></p>
+                  <p class="text-light-gray mb-2 ms-3"><strong>👤</strong> <%= t('quotes.new.info.step2_text') %></p>
+                </div>
+                <div class="mb-3">
+                  <p class="text-light-gray mb-2"><strong><%= t('quotes.new.info.step3_title') %></strong></p>
+                  <p class="text-light-gray mb-2 ms-3"><strong>📦</strong> <%= t('quotes.new.info.step3_text') %></p>
+                </div>
+                <p class="text-light-gray mb-0"><strong>📤</strong> <%= t('quotes.new.info.final_note') %></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    
     <!-- Vue app mount point -->
     <div id="quote-form-app" class="quote-form-root" 
       data-available-products="<%= @products.to_json(methods: [:formatted_description], except: [:created_at, :updated_at]) %>"
@@ -68,4 +104,72 @@
 <%= tag.meta name: "csrf-token", content: form_authenticity_token %>
 
 <!-- Load Vue app -->
-<%= javascript_pack_tag 'quote_form' %> 
+<%= javascript_pack_tag 'quote_form' %>
+
+<script>
+function closeBlock(blockName) {
+  console.log('closeBlock called with:', blockName);
+  
+  // Get CSRF token
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  console.log('CSRF Token:', csrfToken);
+  
+  fetch('<%= close_block_path %>', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': csrfToken
+    },
+    body: JSON.stringify({ block_name: blockName })
+  })
+  .then(response => {
+    console.log('Response status:', response.status);
+    return response.json();
+  })
+  .then(data => {
+    console.log('Response data:', data);
+    if (data.success) {
+      const blockElement = document.getElementById(blockName.replace(/_/g, '-') + '-block');
+      console.log('Block element:', blockElement);
+      console.log('Looking for element with ID:', blockName.replace(/_/g, '-') + '-block');
+      if (blockElement) {
+        console.log('Found block element, starting fade out...');
+        blockElement.style.transition = 'opacity 0.3s ease-out';
+        blockElement.style.opacity = '0';
+        setTimeout(() => {
+          blockElement.remove();
+          console.log('Block element removed from DOM');
+        }, 300);
+      } else {
+        console.error('Block element not found with ID:', blockName + '-block');
+      }
+    }
+  })
+  .catch(error => {
+    console.error('Error closing block:', error);
+  });
+}
+
+// Test function to verify the block exists and set up event listeners
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM loaded, setting up event listeners for new quote info...');
+  
+  const infoBlock = document.getElementById('new-quote-info-block');
+  console.log('New quote info block found:', infoBlock);
+  
+  const closeButton = document.getElementById('close-new-quote-info-btn');
+  console.log('Close button found:', closeButton);
+  
+  if (closeButton) {
+    console.log('Adding click event listener to close button...');
+    closeButton.addEventListener('click', function() {
+      console.log('Close button clicked!');
+      closeBlock('new_quote_info');
+    });
+  }
+  
+  if (infoBlock) {
+    console.log('Info block HTML:', infoBlock.outerHTML);
+  }
+});
+</script> 

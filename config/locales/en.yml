@@ -108,10 +108,13 @@ en:
   dashboard:
     title: "Inicio"
     welcome:
-      greeting: "Welcome to Cotalo, %{name}!"
-      new_subtitle: "We've prepared an example product and quote for you to see how the platform works."
-      customization_text: "You can customize your materials, processes, and indirect costs for the specific type of project you work on. And you can also customize your account to make product costing simpler and faster and personalize your quote content."
-      suggested_steps: "I suggest you follow these steps:"
+      greeting: "Welcome to Cotalo!"
+      subtitle: "Cotalo helps you quote your graphic arts products quickly, accurately and professionally."
+      description: "You only need to register your materials, processes and indirect costs once — after that, you can reuse them to create products and quotes in minutes."
+      benefit1: "Save time"
+      benefit2: "Improve your margins with total cost control"
+      benefit3: "Impress your clients with clear and well-presented quotes"
+      suggested_steps: "Follow these steps to get started:"
       catalog_setup: "Catalog Setup"
       review_example: "Review or edit the example product"
       create_first: "Create your first real product"
@@ -132,6 +135,12 @@ en:
       subtitle: "Our team can show you how to optimize your costing process with a personalized demonstration."
       request_demo: "Request demo"
       schedule_call: "Schedule call"
+    reminder:
+      title: "We see you haven't started yet!"
+      subtitle: "It's been a few days since you created your account, but you still haven't created your first product or generated a quote."
+      question: "Would you like us to guide you step by step?"
+      create_first_product: "Create my first product"
+      request_demo: "Request demo"
     subscription:
       status_title: "Subscription Status"
       trial_status: "Trial Period"
@@ -531,6 +540,14 @@ en:
       no_products: "No products"
       create_new: "Create new quote"
       search_placeholder: "Search quotes…"
+      info:
+        title: "How does this section work?"
+        description: "Here you can consult and manage your quotes."
+        quote_definition: "A quote in Cotalo groups one or several previously costed products, so you can send a clear proposal with defined margins and professional format."
+        instruction1_title: "Ready to send a proposal?"
+        instruction1_text: "Make sure you have created at least one product. Then, click on \"New quote\" to select the products you want to include."
+        instruction2_title: "And then?"
+        instruction2_text: "From here you can also view, duplicate, edit or delete previous quotes, or download the PDF to send to the client."
     form:
       quote_info: "Quote Info"
       project_name: "Project Name"
@@ -569,6 +586,16 @@ en:
       title: "Edit quote #%{id}"
     new:
       title: "New quote"
+      info:
+        title: "How to create a quote in Cotalo? Follow these steps."
+        description: "Quotes are not costed directly. They are composed from products that you have already created and calculated previously."
+        step1_title: "1. Define the project"
+        step1_text: "Assign a representative name to the project (E.g. \"Premium perfume packaging\")"
+        step2_title: "2. Add the client"
+        step2_text: "Select them from your list or add them if they don't exist yet"
+        step3_title: "3. Add products"
+        step3_text: "Choose one or more previously costed products from your catalog"
+        final_note: "Once ready, you can download it as PDF, send it by email, or generate an invoice from this same screen."
     show:
       title: "Quote #%{id}"
       view_pdf: "View PDF"
@@ -637,6 +664,29 @@ en:
       no_products: "No products created yet."
       create_new: "Create new product"
       search_placeholder: "Search products…"
+      info:
+        title: "How does this section work?"
+        description: "Here you can see all your registered products."
+        product_definition: "A product in Cotalo represents a project with its materials, processes and indirect costs, and is where costing is performed."
+        instruction1: "Use the \"+ New product\" button to create one from scratch."
+        instruction2: "Or click on an existing product to edit it or duplicate it to save time."
+        suggestion_title: "Don't know where to start?"
+        suggestion_text: "We recommend reviewing an example product and then creating your own."
+    new:
+      title: "New product"
+      info:
+        title: "First time creating a product? We'll guide you step by step."
+        section1_title: "1. General Information"
+        section1_description: "Define the basic data of your product:"
+        description_label: "Description: E.g. \"Promotional trifold 21×29.7 cm\""
+        quantity_label: "Quantity of pieces: Total desired units (e.g. 2,500)"
+        dimensions_label: "Width/Length: Final dimensions of the finished product"
+        inner_measurements_label: "Inner measurements: Useful for foldable products or with creases"
+        comments_label: "Comments: Optional notes from the client or project"
+        section2_title: "2. Materials, processes and indirect costs"
+        section2_description: "Associate the necessary supplies and operations to manufacture it."
+        section2_details: "Select materials, apply processes such as printing or die-cutting, and consider indirect costs such as calibrations or design."
+        reuse_info: "Once saved, you can reuse the product for similar quotes."
     form:
       tabs:
         general: "General Information"

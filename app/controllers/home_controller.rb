@@ -11,6 +11,11 @@ class HomeController < ApplicationController
     if @user.trial_ends_at.nil? && @user.subscription_status == 'trial'
       @user.update(trial_ends_at: 14.days.from_now)
     end
+    
+    # Auto-close welcome block if reminder should be shown
+    if @user.should_show_reminder? && !@user.block_closed?('welcome')
+      @user.close_block('welcome')
+    end
   end
 
   def close_block

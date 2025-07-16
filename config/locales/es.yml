@@ -81,10 +81,13 @@ es:
   dashboard:
     title: "Inicio"
     welcome:
-      greeting: "¡Bienvenido a Cotalo, %{name}!"
-      new_subtitle: "Te hemos preparado algunos productos y cotizaciones de ejemplo para que veas cómo funciona la plataforma."
-      customization_text: "Puedes personalizar tus materiales, procesos y costos indirectos para el tipo específico de proyecto que realizas. Y también puedes personalizar tu cuenta para hacer más simple y rápido el costeo de tu producto y el contenido de tu cotización."
-      suggested_steps: "Te sugiero sigas estos pasos:"
+      greeting: "¡Bienvenido a Cotalo!"
+      subtitle: "Cotalo te ayuda a cotizar de forma rápida, precisa y profesional tus productos de artes gráficas."
+      description: "Solo necesitas registrar tus materiales, procesos y costos indirectos una sola vez — después, podrás reutilizarlos para crear productos y cotizaciones en minutos."
+      benefit1: "Ahorra tiempo"
+      benefit2: "Mejora tus márgenes con control total de costos"
+      benefit3: "Impresiona a tus clientes con cotizaciones claras y bien presentadas"
+      suggested_steps: "Sigue estos pasos para comenzar:"
       catalog_setup: "Configuración de Catálogos"
       review_example: "Revisar productos de ejemplo"
       create_first: "Crear tu primer producto real"
@@ -105,6 +108,12 @@ es:
       subtitle: "Nuestro equipo puede mostrarte cómo optimizar tu proceso de costeo con una demostración personalizada."
       request_demo: "Solicitar demo"
       schedule_call: "Agendar llamada"
+    reminder:
+      title: "¡Vemos que aún no has comenzado!"
+      subtitle: "Ya pasaron unos días desde que creaste tu cuenta, pero todavía no has creado tu primer producto ni generado una cotización."
+      question: "¿Te gustaría que te guiemos paso a paso?"
+      create_first_product: "Crear mi primer producto"
+      request_demo: "Solicitar demo"
     products: "Productos"
     view_all: "Ver todos"
     add_new: "Agregar nuevo"
@@ -507,6 +516,14 @@ es:
       no_products: "Sin productos"
       create_new: "Crear nueva cotización"
       search_placeholder: "Buscar cotizaciones…"
+      info:
+        title: "¿Cómo funciona esta sección?"
+        description: "Aquí puedes consultar y gestionar tus cotizaciones."
+        quote_definition: "Una cotización en Cotalo agrupa uno o varios productos previamente costeados, para que puedas enviar una propuesta clara, con márgenes definidos y formato profesional."
+        instruction1_title: "¿Listo para enviar una propuesta?"
+        instruction1_text: "Asegúrate de haber creado al menos un producto. Luego, haz clic en \"Nueva cotización\" para seleccionar los productos que deseas incluir."
+        instruction2_title: "¿Y después?"
+        instruction2_text: "Desde aquí también podrás ver, duplicar, editar o eliminar cotizaciones anteriores, o descargar el PDF para enviar al cliente."
     form:
       quote_info: "Información de la cotización"
       project_name: "Nombre del proyecto"
@@ -546,6 +563,16 @@ es:
       title: "Editar cotización #%{id}"
     new:
       title: "Nueva cotización"
+      info:
+        title: "¿Cómo crear una cotización en Cotalo? Sigue estos pasos."
+        description: "Las cotizaciones no se costean directamente. Se componen a partir de productos que ya creaste y calculaste previamente."
+        step1_title: "1. Define el proyecto"
+        step1_text: "Asigna un nombre representativo al proyecto (Ej. \"Empaque premium para perfume\")"
+        step2_title: "2. Agrega al cliente"
+        step2_text: "Selecciónalo de tu lista o añádelo si aún no existe"
+        step3_title: "3. Agrega productos"
+        step3_text: "Elige uno o más productos previamente costeados desde tu catálogo"
+        final_note: "Una vez lista, puedes descargarla en PDF, enviarla por correo o generar una factura desde esta misma pantalla."
     show:
       title: "Cotización #%{id}"
       view_pdf: "Ver PDF"
@@ -617,8 +644,29 @@ es:
       create_first_product: "Crea tu primer producto"
       save_product: "Guardar"
       search_placeholder: "Buscar productos…"
+      info:
+        title: "¿Cómo funciona esta sección?"
+        description: "Aquí puedes ver todos tus productos registrados."
+        product_definition: "Un producto en Cotalo representa un proyecto con sus materiales, procesos y costos indirectos, y es donde se realiza el costeo."
+        instruction1: "Usa el botón \"+ Nuevo producto\" para crear uno desde cero."
+        instruction2: "O haz clic en un producto existente para editarlo o duplicarlo y ahorrar tiempo."
+        suggestion_title: "¿No sabes por dónde empezar?"
+        suggestion_text: "Te recomendamos revisar un producto de ejemplo y luego crear el tuyo propio."
     new:
       title: "Nuevo producto"
+      info:
+        title: "¿Primera vez creando un producto? Te guiamos paso a paso."
+        section1_title: "1. Información general"
+        section1_description: "Define los datos base de tu producto:"
+        description_label: "Descripción: Ej. \"Tríptico promocional 21×29.7 cm\""
+        quantity_label: "Cantidad de piezas: Total de unidades deseadas (ej. 2,500)"
+        dimensions_label: "Ancho/Largo: Medidas finales del producto terminado"
+        inner_measurements_label: "Medidas internas: Útil para productos plegables o con dobleces"
+        comments_label: "Comentarios: Notas opcionales del cliente o del proyecto"
+        section2_title: "2. Materiales, procesos e indirectos"
+        section2_description: "Asocia los insumos y operaciones necesarias para fabricarlo."
+        section2_details: "Selecciona materiales, aplica procesos como impresión o troquelado, y considera costos indirectos como calibraciones o diseño."
+        reuse_info: "Una vez guardado, podrás reutilizar el producto para cotizaciones similares."
     edit:
       title: "Editar producto"
     show:
