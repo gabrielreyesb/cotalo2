@@ -112,6 +112,7 @@ en:
       new_subtitle: "We've prepared an example product and quote for you to see how the platform works."
       customization_text: "You can customize your materials, processes, and indirect costs for the specific type of project you work on. And you can also customize your account to make product costing simpler and faster and personalize your quote content."
       suggested_steps: "I suggest you follow these steps:"
+      catalog_setup: "Catalog Setup"
       review_example: "Review or edit the example product"
       create_first: "Create your first real product"
       create_quote: "Generate a new quote"

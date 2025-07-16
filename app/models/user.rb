@@ -50,12 +50,6 @@ class User < ApplicationRecord
   def inactive_message
     if disabled?
       :account_disabled
-    elsif !subscription_active?
-      if trial?
-        :trial_expired
-      else
-        :subscription_expired
-      end
     else
       super
     end
@@ -103,20 +97,21 @@ class User < ApplicationRecord
   end
 
   def subscription_active?
-    return true if trial? && trial_ends_at.present? && trial_ends_at > Time.current
-    return true if active_subscription? && subscription_ends_at.present? && subscription_ends_at > Time.current
-    false
+    # Temporarily frozen - all users have access without restrictions
+    true
   end
 
   def trial_days_remaining
-    return 0 unless trial?
-    return 0 if trial_ends_at.nil?
+    # Temporarily frozen - always show unlimited trial days
+    return 999 unless trial?
+    return 999 if trial_ends_at.nil?
     [(trial_ends_at - Time.current).to_i / 1.day, 0].max
   end
 
   def subscription_days_remaining
-    return 0 unless active_subscription?
-    return 0 if subscription_ends_at.nil?
+    # Temporarily frozen - always show unlimited subscription days
+    return 999 unless active_subscription?
+    return 999 if subscription_ends_at.nil?
     [(subscription_ends_at - Time.current).to_i / 1.day, 0].max
   end
 
@@ -160,6 +155,8 @@ class User < ApplicationRecord
     self.dashboard_preferences = prefs
     save
   end
+
+
 
   private
 

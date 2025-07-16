@@ -82,9 +82,10 @@ es:
     title: "Inicio"
     welcome:
       greeting: "¡Bienvenido a Cotalo, %{name}!"
-      new_subtitle: "Te hemos preparado un producto y una cotización de ejemplo para que veas cómo funciona la plataforma."
+      new_subtitle: "Te hemos preparado algunos productos y cotizaciones de ejemplo para que veas cómo funciona la plataforma."
       customization_text: "Puedes personalizar tus materiales, procesos y costos indirectos para el tipo específico de proyecto que realizas. Y también puedes personalizar tu cuenta para hacer más simple y rápido el costeo de tu producto y el contenido de tu cotización."
       suggested_steps: "Te sugiero sigas estos pasos:"
+      catalog_setup: "Configuración de Catálogos"
       review_example: "Revisar productos de ejemplo"
       create_first: "Crear tu primer producto real"
       create_quote: "Generar una cotización nueva"

@@ -123,13 +123,13 @@ module StripeSubscription
   end
 
   def subscription_active?
-    return true if trial? && trial_ends_at.present? && trial_ends_at > Time.current
-    return true if active_subscription? && subscription_ends_at.present? && subscription_ends_at > Time.current
-    false
+    # Temporarily frozen - all users have access without restrictions
+    true
   end
 
   def trial_days_remaining
-    return 0 unless trial? && trial_ends_at.present?
+    # Temporarily frozen - always show unlimited trial days
+    return 999 unless trial? && trial_ends_at.present?
     ((trial_ends_at - Time.current) / 1.day).ceil
   end
 
@@ -141,13 +141,13 @@ module StripeSubscription
   end
 
   def subscription_days_remaining
-    return 0 unless active_subscription? && subscription_ends_at.present?
+    # Temporarily frozen - always show unlimited subscription days
+    return 999 unless active_subscription? && subscription_ends_at.present?
     ((subscription_ends_at - Time.current) / 1.day).ceil
   end
 
   def subscription_expired?
-    return true if trial? && trial_ends_at.present? && trial_ends_at <= Time.current
-    return true if active_subscription? && subscription_ends_at.present? && subscription_ends_at <= Time.current
+    # Temporarily frozen - no subscriptions are considered expired
     false
   end
 end 

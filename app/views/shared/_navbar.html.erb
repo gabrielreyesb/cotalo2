@@ -103,9 +103,10 @@
         <% end %>
       </ul>
       <ul class="navbar-nav">
-        <% if user_signed_in? && !current_user.admin? %>
-          <%= render 'shared/navbar_subscription_status' %>
-        <% end %>
+        <%# Temporarily hidden - subscription status removed %>
+        <%# <% if user_signed_in? && !current_user.admin? %>
+        <%#   <%= render 'shared/navbar_subscription_status' %>
+        <%# <% end %>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             🌐 <%= t('navbar.language') %>
