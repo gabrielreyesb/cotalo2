@@ -865,6 +865,8 @@ es:
       show_disabled: "Mostrar usuarios deshabilitados"
       last_login: "Último acceso"
       never_logged_in: "Nunca"
+      products_count: "Productos"
+      quotes_count: "Cotizaciones"
     impersonation:
       currently_impersonating: "Actualmente estás suplantando a %{email}"
       stop: "Dejar de Suplantar"
@@ -1099,6 +1101,30 @@ es:
  
   activerecord:
     errors:
+      messages:
+        taken: "ya está en uso"
+        blank: "no puede estar en blanco"
+        too_short: "es demasiado corto (mínimo %{count} caracteres)"
+        too_long: "es demasiado largo (máximo %{count} caracteres)"
+        not_a_number: "no es un número"
+        greater_than: "debe ser mayor que %{count}"
+        greater_than_or_equal_to: "debe ser mayor o igual a %{count}"
+        less_than: "debe ser menor que %{count}"
+        less_than_or_equal_to: "debe ser menor o igual a %{count}"
+        invalid: "no es válido"
+        confirmation: "no coincide con la confirmación"
+        required: "es requerido"
+        accepted: "debe ser aceptado"
+        empty: "no puede estar vacío"
+        not_an_integer: "debe ser un número entero"
+        inclusion: "no está incluido en la lista"
+        exclusion: "está reservado"
+        not_saved: "no se pudo guardar"
+        not_found: "no se encontró"
+        record_invalid: "La validación falló: %{errors}"
+        restrict_dependent_destroy:
+          has_one: "No se puede eliminar el registro porque existe un %{record} dependiente"
+          has_many: "No se puede eliminar el registro porque existen %{record} dependientes"
       models:
         material:
           attributes:
@@ -1137,6 +1163,8 @@ es:
             email:
               blank: "El correo electrónico es requerido"
               invalid: "Por favor ingresa un correo electrónico válido"
+            quote_number:
+              taken: "El número de cotización ya existe"
           errors:
             at_least_one_product: "Debe agregar al menos un producto a la cotización"
         price_margin:

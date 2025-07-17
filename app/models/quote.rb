@@ -81,8 +81,8 @@ class Quote < ApplicationRecord
   def generate_quote_number
     return if quote_number.present?
     
-    # Get the last quote number
-    last_quote = Quote.order(created_at: :desc).first
+    # Get the last quote number for this specific user
+    last_quote = user.quotes.order(created_at: :desc).first
     last_number = last_quote&.quote_number&.split('-')&.last&.to_i || 0
     
     # Generate new quote number

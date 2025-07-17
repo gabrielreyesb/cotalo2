@@ -20,8 +20,10 @@
           <thead>
             <tr>
               <th><%= t('admin.users.email') %></th>
-              <th style="width: 110px;" class="text-center"><%= t('admin.users.admin') %></th>
-              <th style="width: 110px;" class="text-center"><%= t('admin.users.status') %></th>
+              <th><%= t('admin.users.admin') %></th>
+              <th><%= t('admin.users.status') %></th>
+              <th><%= t('admin.users.products') %></th>
+              <th><%= t('admin.users.quotes') %></th>
               <th><%= t('admin.users.created_at') %></th>
               <th><%= t('admin.users.actions') %></th>
             </tr>
@@ -29,25 +31,51 @@
           <tbody>
             <% @users.each do |user| %>
               <tr>
-                <td class="text-truncate" style="max-width: 320px;" title="<%= user.email %>"><%= user.email %></td>
-                <td class="text-center">
-                  <span class="badge <%= user.admin? ? 'bg-success' : 'bg-secondary' %>">
-                    <%= user.admin? ? t('common.yes') : t('common.no') %>
-                  </span>
+                <td><%= user.email %></td>
+                <td>
+                  <% if user.admin? %>
+                    <span class="badge bg-success"><%= t('admin.users.yes') %></span>
+                  <% else %>
+                    <span class="badge bg-secondary"><%= t('admin.users.no') %></span>
+                  <% end %>
                 </td>
-                <td class="text-center">
-                  <span class="badge <%= user.disabled? ? 'bg-danger' : 'bg-success' %>">
-                    <%= user.disabled? ? t('admin.users.status_labels.disabled') : t('admin.users.status_labels.active') %>
-                  </span>
+                <td>
+                  <% if user.disabled? %>
+                    <span class="badge bg-danger"><%= t('admin.users.disabled') %></span>
+                  <% else %>
+                    <span class="badge bg-success"><%= t('admin.users.active') %></span>
+                  <% end %>
                 </td>
+                <td><%= user.products_count %></td>
+                <td><%= user.quotes_count %></td>
                 <td><%= user.created_at.strftime("%Y-%m-%d") %></td>
                 <td>
-                  <% unless user == current_user %>
-                    <%= button_to admin_impersonations_path(user_id: user.id), method: :post, class: "btn btn-sm btn-outline-success me-1", title: t('admin.users.impersonate'), data: { bs_toggle: 'tooltip' }, form: { style: 'display: inline-block;' } do %><i class="fas fa-user-secret"></i><% end %>
-                    <%= button_to toggle_disabled_admin_user_path(user), method: :post, class: "btn btn-sm #{user.disabled? ? 'btn-outline-success' : 'btn-outline-warning'} me-1", title: user.disabled? ? t('admin.users.toggle_disabled.enable') : t('admin.users.toggle_disabled.disable'), data: { turbo_confirm: user.disabled? ? t('admin.users.toggle_disabled.confirm_enable') : t('admin.users.toggle_disabled.confirm_disable'), bs_toggle: 'tooltip' }, form: { style: 'display: inline-block;' } do %><i class="fas <%= user.disabled? ? 'fa-user-check' : 'fa-user-slash' %>"></i><% end %>
-                    <%= button_to admin_user_path(user), method: :delete, form: { data: { turbo_method: :delete, turbo_confirm: t('admin.users.delete.confirm') }, style: 'display: inline-block;' }, class: "btn btn-sm btn-outline-danger me-1", title: t('admin.users.delete.button') do %><i class="fas fa-trash"></i><% end %>
-                  <% end %>
-                  <%= link_to edit_admin_user_path(user), class: "btn btn-sm btn-outline-secondary", title: t('admin.users.edit'), data: { bs_toggle: 'tooltip' } do %><i class="fas fa-edit"></i><% end %>
+                  <div class="d-flex gap-1">
+                    <% unless user == current_user %>
+                      <%= button_to admin_impersonations_path(user_id: user.id), 
+                                  method: :post, 
+                                  class: "btn btn-sm btn-success" do %>
+                        <i class="fas fa-user-secret"></i>
+                      <% end %>
+                    <% end %>
+                    <%= link_to edit_admin_user_path(user), class: 'btn btn-sm btn-primary' do %>
+                      <i class="fas fa-edit"></i>
+                    <% end %>
+                    <% unless user == current_user %>
+                      <%= button_to toggle_disabled_admin_user_path(user), 
+                                  method: :post, 
+                                  data: { confirm: t('admin.users.toggle_disabled.confirm_' + (user.disabled? ? 'enable' : 'disable')) }, 
+                                  class: 'btn btn-sm ' + (user.disabled? ? 'btn-success' : 'btn-warning') do %>
+                        <i class="fas fa-<%= user.disabled? ? 'check' : 'ban' %>"></i>
+                      <% end %>
+                      <%= link_to admin_user_path(user), 
+                          method: :delete, 
+                          data: { confirm: t('admin.users.delete.confirm') }, 
+                          class: 'btn btn-sm btn-danger' do %>
+                        <i class="fas fa-trash"></i>
+                      <% end %>
+                    <% end %>
+                  </div>
                 </td>
               </tr>
             <% end %>

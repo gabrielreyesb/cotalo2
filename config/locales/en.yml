@@ -862,6 +862,8 @@ en:
       show_disabled: "Show disabled users"
       last_login: "Last Login"
       never_logged_in: "Never"
+      products_count: "Products"
+      quotes_count: "Quotes"
       search_placeholder: "Search customers…"
     impersonation:
       currently_impersonating: "You are currently impersonating %{email}"

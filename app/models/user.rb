@@ -174,7 +174,26 @@ class User < ApplicationRecord
     save
   end
 
+  # Methods for admin dashboard activity tracking
+  def products_count
+    self[:products_count] || products.count
+  end
 
+  def quotes_count
+    self[:quotes_count] || quotes.count
+  end
+
+  def has_activity?
+    products_count > 0 || quotes_count > 0
+  end
+
+  def activity_summary
+    {
+      products: products_count,
+      quotes: quotes_count,
+      has_activity: has_activity?
+    }
+  end
 
   private
 
