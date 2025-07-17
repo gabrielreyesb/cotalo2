@@ -9,7 +9,7 @@ class Quote < ApplicationRecord
     super
   end
   
-  validates :quote_number, presence: true, uniqueness: true
+  validates :quote_number, presence: true, uniqueness: { scope: :user_id }
   validates :project_name, presence: true
   validates :customer_name, presence: true
   validates :organization, presence: true
@@ -81,12 +81,19 @@ class Quote < ApplicationRecord
   def generate_quote_number
     return if quote_number.present?
     
-    # Get the last quote number for this specific user
-    last_quote = user.quotes.order(created_at: :desc).first
-    last_number = last_quote&.quote_number&.split('-')&.last&.to_i || 0
+    # Get the highest quote number for this specific user in current month
+    current_month = Time.current.strftime('%Y%m')
+    pattern = "COT-#{current_month}-%"
+    
+    last_quote = user.quotes.where("quote_number LIKE ?", pattern).order(:quote_number).last
+    last_number = if last_quote
+      last_quote.quote_number.split('-').last.to_i
+    else
+      0
+    end
     
     # Generate new quote number
-    self.quote_number = "COT-#{Time.current.strftime('%Y%m')}-#{format('%04d', last_number + 1)}"
+    self.quote_number = "COT-#{current_month}-#{format('%04d', last_number + 1)}"
   end
   
   # Default data structure
