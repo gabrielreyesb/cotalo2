@@ -112,4 +112,5 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: 'cotalo.app' }
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.asset_host = 'https://cotalo.app'
 end
