@@ -1,10 +1,30 @@
+/**
+ * Product Creation Test - Validated Calculation Test Case
+ * 
+ * This test validates the complete product calculation system using a real-world scenario:
+ * - Product: "Tarjetas de presentación premium"
+ * - Quantity: 4,000 pieces
+ * - Dimensions: 32 x 22 cm
+ * - Materials: Cartulina caple sulfatada 12 pts + Papel couché brillante 150 g/m²
+ * - Processes: 4 processes (2 per material)
+ * - Extras: 3 services
+ * 
+ * Expected Results (validated manually):
+ * - Materials cost: $8,250.00
+ * - Processes cost: $5,520.00
+ * - Extras cost: $1,000.00
+ * - Total price: $17,834.78
+ * - Price per piece: $4.46
+ * 
+ * This test serves as our "regression test" to ensure calculations remain accurate.
+ */
 describe('Product Creation', () => {
   before(() => {
     // Visit the login page
     cy.visit('/users/sign_in')
     
     // Fill in login form
-    cy.get('input[name="user[email]"]').type('gabrielreyesb@gmail.com')
+    cy.get('input[name="user[email]"]').type('gabrielreyesb+51@gmail.com')
     cy.get('input[name="user[password]"]').type('123456')
     cy.get('form').submit()
     
@@ -24,9 +44,9 @@ describe('Product Creation', () => {
   })
 
   it('should create a new product with correct pricing calculations', () => {
-    // Fill in the product form
-    cy.get('#product-description').type('Test Product')
-    cy.get('#product-quantity').type('3000')
+    // Fill in the product form with our test case data
+    cy.get('#product-description').type('Tarjetas de presentación premium')
+    cy.get('#product-quantity').type('4000')
     cy.get('#product-width').type('32')
     cy.get('#product-length').type('22')
     
@@ -39,16 +59,23 @@ describe('Product Creation', () => {
     // Wait for the materials tab to load and be visible
     cy.get('.materials-tab').should('be.visible')
     
-    // Wait for the material select to be ready
-    cy.get('#material-select').should('exist')
+    // Wait for the material multiselect to be ready
+    cy.get('.multiselect').should('exist')
     
-    // Select the first material
-    cy.get('#material-select').select(1, { force: true })
-    
-    // Click the Add Material button
+    // Add first material: Cartulina caple sulfatada 12 pts
+    cy.get('.multiselect').first().click()
+    cy.get('.multiselect__content-wrapper').should('be.visible')
+    cy.get('.multiselect__option').contains('Cartulina caple sulfatada 12 pts').click({ force: true })
+    cy.wait(500) // Wait for selection to complete
     cy.contains('Agregar material').click()
+    cy.wait(1000)
     
-    // Wait for the material to be added and pricing to update
+    // Add second material: Papel couché brillante 150 g/m²
+    cy.get('.multiselect').first().click()
+    cy.get('.multiselect__content-wrapper').should('be.visible')
+    cy.get('.multiselect__option').contains('Papel couché brillante 150 g/m²').click({ force: true })
+    cy.wait(500) // Wait for selection to complete
+    cy.contains('Agregar material').click()
     cy.wait(1000)
     
     // Click on the Processes tab
@@ -57,51 +84,92 @@ describe('Product Creation', () => {
     // Wait for the processes tab to load and be visible
     cy.get('.processes-tab').should('be.visible')
     
-    // Wait for the process select to be ready
-    cy.get('#process-select').should('exist')
+    // Wait for the process multiselect to be ready
+    cy.get('.multiselect').should('have.length.at.least', 2)
     
-    // Select the first process
-    cy.get('#process-select').select(1, { force: true })
-
-    // Select the first material in the process tab
-    cy.get('#material-select').select(1, { force: true })
-
-    // Wait for the Add Process button to be enabled, then click it
+    // Add processes for first material: Cartulina caple sulfatada 12 pts
+    // First, select the material
+    cy.get('.multiselect').first().click() // Material select in processes tab
+    cy.get('.multiselect__content-wrapper').should('be.visible')
+    cy.get('.multiselect__option').contains('Cartulina caple sulfatada 12 pts (1)').click({ force: true })
+    // Then select the process
+    cy.get('.multiselect').eq(1).click() // Process select
+    cy.get('.multiselect__content-wrapper').should('be.visible')
+    cy.get('.multiselect__option').contains('Impresión offset 4 tintas (CMYK)').click({ force: true })
     cy.get('.processes-tab .btn-primary').should('not.be.disabled').click();
+    cy.wait(1000)
     
-    // Wait for the process to be added and pricing to update
+    // Add second process for first material (material should already be selected)
+    cy.wait(2000) // Wait for UI to stabilize after adding the first process
+    // The material should already be selected, so just select the process
+    cy.get('.multiselect').eq(1).click() // Process select
+    cy.get('.multiselect__content-wrapper').should('be.visible')
+    cy.get('.multiselect__option').contains('Barniz UV spot').click({ force: true })
+    cy.get('.processes-tab .btn-primary').should('not.be.disabled').click();
+    cy.wait(1000)
+    
+    // Add processes for second material: Papel couché brillante 150 g/m²
+    cy.wait(2000) // Wait for UI to stabilize
+    cy.get('.multiselect').first().click() // Material select in processes tab
+    cy.get('.multiselect__content-wrapper').should('be.visible')
+    cy.get('.multiselect__option').contains('Papel couché brillante 150 g/m² (1)').click({ force: true })
+    cy.wait(500) // Wait for material selection to complete
+    cy.get('.multiselect').eq(1).click() // Process select
+    cy.get('.multiselect__content-wrapper').should('be.visible')
+    cy.get('.multiselect__option').contains('Troquelado').click({ force: true })
+    cy.get('.processes-tab .btn-primary').should('not.be.disabled').click();
+    cy.wait(1000)
+    
+    // Add second process for second material (material should already be selected)
+    cy.wait(2000) // Wait for UI to stabilize
+    // The material should already be selected, so just select the process
+    cy.get('.multiselect').eq(1).click() // Process select
+    cy.get('.multiselect__content-wrapper').should('be.visible')
+    cy.get('.multiselect__option').contains('Hendido y corte').click({ force: true })
+    cy.get('.processes-tab .btn-primary').should('not.be.disabled').click();
     cy.wait(1000)
     
     // Click on the Extras tab
-    cy.get('a.nav-link').contains('Extras').click({ force: true })
+    cy.get('a.nav-link').contains('Indirectos').click({ force: true })
     
     // Wait for the extras tab to load and be visible
     cy.get('.extras-tab').should('be.visible')
     
-    // Wait for the extra select to be ready
-    cy.get('#extra-select').should('exist')
+    // Wait for the extra multiselect to be ready
+    cy.get('.multiselect').should('exist')
     
-    // Select the first extra
-    cy.get('#extra-select').select(1, { force: true })
-    
-    // Click the Add Extra button
+    // Add extras
+    cy.get('.multiselect').first().click() // Extra select in extras tab
+    cy.get('.multiselect__content-wrapper').should('be.visible')
+    cy.get('.multiselect__option').contains('Diseño gráfico editorial').click({ force: true })
     cy.get('.extras-tab .btn-primary').should('not.be.disabled').click();
+    cy.wait(1000)
     
-    // Wait for the extra to be added and pricing to update
+    cy.get('.multiselect').first().click() // Extra select in extras tab
+    cy.get('.multiselect__content-wrapper').should('be.visible')
+    cy.get('.multiselect__option').contains('Ajuste de archivos para impresión').click({ force: true })
+    cy.get('.extras-tab .btn-primary').should('not.be.disabled').click();
+    cy.wait(1000)
+    
+    cy.get('.multiselect').first().click() // Extra select in extras tab
+    cy.get('.multiselect__content-wrapper').should('be.visible')
+    cy.get('.multiselect__option').contains('Prueba de color digital (matchprint)').click({ force: true })
+    cy.get('.extras-tab .btn-primary').should('not.be.disabled').click();
     cy.wait(1000)
 
     // Define expected values with correct format (using , for thousands and . for decimals)
+    // Based on our validated test case: 4000 pieces of 32x22 cm with real prices
     const expectedValues = {
-      materialsCost: '$582.75',
-      processesCost: '$31,500.00',
-      extrasCost: '$2,000.00',
-      subtotal: '$34,082.75',
-      wasteValue: '$1,704.14',
-      subtotalWithWaste: '$35,786.89',
-      pricePerPieceBeforeMargin: '$11.93',
-      marginValue: '$3,578.69',
-      totalPrice: '$39,365.58',
-      finalPricePerPiece: '$13.12'
+      materialsCost: '$8,250.00',
+      processesCost: '$5,520.00',
+      extrasCost: '$1,000.00',
+      subtotal: '$14,770.00',
+      wasteValue: '$738.50',
+      subtotalWithWaste: '$15,508.50',
+      pricePerPieceBeforeMargin: '$3.88',
+      marginValue: '$2,326.28',
+      totalPrice: '$17,834.78',
+      finalPricePerPiece: '$4.46'
     };
 
     // Helper function to verify price value with better error message
@@ -148,7 +216,7 @@ describe('Product Creation', () => {
     
     // Verify the product was created and we're on the products page
     cy.url().should('include', '/products')
-    cy.contains('Test Product').should('be.visible')
+    cy.contains('Tarjetas de presentación premium').should('be.visible')
   })
 
   // it('should show validation errors for invalid input', () => {

@@ -500,6 +500,7 @@ export default {
         }
         
         const selectedMaterial = this.selectedMaterialId;
+        // Always use materialInstanceId if available, otherwise fall back to id
         const materialId = selectedMaterial.materialInstanceId || selectedMaterial.id;
         const materialDescription = selectedMaterial.displayName || selectedMaterial.description;
         const materialSheets = selectedMaterial.totalSheets;
@@ -543,7 +544,6 @@ export default {
       if (updated[materialId].length === 0) delete updated[materialId];
       this.$emit('update:product-processes-by-material', updated);
       this.$emit('update:processes-cost', this.totalCost - (parseFloat(removed.price) || 0));
-      window.showSuccess(`Proceso "${removed.description}" eliminado exitosamente`);
     },
     updateProcessField(materialId, index, field, value) {
       const updated = { ...this.productProcessesByMaterial };
@@ -570,11 +570,9 @@ export default {
       this.$emit('update:product-processes-by-material', updated);
       const newTotalCost = Object.values(updated).flat().reduce((sum, p) => sum + (parseFloat(p.price) || 0), 0);
       this.$emit('update:processes-cost', newTotalCost);
-      window.showInfo(`Campo actualizado para proceso "${process.description}"`);
     },
     updateGlobalComments() {
       this.$emit('update:comments', this.globalComments);
-      window.showInfo('Comentarios de procesos actualizados');
     },
     onProcessSelect(selectedOption) {
       if (!selectedOption) {
@@ -748,31 +746,10 @@ export default {
     }
   },
   watch: {
-    productQuantity() {
-      this.updateProcessCalculations();
-    },
-    totalSheets() {
-      this.updateProcessCalculations();
-    },
-    totalSquareMeters() {
-      this.updateProcessCalculations();
-    },
     productMaterials: {
       handler(newMaterials) {
         // Ensure material instance IDs are set for all materials
         this.ensureMaterialInstanceIds();
-        // Update process calculations when material properties change
-        this.updateProcessCalculations();
-      },
-      deep: true
-    },
-    productProcessesByMaterial: {
-      handler(newProcesses) {
-        const allProcesses = Object.values(newProcesses).flat();
-        const needsRecalculation = allProcesses.some(process => process._needsRecalculation);
-        if (needsRecalculation) {
-          this.updateProcessCalculations();
-        }
       },
       deep: true
     },
@@ -801,16 +778,13 @@ export default {
     // Ensure material instance IDs are set for all materials
     this.ensureMaterialInstanceIds();
 
-    // Emit initial processes cost when component mounts
-    const initialCost = Object.values(this.productProcessesByMaterial).flat().reduce((sum, process) => {
-      return sum + (parseFloat(process.price) || 0);
-    }, 0);
-    
-    this.$emit('update:processes-cost', initialCost);
-    
-    // Show info notification if there are existing processes
+    // Only emit initial processes cost if there are actual processes
     if (Object.keys(this.productProcessesByMaterial).length > 0) {
-      window.showInfo(`${Object.values(this.productProcessesByMaterial).flat().length} proceso(s) cargado(s) - Total: ${this.formatCurrency(initialCost)}`);
+      const initialCost = Object.values(this.productProcessesByMaterial).flat().reduce((sum, process) => {
+        return sum + (parseFloat(process.price) || 0);
+      }, 0);
+      
+      this.$emit('update:processes-cost', initialCost);
     }
   },
   beforeUnmount() {

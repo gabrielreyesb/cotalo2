@@ -324,9 +324,6 @@ export default {
       extra.total = extra.unit_price * extra.quantity;
       this.$emit('update:product-extras', this.productExtras);
       this.$emit('update:extras-cost', this.totalCost);
-      
-      // Show info notification for quantity update
-      window.showInfo(`Cantidad del extra "${extra.name}" actualizada`);
     },
     updateExtraPrice(index) {
       const extra = this.productExtras[index];
@@ -336,9 +333,6 @@ export default {
       extra.total = extra.unit_price * extra.quantity;
       this.$emit('update:product-extras', this.productExtras);
       this.$emit('update:extras-cost', this.totalCost);
-      
-      // Show info notification for price update
-      window.showInfo(`Precio del extra "${extra.name}" actualizado`);
     },
     addExtra() {
       if (!this.selectedExtraId) {
@@ -377,15 +371,9 @@ export default {
       const updatedExtras = [...this.productExtras];
       updatedExtras.splice(index, 1);
       this.$emit('update:product-extras', updatedExtras);
-      
-      // Show success notification
-      window.showSuccess(`Extra "${extraToRemove.name}" eliminado exitosamente`);
     },
     updateGlobalComments() {
       this.$emit('update:comments', this.globalComments);
-      
-      // Show info notification for comments update
-      window.showInfo('Comentarios de extras actualizados');
     },
     updateExtrasCalculations() {      
       // For now, just emit the current extras to ensure pricing gets updated
@@ -393,12 +381,6 @@ export default {
     },
     updateIncludeInSubtotal() {
       this.$emit('update:include-extras-in-subtotal', this.includeInSubtotal);
-      
-      // Show info notification for subtotal setting update
-      const message = this.includeInSubtotal 
-        ? 'Extras incluidos en el subtotal' 
-        : 'Extras excluidos del subtotal';
-      window.showInfo(message);
     },
     onExtraSelect(selectedOption) {
       if (!selectedOption) {
@@ -482,13 +464,10 @@ export default {
     // Listen for language changes
     window.addEventListener('languageChanged', this.handleLanguageChange);
     
-    // Emit initial extras cost when component mounts
-    const initialCost = this.productExtras.reduce((sum, extra) => sum + (parseFloat(extra.total) || 0), 0);
-    this.$emit('update:extras-cost', initialCost);
-    
-    // Show info notification if there are existing extras
+    // Only emit initial extras cost if there are actual extras
     if (this.productExtras.length > 0) {
-      window.showInfo(`${this.productExtras.length} extra(s) cargado(s) - Total: ${this.formatCurrency(initialCost)}`);
+      const initialCost = this.productExtras.reduce((sum, extra) => sum + (parseFloat(extra.total) || 0), 0);
+      this.$emit('update:extras-cost', initialCost);
     }
 
     // Initialize _unit_price_edit for each extra

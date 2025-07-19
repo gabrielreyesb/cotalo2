@@ -70,10 +70,12 @@
                       :width-margin="userConfig.width_margin"
                       :length-margin="userConfig.length_margin"
                       :translations="translations"
+                      :product-processes-by-material="productProcessesByMaterial"
                       @update:product-materials="updateMaterials"
                       @update:comments="updateMaterialsComments"
                       @update:materials-cost="updateMaterialsCost"
                       @material-calculation-changed="handleMaterialCalculationChanged"
+                      @remove-material-with-processes="handleRemoveMaterialWithProcesses"
                     />
                   </div>
                   
@@ -203,6 +205,14 @@ export default {
       translations: JSON.parse(document.getElementById('product-form-app').dataset.translations),
       manualMarginOverride: false,
       productProcessesByMaterial: {},
+      // Recalculation queue system
+      recalculationQueue: {
+        materials: false,
+        processes: false,
+        extras: false,
+        pricing: false
+      },
+      isRecalculating: false,
     };
   },
   computed: {
@@ -212,6 +222,96 @@ export default {
     }
   },
   methods: {
+    // Central recalculation system
+    markForRecalculation(type) {
+      this.recalculationQueue[type] = true;
+      this.executeRecalculations();
+    },
+    
+    async executeRecalculations() {
+      if (this.isRecalculating) {
+        return;
+      }
+      
+      this.isRecalculating = true;
+      
+      try {
+        // Order: Materials → Processes → Extras → Pricing
+        if (this.recalculationQueue.materials) {
+          await this.recalculateMaterials();
+          this.recalculationQueue.processes = true; // Materials changed → processes must recalculate
+        }
+        
+        if (this.recalculationQueue.processes) {
+          await this.recalculateProcesses();
+        }
+        
+        if (this.recalculationQueue.extras) {
+          await this.recalculateExtras();
+        }
+        
+        if (this.recalculationQueue.pricing) {
+          await this.recalculatePricing();
+        }
+        
+        // Reset queue
+        this.recalculationQueue = { materials: false, processes: false, extras: false, pricing: false };
+      } catch (error) {
+        console.error(`❌ [RECALC] Error during recalculation:`, error);
+        window.showError('Error en el recálculo. Por favor, verifica los datos e intenta de nuevo.');
+        // Reset queue on error
+        this.recalculationQueue = { materials: false, processes: false, extras: false, pricing: false };
+      } finally {
+        this.isRecalculating = false;
+      }
+    },
+    
+    async recalculateMaterials() {
+      if (!this.product?.data?.materials?.length) {
+        return;
+      }
+      
+      const updatedMaterials = this.product.data.materials.map(material => ({
+        ...material,
+        _needsRecalculation: true
+      }));
+      
+      await this.updateMaterials(updatedMaterials);
+    },
+    
+    async recalculateProcesses() {
+      // Get all processes from the grouped structure
+      const allProcesses = Object.values(this.productProcessesByMaterial).flat();
+      
+      if (!allProcesses.length) {
+        return;
+      }
+      
+      const updatedProcesses = allProcesses.map(process => ({
+        ...process,
+        _needsRecalculation: true
+      }));
+      
+      await this.updateProcesses(updatedProcesses);
+    },
+    
+    async recalculateExtras() {
+      if (!this.product?.data?.extras?.length) {
+        return;
+      }
+      
+      const updatedExtras = this.product.data.extras.map(extra => ({
+        ...extra,
+        _needsRecalculation: true
+      }));
+      
+      await this.updateExtras(updatedExtras);
+    },
+    
+    async recalculatePricing() {
+      await this.ensurePricingUpdated();
+    },
+    
     async setActiveTab(tab) {
       if (event.target.closest('.product-form-container')) {
         event.preventDefault();
@@ -221,8 +321,8 @@ export default {
         this.activeTab = tab;
         
         if (tab === 'pricing') {
+          // Only ensure pricing is up to date, don't trigger recalculation
           await this.ensurePricingUpdated();
-          this.recalculatePricing();
           this.suggestedMargin = await this.calculateSuggestedMargin();
           this.$nextTick(() => {
             this.$forceUpdate();
@@ -402,7 +502,7 @@ export default {
         // Wait for a short duration to allow the user to see the toast notification
         setTimeout(() => {
           window.location.href = '/products';
-        }, 3000); // 3 second delay
+        }, 1500); // 1.5 second delay
 
       } catch (error) {
         console.error('Error creating product:', error);
@@ -423,10 +523,11 @@ export default {
         const newWidth = updatePayload.data?.general_info?.width;
         const newLength = updatePayload.data?.general_info?.length;
 
-        // Only consider it changed if the new value is defined and different
-        const quantityChanged = newQuantity !== undefined && oldQuantity !== newQuantity;
-        const widthChanged = newWidth !== undefined && oldWidth !== newWidth;
-        const lengthChanged = newLength !== undefined && oldLength !== newLength;
+        // Only consider it changed if the new value is defined, not null, and different from old value
+        // Also handle the case where old value might be undefined but new value is null (no real change)
+        const quantityChanged = newQuantity !== undefined && newQuantity !== null && oldQuantity !== newQuantity;
+        const widthChanged = newWidth !== undefined && newWidth !== null && oldWidth !== newWidth;
+        const lengthChanged = newLength !== undefined && newLength !== null && oldLength !== newLength;
 
         // Simplified State Merge
         if (updatePayload.description !== undefined) {
@@ -446,28 +547,8 @@ export default {
         
         // If quantity, width, or length changed, trigger recalculations
         if (quantityChanged || widthChanged || lengthChanged) {
-          if (this.product.data.materials && this.product.data.materials.length > 0) {
-            const updatedMaterials = this.product.data.materials.map(material => ({
-              ...material,
-              _needsRecalculation: true
-            }));
-            this.updateMaterials(updatedMaterials);
-          }
-          if (this.product.data.processes && this.product.data.processes.length > 0) {
-            const updatedProcesses = this.product.data.processes.map(process => ({
-              ...process,
-              _needsRecalculation: true
-            }));
-            this.updateProcesses(updatedProcesses);
-          }
-          if (this.product.data.extras && this.product.data.extras.length > 0) {
-            const updatedExtras = this.product.data.extras.map(extra => ({
-              ...extra,
-              _needsRecalculation: true
-            }));
-            this.updateExtras(updatedExtras);
-          }
-          this.ensurePricingUpdated();
+          // Use the new centralized recalculation system
+          this.markForRecalculation('materials');
         }
         
       } catch (error) {
@@ -582,10 +663,8 @@ export default {
       const needsRecalculation = processes.some(process => process._needsRecalculation);
       
       if (needsRecalculation) {
-        // Get the current quantity and calculate sheets/square meters
+        // Get the current quantity
         const productQuantity = this.product.data.general_info?.quantity || 1;
-        const totalSheets = this.calculateTotalSheets();
-        const totalSquareMeters = this.calculateTotalSquareMeters();
                 
         // Manually calculate each process's price based on current values
         processes = processes.map(process => {
@@ -595,13 +674,25 @@ export default {
           const basePrice = parseFloat(process.unitPrice) || 0;
           let calculatedPrice = basePrice;
           
+          // Find the material this process belongs to
+          const materialId = process.materialId;
+          let material = null;
+          
+          if (materialId && materialId !== 'product') {
+            // Find material by materialInstanceId first, then by id
+            material = this.product.data.materials.find(m => m.materialInstanceId === materialId);
+            if (!material) {
+              material = this.product.data.materials.find(m => m.id == materialId);
+            }
+          }
+          
           // Recalculate price based on unit type
           if (process.unit === 'pieza') {
             calculatedPrice = basePrice * productQuantity;
           } else if (process.unit === 'pliego') {
-            calculatedPrice = basePrice * totalSheets;
+            calculatedPrice = basePrice * (material ? material.totalSheets || 0 : 0);
           } else if (process.unit === 'mt2') {
-            calculatedPrice = basePrice * totalSquareMeters;
+            calculatedPrice = basePrice * (material ? material.totalSquareMeters || 0 : 0);
           }
           
           return {
@@ -612,8 +703,9 @@ export default {
         });
       }
       
-      // Update local processes data
+      // Update both the flat array and the grouped structure
       this.product.data.processes = processes;
+      this.productProcessesByMaterial = this.groupProcessesByMaterial(processes);
       
       // Calculate the total cost of processes
       const processesCost = processes.reduce((sum, process) => sum + (parseFloat(process.price) || 0), 0);
@@ -650,8 +742,8 @@ export default {
       // Update extras cost in pricing
       this.product.data.pricing.extras_cost = extrasCost;
       
-      // Update pricing with new calculations
-      await this.ensurePricingUpdated();
+      // Use the new centralized recalculation system
+      this.markForRecalculation('pricing');
     },
     async fetchAvailableExtras() {
       try {
@@ -721,8 +813,8 @@ export default {
       // Update pricing data
       this.product.data.pricing.materials_cost = cost;
       
-      // Recalculate pricing
-      this.recalculatePricing();
+      // Use the new centralized recalculation system
+      this.markForRecalculation('pricing');
     },
     updateProcessesCost(cost) {
       if (!this.product || !this.product.data) return;
@@ -732,12 +824,11 @@ export default {
         this.product.data.pricing = { ...this.defaultPricing };
       }
       
-      // Update pricing data with the passed cost value (not recalculating)
+      // Update pricing data with the passed cost value
       this.product.data.pricing.processes_cost = parseFloat(cost) || 0;
       
-      // Recalculate total pricing
-      this.recalculatePricing();
-      
+      // Use the new centralized recalculation system
+      this.markForRecalculation('pricing');
     },
     calculateTotalSheets() {
       // Calculate the total number of sheets needed based on materials
@@ -991,7 +1082,7 @@ export default {
         // Wait for a short duration to allow the user to see the toast notification
         setTimeout(() => {
           window.location.href = '/products';
-        }, 3000); // 3 second delay
+        }, 1500); // 1.5 second delay
 
       } catch (error) {
         console.error(`Error ${this.isNew ? 'creating' : 'updating'} product:`, error);
@@ -1108,20 +1199,58 @@ export default {
         };
       }
       
-      if (eventData.materialId === this.product.data.selected_material_id && this.product.data.processes && this.product.data.processes.length > 0) {
-        const processesNeedingRecalculation = this.product.data.processes.map(process => {
-          return {
-            ...process,
-            _needsRecalculation: true
-          };
-        });
-        
-        this.updateProcesses(processesNeedingRecalculation);
+      // Use the new centralized recalculation system
+      this.markForRecalculation('processes');
+    },
+    
+    handleRemoveMaterialWithProcesses(data) {
+      const { materialId, materialIndex, processesToRemove } = data;
+      
+      // Remove the material
+      this.product.data.materials.splice(materialIndex, 1);
+      
+      // Remove processes for this material
+      const updatedProcessesByMaterial = { ...this.productProcessesByMaterial };
+      
+      // Find and remove the correct key from productProcessesByMaterial
+      let keyToRemove = null;
+      
+      // First, try to find by exact match
+      for (const key in updatedProcessesByMaterial) {
+        if (key === materialId || key === String(materialId) || key === Number(materialId)) {
+          keyToRemove = key;
+          break;
+        }
       }
       
-      if (eventData.needsPricingRecalculation) {
-        this.recalculatePricing();
+      // If not found by exact match, try to find by base material ID
+      if (!keyToRemove) {
+        // Extract base material ID from materialInstanceId (e.g., "371_1" -> "371")
+        const baseMaterialId = materialId.toString().split('_')[0];
+        
+        for (const key in updatedProcessesByMaterial) {
+          if (key === baseMaterialId || key.startsWith(baseMaterialId + '_')) {
+            keyToRemove = key;
+            break;
+          }
+        }
       }
+      
+      if (keyToRemove) {
+        delete updatedProcessesByMaterial[keyToRemove];
+      }
+      
+      this.productProcessesByMaterial = updatedProcessesByMaterial;
+      
+      // Update the flat processes array
+      this.convertGroupedProcessesToFlat();
+      
+      // Emit updates
+      this.$emit('update:product-materials', this.product.data.materials);
+      this.$emit('update:materials-cost', this.calculateMaterialsCost());
+      
+      // Trigger recalculation
+      this.markForRecalculation('processes');
     },
     
     handlePricingUpdate(updatedPricing) {
@@ -1234,6 +1363,11 @@ export default {
       }
       
       this.product.data.processes = flatProcesses;
+    },
+    
+    calculateMaterialsCost() {
+      if (!this.product?.data?.materials) return 0;
+      return this.product.data.materials.reduce((sum, material) => sum + (parseFloat(material.totalPrice) || 0), 0);
     },
   },
   // Add the created hook to initialize the component

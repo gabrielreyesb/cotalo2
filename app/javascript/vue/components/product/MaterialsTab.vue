@@ -410,7 +410,8 @@ export default {
     'update:product-materials': null,
     'update:comments': null,
     'update:materials-cost': null,
-    'material-calculation-changed': null
+    'material-calculation-changed': null,
+    'remove-material-with-processes': null
   },
   props: {
     productMaterials: {
@@ -448,6 +449,10 @@ export default {
     translations: {
       type: Object,
       required: true
+    },
+    productProcessesByMaterial: {
+      type: Object,
+      default: () => ({})
     }
   },
   data() {
@@ -790,20 +795,66 @@ export default {
       );
     },
     removeMaterial(index) {
-      const removedMaterial = this.productMaterials[index];
-      this.productMaterials.splice(index, 1);
+      const materialToRemove = this.productMaterials[index];
       
-      // Emit updates in the correct order
-      this.$emit('update:product-materials', this.productMaterials);
-      this.$emit('update:materials-cost', this.totalCost);
-      this.$emit('material-calculation-changed', {
-        materialId: removedMaterial.id,
-        totalSheets: 0,
-        totalSquareMeters: 0,
-        totalPrice: 0,
-        needsProcessRecalculation: true,
-        needsPricingRecalculation: true
-      });
+      // Check if this material has processes assigned
+      const materialId = materialToRemove.materialInstanceId || materialToRemove.id;
+      
+      // Try to find processes for this material with different ID formats
+      let processesForMaterial = this.productProcessesByMaterial[materialId] || [];
+      
+      // If not found, try with string conversion
+      if (processesForMaterial.length === 0) {
+        processesForMaterial = this.productProcessesByMaterial[String(materialId)] || [];
+      }
+      
+      // If still not found, try with number conversion
+      if (processesForMaterial.length === 0) {
+        processesForMaterial = this.productProcessesByMaterial[Number(materialId)] || [];
+      }
+      
+      // If still not found, search through all keys to find a match by base ID
+      if (processesForMaterial.length === 0) {
+        const baseMaterialId = materialToRemove.id; // The original material ID without instance number
+        for (const key in this.productProcessesByMaterial) {
+          // Check if the key starts with the base material ID (for instance IDs like "371_1", "371_2")
+          if (key.startsWith(baseMaterialId + '_') || key == baseMaterialId) {
+            processesForMaterial = this.productProcessesByMaterial[key];
+            break;
+          }
+        }
+      }
+      
+      if (processesForMaterial.length > 0) {
+        // Show confirmation dialog
+        const confirmMessage = `El material "${materialToRemove.displayName || materialToRemove.description}" tiene ${processesForMaterial.length} proceso(s) asignado(s).\n\n¿Deseas eliminar el material y todos sus procesos asociados?`;
+        
+        if (!confirm(confirmMessage)) {
+          return; // User cancelled
+        }
+        
+        // Emit event to remove processes for this material
+        this.$emit('remove-material-with-processes', {
+          materialId: materialId,
+          materialIndex: index,
+          processesToRemove: processesForMaterial
+        });
+      } else {
+        // No processes assigned, proceed with normal removal
+        this.productMaterials.splice(index, 1);
+        
+        // Emit updates in the correct order
+        this.$emit('update:product-materials', this.productMaterials);
+        this.$emit('update:materials-cost', this.totalCost);
+        this.$emit('material-calculation-changed', {
+          materialId: materialToRemove.id,
+          totalSheets: 0,
+          totalSquareMeters: 0,
+          totalPrice: 0,
+          needsProcessRecalculation: true,
+          needsPricingRecalculation: true
+        });
+      }
     },
     updateGlobalComments() {
       this.$emit('update:comments', this.globalComments);
