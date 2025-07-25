@@ -22,6 +22,7 @@ class Material < ApplicationRecord
 
   # Check if this material uses area-based pricing (m²)
   def area_based_pricing?
-    unit&.name&.downcase&.include?('m2') || unit&.abbreviation&.downcase&.include?('m2')
+    unit&.name&.downcase&.include?('m2') || unit&.name&.downcase&.include?('mt2') || 
+    unit&.abbreviation&.downcase&.include?('m2') || unit&.abbreviation&.downcase&.include?('mt2')
   end
 end
