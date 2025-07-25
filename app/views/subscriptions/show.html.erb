@@ -2,74 +2,65 @@
   Mi Suscripción
 <% end %>
 
-<div class="container mt-5" style="max-width: 900px;">
+<div class="container-fluid mt-5" style="max-width: 1400px;">
   <div class="row g-4">
-    <!-- Subscription Details -->
-    <div class="col-md-8">
+    <!-- User Information -->
+    <div class="col-lg-8">
       <div class="green-accent-panel">
         <div class="card shadow-sm">
-          <div class="card-header">
-            <h3 class="mb-0">Detalles de la Suscripción</h3>
+          <div class="card-header bg-gradient-success">
+            <h3 class="mb-0 text-white">
+              <i class="fas fa-user-circle me-2"></i>
+              Información del Usuario
+            </h3>
           </div>
           <div class="card-body">
-            <% if current_user.active_subscription? %>
-              <div class="alert alert-success">
-                <h5 class="alert-heading">
-                  <i class="fas fa-check-circle me-2"></i>
-                  Suscripción Activa
-                </h5>
-                <p class="mb-0">Tu suscripción está activa y tienes acceso completo a Cotalo.</p>
-              </div>
-            <% elsif current_user.subscription_status == 'past_due' %>
-              <div class="alert alert-warning">
-                <h5 class="alert-heading">
-                  <i class="fas fa-exclamation-triangle me-2"></i>
-                  Pago Pendiente
-                </h5>
-                <p class="mb-0">Tu último pago no pudo ser procesado. Por favor, actualiza tu información de pago.</p>
-              </div>
-            <% elsif current_user.subscription_status == 'canceled' %>
-              <div class="alert alert-info">
-                <h5 class="alert-heading">
-                  <i class="fas fa-info-circle me-2"></i>
-                  Suscripción Cancelada
-                </h5>
-                <p class="mb-0">Tu suscripción ha sido cancelada pero aún tienes acceso hasta el final del período actual.</p>
-              </div>
-            <% end %>
-
             <div class="row">
               <div class="col-md-6">
-                <h6>Estado de la Suscripción</h6>
-                <p class="text-muted"><%= current_user.subscription_status.humanize %></p>
+                <div class="info-item">
+                  <div class="info-label">
+                    <i class="fas fa-user me-2 text-success"></i>
+                    <strong>Usuario</strong>
+                  </div>
+                  <div class="info-value">
+                    <%= current_user.email.split('@').first %>
+                  </div>
+                </div>
               </div>
               <div class="col-md-6">
-                <h6>Plan</h6>
-                <p class="text-muted">Cotalo Anual - $3,000 MXN/año</p>
+                <div class="info-item">
+                  <div class="info-label">
+                    <i class="fas fa-envelope me-2 text-success"></i>
+                    <strong>Correo Electrónico</strong>
+                  </div>
+                  <div class="info-value">
+                    <%= current_user.email %>
+                  </div>
+                </div>
               </div>
             </div>
-
-            <% if current_user.subscription_ends_at.present? %>
-              <div class="row">
-                <div class="col-md-6">
-                  <h6>Próxima Renovación</h6>
-                  <p class="text-muted"><%= l(current_user.subscription_ends_at, format: :long) %></p>
-                </div>
-                <div class="col-md-6">
-                  <h6>Días Restantes</h6>
-                  <p class="text-muted"><%= current_user.subscription_days_remaining %> días</p>
-                </div>
-              </div>
-            <% end %>
-
             <div class="row">
               <div class="col-md-6">
-                <h6>ID de Cliente</h6>
-                <p class="text-muted"><%= current_user.stripe_customer_id %></p>
+                <div class="info-item">
+                  <div class="info-label">
+                    <i class="fas fa-calendar-plus me-2 text-success"></i>
+                    <strong>Fecha de Registro</strong>
+                  </div>
+                  <div class="info-value">
+                    <%= current_user.created_at ? current_user.created_at.strftime("%d/%m/%Y") : 'No disponible' %>
+                  </div>
+                </div>
               </div>
               <div class="col-md-6">
-                <h6>ID de Suscripción</h6>
-                <p class="text-muted"><%= current_user.stripe_subscription_id %></p>
+                <div class="info-item">
+                  <div class="info-label">
+                    <i class="fas fa-calendar-check me-2 text-success"></i>
+                    <strong>Fecha de Suscripción</strong>
+                  </div>
+                  <div class="info-value">
+                    <%= current_user.subscription_ends_at ? current_user.subscription_ends_at.strftime("%d/%m/%Y") : 'No disponible' %>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -78,66 +69,143 @@
     </div>
 
     <!-- Subscription Actions -->
-    <div class="col-md-4">
+    <div class="col-lg-4">
       <div class="green-accent-panel">
         <div class="card shadow-sm">
-          <div class="card-header">
-            <h5 class="mb-0">Acciones</h5>
+          <div class="card-header bg-gradient-success">
+            <h5 class="mb-0 text-white">
+              <i class="fas fa-cogs me-2"></i>
+              Administrar Suscripción
+            </h5>
           </div>
           <div class="card-body">
             <% if current_user.subscription_status == 'past_due' %>
               <%= link_to subscription_path(action_type: 'update_payment'), 
                   method: :patch, 
-                  class: 'btn btn-warning w-100 mb-3' do %>
+                  class: 'btn btn-warning w-100 mb-3 shadow-sm' do %>
                 <i class="fas fa-credit-card me-2"></i>
-                Actualizar Método de Pago
+                <strong>Actualizar Tarjeta de Crédito</strong>
               <% end %>
             <% end %>
 
             <% if current_user.subscription_status == 'canceled' %>
               <%= link_to subscription_path(action_type: 'reactivate'), 
                   method: :patch, 
-                  class: 'btn btn-success w-100 mb-3',
+                  class: 'btn btn-success w-100 mb-3 shadow-sm',
                   data: { confirm: '¿Estás seguro de que quieres reactivar tu suscripción?' } do %>
                 <i class="fas fa-play me-2"></i>
-                Reactivar Suscripción
+                <strong>Reactivar Suscripción</strong>
               <% end %>
             <% end %>
 
             <% if current_user.active_subscription? %>
               <%= link_to subscription_path(action_type: 'update_payment'), 
                   method: :patch, 
-                  class: 'btn btn-outline-primary w-100 mb-3' do %>
-                <i class="fas fa-edit me-2"></i>
-                Actualizar Método de Pago
+                  class: 'btn btn-outline-success w-100 mb-3 shadow-sm' do %>
+                <i class="fas fa-credit-card me-2"></i>
+                <strong>Cambiar Tarjeta de Crédito</strong>
               <% end %>
 
               <%= link_to subscription_path, 
                   method: :delete, 
-                  class: 'btn btn-outline-danger w-100',
+                  class: 'btn btn-outline-danger w-100 shadow-sm',
                   data: { confirm: '¿Estás seguro de que quieres cancelar tu suscripción? Podrás seguir usando Cotalo hasta el final del período actual.' } do %>
                 <i class="fas fa-times me-2"></i>
-                Cancelar Suscripción
+                <strong>Cancelar Suscripción</strong>
+              <% end %>
+            <% end %>
+
+            <% if current_user.trial? %>
+              <%= link_to new_subscription_path, class: 'btn btn-success w-100 shadow-sm' do %>
+                <i class="fas fa-credit-card me-2"></i>
+                <strong>Suscribirse Ahora</strong>
               <% end %>
             <% end %>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Support Information -->
-      <div class="green-accent-panel mt-4">
+    <!-- Subscription Details -->
+    <div class="col-12">
+      <div class="green-accent-panel">
         <div class="card shadow-sm">
-          <div class="card-header">
-            <h5 class="mb-0">Soporte</h5>
+          <div class="card-header bg-gradient-success">
+            <h3 class="mb-0 text-white">
+              <i class="fas fa-credit-card me-2"></i>
+              Detalles de la Suscripción
+            </h3>
           </div>
           <div class="card-body">
-            <p class="small text-muted">
-              Si tienes alguna pregunta sobre tu suscripción, contáctanos:
-            </p>
-            <ul class="list-unstyled small text-muted">
-              <li><i class="fas fa-envelope me-2"></i>soporte@cotalo.com</li>
-              <li><i class="fas fa-clock me-2"></i>Respuesta en 48 horas hábiles</li>
-            </ul>
+            <div class="row">
+              <div class="col-lg-3 col-md-6">
+                <div class="info-item">
+                  <div class="info-label">
+                    <i class="fas fa-shield-alt me-2 text-success"></i>
+                    <strong>Estado de la Suscripción</strong>
+                  </div>
+                  <div class="info-value">
+                    <% case current_user.subscription_status %>
+                    <% when 'trial' %>
+                      <span class="badge bg-info">Período de Prueba</span>
+                    <% when 'active' %>
+                      <span class="badge bg-success">Activa</span>
+                    <% when 'past_due' %>
+                      <span class="badge bg-warning">Pago Pendiente</span>
+                    <% when 'canceled' %>
+                      <span class="badge bg-secondary">Cancelada</span>
+                    <% when 'expired' %>
+                      <span class="badge bg-danger">Expirada</span>
+                    <% else %>
+                      <span class="badge bg-secondary"><%= current_user.subscription_status || 'No disponible' %></span>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-3 col-md-6">
+                <div class="info-item">
+                  <div class="info-label">
+                    <i class="fas fa-crown me-2 text-warning"></i>
+                    <strong>Plan</strong>
+                  </div>
+                  <div class="info-value">
+                    <% if current_user.subscription_plan %>
+                      <span class="badge bg-primary"><%= current_user.subscription_plan == ENV['STRIPE_PRICE_ID'] ? 'Cotalo Anual - $3,000 MXN/año' : current_user.subscription_plan %></span>
+                    <% else %>
+                      <span class="badge bg-info">Período de Prueba</span>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-3 col-md-6">
+                <div class="info-item">
+                  <div class="info-label">
+                    <i class="fas fa-calendar-alt me-2 text-success"></i>
+                    <strong>Próxima Renovación</strong>
+                  </div>
+                  <div class="info-value">
+                    <%= current_user.subscription_ends_at ? current_user.subscription_ends_at.strftime("%d/%m/%Y") : 'No disponible' %>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-3 col-md-6">
+                <div class="info-item">
+                  <div class="info-label">
+                    <i class="fas fa-hourglass-half me-2 text-warning"></i>
+                    <strong>Días Restantes</strong>
+                  </div>
+                  <div class="info-value">
+                    <% if current_user.subscription_ends_at.present? %>
+                      <span class="badge bg-warning text-dark"><%= current_user.subscription_days_remaining %> días</span>
+                    <% elsif current_user.trial_ends_at.present? %>
+                      <span class="badge bg-warning text-dark"><%= current_user.trial_days_remaining %> días</span>
+                    <% else %>
+                      <span class="badge bg-secondary">No disponible</span>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

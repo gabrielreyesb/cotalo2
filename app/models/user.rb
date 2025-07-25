@@ -97,30 +97,8 @@ class User < ApplicationRecord
   end
 
   def subscription_active?
-    # Temporarily frozen - all users have access without restrictions
+    # Temporarily disabled - all users have unlimited access
     true
-  end
-
-  def trial_days_remaining
-    # Temporarily frozen - always show unlimited trial days
-    return 999 unless trial?
-    return 999 if trial_ends_at.nil?
-    [(trial_ends_at - Time.current).to_i / 1.day, 0].max
-  end
-
-  def subscription_days_remaining
-    # Temporarily frozen - always show unlimited subscription days
-    return 999 unless active_subscription?
-    return 999 if subscription_ends_at.nil?
-    [(subscription_ends_at - Time.current).to_i / 1.day, 0].max
-  end
-
-  def trial_percentage_completed
-    return 0 unless trial?
-    return 0 if trial_ends_at.nil?
-    total_days = TRIAL_PERIOD_DAYS
-    days_used = total_days - trial_days_remaining
-    (days_used.to_f / total_days * 100).round(2)
   end
 
   def setup_trial_period

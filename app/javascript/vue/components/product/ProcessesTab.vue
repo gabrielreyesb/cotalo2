@@ -848,15 +848,15 @@ export default {
 }
 
 /* Override for disabled vue-multiselect in dark theme to match enabled style exactly */
-::v-deep .multiselect--disabled .multiselect__tags {
+:deep(.multiselect--disabled .multiselect__tags) {
   border: 1px solid #495057 !important;
   border-radius: 4px !important;
   background: #2c3136 !important;
   color: #aaa !important;
   cursor: not-allowed;
 }
-::v-deep .multiselect--disabled .multiselect__select,
-::v-deep .multiselect--disabled .multiselect__single {
+:deep(.multiselect--disabled .multiselect__select),
+:deep(.multiselect--disabled .multiselect__single) {
   background: #2c3136 !important;
   color: #aaa !important;
   cursor: not-allowed;

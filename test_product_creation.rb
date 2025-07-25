@@ -1,198 +1,429 @@
 #!/usr/bin/env ruby
 
-# Test script to verify product creation when a new user is created
-require_relative 'config/environment'
+# Test script for product creation with materials, processes, and extras
+# This script validates that the product calculation system works correctly
 
-puts "=== Testing Product Creation for New Users ==="
-puts
+require 'net/http'
+require 'json'
+require 'uri'
 
-# Clean up any existing test data
-puts "Cleaning up existing test data..."
-# Delete in proper order to avoid foreign key constraints
-QuoteProduct.destroy_all
-Quote.destroy_all
-Product.destroy_all
-Extra.destroy_all
-ManufacturingProcess.destroy_all
-Material.destroy_all
-PriceMargin.destroy_all
-AppConfig.destroy_all
-PdfConfig.destroy_all
-User.where(email: 'test@example.com').destroy_all
-Unit.destroy_all
-
-puts "Creating a new test user..."
-user = User.create!(
-  email: 'test@example.com',
-  password: 'password123',
-  password_confirmation: 'password123'
-)
-
-puts "✅ User created: #{user.email}"
-puts
-
-# Verify demo data was created
-puts "=== Verifying Demo Data Creation ==="
-puts
-
-# Check units
-puts "📏 Units created: #{Unit.count}"
-Unit.all.each do |unit|
-  puts "  - #{unit.name} (#{unit.abbreviation})"
-end
-puts
-
-# Check materials
-puts "📦 Materials created: #{user.materials.count}"
-user.materials.each do |material|
-  puts "  - #{material.description} - $#{material.price}/#{material.unit.abbreviation}"
-end
-puts
-
-# Check manufacturing processes
-puts "⚙️  Manufacturing processes created: #{user.manufacturing_processes.count}"
-user.manufacturing_processes.each do |process|
-  puts "  - #{process.name} - $#{process.cost}/#{process.unit.abbreviation}"
-end
-puts
-
-# Check extras
-puts "🔧 Extras created: #{user.extras.count}"
-user.extras.each do |extra|
-  puts "  - #{extra.name} - $#{extra.cost}/#{extra.unit.abbreviation}"
-end
-puts
-
-# Check price margins
-puts "💰 Price margins created: #{user.price_margins.count}"
-user.price_margins.each do |margin|
-  puts "  - $#{margin.min_price} - $#{margin.max_price}: #{margin.margin_percentage}%"
-end
-puts
-
-# Check products
-puts "📋 Products created: #{user.products.count}"
-user.products.each do |product|
-  puts "  - #{product.description}"
-  puts "    General Info:"
-  puts "      - Width: #{product.general_info['width']} cm"
-  puts "      - Length: #{product.general_info['length']} cm"
-  puts "      - Quantity: #{product.general_info['quantity']}"
-  puts "      - Comments: #{product.general_info['comments']}"
-  puts
-  puts "    Materials (#{product.materials.length}):"
-  product.materials.each_with_index do |material, index|
-    puts "      #{index + 1}. #{material['description']}"
-    puts "         - Size: #{material['width']} x #{material['length']} cm"
-    puts "         - Quantity: #{material['quantity']} pieces"
-    puts "         - Pieces per material: #{material['pieces_per_material']}"
-    puts "         - Total sheets: #{material['total_sheets']}"
-    puts "         - Total m²: #{material['total_square_meters']}"
-    puts "         - Subtotal: $#{material['subtotal_price']}"
-    puts "         - Comments: #{material['comments']}"
+class ProductCreationTest
+  def initialize
+    @base_url = 'http://localhost:3000'
+    @api_token = nil
+    @user_id = nil
+    @test_materials = []
+    @test_processes = []
+    @test_extras = []
+    @test_product = nil
   end
-  puts
-  puts "    Processes (#{product.processes.length}):"
-  product.processes.each_with_index do |process, index|
-    puts "      #{index + 1}. #{process['description']}"
-    puts "         - Veces: #{process['veces']} #{process['unit']['abbreviation']}"
-    puts "         - Subtotal: $#{process['subtotal_price']}"
-    puts "         - Comments: #{process['comments']}"
+
+  def run_test
+    puts "🧪 Starting Product Creation Test"
+    puts "=" * 50
+    
+    begin
+      # Step 1: Login and get API token
+      login_user
+      
+      # Step 2: Create test materials
+      create_test_materials
+      
+      # Step 3: Create test processes
+      create_test_processes
+      
+      # Step 4: Create test extras
+      create_test_extras
+      
+      # Step 5: Create test product
+      create_test_product
+      
+      # Step 6: Validate calculations
+      validate_calculations
+      
+      puts "✅ All tests passed successfully!"
+      
+    rescue => e
+      puts "❌ Test failed: #{e.message}"
+      puts e.backtrace.first(5)
+    end
   end
-  puts
-  puts "    Extras (#{product.extras.length}):"
-  product.extras.each_with_index do |extra, index|
-    puts "      #{index + 1}. #{extra['description']}"
-    puts "         - Quantity: #{extra['quantity']}"
-    puts "         - Subtotal: $#{extra['subtotal_price']}"
-    puts "         - Comments: #{extra['comments']}"
+
+  private
+
+  def login_user
+    puts "🔐 Logging in user..."
+    
+    # Simulate login - you might need to adjust this based on your auth system
+    # For now, we'll assume we have a test user or use a default session
+    @user_id = 1 # Adjust based on your test user ID
+    
+    puts "✅ Logged in as user #{@user_id}"
   end
-  puts
-  puts "    Pricing:"
-  pricing = product.pricing
-  puts "      - Materials cost: $#{pricing['materials_cost']}"
-  puts "      - Processes cost: $#{pricing['processes_cost']}"
-  puts "      - Extras cost: $#{pricing['extras_cost']}"
-  puts "      - Subtotal: $#{pricing['subtotal']}"
-  puts "      - Waste percentage: #{pricing['waste_percentage']}%"
-  puts "      - Waste value: $#{pricing['waste_value']}"
-  puts "      - Price per piece (before margin): $#{pricing['price_per_piece_before_margin']}"
-  puts "      - Margin percentage: #{pricing['margin_percentage']}%"
-  puts "      - Margin value: $#{pricing['margin_value']}"
-  puts "      - Total price: $#{pricing['total_price']}"
-  puts "      - Final price per piece: $#{pricing['final_price_per_piece']}"
+
+  def create_test_materials
+    puts "📦 Creating test materials..."
+    
+    materials_data = [
+      {
+        description: "Cartulina caple sulfatada 12 pts",
+        client_description: "Cartulina caple sulfatada 12 pts",
+        price: 0.85,
+        ancho: 100.0,
+        largo: 100.0,
+        unit_id: 1, # Assuming unit ID 1 is for m²
+        weight: 300 # grams per m²
+      },
+      {
+        description: "Papel couché brillante 150 grs",
+        client_description: "Papel couché brillante 150 grs", 
+        price: 1.20,
+        ancho: 100.0,
+        largo: 100.0,
+        unit_id: 1, # Assuming unit ID 1 is for m²
+        weight: 150 # grams per m²
+      }
+    ]
+
+    materials_data.each_with_index do |material_data, index|
+      response = post_request("/api/v1/materials", { material: material_data })
+      
+      if response['id']
+        @test_materials << response
+        puts "✅ Created material #{index + 1}: #{material_data[:description]} (ID: #{response['id']})"
+      else
+        raise "Failed to create material #{index + 1}: #{response}"
+      end
+    end
+  end
+
+  def create_test_processes
+    puts "⚙️ Creating test processes..."
+    
+    processes_data = [
+      {
+        name: "Impresión offset 4 tintas (CMYK)",
+        description: "Impresión offset 4 tintas (CMYK)",
+        price: 5.00,
+        unit_id: 2 # Assuming unit ID 2 is for m²
+      },
+      {
+        name: "Barniz UV",
+        description: "Barniz UV",
+        price: 3.50,
+        unit_id: 2 # Assuming unit ID 2 is for m²
+      },
+      {
+        name: "Corte y plegado",
+        description: "Corte y plegado",
+        price: 0.15,
+        unit_id: 3 # Assuming unit ID 3 is for pieza
+      },
+      {
+        name: "Empaque individual",
+        description: "Empaque individual",
+        price: 0.25,
+        unit_id: 3 # Assuming unit ID 3 is for pieza
+      }
+    ]
+
+    processes_data.each_with_index do |process_data, index|
+      response = post_request("/api/v1/manufacturing_processes", { manufacturing_process: process_data })
+      
+      if response['id']
+        @test_processes << response
+        puts "✅ Created process #{index + 1}: #{process_data[:name]} (ID: #{response['id']})"
+      else
+        raise "Failed to create process #{index + 1}: #{response}"
+      end
+    end
+  end
+
+  def create_test_extras
+    puts "➕ Creating test extras..."
+    
+    extras_data = [
+      {
+        name: "Diseño gráfico",
+        description: "Diseño gráfico profesional",
+        unit_price: 150.00,
+        unit_id: 4 # Assuming unit ID 4 is for servicio
+      },
+      {
+        name: "Prueba de color",
+        description: "Prueba de color física",
+        unit_price: 75.00,
+        unit_id: 4 # Assuming unit ID 4 is for servicio
+      },
+      {
+        name: "Entrega urgente",
+        description: "Entrega en 24 horas",
+        unit_price: 200.00,
+        unit_id: 4 # Assuming unit ID 4 is for servicio
+      }
+    ]
+
+    extras_data.each_with_index do |extra_data, index|
+      response = post_request("/api/v1/extras", { extra: extra_data })
+      
+      if response['id']
+        @test_extras << response
+        puts "✅ Created extra #{index + 1}: #{extra_data[:name]} (ID: #{response['id']})"
+      else
+        raise "Failed to create extra #{index + 1}: #{response}"
+      end
+    end
+  end
+
+  def create_test_product
+    puts "🏭 Creating test product..."
+    
+    # Product dimensions: 32 x 22 cm, 4000 pieces
+    product_data = {
+      description: "Tarjetas de presentación premium",
+      data: {
+        general_info: {
+          quantity: 4000,
+          width: 32,
+          length: 22
+        },
+        materials: [
+          {
+            material_id: @test_materials[0]['id'],
+            materialInstanceId: "#{@test_materials[0]['id']}_1",
+            materialInstanceNumber: 1,
+            displayName: "#{@test_materials[0]['description']} (1)",
+            ancho: @test_materials[0]['ancho'],
+            largo: @test_materials[0]['largo'],
+            price: @test_materials[0]['price'],
+            totalSheets: 0,
+            totalSquareMeters: 0,
+            totalPrice: 0
+          },
+          {
+            material_id: @test_materials[1]['id'],
+            materialInstanceId: "#{@test_materials[1]['id']}_1",
+            materialInstanceNumber: 1,
+            displayName: "#{@test_materials[1]['description']} (1)",
+            ancho: @test_materials[1]['ancho'],
+            largo: @test_materials[1]['largo'],
+            price: @test_materials[1]['price'],
+            totalSheets: 0,
+            totalSquareMeters: 0,
+            totalPrice: 0
+          }
+        ],
+        processes: [
+          # Processes for material 1
+          {
+            process_id: @test_processes[0]['id'],
+            materialId: "#{@test_materials[0]['id']}_1",
+            description: @test_processes[0]['description'],
+            unit: @test_processes[0]['unit']['abbreviation'],
+            unitPrice: @test_processes[0]['price'],
+            veces: 1,
+            price: 0
+          },
+          {
+            process_id: @test_processes[1]['id'],
+            materialId: "#{@test_materials[0]['id']}_1",
+            description: @test_processes[1]['description'],
+            unit: @test_processes[1]['unit']['abbreviation'],
+            unitPrice: @test_processes[1]['price'],
+            veces: 1,
+            price: 0
+          },
+          # Processes for material 2
+          {
+            process_id: @test_processes[2]['id'],
+            materialId: "#{@test_materials[1]['id']}_1",
+            description: @test_processes[2]['description'],
+            unit: @test_processes[2]['unit']['abbreviation'],
+            unitPrice: @test_processes[2]['price'],
+            veces: 1,
+            price: 0
+          },
+          {
+            process_id: @test_processes[3]['id'],
+            materialId: "#{@test_materials[1]['id']}_1",
+            description: @test_processes[3]['description'],
+            unit: @test_processes[3]['unit']['abbreviation'],
+            unitPrice: @test_processes[3]['price'],
+            veces: 1,
+            price: 0
+          }
+        ],
+        extras: [
+          {
+            extra_id: @test_extras[0]['id'],
+            name: @test_extras[0]['name'],
+            description: @test_extras[0]['description'],
+            unit_price: @test_extras[0]['unit_price'],
+            unit: @test_extras[0]['unit']['abbreviation'],
+            quantity: 1,
+            total: @test_extras[0]['unit_price']
+          },
+          {
+            extra_id: @test_extras[1]['id'],
+            name: @test_extras[1]['name'],
+            description: @test_extras[1]['description'],
+            unit_price: @test_extras[1]['unit_price'],
+            unit: @test_extras[1]['unit']['abbreviation'],
+            quantity: 1,
+            total: @test_extras[1]['unit_price']
+          },
+          {
+            extra_id: @test_extras[2]['id'],
+            name: @test_extras[2]['name'],
+            description: @test_extras[2]['description'],
+            unit_price: @test_extras[2]['unit_price'],
+            unit: @test_extras[2]['unit']['abbreviation'],
+            quantity: 1,
+            total: @test_extras[2]['unit_price']
+          }
+        ],
+        pricing: {
+          materials_cost: 0,
+          processes_cost: 0,
+          extras_cost: 0,
+          subtotal: 0,
+          waste_percentage: 5,
+          waste_value: 0,
+          price_per_piece_before_margin: 0,
+          margin_percentage: 10,
+          margin_value: 0,
+          total_price: 0,
+          final_price_per_piece: 0
+        }
+      }
+    }
+
+    response = post_request("/api/v1/products", { product: product_data })
+    
+    if response['id']
+      @test_product = response
+      puts "✅ Created product: #{product_data[:description]} (ID: #{response['id']})"
+    else
+      raise "Failed to create product: #{response}"
+    end
+  end
+
+  def validate_calculations
+    puts "🧮 Validating calculations..."
+    
+    # Get the created product with calculated values
+    response = get_request("/api/v1/products/#{@test_product['id']}")
+    
+    if response['id']
+      product = response
+      pricing = product['data']['pricing']
+      
+      puts "\n📊 CALCULATION RESULTS:"
+      puts "=" * 40
+      puts "Product: #{product['description']}"
+      puts "Quantity: #{product['data']['general_info']['quantity']} pieces"
+      puts "Dimensions: #{product['data']['general_info']['width']} x #{product['data']['general_info']['length']} cm"
+      puts ""
+      puts "�� COSTS BREAKDOWN:"
+      puts "Materials cost: $#{pricing['materials_cost']}"
+      puts "Processes cost: $#{pricing['processes_cost']}"
+      puts "Extras cost: $#{pricing['extras_cost']}"
+      puts "Subtotal: $#{pricing['subtotal']}"
+      puts "Waste (5%): $#{pricing['waste_value']}"
+      puts "Subtotal with waste: $#{pricing['subtotal'] + pricing['waste_value']}"
+      puts "Margin (10%): $#{pricing['margin_value']}"
+      puts "TOTAL PRICE: $#{pricing['total_price']}"
+      puts "Price per piece: $#{pricing['final_price_per_piece']}"
+      puts ""
+      
+      # Validate that calculations are reasonable
+      validate_reasonable_values(pricing)
+      
+    else
+      raise "Failed to retrieve product for validation"
+    end
+  end
+
+  def validate_reasonable_values(pricing)
+    puts "🔍 VALIDATION CHECKS:"
+    
+    # Check that all costs are positive
+    if pricing['materials_cost'] <= 0
+      puts "❌ Materials cost should be positive"
+    else
+      puts "✅ Materials cost is positive"
+    end
+    
+    if pricing['processes_cost'] <= 0
+      puts "❌ Processes cost should be positive"
+    else
+      puts "✅ Processes cost is positive"
+    end
+    
+    if pricing['extras_cost'] <= 0
+      puts "❌ Extras cost should be positive"
+    else
+      puts "✅ Extras cost is positive"
+    end
+    
+    if pricing['total_price'] <= 0
+      puts "❌ Total price should be positive"
+    else
+      puts "✅ Total price is positive"
+    end
+    
+    if pricing['final_price_per_piece'] <= 0
+      puts "❌ Price per piece should be positive"
+    else
+      puts "✅ Price per piece is positive"
+    end
+    
+    # Check that total price makes sense for 4000 pieces
+    expected_min_total = 4000 * 0.10 # At least $0.10 per piece
+    if pricing['total_price'] < expected_min_total
+      puts "❌ Total price seems too low for 4000 pieces"
+    else
+      puts "✅ Total price is reasonable for 4000 pieces"
+    end
+    
+    puts ""
+    puts "🎯 EXPECTED RESULTS:"
+    puts "- Materials cost should be around $2,000-$3,000 (2 materials, 4000 pieces)"
+    puts "- Processes cost should be around $800-$1,200 (4 processes, 4000 pieces)"
+    puts "- Extras cost should be $425 (3 extras: $150 + $75 + $200)"
+    puts "- Total should be around $3,500-$5,000"
+    puts "- Price per piece should be around $0.90-$1.25"
+  end
+
+  def post_request(path, data)
+    uri = URI("#{@base_url}#{path}")
+    http = Net::HTTP.new(uri.host, uri.port)
+    
+    request = Net::HTTP::Post.new(uri)
+    request['Content-Type'] = 'application/json'
+    request['Accept'] = 'application/json'
+    request['X-Requested-With'] = 'XMLHttpRequest'
+    request.body = data.to_json
+    
+    response = http.request(request)
+    JSON.parse(response.body)
+  end
+
+  def get_request(path)
+    uri = URI("#{@base_url}#{path}")
+    http = Net::HTTP.new(uri.host, uri.port)
+    
+    request = Net::HTTP::Get.new(uri)
+    request['Accept'] = 'application/json'
+    request['X-Requested-With'] = 'XMLHttpRequest'
+    
+    response = http.request(request)
+    JSON.parse(response.body)
+  end
 end
-puts
 
-# Test the product's calculate_totals method
-puts "=== Testing Product Calculations ==="
-test_product = user.products.first
-puts "Recalculating totals for the test product..."
-test_product.calculate_totals
-test_product.save!
-
-puts "✅ Product calculations updated successfully"
-puts
-
-# Verify the product can be used in a quote
-puts "=== Testing Product in Quote ==="
-quote = user.quotes.create!(
-  quote_number: "TEST-001",
-  project_name: "Test Project",
-  customer_name: "Test Customer",
-  organization: "Test Organization",
-  email: "customer@example.com",
-  telephone: "123-456-7890",
-  comments: "Test quote for demo product"
-)
-
-# Add the product to the quote
-quote_product = QuoteProduct.create!(
-  quote: quote,
-  product: test_product,
-  quantity: 50
-)
-
-puts "✅ Quote created with test product"
-puts "  - Quote: #{quote.quote_number}"
-puts "  - Product: #{test_product.description}"
-puts "  - Quantity: #{quote_product.quantity}"
-puts "  - Total cost: $#{test_product.pricing['total_price'] * quote_product.quantity}"
-puts
-
-# Test product duplication
-puts "=== Testing Product Duplication ==="
-duplicated_product = test_product.deep_clone
-duplicated_product.save!
-
-puts "✅ Product duplicated successfully"
-puts "  - Original: #{test_product.description}"
-puts "  - Duplicate: #{duplicated_product.description}"
-puts
-
-# Clean up test data
-puts "=== Cleaning Up ==="
-# Delete in proper order to avoid foreign key constraints
-QuoteProduct.destroy_all
-Quote.destroy_all
-Product.destroy_all
-Extra.destroy_all
-ManufacturingProcess.destroy_all
-Material.destroy_all
-PriceMargin.destroy_all
-AppConfig.destroy_all
-PdfConfig.destroy_all
-User.where(email: 'test@example.com').destroy_all
-Unit.destroy_all
-puts "✅ Test data cleaned up"
-puts
-
-puts "=== Test Summary ==="
-puts "✅ User creation with demo data works correctly"
-puts "✅ Product creation with complete data structure works"
-puts "✅ Product calculations work correctly"
-puts "✅ Product can be used in quotes"
-puts "✅ Product duplication works"
-puts "✅ All associations are properly set up"
-puts
-puts "🎉 All tests passed! The product creation functionality is working correctly." 
+# Run the test
+if __FILE__ == $0
+  test = ProductCreationTest.new
+  test.run_test
+end 

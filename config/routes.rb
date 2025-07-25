@@ -21,6 +21,16 @@ Rails.application.routes.draw do
       end
     end
     resources :suggestions, only: [:index, :update]
+    resources :trial_management, only: [:index] do
+      collection do
+        post :bulk_extend_trial
+      end
+      member do
+        post :extend_trial
+        post :reset_trial
+        post :disable_trial
+      end
+    end
   end
   
   # Dashboard route

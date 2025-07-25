@@ -795,6 +795,7 @@ en:
       duplicate: "Duplicate"
       back: "Back"
       general_information: "General Information"
+      name: "Name"
       width: "Width"
       length: "Length"
       quantity: "Quantity"
@@ -817,6 +818,9 @@ en:
       no_materials_added: "No materials added to this product."
       no_processes_added: "No processes added to this product."
       no_extras_added: "No indirects added to this product."
+      unit_price: "Unit price"
+      subtotal: "Subtotal"
+      times: "Times"
   admin:
     dashboard:
       title: "Admin Dashboard"

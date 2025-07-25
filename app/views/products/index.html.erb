@@ -3,7 +3,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= link_to new_product_path, class: "btn btn-outline-light" do %>
+  <%= link_to new_product_path, class: "btn btn-outline-success" do %>
     <i class="fas fa-plus me-1"></i> <%= t('products.index.new_product') %>
   <% end %>
 <% end %>
@@ -138,47 +138,39 @@
               </div>
               
               <!-- Pricing information - second row -->
-              <div class="d-flex justify-content-end align-items-center mb-2">
+              <div class="d-flex justify-content-start align-items-center mb-2">
                 <div class="d-flex align-items-center me-3">
                   <span class="small me-1"><%= t('products.index.piece') %>:</span>
-                  <span class="badge bg-primary"><%= number_to_currency(product.pricing["final_price_per_piece"] || 0) %></span>
+                  <span class="text-success fw-bold"><%= number_to_currency(product.pricing["final_price_per_piece"] || 0) %></span>
                 </div>
                 <div class="d-flex align-items-center">
                   <span class="small me-1"><%= t('products.index.total') %>:</span>
-                  <span class="badge bg-success"><%= number_to_currency(product.pricing["total_price"] || 0) %></span>
+                  <span class="text-success fw-bold"><%= number_to_currency(product.pricing["total_price"] || 0) %></span>
                 </div>
               </div>
               
-              <!-- Components counts and actions - third row -->
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center">
-                  <span class="badge bg-secondary me-1"><i class="fa fa-cubes fa-sm me-1"></i><%= product.materials.size %></span>
-                  <span class="badge bg-secondary me-1"><i class="fa fa-cogs fa-sm me-1"></i><%= product.processes.size %></span>
-                  <span class="badge bg-secondary me-1"><i class="fa fa-plus-circle fa-sm me-1"></i><%= product.extras.size %></span>
-                </div>
-                
-                <div class="d-flex action-buttons">
-                  <%= link_to product_path(product), class: "btn btn-sm btn-outline-secondary mx-1", 
-                      data: { bs_toggle: "tooltip" }, title: t('products.index.view_details') do %>
-                    <i class="fa fa-eye fa-sm"></i>
-                  <% end %>
-                  <%= link_to edit_product_path(product), class: "btn btn-sm btn-outline-primary mx-1", 
-                      data: { bs_toggle: "tooltip" }, title: t('products.index.edit_product') do %>
-                    <i class="fa fa-edit fa-sm"></i>
-                  <% end %>
-                  <%= button_to product_path(product), method: :delete, 
-                      class: "btn btn-sm btn-outline-danger mx-1", 
-                      form: { class: "d-inline", data: { turbo_confirm: t('common.confirm_delete') } },
-                      data: { bs_toggle: "tooltip" }, title: t('products.index.delete_product') do %>
-                    <i class="fa fa-trash fa-sm"></i>
-                  <% end %>
-                  <%= button_to duplicate_product_path(product), method: :post, 
-                      class: "btn btn-sm btn-outline-secondary mx-1", 
-                      form: { class: "d-inline" },
-                      data: { bs_toggle: "tooltip" }, title: t('products.index.duplicate_product') do %>
-                    <i class="fa fa-copy fa-sm"></i>
-                  <% end %>
-                </div>
+              <!-- Action buttons - third row -->
+              <div class="d-flex justify-content-end action-buttons">
+                <%= link_to product_path(product), class: "btn btn-sm btn-outline-secondary mx-1", 
+                    data: { bs_toggle: "tooltip" }, title: t('products.index.view_details') do %>
+                  <i class="fa fa-eye fa-sm"></i>
+                <% end %>
+                <%= link_to edit_product_path(product), class: "btn btn-sm btn-outline-primary mx-1", 
+                    data: { bs_toggle: "tooltip" }, title: t('products.index.edit_product') do %>
+                  <i class="fa fa-edit fa-sm"></i>
+                <% end %>
+                <%= button_to product_path(product), method: :delete, 
+                    class: "btn btn-sm btn-outline-danger mx-1", 
+                    form: { class: "d-inline", data: { turbo_confirm: t('common.confirm_delete') } },
+                    data: { bs_toggle: "tooltip" }, title: t('products.index.delete_product') do %>
+                  <i class="fa fa-trash fa-sm"></i>
+                <% end %>
+                <%= button_to duplicate_product_path(product), method: :post, 
+                    class: "btn btn-sm btn-outline-secondary mx-1", 
+                    form: { class: "d-inline" },
+                    data: { bs_toggle: "tooltip" }, title: t('products.index.duplicate_product') do %>
+                  <i class="fa fa-copy fa-sm"></i>
+                <% end %>
               </div>
             </div>
             </div>

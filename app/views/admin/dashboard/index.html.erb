@@ -1,10 +1,96 @@
 <% content_for :page_actions do %>
-  <%= link_to t('admin.dashboard.manage_users'), admin_users_path, class: 'btn btn-outline-light' %>
+  <%= link_to t('admin.dashboard.manage_users'), admin_users_path, class: 'btn btn-outline-light me-2' %>
+  <%= link_to 'Períodos de Prueba', admin_trial_management_index_path, class: 'btn btn-outline-warning' %>
 <% end %>
 
 <% content_for :page_title do %>
   <%= t('admin.dashboard.title') %>
 <% end %>
+
+<style>
+  .admin-dashboard-table {
+    table-layout: auto !important;
+  }
+  
+  .admin-dashboard-table th,
+  .admin-dashboard-table td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+  }
+  
+  .admin-dashboard-table th:nth-child(1), /* Email column */
+  .admin-dashboard-table td:nth-child(1) {
+    max-width: 300px;
+    min-width: 250px;
+  }
+  
+  .admin-dashboard-table th:nth-child(2), /* Admin column */
+  .admin-dashboard-table td:nth-child(2) {
+    max-width: 120px;
+    min-width: 100px;
+    text-align: center;
+  }
+  
+  .admin-dashboard-table th:nth-child(3), /* Created date column */
+  .admin-dashboard-table td:nth-child(3) {
+    max-width: 120px;
+    min-width: 100px;
+    text-align: center;
+  }
+  
+  .admin-dashboard-table th:nth-child(4), /* Last login column */
+  .admin-dashboard-table td:nth-child(4) {
+    max-width: 150px;
+    min-width: 120px;
+    text-align: center;
+  }
+  
+  /* Mobile card styles for dashboard */
+  .admin-dashboard-user-card {
+    border-left: 4px solid var(--cotalo-green, #42b983);
+    border: 1.5px solid #b7cfc3;
+    border-left-width: 4px;
+    border-radius: 6px;
+    background: var(--card-bg);
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+  }
+  
+  .admin-dashboard-user-card .card-header {
+    background-color: var(--lighter-bg);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.75rem 1rem;
+  }
+  
+  .admin-dashboard-user-card .card-body {
+    padding: 1rem;
+  }
+  
+  .admin-dashboard-user-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .admin-dashboard-user-info:last-child {
+    margin-bottom: 0;
+  }
+  
+  .admin-dashboard-user-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    min-width: 100px;
+  }
+  
+  .admin-dashboard-user-value {
+    text-align: right;
+    flex: 1;
+    margin-left: 1rem;
+  }
+</style>
 
 <div class="scrollable-view-container">
   <% if session[:impersonated_user_id] %>
@@ -45,11 +131,12 @@
     </div>
   </div>
 
-  <div class="green-accent-panel mt-4">
+  <!-- Desktop Table View -->
+  <div class="green-accent-panel mt-4 d-none d-md-block">
     <div class="card-body">
       <h5 class="card-title"><%= t('admin.dashboard.recent_users') %></h5>
       <div class="table-responsive">
-        <table class="table table-striped">
+        <table class="table table-striped admin-dashboard-table">
           <thead>
             <tr>
               <th><%= t('admin.users.email') %></th>
@@ -61,7 +148,9 @@
           <tbody>
             <% @users.sort_by { |u| [u.last_sign_in_at || u.created_at] }.reverse.first(10).each do |user| %>
               <tr>
-                <td><%= link_to user.email, edit_admin_user_path(user), class: 'text-white' %></td>
+                <td title="<%= user.email %>">
+                  <%= link_to user.email, edit_admin_user_path(user), class: 'text-white' %>
+                </td>
                 <td>
                   <span class="badge <%= user.admin? ? 'bg-success' : 'bg-secondary' %>">
                     <%= user.admin? ? t('common.yes') : t('common.no') %>
@@ -75,5 +164,41 @@
         </table>
       </div>
     </div>
+  </div>
+
+  <!-- Mobile Cards View -->
+  <div class="d-md-none mt-4">
+    <h5 class="mb-3"><%= t('admin.dashboard.recent_users') %></h5>
+    <% @users.sort_by { |u| [u.last_sign_in_at || u.created_at] }.reverse.first(10).each do |user| %>
+      <div class="admin-dashboard-user-card">
+        <div class="card-header">
+          <h6 class="mb-0">
+            <%= link_to user.email, edit_admin_user_path(user), class: 'text-white text-decoration-none' %>
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="admin-dashboard-user-info">
+            <span class="admin-dashboard-user-label"><%= t('admin.users.admin') %>:</span>
+            <span class="admin-dashboard-user-value">
+              <span class="badge <%= user.admin? ? 'bg-success' : 'bg-secondary' %>">
+                <%= user.admin? ? t('common.yes') : t('common.no') %>
+              </span>
+            </span>
+          </div>
+          
+          <div class="admin-dashboard-user-info">
+            <span class="admin-dashboard-user-label"><%= t('admin.users.created_at') %>:</span>
+            <span class="admin-dashboard-user-value"><%= user.created_at.strftime("%Y-%m-%d") %></span>
+          </div>
+          
+          <div class="admin-dashboard-user-info">
+            <span class="admin-dashboard-user-label"><%= t('admin.users.last_login') %>:</span>
+            <span class="admin-dashboard-user-value">
+              <%= user.last_sign_in_at ? user.last_sign_in_at.in_time_zone.strftime("%Y-%m-%d %H:%M") : t('admin.users.never_logged_in') %>
+            </span>
+          </div>
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>

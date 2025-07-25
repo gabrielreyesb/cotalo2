@@ -18,6 +18,11 @@ class ProductsController < ApplicationController
   end
 
   def show
+    # Calculate extras costs before showing the view
+    @product.extras.each do |extra|
+      @product.calculate_extra_cost(extra)
+    end
+    @product.save
   end
 
   def new

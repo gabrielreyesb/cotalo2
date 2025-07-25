@@ -675,6 +675,7 @@ es:
       duplicate: "Duplicar"
       back: "Volver"
       general_information: "Información General"
+      name: "Nombre"
       width: "Ancho"
       length: "Largo"
       quantity: "Cantidad"
@@ -697,6 +698,9 @@ es:
       no_materials_added: "No hay materiales agregados a este producto."
       no_processes_added: "No hay procesos agregados a este producto."
       no_extras_added: "No hay indirectos agregados a este producto."
+      unit_price: "Precio unitario"
+      subtotal: "Subtotal"
+      times: "Veces"
     form:
       tabs:
         general: "Información general"

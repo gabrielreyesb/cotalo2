@@ -1,0 +1,200 @@
+<% content_for :page_title do %>
+  Administración de Períodos de Prueba
+<% end %>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Usuarios en Período de Prueba</h3>
+          <div class="card-tools">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bulkExtendModal">
+              <i class="fas fa-plus"></i> Extender Múltiples
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <% if @users.any? %>
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>
+                      <input type="checkbox" id="select-all-users">
+                    </th>
+                    <th>Usuario</th>
+                    <th>Email</th>
+                    <th>Fecha de Registro</th>
+                    <th>Días Restantes</th>
+                    <th>Productos</th>
+                    <th>Cotizaciones</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @users.each do |user| %>
+                    <tr>
+                      <td>
+                        <input type="checkbox" name="user_ids[]" value="<%= user.id %>" class="user-checkbox">
+                      </td>
+                      <td>
+                        <strong><%= user.email.split('@').first %></strong>
+                      </td>
+                      <td><%= user.email %></td>
+                      <td><%= l(user.created_at, format: :short) %></td>
+                      <td>
+                        <% days_remaining = user.trial_days_remaining %>
+                        <span class="badge <%= days_remaining < 3 ? 'bg-danger' : days_remaining < 7 ? 'bg-warning' : 'bg-success' %>">
+                          <%= days_remaining %> días
+                        </span>
+                      </td>
+                      <td>
+                        <span class="badge bg-info"><%= user.products.count %></span>
+                      </td>
+                      <td>
+                        <span class="badge bg-secondary"><%= user.quotes.count %></span>
+                      </td>
+                      <td>
+                        <% if user.trial_ends_at < Time.current %>
+                          <span class="badge bg-danger">Expirado</span>
+                        <% elsif user.trial_days_remaining < 3 %>
+                          <span class="badge bg-warning">Por Expirar</span>
+                        <% else %>
+                          <span class="badge bg-success">Activo</span>
+                        <% end %>
+                      </td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+                            Acciones
+                          </button>
+                          <ul class="dropdown-menu">
+                            <li>
+                              <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#extendTrialModal<%= user.id %>">
+                                <i class="fas fa-plus"></i> Extender
+                              </a>
+                            </li>
+                                                         <li>
+                               <%= link_to reset_trial_admin_trial_management_path(user), 
+                                           method: :post, 
+                                           class: 'dropdown-item',
+                                           data: { confirm: '¿Reiniciar período de prueba?' } do %>
+                                 <i class="fas fa-redo"></i> Reiniciar
+                               <% end %>
+                             </li>
+                            <li><hr class="dropdown-divider"></li>
+                                                         <li>
+                               <%= link_to disable_trial_admin_trial_management_path(user), 
+                                           method: :post, 
+                                           class: 'dropdown-item text-danger',
+                                           data: { confirm: '¿Deshabilitar período de prueba?' } do %>
+                                 <i class="fas fa-ban"></i> Deshabilitar
+                               <% end %>
+                             </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+            
+            <%= paginate @users %>
+          <% else %>
+            <div class="text-center py-4">
+              <i class="fas fa-users fa-3x text-muted mb-3"></i>
+              <h5 class="text-muted">No hay usuarios en período de prueba</h5>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bulk Extend Modal -->
+<div class="modal fade" id="bulkExtendModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Extender Período de Prueba</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <%= form_tag bulk_extend_trial_admin_trial_management_index_path, method: :post do %>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="days" class="form-label">Días a extender</label>
+            <input type="number" class="form-control" id="days" name="days" min="1" max="365" value="7" required>
+          </div>
+          <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i>
+            Esta acción se aplicará a todos los usuarios seleccionados.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Extender</button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- Individual Extend Modals -->
+<% @users.each do |user| %>
+  <div class="modal fade" id="extendTrialModal<%= user.id %>" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Extender Período de Prueba - <%= user.email %></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <%= form_tag extend_trial_admin_trial_management_path(user), method: :post do %>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="days_<%= user.id %>" class="form-label">Días a extender</label>
+              <input type="number" class="form-control" id="days_<%= user.id %>" name="days" min="1" max="365" value="7" required>
+            </div>
+            <div class="alert alert-info">
+              <strong>Usuario:</strong> <%= user.email %><br>
+              <strong>Días restantes actuales:</strong> <%= user.trial_days_remaining %><br>
+              <strong>Fecha de expiración actual:</strong> <%= l(user.trial_ends_at, format: :long) %>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Extender</button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Select all functionality
+  const selectAllCheckbox = document.getElementById('select-all-users');
+  const userCheckboxes = document.querySelectorAll('.user-checkbox');
+  
+  selectAllCheckbox.addEventListener('change', function() {
+    userCheckboxes.forEach(checkbox => {
+      checkbox.checked = this.checked;
+    });
+  });
+  
+  // Update select all when individual checkboxes change
+  userCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+      const allChecked = Array.from(userCheckboxes).every(cb => cb.checked);
+      const someChecked = Array.from(userCheckboxes).some(cb => cb.checked);
+      
+      selectAllCheckbox.checked = allChecked;
+      selectAllCheckbox.indeterminate = someChecked && !allChecked;
+    });
+  });
+});
+</script> 

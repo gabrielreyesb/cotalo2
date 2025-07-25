@@ -98,13 +98,31 @@ class StripeWebhooksController < ApplicationController
     user = User.find_by(stripe_customer_id: invoice.customer)
     return unless user
 
-    SubscriptionMailer.payment_succeeded(user, invoice).deliver_later
+    # Extract only the necessary data from the invoice
+    invoice_data = {
+      id: invoice.id,
+      amount_paid: invoice.amount_paid,
+      currency: invoice.currency,
+      status: invoice.status,
+      created: invoice.created
+    }
+
+    SubscriptionMailer.payment_succeeded(user, invoice_data).deliver_later
   end
 
   def handle_payment_failed(invoice)
     user = User.find_by(stripe_customer_id: invoice.customer)
     return unless user
 
-    SubscriptionMailer.payment_failed(user, invoice).deliver_later
+    # Extract only the necessary data from the invoice
+    invoice_data = {
+      id: invoice.id,
+      amount_due: invoice.amount_due,
+      currency: invoice.currency,
+      status: invoice.status,
+      created: invoice.created
+    }
+
+    SubscriptionMailer.payment_failed(user, invoice_data).deliver_later
   end
 end 

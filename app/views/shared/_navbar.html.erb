@@ -103,10 +103,9 @@
         <% end %>
       </ul>
       <ul class="navbar-nav">
-        <%# Temporarily hidden - subscription status removed %>
-        <%# <% if user_signed_in? && !current_user.admin? %>
-        <%#   <%= render 'shared/navbar_subscription_status' %>
-        <%# <% end %>
+        <% if user_signed_in? && !current_user.admin? %>
+          <%= render 'shared/navbar_subscription_status' %>
+        <% end %>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             🌐 <%= t('navbar.language') %>
@@ -143,6 +142,11 @@
               <% end %>
               <%= link_to edit_app_configs_path, class: "dropdown-item" do %>
                 <i class="fa fa-cog me-1"></i> Configuración
+              <% end %>
+              <% if current_user.active_subscription? %>
+                <%= link_to subscription_path, class: "dropdown-item" do %>
+                  <i class="fa fa-credit-card me-1"></i> Mi Suscripción
+                <% end %>
               <% end %>
               <div style="height:1px; background:#42b983; margin:0.5rem 0; opacity:0.7;"></div>
               <%= button_to destroy_user_session_path, method: :delete, class: "dropdown-item" do %>
@@ -212,6 +216,63 @@
     border-top: 1px solid #42b983 !important;
     margin: 0.5rem 0;
     opacity: 1 !important;
+  }
+
+  /* Subscription status styling */
+  .navbar-subscription-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    margin-right: 1rem;
+    border-radius: 0.375rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .navbar-subscription-status .badge {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .navbar-subscription-status .trial-badge {
+    background: linear-gradient(135deg, #42b983, #3aa876);
+    color: white;
+    border: 1px solid rgba(66, 185, 131, 0.3);
+  }
+
+  .navbar-subscription-status .active-badge {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    border: 1px solid rgba(40, 167, 69, 0.3);
+  }
+
+  .navbar-subscription-status .warning-badge {
+    background: linear-gradient(135deg, #ffc107, #fd7e14);
+    color: #212529;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+  }
+
+  .navbar-subscription-status .danger-badge {
+    background: linear-gradient(135deg, #dc3545, #e74c3c);
+    color: white;
+    border: 1px solid rgba(220, 53, 69, 0.3);
+  }
+
+  .navbar-subscription-status .days-text {
+    color: #e9ecef;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .navbar-subscription-status .btn-sm {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    color: #212529;
+    font-weight: 500;
   }
 </style>
 

@@ -2,19 +2,15 @@
 <% if user_signed_in? && !current_user.admin? %>
   <div class="navbar-subscription-status">
     <% if current_user.trial? %>
-      <span class="badge bg-info">Prueba</span>
-      <small><%= current_user.trial_days_remaining %> días</small>
-      <% if current_user.trial_days_remaining < 3 %>
-        <%= link_to "Actualizar", new_subscription_path, class: 'btn btn-warning btn-sm' %>
-      <% end %>
+      <span class="badge trial-badge">Días disponibles para pruebas: <%= current_user.trial_days_remaining %></span>
+      <%= link_to "Suscribirme", "#", class: 'btn btn-success btn-sm disabled', disabled: true, onclick: 'return false;' %>
     <% elsif current_user.active_subscription? %>
-      <span class="badge bg-success">Activa</span>
-      <small><%= current_user.subscription_days_remaining %> días</small>
+      <span class="badge active-badge">Suscripción Activa</span>
     <% elsif current_user.subscription_status == 'past_due' %>
-      <span class="badge bg-warning">Pago Pendiente</span>
-      <%= link_to "Actualizar", subscription_path(action_type: 'update_payment'), method: :patch, class: 'btn btn-warning btn-sm' %>
+      <span class="badge warning-badge">Pago Pendiente</span>
+      <%= link_to "Actualizar Pago", subscription_path(action_type: 'update_payment'), method: :patch, class: 'btn btn-warning btn-sm' %>
     <% elsif current_user.subscription_status == 'expired' %>
-      <span class="badge bg-danger">Expirada</span>
+      <span class="badge danger-badge">Expirada</span>
       <%= link_to "Renovar", new_subscription_path, class: 'btn btn-danger btn-sm' %>
     <% end %>
   </div>

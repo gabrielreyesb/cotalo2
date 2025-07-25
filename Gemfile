@@ -9,10 +9,9 @@ gem "pg", "~> 1.5", group: :production
 gem "puma", ">= 5.0"
 gem "jbuilder"
 gem "devise"
-gem "webpacker", "~> 5.0"
-gem "sass-rails", ">= 6"
+gem "webpacker", "~> 5.4"
+gem "sass-rails", "~> 6.0"
 gem "bootstrap", "~> 5.3.3"
-gem "sassc-rails"
 gem "jquery-rails"
 gem "popper_js"
 gem "tzinfo-data", platforms: %i[ windows jruby ]

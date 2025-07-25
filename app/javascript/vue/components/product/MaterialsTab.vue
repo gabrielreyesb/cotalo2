@@ -172,93 +172,106 @@
           
           <!-- Mobile Cards -->
           <div class="d-md-none">
-            <div v-for="(material, index) in productMaterials" :key="index" class="card mb-3 shadow-sm">
-              <div class="card-body p-2">
-                <!-- Material name -->
-                <h6 class="card-title mb-2"><i class="fa fa-box me-1"></i>{{ material.displayName || material.description }}</h6>
-                <!-- Icon-value-unit grid -->
-                <div class="row g-2 mb-2 text-center">
-                  <div class="col-4 d-flex flex-column align-items-center">
-                    <span><i class="fa fa-arrows-alt-h me-1"></i>
-                      <input 
-                        type="number" 
-                        class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge d-inline-block"
-                        v-model.number="material.ancho" 
-                        min="0"
-                        step="0.1"
-                        @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
-                        style="max-width: 70px; display: inline-block;"
-                      /> <span class="text-muted">cm</span>
-                    </span>
+            <div v-for="(material, index) in productMaterials" :key="index" class="material-card-mobile">
+              <!-- Header with name and delete button -->
+              <div class="material-header">
+                <div class="material-name">
+                  <i class="fa fa-box me-2"></i>
+                  <span>{{ material.displayName || material.description }}</span>
+                </div>
+                <button 
+                  class="btn btn-sm btn-outline-danger" 
+                  @click="removeMaterial(index)"
+                  :title="translations.materials.remove"
+                >
+                  <i class="fa fa-trash"></i>
+                </button>
+              </div>
+              
+              <!-- Main content grid -->
+              <div class="material-content">
+                <!-- Dimensions and Price row -->
+                <div class="input-row">
+                  <div class="input-group">
+                    <span class="input-label"><i class="fa fa-arrows-alt-h"></i> Ancho</span>
+                    <input 
+                      type="number" 
+                      class="form-control form-control-sm" 
+                      v-model.number="material.ancho" 
+                      min="0"
+                      step="0.1"
+                      :placeholder="'0.0'"
+                      @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
+                    />
+                    <span class="input-unit">cm</span>
                   </div>
-                  <div class="col-4 d-flex flex-column align-items-center">
-                    <span><i class="fa fa-arrows-alt-v me-1"></i>
-                      <input 
-                        type="number" 
-                        class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge d-inline-block"
-                        v-model.number="material.largo" 
-                        min="0"
-                        step="0.1"
-                        @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
-                        style="max-width: 70px; display: inline-block;"
-                      /> <span class="text-muted">cm</span>
-                    </span>
+                  <div class="input-group">
+                    <span class="input-label"><i class="fa fa-arrows-alt-v"></i> Largo</span>
+                    <input 
+                      type="number" 
+                      class="form-control form-control-sm" 
+                      v-model.number="material.largo" 
+                      min="0"
+                      step="0.1"
+                      :placeholder="'0.0'"
+                      @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
+                    />
+                    <span class="input-unit">cm</span>
                   </div>
-                  <div class="col-4 d-flex flex-column align-items-center">
-                    <span><i class="fa fa-dollar-sign me-1"></i>
-                      <input 
-                        type="number" 
-                        class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge d-inline-block"
-                        v-model.number="material.price" 
-                        min="0"
-                        step="0.01"
-                        @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
-                        style="max-width: 70px; display: inline-block;"
-                      /> <span class="text-muted">$</span>
-                    </span>
+                  <div class="input-group">
+                    <span class="input-label"><i class="fa fa-dollar-sign"></i> Precio</span>
+                    <input 
+                      type="number" 
+                      class="form-control form-control-sm" 
+                      v-model.number="material.price" 
+                      min="0"
+                      step="0.01"
+                      :placeholder="'0.00'"
+                      @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
+                    />
+                    <span class="input-unit">$</span>
                   </div>
                 </div>
-                <div class="row g-2 mb-2 text-center">
-                  <div class="col-4 d-flex flex-column align-items-center">
-                    <span><i class="fa fa-hashtag me-1"></i>
-                      <input 
-                        type="number" 
-                        class="form-control form-control-sm text-center p-2 w-100 material-badge editable-badge d-inline-block"
-                        v-model.number="material.piecesPerMaterial" 
-                        min="1"
-                        @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
-                        style="max-width: 70px; display: inline-block;"
-                      /> <span class="text-muted">pz</span>
-                    </span>
+                
+                <!-- Quantity and Pieces row -->
+                <div class="input-row">
+                  <div class="input-group">
+                    <span class="input-label"><i class="fa fa-hashtag"></i> Pzas/hoja</span>
+                    <input 
+                      type="number" 
+                      class="form-control form-control-sm" 
+                      v-model.number="material.piecesPerMaterial" 
+                      min="1"
+                      :placeholder="'1'"
+                      @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
+                    />
+                    <span class="input-unit">pz</span>
                   </div>
-                  <div class="col-4 d-flex flex-column align-items-center">
-                    <span><i class="fa fa-file-alt me-1"></i>{{ material.totalSheets }} <span class="text-muted">pgs</span></span>
+                  <div class="input-group">
+                    <span class="input-label"><i class="fa fa-file-alt"></i> Pliegos</span>
+                    <span class="display-value">{{ material.totalSheets || 0 }}</span>
+                    <span class="input-unit">pgs</span>
                   </div>
-                  <div class="col-4 d-flex flex-column align-items-center">
-                    <span 
-                      :title="'El costo del material se calcula con base en el área total usada (en m²), no por pliegos completos. La cantidad de pliegos mostrada es solo una referencia visual.'"
-                      data-bs-toggle="tooltip"
-                      data-bs-placement="top"
-                      style="cursor: help;"
-                    >
-                      <i class="fa fa-dollar-sign me-1"></i>{{ formatCurrency(material.totalPrice) }} <span class="text-muted">$</span>
-                      <i class="fa fa-info-circle ms-1 text-info tooltip-icon" style="font-size: 0.9em; opacity: 0.8;"></i>
-                    </span>
+                  <div class="input-group">
+                    <span class="input-label"><i class="fa fa-ruler-combined"></i> m²</span>
+                    <span class="display-value">{{ (material.totalSquareMeters || 0).toFixed(2) }}</span>
+                    <span class="input-unit">m²</span>
                   </div>
                 </div>
-                <div class="row g-2 mb-2 text-center">
-                  <div class="col-6 d-flex justify-content-end align-items-center">
-                    <span><i class="fa fa-ruler-combined me-1"></i>{{ material.totalSquareMeters.toFixed(2) }} <span class="text-muted">m²</span></span>
-                  </div>
-                  <div class="col-6 d-flex flex-column align-items-center">
-                    <button 
-                      class="btn btn-sm btn-outline-danger" 
-                      @click="removeMaterial(index)"
-                      :title="translations.materials.remove"
-                    >
-                      <i class="fa fa-trash"></i>
-                    </button>
-                  </div>
+                
+                <!-- Total price row -->
+                <div class="total-row">
+                  <span class="total-label">Total:</span>
+                  <span 
+                    class="total-value"
+                    :title="'El costo del material se calcula con base en el área total usada (en m²), no por pliegos completos. La cantidad de pliegos mostrada es solo una referencia visual.'"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    style="cursor: help;"
+                  >
+                    {{ formatCurrency(material.totalPrice) }}
+                    <i class="fa fa-info-circle ms-1 text-info tooltip-icon" style="font-size: 0.9em; opacity: 0.8;"></i>
+                  </span>
                 </div>
               </div>
             </div>
@@ -726,16 +739,27 @@ export default {
       console.log('--- MATERIAL CALCULATION START ---');
       console.log('Material:', JSON.stringify(material));
       console.log('Unit string:', unitStr);
+      console.log('Unit string length:', unitStr.length);
+      console.log('Unit string includes m2:', unitStr.toLowerCase().includes('m2'));
+      console.log('Unit string includes m²:', unitStr.toLowerCase().includes('m²'));
       console.log('Width:', material.ancho, 'Length:', material.largo, 'Price:', material.price);
       console.log('Pieces per sheet:', piecesPerMaterial, 'Sheets needed:', totalSheets);
       console.log('Total m2:', totalSquareMeters);
+      
+      // DEBUG: Check why condition is not working
+      console.log('DEBUG - Condition check:');
+      console.log('  unitStr.toLowerCase():', unitStr.toLowerCase());
+      console.log('  includes m2:', unitStr.toLowerCase().includes('m2'));
+      console.log('  includes mt2:', unitStr.toLowerCase().includes('mt2'));
+      console.log('  includes grs/m2:', unitStr.toLowerCase().includes('grs/m2'));
+      
       if (unitStr.toLowerCase().includes('grs/m2') || unitStr.toLowerCase().includes('grs/m²')) {
         // Weight-based pricing (grs/m²)
         const materialWeight = parseFloat(material.weight) || 0;
         totalWeight = totalSquareMeters * materialWeight; // grams
         totalPrice = (totalWeight / 1000) * (material.price || 0); // price per kg
         console.log('Weight-based: totalWeight (g):', totalWeight, 'price per kg:', material.price, 'totalPrice:', totalPrice);
-      } else if (unitStr.toLowerCase().includes('m2')) {
+      } else if (unitStr.toLowerCase().includes('m2') || unitStr.toLowerCase().includes('mt2')) {
         // Area-based pricing (m²)
         totalPrice = totalSquareMeters * (material.price || 0);
         console.log('Area-based: totalSquareMeters:', totalSquareMeters, 'price:', material.price, 'totalPrice:', totalPrice);
@@ -1004,6 +1028,177 @@ export default {
   
   &:hover {
     color: #93c5fd !important;
+  }
+}
+
+// Mobile material cards styling
+.material-card-mobile {
+  background: var(--bs-card-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  
+  .material-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--bs-card-cap-bg);
+    border-bottom: 1px solid var(--bs-border-color);
+    
+    .material-name {
+      font-weight: 600;
+      color: var(--bs-body-color);
+      display: flex;
+      align-items: center;
+      
+      i {
+        color: var(--cotalo-green);
+      }
+    }
+  }
+  
+  .material-content {
+    padding: 1rem;
+    
+    .input-row {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+      
+      .input-group {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        
+        .input-label {
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: var(--bs-secondary);
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+          
+          i {
+            color: var(--cotalo-green);
+          }
+        }
+        
+        .form-control {
+          height: 2rem;
+          font-size: 0.875rem;
+          text-align: center;
+          border-radius: 0.25rem;
+          background: var(--bs-body-bg);
+          color: var(--bs-body-color);
+          border: 1px solid var(--bs-border-color);
+          padding: 0.25rem 0.5rem;
+          
+          &:focus {
+            border-color: var(--cotalo-green);
+            box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25);
+          }
+          
+          &::placeholder {
+            color: var(--bs-secondary);
+            opacity: 0.7;
+          }
+        }
+        
+        .display-value {
+          height: 2rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: var(--bs-secondary-bg);
+          border: 1px solid var(--bs-border-color);
+          border-radius: 0.25rem;
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: var(--bs-body-color);
+          min-width: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        
+        .input-unit {
+          font-size: 0.75rem;
+          color: var(--bs-secondary);
+          text-align: center;
+          font-weight: 500;
+        }
+      }
+    }
+    
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem;
+      background: rgba(66, 185, 131, 0.1);
+      border-radius: 0.25rem;
+      border: 1px solid rgba(66, 185, 131, 0.2);
+      
+      .total-label {
+        font-weight: 700;
+        color: var(--bs-body-color);
+        font-size: 0.9rem;
+      }
+      
+      .total-value {
+        font-weight: 700;
+        color: var(--cotalo-green);
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+    }
+  }
+}
+
+// Responsive adjustments for very small screens
+@media (max-width: 480px) {
+  .material-card-mobile {
+    .material-content {
+      padding: 0.75rem;
+      
+      .input-row {
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        
+        .input-group {
+          .input-label {
+            font-size: 0.7rem;
+          }
+          
+          .form-control,
+          .display-value {
+            height: 1.75rem;
+            font-size: 0.8rem;
+          }
+          
+          .input-unit {
+            font-size: 0.7rem;
+          }
+        }
+      }
+      
+      .total-row {
+        padding: 0.5rem;
+        
+        .total-label {
+          font-size: 0.85rem;
+        }
+        
+        .total-value {
+          font-size: 0.9rem;
+        }
+      }
+    }
   }
 }
 </style>

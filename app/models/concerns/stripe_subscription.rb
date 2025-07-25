@@ -3,14 +3,13 @@ module StripeSubscription
 
   included do
     # Callbacks
-    after_create :create_stripe_customer
     after_update :update_stripe_customer, if: :saved_change_to_email?
     # Subscription status constants
     SUBSCRIPTION_STATUSES = %w[trial active past_due expired].freeze
   end
 
   def create_stripe_customer
-    return if stripe_customer_id.present?
+    return stripe_customer_id if stripe_customer_id.present?
 
     customer = Stripe::Customer.create(
       email: email,
@@ -20,8 +19,10 @@ module StripeSubscription
     )
 
     update(stripe_customer_id: customer.id)
+    customer.id
   rescue Stripe::StripeError => e
     Rails.logger.error "Failed to create Stripe customer: #{e.message}"
+    nil
   end
 
   def update_stripe_customer
@@ -128,9 +129,9 @@ module StripeSubscription
   end
 
   def trial_days_remaining
-    # Temporarily frozen - always show unlimited trial days
-    return 999 unless trial? && trial_ends_at.present?
-    ((trial_ends_at - Time.current) / 1.day).ceil
+    return 0 unless trial? && trial_ends_at.present?
+    days = ((trial_ends_at - Time.current) / 1.day).ceil
+    days > 0 ? days : 0
   end
 
   def trial_percentage_completed
@@ -141,9 +142,9 @@ module StripeSubscription
   end
 
   def subscription_days_remaining
-    # Temporarily frozen - always show unlimited subscription days
-    return 999 unless active_subscription? && subscription_ends_at.present?
-    ((subscription_ends_at - Time.current) / 1.day).ceil
+    return 0 unless active_subscription? && subscription_ends_at.present?
+    days = ((subscription_ends_at - Time.current) / 1.day).ceil
+    days > 0 ? days : 0
   end
 
   def subscription_expired?

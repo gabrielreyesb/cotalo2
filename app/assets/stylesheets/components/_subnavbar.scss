@@ -12,11 +12,22 @@
   // Title styling
   .navbar-brand {
     font-size: 1.5rem;
-    color: var(--text-primary);
+    color: white !important;
     margin: 0;
     padding: 0;
     line-height: 1.2;
     font-weight: 500;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  // Override light theme subnavbar styles
+  body[data-theme="light"] &.navbar-dark.bg-dark .navbar-brand {
+    color: var(--text-primary) !important;
+    font-weight: 500 !important;
+    display: block !important;
+    visibility: visible !important;
   }
 
   // Button styling
@@ -47,6 +58,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0.5rem 0;
+    width: 100%;
   }
 
   // Actions container
@@ -54,5 +66,134 @@
     display: flex;
     gap: 0.5rem;
     align-items: center;
+  }
+
+  // New subnavbar structure styles
+  .subnavbar-title {
+    flex: 1;
+    min-width: 0;
+    
+    .title-text {
+      color: var(--cotalo-green);
+      font-size: 1.5rem; /* 24px equivalent */
+      font-weight: 600;
+      padding: 0.5rem 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
+    }
+  }
+
+  .subnavbar-actions {
+    flex-shrink: 0;
+    margin-left: auto;
+    
+    .actions-container {
+      display: flex;
+      gap: 0.25rem;
+      align-items: center;
+      flex-wrap: nowrap;
+    }
+  }
+
+  // Mobile responsive styles - FORCED SINGLE LINE
+  @media (max-width: 768px) {
+    padding: 0.25rem 0.5rem;
+    
+    .container-fluid {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      width: 100% !important;
+      gap: 0.25rem !important;
+    }
+    
+    .subnavbar-title {
+      flex: 1 !important;
+      min-width: 0 !important;
+      
+      .title-text {
+        font-size: 1.25rem !important; /* 20px equivalent for mobile */
+        padding: 0.25rem 0 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+      }
+    }
+    
+    .subnavbar-actions {
+      flex-shrink: 0 !important;
+      margin-left: 0.25rem !important;
+      
+      .actions-container {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        gap: 0.125rem !important;
+      }
+    }
+    
+    .btn {
+      padding: 0.25rem 0.5rem !important;
+      font-size: 0.8rem !important;
+      margin: 0 !important;
+      white-space: nowrap !important;
+      
+      // Hide button text on mobile, show only icons
+      span, .btn-text {
+        display: none !important;
+      }
+      
+      i {
+        margin-right: 0 !important;
+        font-size: 0.9rem !important;
+      }
+    }
+  }
+
+  // Extra small screens
+  @media (max-width: 480px) {
+    padding: 0.25rem 0.375rem;
+    
+    .subnavbar-title .title-text {
+      font-size: 1.125rem !important; /* 18px equivalent for small screens */
+      padding: 0.25rem 0 !important;
+    }
+    
+    .subnavbar-actions .actions-container {
+      gap: 0.125rem !important;
+    }
+    
+    .btn {
+      padding: 0.25rem 0.375rem !important;
+      font-size: 0.75rem !important;
+      min-width: 2rem !important;
+      
+      i {
+        font-size: 0.8rem !important;
+      }
+    }
+  }
+
+  // Ultra small screens
+  @media (max-width: 360px) {
+    padding: 0.25rem 0.25rem;
+    
+    .subnavbar-title .title-text {
+      font-size: 1rem !important; /* 16px equivalent for ultra small screens */
+      padding: 0.25rem 0 !important;
+    }
+    
+    .btn {
+      padding: 0.25rem 0.25rem !important;
+      font-size: 0.7rem !important;
+      min-width: 1.75rem !important;
+      
+      i {
+        font-size: 0.75rem !important;
+      }
+    }
   }
 } 

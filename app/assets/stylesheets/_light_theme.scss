@@ -473,3 +473,69 @@ body[data-theme="light"] .footer {
     color: var(--text-secondary) !important;
   }
 } 
+
+// Light theme subscription info text styling
+body[data-theme="light"] .subscription-info-text {
+  color: var(--text-primary) !important;
+  font-weight: 500;
+}
+
+// Info item styling for subscription page
+body[data-theme="light"] .info-item {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 8px;
+  border-left: 4px solid var(--cotalo-green);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  }
+}
+
+body[data-theme="light"] .info-label {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  
+  i {
+    font-size: 1rem;
+  }
+}
+
+body[data-theme="light"] .info-value {
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+  
+  .badge {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  code {
+    background: #f8f9fa !important;
+    color: #495057 !important;
+    border: 1px solid #dee2e6;
+  }
+}
+
+// Gradient backgrounds for card headers
+body[data-theme="light"] .bg-gradient-primary {
+  background: linear-gradient(135deg, var(--cotalo-green) 0%, var(--cotalo-green-dark) 100%) !important;
+}
+
+body[data-theme="light"] .bg-gradient-success {
+  background: linear-gradient(135deg, var(--cotalo-green) 0%, var(--cotalo-green-dark) 100%) !important;
+}
+
+body[data-theme="light"] .bg-gradient-info {
+  background: linear-gradient(135deg, var(--cotalo-green) 0%, var(--cotalo-green-dark) 100%) !important;
+}
+
+// Light theme for form controls in green-accent-panel 

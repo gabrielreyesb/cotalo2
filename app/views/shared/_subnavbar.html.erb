@@ -2,15 +2,15 @@
 <% if (user_signed_in? && !(controller_name == 'home' && action_name == 'index')) || (controller_name == 'home' && action_name == 'about') || controller_name == 'demo_requests' %>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark subnavbar">
   <div class="container-fluid py-0">
-    <h1 class="navbar-brand mb-0">
-      <% if content_for?(:page_title) %>
-        <%= yield :page_title %>
-      <% else %>
-        <%= controller_name.humanize.titleize %>
-      <% end %>
-    </h1>
-    <div class="ms-auto">
-      <%= yield :page_actions %>
+    <div class="subnavbar-title">
+      <div class="title-text">
+        <%= yield :page_title || 'Cotalo' %>
+      </div>
+    </div>
+    <div class="subnavbar-actions">
+      <div class="actions-container">
+        <%= yield :page_actions %>
+      </div>
     </div>
   </div>
 </nav>

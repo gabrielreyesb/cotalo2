@@ -43,24 +43,26 @@
               </div>
             </div>
 
-            <!-- Stripe Checkout Button -->
-            <div class="text-center">
-              <button id="checkout-button" class="btn btn-primary btn-lg w-100">
-                <i class="fas fa-credit-card me-2"></i>
-                Suscribirse Ahora
-              </button>
-              <p class="small text-muted mt-2">
-                Al hacer clic en "Suscribirse Ahora", serás redirigido a Stripe para completar tu pago de forma segura.
-              </p>
-            </div>
-
-            <!-- Loading State -->
-            <div id="loading-state" class="text-center mt-3" style="display: none;">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Cargando...</span>
+            <!-- Payment Form -->
+            <%= form_tag subscription_path, method: :post, id: 'payment-form' do %>
+              <div class="mb-3">
+                <label for="card-element" class="form-label">Información de la Tarjeta</label>
+                <div id="card-element" class="form-control" style="height: 50px; padding: 12px; background-color: white; border: 2px solid #e0e0e0; border-radius: 8px;">
+                  <!-- Stripe Elements will be inserted here -->
+                </div>
+                <div id="card-errors" class="text-danger mt-2" role="alert"></div>
               </div>
-              <p class="mt-2">Procesando tu suscripción...</p>
-            </div>
+              
+              <div class="text-center">
+                <button type="submit" class="btn btn-primary btn-lg w-100" id="submit-button">
+                  <i class="fas fa-credit-card me-2"></i>
+                  Suscribirse Ahora - $3,000 MXN
+                </button>
+                <p class="small text-muted mt-2">
+                  Tu pago será procesado de forma segura por Stripe.
+                </p>
+              </div>
+            <% end %>
           </div>
         </div>
       </div>
@@ -68,56 +70,95 @@
   </div>
 </div>
 
-<!-- Stripe Script -->
 <script src="https://js.stripe.com/v3/"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const stripe = Stripe('<%= Rails.configuration.stripe[:publishable_key] %>');
-    const checkoutButton = document.getElementById('checkout-button');
-    const loadingState = document.getElementById('loading-state');
+  // Initialize Stripe
+  const stripe = Stripe('<%= ENV['STRIPE_PUBLISHABLE_KEY'] %>');
+  const elements = stripe.elements();
 
-    checkoutButton.addEventListener('click', function() {
-      // Show loading state
-      checkoutButton.style.display = 'none';
-      loadingState.style.display = 'block';
+  // Create card element with better styling
+  const cardElement = elements.create('card', {
+    style: {
+      base: {
+        fontSize: '18px',
+        color: '#ffffff',
+        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+        fontSmoothing: 'antialiased',
+        fontWeight: '500',
+        '::placeholder': {
+          color: '#cccccc',
+          fontWeight: '400',
+        },
+        ':-webkit-autofill': {
+          color: '#ffffff',
+          backgroundColor: '#333333',
+        },
+      },
+      invalid: {
+        color: '#fa755a',
+        iconColor: '#fa755a',
+      },
+    },
+    hidePostalCode: true,
+  });
 
-      // Create checkout session
-      fetch('/subscription/create_checkout_session', {
+  // Mount card element
+  cardElement.mount('#card-element');
+
+  // Handle form submission
+  const form = document.getElementById('payment-form');
+  const submitButton = document.getElementById('submit-button');
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    
+    submitButton.disabled = true;
+    submitButton.textContent = 'Procesando...';
+
+    try {
+      // Create payment method
+      const { paymentMethod, error } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: cardElement,
+      });
+
+      if (error) {
+        const errorElement = document.getElementById('card-errors');
+        errorElement.textContent = error.message;
+        submitButton.disabled = false;
+        submitButton.innerHTML = '<i class="fas fa-credit-card me-2"></i>Suscribirse Ahora - $3,000 MXN';
+        return;
+      }
+
+      // Send payment method ID to backend
+      const response = await fetch('<%= subscription_path %>', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        }
-      })
-      .then(function(response) {
-        return response.json();
-      })
-      .then(function(session) {
-        if (session.error) {
-          // Show error and restore button
-          alert('Error: ' + session.error);
-          checkoutButton.style.display = 'block';
-          loadingState.style.display = 'none';
-          return;
-        }
-        
-        // Redirect to Stripe Checkout
-        return stripe.redirectToCheckout({ sessionId: session.id });
-      })
-      .then(function(result) {
-        if (result.error) {
-          // Show error and restore button
-          alert('Error: ' + result.error.message);
-          checkoutButton.style.display = 'block';
-          loadingState.style.display = 'none';
-        }
-      })
-      .catch(function(error) {
-        console.error('Error:', error);
-        alert('Error inesperado. Por favor, inténtalo de nuevo.');
-        checkoutButton.style.display = 'block';
-        loadingState.style.display = 'none';
+        },
+        body: JSON.stringify({
+          payment_method_id: paymentMethod.id
+        })
       });
-    });
+
+      const result = await response.json();
+
+      if (result.success) {
+        window.location.href = '<%= subscription_path %>';
+      } else {
+        const errorElement = document.getElementById('card-errors');
+        errorElement.textContent = result.error || 'Error al procesar el pago';
+        submitButton.disabled = false;
+        submitButton.innerHTML = '<i class="fas fa-credit-card me-2"></i>Suscribirse Ahora - $3,000 MXN';
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      const errorElement = document.getElementById('card-errors');
+      errorElement.textContent = 'Error inesperado. Por favor, inténtalo de nuevo.';
+      submitButton.disabled = false;
+      submitButton.innerHTML = '<i class="fas fa-credit-card me-2"></i>Suscribirse Ahora - $3,000 MXN';
+    }
   });
-</script> 
+</script>
+
