@@ -167,7 +167,8 @@ class Product < ApplicationRecord
   def calculate_totals
     # Calculate materials cost - handle both old and new field names
     materials_cost = materials.sum do |m| 
-      m["subtotal_price"].to_f + m["totalPrice"].to_f
+      # Use totalPrice if available (from frontend), otherwise use subtotal_price (from backend)
+      m["totalPrice"].to_f > 0 ? m["totalPrice"].to_f : m["subtotal_price"].to_f
     end
     
     # Calculate processes cost - handle both old and new field names
@@ -371,6 +372,41 @@ class Product < ApplicationRecord
     price_margin&.margin_percentage || 0
   end
   
+  # Calculate cost for an extra based on its properties
+  def calculate_extra_cost(extra)
+    extra_id = extra["extra_id"] || extra["id"]
+    return 0 unless extra_id
+    
+    extra_record = user.extras.find_by(id: extra_id)
+    return 0 unless extra_record
+    
+    # Get values or defaults
+    extra_price = extra_record.cost || 0
+    quantity = extra["quantity"].to_f || 0
+    
+    # Calculate subtotal
+    subtotal_price = extra_price * quantity
+    
+    # Update the extra with calculated values
+    updated_extra = extra.merge(
+      "extra_id" => extra_id,
+      "description" => extra_record.name,
+      "price" => extra_price,
+      "quantity" => quantity,
+      "subtotal_price" => subtotal_price
+    )
+    
+    # Replace the extra in the extras array
+    extra_index = extras.index { |e| (e["extra_id"] || e["id"]) == extra_id }
+    if extra_index
+      new_extras = extras.dup
+      new_extras[extra_index] = updated_extra
+      self.extras = new_extras
+    end
+    
+    return subtotal_price
+  end
+  
   private
   
   def validate_general_info
@@ -400,9 +436,10 @@ class Product < ApplicationRecord
     return 0 unless material_record
     
     # Get values or defaults
-    material_price = material_record.price || 0
-    material_width = material_record.ancho || 0
-    material_length = material_record.largo || 0
+    # Use user-modified price if available, otherwise use material record price
+    material_price = material["price"].to_f > 0 ? material["price"].to_f : (material_record.price || 0)
+    material_width = material["ancho"].to_f > 0 ? material["ancho"].to_f : (material_record.ancho || 0)
+    material_length = material["largo"].to_f > 0 ? material["largo"].to_f : (material_record.largo || 0)
     material_weight = material_record.weight || 0
     material_unit = material_record.unit
     
@@ -419,12 +456,24 @@ class Product < ApplicationRecord
     
     if material_record.weight_based_pricing?
       # For materials measured in grams per square meter (grs/m²)
-      total_square_meters = (width * length * quantity) / 10000.0  # cm² to m²
+      # Calculate total square meters based on material dimensions and sheets needed
+      if pieces_per_material > 0
+        total_sheets = (quantity / pieces_per_material).ceil
+        total_square_meters = total_sheets * (material_width * material_length) / 10000.0  # cm² to m²
+      else
+        total_square_meters = (width * length * quantity) / 10000.0  # cm² to m²
+      end
       total_weight = total_square_meters * material_weight  # grams
       subtotal_price = total_weight * material_price  # price per gram
     elsif material_record.area_based_pricing?
       # For materials measured in square meters (m²)
-      total_square_meters = (width * length * quantity) / 10000.0  # cm² to m²
+      # Calculate total square meters based on material dimensions and sheets needed
+      if pieces_per_material > 0
+        total_sheets = (quantity / pieces_per_material).ceil
+        total_square_meters = total_sheets * (material_width * material_length) / 10000.0  # cm² to m²
+      else
+        total_square_meters = (width * length * quantity) / 10000.0  # cm² to m²
+      end
       subtotal_price = total_square_meters * material_price
     elsif pieces_per_material > 0
       # For materials with piece counts
@@ -440,7 +489,7 @@ class Product < ApplicationRecord
       "description" => material_record.description,
       "resistance" => material_record.resistance,
       "client_description" => material_record.client_description,
-      "price" => material_price,
+      "price" => material["price"].to_f > 0 ? material["price"].to_f : material_price,
       "weight" => material_weight,
       "unit" => material_unit ? {
         "id" => material_unit.id,
@@ -508,38 +557,4 @@ class Product < ApplicationRecord
     return subtotal_price
   end
   
-  # Calculate cost for an extra based on its properties
-  def calculate_extra_cost(extra)
-    extra_id = extra["extra_id"] || extra["id"]
-    return 0 unless extra_id
-    
-    extra_record = user.extras.find_by(id: extra_id)
-    return 0 unless extra_record
-    
-    # Get values or defaults
-    extra_price = extra_record.cost || 0
-    quantity = extra["quantity"].to_f || 0
-    
-    # Calculate subtotal
-    subtotal_price = extra_price * quantity
-    
-    # Update the extra with calculated values
-    updated_extra = extra.merge(
-      "extra_id" => extra_id,
-      "description" => extra_record.name,
-      "price" => extra_price,
-      "quantity" => quantity,
-      "subtotal_price" => subtotal_price
-    )
-    
-    # Replace the extra in the extras array
-    extra_index = extras.index { |e| (e["extra_id"] || e["id"]) == extra_id }
-    if extra_index
-      new_extras = extras.dup
-      new_extras[extra_index] = updated_extra
-      self.extras = new_extras
-    end
-    
-    return subtotal_price
-  end
 end 

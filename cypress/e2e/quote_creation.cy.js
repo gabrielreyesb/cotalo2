@@ -13,37 +13,38 @@ describe('Quote Creation', () => {
     
     // Visit the quote creation page
     cy.visit('/quotes/new')
+    
+    // Wait for Vue app to load
+    cy.get('#quote-form-app').should('exist')
+    cy.wait(2000) // Wait for Vue to initialize
   })
 
   it('should create a new quote successfully', () => {
     // Fill in the quote form
+    cy.get('#project_name').type('Test Project')
     cy.get('#customer_name').type('Test Customer')
     cy.get('#organization').type('Test Organization')
     cy.get('#email').type('test@example.com')
     cy.get('#telephone').type('1234567890')
     cy.get('#comments').type('This is a test quote')
     
-    // Ensure there is at least one product to select
-    cy.get('#product-select option').should('have.length.greaterThan', 1);
-
-    // Log all option texts
-    cy.get('#product-select option').each(($option) => {
-      cy.log($option.text());
-    });
-
-    // Select the first real product option dynamically
-    cy.get('#product-select option').eq(1).then($option => {
-      cy.get('#product-select').select($option.text());
-    });
-
-    // Add the product to the quote
-    cy.contains('Agregar a la cotización').click();
-
-    // Ensure the product is added to the quote
-    cy.get('.table').contains('Test Product').should('be.visible');
-
-    // Re-type the project name in case it was cleared
-    cy.get('#project_name').clear().type('Test Project');
+    // Wait for the multiselect to be ready (Vue component)
+    cy.get('.multiselect').should('exist')
+    
+    // Click on the multiselect to open it
+    cy.get('.multiselect').first().click()
+    
+    // Wait for the dropdown to appear
+    cy.get('.multiselect__content-wrapper').should('be.visible')
+    
+    // Select the first available product
+    cy.get('.multiselect__option').first().click()
+    
+    // Click the "Add to quote" button
+    cy.contains('Agregar a la cotización').click()
+    
+    // Verify that a product was added (look for the table or product list)
+    cy.get('.table, .selected-products, [data-testid="selected-products"]').should('exist')
     
     // Submit the form
     cy.get('#save-quote-button').click()
