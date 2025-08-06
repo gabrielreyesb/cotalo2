@@ -352,6 +352,8 @@ es:
     materials_tab:
       comments_label: "Comentarios sobre los materiales"
       comments_placeholder: "Agregar notas o comentarios generales sobre los materiales de este producto"
+      product_info: "Información del Producto"
+      pieces: "pzas"
   processes:
     index:
       title: "Procesos"
@@ -629,7 +631,7 @@ es:
       materials: "Materiales"
       processes: "Procesos"
       extras: "Indirectos"
-      total_price: "Precio total"
+      total_price: "Costo total"
       price_per_piece: "Precio por pieza"
       actions: "Acciones"
       duplicate: "Duplicar"
@@ -728,23 +730,28 @@ es:
       total: "Total"
       remove: "Eliminar"
       select_process: "Seleccionar proceso"
-      add_process: "Agregar proceso"
+      add_process: "Agregar"
       no_processes: "No hay procesos agregados. Selecciona un proceso y agrégalo al producto."
       process_description: "Descripción"
       unit: "Unidad"
       applied_to: "Aplicado a material"
       unit_price: "Precio unitario"
-      process_total_price: "Precio total"
+      process_total_price: "Costo total"
       process_comments: "Comentarios sobre procesos"
       pieces: "pzas"
       sheets: "pliegos"
       material: "Material"
       total_general: "Total Procesos"
-      process_type: "Tipo de Proceso"
-      material_process: "Proceso de Material"
-      product_process: "Proceso de Producto"
+      process_type: "Tipo de proceso:"
+      material_process: "Proceso aplicado a material"
+      product_process: "Proceso aplicado al producto"
       product_process_info: "Este proceso se aplicará al producto completo"
       no_product_processes: "No hay procesos de piezas disponibles para aplicar al producto"
+      side: "Cara"
+      times: "Veces"
+      sheets: "pliegos"
+      pieces: "pzas"
+      material: "Material"
       select_extra: "Seleccionar indirecto"
       add_extra: "Agregar indirecto"
       no_extras: "No hay indirectos agregados. Selecciona un indirecto y agrégalo al producto."
@@ -753,27 +760,32 @@ es:
       extra_unit_price: "Precio unitario"
       extra_quantity: "Cantidad"
       include_in_subtotal: "Incluir indirectos en el valor del producto"
-      materials_cost: "Costo de materiales:"
-      processes_cost: "Costo de procesos:"
-      extras_cost: "Costo de indirectos:"
+      materials_cost: "Materiales:"
+      processes_cost: "Procesos:"
+      extras_cost: "Indirectos:"
       subtotal: "Subtotal:"
       waste: "Desperdicio:"
-      subtotal_with_waste: "Subtotal con desperdicio:"
-      price_per_piece_before_margin: "Precio por pieza antes de margen:"
+      subtotal_with_waste: "Sub. con merma:"
+      price_per_piece_before_margin: "Pieza antes margen:"
       margin: "Margen:"
-      total_price: "Precio total:"
-      final_price_per_piece: "Precio final por pieza:"
+      total_price: "Costo total:"
+      final_price_per_piece: "Final por pieza:"
       save_product: "Guardar"
       materials_tab:
         comments_label: "Comentarios sobre los materiales"
         comments_placeholder: "Agregar notas o comentarios generales sobre los materiales de este producto"
       materials_calculation_tooltip: |
-        <strong>Cómo se calculan los costos de materiales:</strong><br>
-        • <u>Piezas por material</u>: Cantidad de piezas que se pueden obtener de un pliego de material<br>
-        • <u>Total pliegos</u>: Cantidad de pliegos de material necesarios para crear el producto<br>
-        • <u>Total m²</u>: Cantidad de metros cuadrados de material necesarios para crear el producto<br>
-        • <u>Precio total</u>: Precio total del material para crear el producto
-      processes_calculation_tooltip: "<strong>Cómo se calculan los costos de procesos:</strong><br>• <u>Precio unitario</u>: El costo por unidad del proceso<br>• <u>Aplicado a</u>: El material o parte a la que se aplica el proceso<br>• <u>Precio total</u>: El costo total de este proceso en el producto"
+        <strong>¿Cómo se calculan los costos de materiales?</strong><br><br>
+        <strong>Materiales por área (m²):</strong><br>
+        • <u>Piezas por material</u>: Cantidad de piezas que se pueden obtener de un pliego<br>
+        • <u>Total de pliegos</u>: Cantidad estimada de pliegos necesarios<br>
+        • <u>Total en m²</u>: Metros cuadrados totales requeridos<br>
+        • <u>Costo total</u>: Precio por m² × Total m²<br><br>
+        <strong>Materiales por peso (kg, g):</strong><br>
+        • <u>Peso por pieza</u>: Peso individual de cada pieza<br>
+        • <u>Peso total</u>: Peso total requerido para todas las piezas<br>
+        • <u>Costo total</u>: Precio por kg/g × Peso total
+      processes_calculation_tooltip: "<strong>¿Cómo se calculan los costos de procesos globales?</strong><br><br><strong>Procesos globales:</strong><br>• <u>Costo unitario</u>: El costo por unidad del proceso (por pieza, por millar, etc.)<br>• <u>Veces</u>: Número de veces que se aplica el proceso a cada pieza<br>• <u>Aplicado a</u>: Se aplica a <strong>TODAS las piezas</strong> del producto<br>• <u>Costo total</u>: Costo unitario × Veces × Cantidad total de piezas<br><br><strong>Ejemplo:</strong><br>Si tienes 1,000 piezas y un proceso de $0.50 por pieza aplicado 2 veces:<br>Costo total = $0.50 × 2 × 1,000 = $1,000"
       processes_material_tooltip: "<strong>Selección de material:</strong><br>• Selecciona el material al que se aplicará el proceso<br>• El proceso se calculará basado en las dimensiones y cantidad del material seleccionado<br>• Asegúrate de que el material tenga las dimensiones correctas configuradas"
       extras_tab:
         select_extra: "Seleccionar indirecto"

@@ -27,6 +27,8 @@
                 :disabled="!availableMaterials.length"
                 @select="onMaterialSelect"
                 :select-label="''"
+                :remove-label="''"
+                :deselect-label="''"
               />
             </div>
             
@@ -52,7 +54,23 @@
     <!-- Materials Table/Cards -->
     <div class="green-accent-panel mt-4" v-if="productMaterials.length">
       <div class="card">
+        <div class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+              <i class="fa fa-list me-2"></i>Lista de materiales
+            </h5>
+            <div class="d-flex align-items-center gap-3">
+              <span class="text-light material-header-text">
+                <i class="fa fa-cube me-1"></i>{{ productQuantity }} {{ translations.materials.pieces || 'pzas' }}
+              </span>
+              <span class="text-light material-header-text">
+                <i class="fa fa-arrows-alt-h me-1"></i>{{ productWidth }} × {{ productLength }} cm
+              </span>
+            </div>
+          </div>
+        </div>
         <div class="card-body p-0">
+          
           <!-- Desktop Table -->
           <div class="d-none d-md-block">
             <table class="table table-striped product-table mb-0">
@@ -80,7 +98,7 @@
                       v-model.number="material.ancho" 
                       min="0"
                       step="0.1"
-                      @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
+                      @blur="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
                       :title="translations.materials.width"
                       data-toggle="tooltip"
                     />
@@ -92,7 +110,7 @@
                       v-model.number="material.largo" 
                       min="0"
                       step="0.1"
-                      @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
+                      @blur="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
                       :title="translations.materials.length"
                       data-toggle="tooltip"
                     />
@@ -104,7 +122,7 @@
                       v-model.number="material.price" 
                       min="0"
                       step="0.01"
-                      @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
+                      @blur="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
                       :title="translations.materials.price"
                       data-toggle="tooltip"
                     />
@@ -115,14 +133,14 @@
                       class="form-control form-control-sm text-end" 
                       v-model.number="material.piecesPerMaterial" 
                       min="1"
-                      @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
+                      @blur="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
                       title="Pzas"
                       data-toggle="tooltip"
                     />
                   </td>
                   <td class="text-end">{{ material.totalSheets }}</td>
                   <td class="text-end">
-                    <span v-if="material.totalWeight && material.totalWeight > 0">{{ (material.totalWeight / 1000).toFixed(2) }} kg</span>
+                    <span v-if="material.totalWeight && material.totalWeight > 0">{{ (material.totalWeight / 1000).toFixed(2) }}</span>
                     <span v-else>-</span>
                   </td>
                   <td class="text-end">
@@ -162,7 +180,7 @@
               </tbody>
               <tfoot>
                 <tr>
-                  <th :colspan="productMaterials.length ? 8 : 1" class="text-end">Total:</th>
+                  <th :colspan="productMaterials.length ? 8 : 1" class="text-end">Costo total:</th>
                   <th class="text-end">{{ formatCurrency(totalCost) }}</th>
                   <th></th>
                 </tr>
@@ -201,7 +219,7 @@
                       min="0"
                       step="0.1"
                       :placeholder="'0.0'"
-                      @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
+                      @blur="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
                     />
                     <span class="input-unit">cm</span>
                   </div>
@@ -214,7 +232,7 @@
                       min="0"
                       step="0.1"
                       :placeholder="'0.0'"
-                      @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
+                      @blur="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
                     />
                     <span class="input-unit">cm</span>
                   </div>
@@ -227,7 +245,7 @@
                       min="0"
                       step="0.01"
                       :placeholder="'0.00'"
-                      @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
+                      @blur="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
                     />
                     <span class="input-unit">$</span>
                   </div>
@@ -243,7 +261,7 @@
                       v-model.number="material.piecesPerMaterial" 
                       min="1"
                       :placeholder="'1'"
-                      @change="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
+                      @blur="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
                     />
                     <span class="input-unit">pz</span>
                   </div>
@@ -261,7 +279,7 @@
                 
                 <!-- Total price row -->
                 <div class="total-row">
-                  <span class="total-label">Total:</span>
+                                      <span class="total-label">Costo total:</span>
                   <span 
                     class="total-value"
                     :title="'El costo del material se calcula con base en el área total usada (en m²), no por pliegos completos. La cantidad de pliegos mostrada es solo una referencia visual.'"
@@ -621,7 +639,7 @@ export default {
         this.materialIdForAdd = null; // Reset selector
         return;
       }
-      console.log('MATERIAL SELECTED:', JSON.stringify(selectedOption));
+
     },
     addMaterial() {
       if (!this.productWidth || this.productWidth <= 0 || !this.productLength || this.productLength <= 0) {
@@ -736,40 +754,21 @@ export default {
       const unitStr = typeof material.unit === 'string'
         ? material.unit
         : (material.unit?.name || material.unit?.abbreviation || '');
-      console.log('--- MATERIAL CALCULATION START ---');
-      console.log('Material:', JSON.stringify(material));
-      console.log('Unit string:', unitStr);
-      console.log('Unit string length:', unitStr.length);
-      console.log('Unit string includes m2:', unitStr.toLowerCase().includes('m2'));
-      console.log('Unit string includes m²:', unitStr.toLowerCase().includes('m²'));
-      console.log('Width:', material.ancho, 'Length:', material.largo, 'Price:', material.price);
-      console.log('Pieces per sheet:', piecesPerMaterial, 'Sheets needed:', totalSheets);
-      console.log('Total m2:', totalSquareMeters);
-      
-      // DEBUG: Check why condition is not working
-      console.log('DEBUG - Condition check:');
-      console.log('  unitStr.toLowerCase():', unitStr.toLowerCase());
-      console.log('  includes m2:', unitStr.toLowerCase().includes('m2'));
-      console.log('  includes mt2:', unitStr.toLowerCase().includes('mt2'));
-      console.log('  includes grs/m2:', unitStr.toLowerCase().includes('grs/m2'));
+
       
       if (unitStr.toLowerCase().includes('grs/m2') || unitStr.toLowerCase().includes('grs/m²')) {
         // Weight-based pricing (grs/m²)
         const materialWeight = parseFloat(material.weight) || 0;
         totalWeight = totalSquareMeters * materialWeight; // grams
         totalPrice = (totalWeight / 1000) * (material.price || 0); // price per kg
-        console.log('Weight-based: totalWeight (g):', totalWeight, 'price per kg:', material.price, 'totalPrice:', totalPrice);
       } else if (unitStr.toLowerCase().includes('m2') || unitStr.toLowerCase().includes('mt2')) {
         // Area-based pricing (m²)
         totalPrice = totalSquareMeters * (material.price || 0);
-        console.log('Area-based: totalSquareMeters:', totalSquareMeters, 'price:', material.price, 'totalPrice:', totalPrice);
       } else {
         // Default: per sheet
         totalPrice = totalSheets * (material.price || 0);
-        console.log('Sheet-based: sheetsNeeded:', totalSheets, 'price:', material.price, 'totalPrice:', totalPrice);
       }
       material.totalPrice = totalPrice;
-      console.log('--- MATERIAL CALCULATION END ---');
 
       // Update the material with new calculations
       const updatedMaterial = {
@@ -1157,6 +1156,19 @@ export default {
         gap: 0.25rem;
       }
     }
+  }
+}
+
+/* Material header text styling */
+.material-header-text {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+/* Mobile material header styling */
+@media (max-width: 767.98px) {
+  .material-header-text {
+    font-size: 0.8rem;
   }
 }
 

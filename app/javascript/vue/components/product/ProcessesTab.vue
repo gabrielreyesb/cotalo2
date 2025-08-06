@@ -1,26 +1,31 @@
 <template>
   <div class="processes-tab">
+    <!-- Process Type Toggle -->
     <div class="green-accent-panel">
       <div class="card">
         <div class="card-body">
-          <div class="row align-items-end">
-            <!-- Process Type Toggle -->
-            <div class="col-md-12 mb-2">
-              <div class="d-flex align-items-center mb-2">
-                <label class="form-label mb-0 me-3">{{ translations.processes.process_type || 'Tipo de Proceso' }}</label>
-                <div class="btn-group" role="group">
-                  <input type="radio" class="btn-check" name="processType" id="materialProcess" value="material" v-model="processType" />
-                  <label class="btn btn-outline-primary btn-sm" for="materialProcess">
-                    <i class="fa fa-box me-1"></i>{{ translations.processes.material_process || 'Proceso de Material' }}
-                  </label>
-                  <input type="radio" class="btn-check" name="processType" id="productProcess" value="product" v-model="processType" />
-                  <label class="btn btn-outline-primary btn-sm" for="productProcess">
-                    <i class="fa fa-cube me-1"></i>{{ translations.processes.product_process || 'Proceso de Producto' }}
-                  </label>
-                </div>
-              </div>
+          <div class="d-flex align-items-center">
+            <label class="form-label mb-0 me-3">{{ translations.processes.process_type || 'Tipo de Proceso' }}</label>
+            <div class="btn-group" role="group">
+              <input type="radio" class="btn-check" name="processType" id="materialProcess" value="material" v-model="processType" />
+              <label class="btn btn-outline-primary btn-sm" for="materialProcess">
+                <i class="fa fa-box me-1"></i>{{ translations.processes.material_process || 'Proceso de Material' }}
+              </label>
+              <input type="radio" class="btn-check" name="processType" id="productProcess" value="product" v-model="processType" />
+              <label class="btn btn-outline-primary btn-sm" for="productProcess">
+                <i class="fa fa-cube me-1"></i>{{ translations.processes.product_process || 'Proceso de Producto' }}
+              </label>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <!-- Process Selection -->
+    <div class="green-accent-panel mt-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="row align-items-end">
             <!-- Material Selector -->
             <div class="col-md-4 mb-2">
               <div class="d-flex align-items-center mb-2">
@@ -44,11 +49,13 @@
                 :placeholder="''"
                 :disabled="!productMaterials.length || processType === 'product'"
                 :select-label="''"
+                :remove-label="''"
+                :deselect-label="''"
               />
             </div>
 
             <!-- Process Selector -->
-            <div class="col-md-4 mb-2">
+            <div class="col-md-3 mb-2">
               <div class="d-flex align-items-center mb-2">
                 <label for="process-select" class="form-label mb-0 me-2">{{ translations.processes.select_process }}</label>
                 <button 
@@ -70,12 +77,41 @@
                 :placeholder="''"
                 :disabled="!filteredProcesses.length"
                 :select-label="''"
+                :remove-label="''"
+                :deselect-label="''"
                 @select="onProcessSelect"
               />
             </div>
 
-            <!-- Veces Input THIRD (narrower) -->
+            <!-- Side Selector -->
             <div class="col-md-2 mb-2">
+              <div class="d-flex align-items-center mb-2">
+                <label for="side-select" class="form-label mb-0 me-2">{{ translations.processes.side || 'Cara' }}</label>
+                <button 
+                  type="button" 
+                  class="btn btn-outline-success btn-sm"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="right"
+                  data-bs-html="true"
+                  :title="translations.processes_side_tooltip || 'Selección de cara<br>• Frente: Proceso aplicado solo al frente<br>• Reverso: Proceso aplicado solo al reverso<br>• Ambas: Proceso aplicado a ambas caras (precio × 2)'"
+                >
+                  <i class="fa fa-question-circle"></i>
+                </button>
+              </div>
+              <select
+                v-model="selectedSide"
+                class="form-select"
+                :disabled="!selectedProcessId"
+                style="background-color: var(--card-bg); border-color: #32383e; color: #f8f9fa;"
+              >
+                <option value="front">Frente</option>
+                <option value="back">Reverso</option>
+                <option value="both">Ambas</option>
+              </select>
+            </div>
+
+            <!-- Veces Input -->
+            <div class="col-md-1 mb-2">
               <label class="form-label mb-0">{{ translations.processes.times || 'Veces' }}</label>
               <input
                 type="number"
@@ -87,13 +123,13 @@
               />
             </div>
 
-            <!-- Add Process Button FOURTH (same row) -->
+            <!-- Add Process Button -->
             <div class="col-md-2 mb-2 d-flex align-items-end">
               <button 
                 class="btn btn-primary w-100" 
                 @click="addProcess" 
                 :disabled="!canAdd"
-                style="min-width: 100px;"
+                style="min-width: 120px;"
               >
                 <i class="fa fa-plus me-1"></i> {{ translations.processes.add_process }}
               </button>
@@ -152,10 +188,11 @@
                   <thead>
                     <tr>
                       <th style="width: 35%">{{ translations.processes.process }}</th>
-                      <th style="width: 10%">{{ translations.processes.unit }}</th>
-                      <th style="width: 10%">{{ translations.processes.times || 'Veces' }}</th>
-                      <th style="width: 15%" class="text-end">{{ translations.processes.unit_price }}</th>
-                      <th style="width: 15%" class="text-end">{{ translations.processes.total_price }}</th>
+                      <th style="width: 8%">{{ translations.processes.unit }}</th>
+                      <th style="width: 8%">{{ translations.processes.times || 'Veces' }}</th>
+                      <th style="width: 12%" class="text-end">{{ translations.processes.unit_price }}</th>
+                      <th style="width: 12%" class="text-center">{{ translations.processes.side || 'Cara' }}</th>
+                      <th style="width: 10%" class="text-end">{{ translations.processes.total_price }}</th>
                       <th style="width: 10%" class="text-center">{{ translations.processes.actions }}</th>
                     </tr>
                   </thead>
@@ -186,6 +223,19 @@
                           data-toggle="tooltip"
                         />
                       </td>
+                      <td class="text-center">
+                        <select
+                          v-model="process.side"
+                          class="form-select form-select-sm w-100"
+                          @change="updateProcessField(materialId, index, 'side', process.side)"
+                          :title="translations.processes.side || 'Cara'"
+                          style="background-color: var(--card-bg); border-color: #32383e; color: #f8f9fa; font-size: 0.8rem;"
+                        >
+                          <option value="front">Frente</option>
+                          <option value="back">Reverso</option>
+                          <option value="both">Ambas</option>
+                        </select>
+                      </td>
                       <td class="text-end">{{ formatCurrency(process.price) }}</td>
                       <td class="text-center">
                         <div class="btn-group">
@@ -202,7 +252,7 @@
                   </tbody>
                   <tfoot>
                     <tr>
-                      <th colspan="4" class="text-end">{{ translations.processes.total }}:</th>
+                      <th colspan="5" class="text-end">{{ translations.processes.total }}:</th>
                       <th class="text-end">
                         {{ formatCurrency(processes.reduce((sum, p) => sum + (parseFloat(p.price) || 0), 0)) }}
                       </th>
@@ -248,7 +298,7 @@
                     </h6>
                     <!-- Editable fields grid -->
                     <div class="row g-2 mb-2 text-center">
-                      <div class="col-4 d-flex flex-column align-items-center">
+                      <div class="col-3 d-flex flex-column align-items-center">
                         <span>
                           <i class="fa fa-redo me-1"></i>
                           <input 
@@ -258,11 +308,11 @@
                             min="1"
                             step="1"
                             @change="updateProcessField(materialId, index, 'veces', process.veces)"
-                            style="max-width: 70px; display: inline-block;"
+                            style="max-width: 60px; display: inline-block;"
                           /> <span class="text-muted">x</span>
                         </span>
                       </div>
-                      <div class="col-4 d-flex flex-column align-items-center">
+                      <div class="col-3 d-flex flex-column align-items-center">
                         <span>
                           <i class="fa fa-dollar-sign me-1"></i>
                           <input 
@@ -272,11 +322,26 @@
                             min="0"
                             step="0.01"
                             @change="updateProcessField(materialId, index, 'unitPrice', process.unitPrice)"
-                            style="max-width: 70px; display: inline-block;"
+                            style="max-width: 60px; display: inline-block;"
                           /> <span class="text-muted">$</span>
                         </span>
                       </div>
-                      <div class="col-4 d-flex flex-column align-items-center">
+                      <div class="col-3 d-flex flex-column align-items-center">
+                        <span>
+                          <i class="fa fa-layer-group me-1"></i>
+                          <select
+                            v-model="process.side"
+                            class="form-select form-select-sm"
+                            @change="updateProcessField(materialId, index, 'side', process.side)"
+                            style="max-width: 70px; font-size: 0.8rem; background-color: var(--card-bg); border-color: #32383e; color: #f8f9fa;"
+                          >
+                            <option value="front">Frente</option>
+                            <option value="back">Reverso</option>
+                            <option value="both">Ambas</option>
+                          </select>
+                        </span>
+                      </div>
+                      <div class="col-3 d-flex flex-column align-items-center">
                         <span>
                           <i class="fa fa-calculator me-1"></i>
                           {{ formatCurrency(process.price) }} <span class="text-muted">$</span>
@@ -397,6 +462,7 @@ export default {
     return {
       selectedProcessId: null,
       selectedMaterialId: null,
+      selectedSide: 'front',
       veces: 1,
       globalComments: this.comments || '',
       processType: 'material', // 'material' or 'product'
@@ -467,13 +533,16 @@ export default {
       const basePrice = parseFloat(process.price) || 0;
       let calculatedPrice = basePrice;
       
+      // Apply side multiplier
+      const sideMultiplier = this.selectedSide === 'both' ? 2 : 1;
+      
       if (this.processType === 'product') {
         // Product-level process
         if (process.unit === 'pieza') {
-          calculatedPrice = basePrice * this.productQuantity * this.veces;
+          calculatedPrice = basePrice * this.productQuantity * this.veces * sideMultiplier;
         } else {
-          // For other units, use the base price * veces
-          calculatedPrice = basePrice * this.veces;
+          // For other units, use the base price * veces * side multiplier
+          calculatedPrice = basePrice * this.veces * sideMultiplier;
         }
         
         const newProcess = {
@@ -482,6 +551,7 @@ export default {
           unit: process.unit || 'unidad',
           unitPrice: basePrice,
           veces: this.veces,
+          side: this.selectedSide,
           price: calculatedPrice,
           materialId: 'product',
           materialDescription: 'Producto'
@@ -507,11 +577,11 @@ export default {
         const materialSquareMeters = selectedMaterial.totalSquareMeters;
         
         if (process.unit === 'pieza') {
-          calculatedPrice = basePrice * this.productQuantity * this.veces;
+          calculatedPrice = basePrice * this.productQuantity * this.veces * sideMultiplier;
         } else if (process.unit === 'pliego') {
-          calculatedPrice = basePrice * materialSheets * this.veces;
+          calculatedPrice = basePrice * materialSheets * this.veces * sideMultiplier;
         } else if (process.unit === 'mt2') {
-          calculatedPrice = basePrice * materialSquareMeters * this.veces;
+          calculatedPrice = basePrice * materialSquareMeters * this.veces * sideMultiplier;
         }
         
         const newProcess = {
@@ -520,6 +590,7 @@ export default {
           unit: process.unit || 'unidad',
           unitPrice: basePrice,
           veces: this.veces,
+          side: this.selectedSide,
           price: calculatedPrice,
           materialId,
           materialDescription
@@ -536,6 +607,7 @@ export default {
       // Keep the material selected for convenience when adding multiple processes to the same material
       // this.selectedMaterialId = null;
       this.veces = 1;
+      this.selectedSide = 'front';
     },
     removeProcess(materialId, index) {
       const updated = { ...this.productProcessesByMaterial };
@@ -550,6 +622,8 @@ export default {
       const process = { ...updated[materialId][index], [field]: value };
       const basePrice = parseFloat(process.unitPrice) || 0;
       const veces = parseInt(process.veces) || 1;
+      const side = process.side || 'front';
+      const sideMultiplier = side === 'both' ? 2 : 1;
       let calculatedPrice = basePrice;
       // First try to find by materialInstanceId (for numbered materials)
       let material = this.productMaterials.find(m => m.materialInstanceId === materialId);
@@ -559,11 +633,11 @@ export default {
         material = this.productMaterials.find(m => m.id == materialId);
       }
       if (process.unit === 'pieza') {
-        calculatedPrice = basePrice * this.productQuantity * veces;
+        calculatedPrice = basePrice * this.productQuantity * veces * sideMultiplier;
       } else if (process.unit === 'pliego') {
-        calculatedPrice = basePrice * (material ? material.totalSheets : 0) * veces;
+        calculatedPrice = basePrice * (material ? material.totalSheets : 0) * veces * sideMultiplier;
       } else if (process.unit === 'mt2') {
-        calculatedPrice = basePrice * (material ? material.totalSquareMeters : 0) * veces;
+        calculatedPrice = basePrice * (material ? material.totalSquareMeters : 0) * veces * sideMultiplier;
       }
       process.price = calculatedPrice;
       updated[materialId] = updated[materialId].map((p, i) => i === index ? process : p);
@@ -578,6 +652,9 @@ export default {
       if (!selectedOption) {
         return;
       }
+
+      // Set default side value when a process is selected
+      this.selectedSide = selectedOption.side || 'front';
 
       // Check if there are any materials available
       if (!this.productMaterials || this.productMaterials.length === 0) {
@@ -705,14 +782,25 @@ export default {
         updated[materialId] = updated[materialId].map(process => {
           const basePrice = parseFloat(process.unitPrice) || 0;
           const veces = parseInt(process.veces) || 1;
+          const side = process.side || 'front';
+          const sideMultiplier = side === 'both' ? 2 : 1;
           let calculatedPrice = basePrice;
           
           if (process.unit === 'pieza') {
-            calculatedPrice = basePrice * this.productQuantity * veces;
+            calculatedPrice = basePrice * this.productQuantity * veces * sideMultiplier;
           } else if (process.unit === 'pliego') {
-            calculatedPrice = basePrice * (material.totalSheets || 0) * veces;
+            calculatedPrice = basePrice * (material.totalSheets || 0) * veces * sideMultiplier;
           } else if (process.unit === 'mt2') {
-            calculatedPrice = basePrice * (material.totalSquareMeters || 0) * veces;
+            // Per square meter - consider material type
+            const isWeightBased = this.isWeightBasedMaterial(material);
+            if (isWeightBased) {
+              // For weight-based materials, use total weight (in kg) instead of square meters
+              const totalWeightKg = (material.totalWeight || 0) / 1000;
+              calculatedPrice = basePrice * totalWeightKg * veces * sideMultiplier;
+            } else {
+              // For area-based materials, use square meters
+              calculatedPrice = basePrice * (material.totalSquareMeters || 0) * veces * sideMultiplier;
+            }
           }
           
           return { ...process, price: calculatedPrice };
@@ -743,6 +831,30 @@ export default {
           this.productMaterials[index] = updatedMaterial;
         }
       });
+    },
+    
+    // Check if this material uses weight-based pricing (kg, g, gr, etc.)
+    isWeightBasedMaterial(material) {
+      if (!material.unit) return false;
+      
+      let unitName = '';
+      let unitAbbr = '';
+      
+      // Handle both object and string unit formats
+      if (typeof material.unit === 'string') {
+        unitName = material.unit.toLowerCase();
+        unitAbbr = material.unit.toLowerCase();
+      } else if (material.unit && typeof material.unit === 'object') {
+        unitName = (material.unit.name || '').toLowerCase();
+        unitAbbr = (material.unit.abbreviation || '').toLowerCase();
+      }
+      
+      // Check for weight units (exact matches to avoid false positives)
+      const weightUnits = ['kg', 'g', 'gr', 'gramo', 'gramos', 'kilo', 'kilos', 'kilogramo', 'kilogramos'];
+      const weightMatch = weightUnits.some(wu => unitName === wu || unitAbbr === wu);
+      const grsMatch = unitName.includes('grs/m2') || unitAbbr.includes('grs/m2');
+      
+      return weightMatch || grsMatch;
     }
   },
   watch: {

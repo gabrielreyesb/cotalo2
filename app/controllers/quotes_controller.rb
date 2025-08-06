@@ -40,6 +40,11 @@ class QuotesController < ApplicationController
   def new
     @quote = current_user.quotes.new
     @products = current_user.products.order(created_at: :desc)
+    
+    # Pre-select product if product_id is provided
+    if params[:product_id].present?
+      @preselected_product = current_user.products.find_by(id: params[:product_id])
+    end
   end
   
   def create

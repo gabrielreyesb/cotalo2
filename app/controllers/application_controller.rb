@@ -9,13 +9,43 @@ class ApplicationController < ActionController::Base
   # Redirect to dashboard after sign in
   def after_sign_in_path_for(resource)
     flash.delete(:notice)
-    dashboard_path
+    
+    # Debug logging
+    Rails.logger.info "[after_sign_in_path_for] METHOD CALLED - User: #{resource.email}"
+    Rails.logger.info "[after_sign_in_path_for] Has real products: #{resource.has_real_products?}"
+    Rails.logger.info "[after_sign_in_path_for] Has real quotes: #{resource.has_real_quotes?}"
+    Rails.logger.info "[after_sign_in_path_for] Has activity: #{resource.has_activity?}"
+    Rails.logger.info "[after_sign_in_path_for] New user flag: #{session[:new_user]}"
+    
+    # If this is a new user (just registered), always go to onboarding
+    if session[:new_user]
+      Rails.logger.info "[after_sign_in_path_for] New user detected, redirecting to onboarding"
+      session.delete(:new_user) # Clear the flag
+      onboarding_path
+    # If user has no products and no quotes, redirect to onboarding
+    elsif !resource.has_activity?
+      Rails.logger.info "[after_sign_in_path_for] No activity detected, redirecting to onboarding"
+      onboarding_path
+    else
+      Rails.logger.info "[after_sign_in_path_for] Has activity, redirecting to dashboard"
+      dashboard_path
+    end
   end
 
   # Redirect to dashboard after sign up (new account creation)
   def after_sign_up_path_for(resource)
     flash.delete(:notice)
-    dashboard_path
+    
+    # Debug logging
+    Rails.logger.info "[after_sign_up_path_for] METHOD CALLED - New user: #{resource.email}"
+    Rails.logger.info "[after_sign_up_path_for] Redirecting to onboarding"
+    Rails.logger.info "[after_sign_up_path_for] Session new_user flag set to true"
+    
+    # Set a flag to indicate this is a new user
+    session[:new_user] = true
+    
+    # New users should always go to onboarding, regardless of demo data
+    onboarding_path
   end
 
   def after_sign_out_path_for(resource_or_scope)

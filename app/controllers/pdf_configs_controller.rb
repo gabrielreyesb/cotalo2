@@ -1,4 +1,5 @@
 class PdfConfigsController < ApplicationController
+  require 'fileutils'
   before_action :authenticate_user!
   skip_before_action :verify_authenticity_token, only: [:update_logo]
 
@@ -8,7 +9,19 @@ class PdfConfigsController < ApplicationController
 
   def update
     @pdf_config = current_user.pdf_config || current_user.build_pdf_config
-    if @pdf_config.update(pdf_config_params)
+    
+    # Proteger la URL del logo - no permitir que se sobrescriba con valores vacíos
+    update_params = pdf_config_params
+    
+    # Verificar si logo_url está vacío o es nil y hay una URL actual que proteger
+    logo_url_param = update_params[:logo_url]
+    if logo_url_param.blank? && @pdf_config.logo_url.present?
+      update_params.delete(:logo_url)
+    elsif logo_url_param.present?
+    else
+    end
+    
+    if @pdf_config.update(update_params)
       redirect_to edit_pdf_config_path, notice: t('pdf_configs.update.success')
     else
       render :edit
@@ -28,22 +41,28 @@ class PdfConfigsController < ApplicationController
           return
         end
 
+        # Upload to Cloudinary
+        timestamp = Time.current.to_i
+        public_id = "pdf_logos/#{current_user.id}/logo_#{timestamp}"
+        
         result = Cloudinary::Uploader.upload(
-          params[:logo].tempfile,
+          params[:logo],
+          public_id: public_id,
           folder: "pdf_logos/#{current_user.id}",
-          public_id: "logo_#{Time.current.to_i}",
-          overwrite: true,
-          resource_type: :auto
+          resource_type: :image,
+          transformation: [
+            { width: 400, height: 400, crop: :limit }
+          ]
         )
-
+        
+        cloudinary_url = result['secure_url']
+        
         pdf_config = current_user.pdf_config || current_user.build_pdf_config
-        pdf_config.logo_url = result['secure_url']
+        pdf_config.logo_url = cloudinary_url
         pdf_config.save!
 
-        render json: { success: true, url: result['secure_url'] }
+        render json: { success: true, url: cloudinary_url }
       rescue => e
-        Rails.logger.error "Error uploading PDF logo: #{e.message}"
-        Rails.logger.error e.backtrace.join("\n")
         render json: { success: false, error: "Error interno del servidor: #{e.message}" }, status: :unprocessable_entity
       end
     else

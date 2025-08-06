@@ -2,7 +2,12 @@ Rails.application.routes.draw do
   get 'demo_requests/new'
   get 'demo_requests/create'
   # Authentication routes
-  devise_for :users
+  devise_for :users, controllers: {
+    registrations: 'registrations'
+  }
+  
+  # Add users resource for Devise compatibility
+  resources :users, only: [:index, :show]
   
   # Admin routes
   namespace :admin do
@@ -35,6 +40,7 @@ Rails.application.routes.draw do
   
   # Dashboard route
   get 'dashboard', to: 'home#dashboard', as: 'dashboard'
+  get 'onboarding', to: 'home#onboarding', as: 'onboarding'
   post 'dashboard/close_block', to: 'home#close_block', as: 'close_dashboard_block'
   post 'close_block', to: 'home#close_block', as: 'close_block'
   
@@ -72,12 +78,14 @@ Rails.application.routes.draw do
       get :general_info
       get :pricing
       get :modal_test
+      get :edit_v2
     end
     
     collection do
       get :materials_list
       get :processes_list
       get :extras_list
+      get :new_v2
     end
   end
   

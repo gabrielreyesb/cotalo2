@@ -54,6 +54,7 @@
       data-available-products="<%= @products.to_json(methods: [:formatted_description], except: [:created_at, :updated_at]) %>"
       data-quote="{}"
       data-edit-mode="false"
+      data-preselected-product="<%= @preselected_product&.id %>"
       data-translations='<%= {
         quote_info: t("quotes.form.quote_info"),
         project_name: t("quotes.form.project_name"),

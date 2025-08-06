@@ -25,14 +25,14 @@ class QuotePdfGenerator
             # Download the image from Cloudinary
             logo_tempfile = Down.download(logo_url)
             
-            # Position logo higher than the top margin
+            # Position logo in the top right corner
             pdf.image logo_tempfile.path, 
                      width: 160, 
-                     at: [0, pdf.bounds.top + 15],
-                     position: :left,
+                     at: [pdf.bounds.width - 160, pdf.bounds.top + 15],
+                     position: :right,
                      vposition: :top,
                      fit: [160, 50],  # Constrain dimensions while maintaining aspect ratio
-                     align: :left     # Align to left
+                     align: :right    # Align to right
             
             # Add quote number in the middle
             pdf.text_box "Cotización: #{quote.quote_number}",
@@ -42,11 +42,11 @@ class QuotePdfGenerator
                       size: 12,
                       style: :bold
             
-            # Add date on the right
+            # Add date on the left
             pdf.text_box "Guadalajara, Jalisco. A #{quote.created_at.day} de #{month_name(quote.created_at.month).upcase} del #{quote.created_at.year}",
                       at: [0, pdf.bounds.top + 15],
-                      width: pdf.bounds.width,
-                      align: :right
+                      width: pdf.bounds.width/3,
+                      align: :left
                       
             # Clean up the tempfile
             logo_tempfile.close

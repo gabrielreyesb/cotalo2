@@ -208,6 +208,8 @@ class Api::V1::ProductsController < ApplicationController
       description: process.name || process.description,
       unit: process.unit ? process.unit.name : 'unidad',
       price: process.cost || 0,
+      side: process.side || 'front',
+      side_label: process.side_label,
       unit_object: process.unit ? {
         id: process.unit.id,
         name: process.unit.name,

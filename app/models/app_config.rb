@@ -45,7 +45,14 @@ class AppConfig < ApplicationRecord
     # Set a config value for a user
     def set(user, key, value, value_type = TEXT)
       config = user.app_configs.find_or_initialize_by(key: key)
-      config.value = value.to_s
+      
+      # Ensure numeric values are stored with proper decimal format
+      if value_type == NUMERIC || value_type == PERCENTAGE
+        config.value = value.to_f.to_s
+      else
+        config.value = value.to_s
+      end
+      
       config.value_type = value_type
       config.save
     end

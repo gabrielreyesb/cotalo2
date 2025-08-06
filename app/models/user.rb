@@ -17,9 +17,9 @@ class User < ApplicationRecord
   has_many :suggestions, dependent: :destroy
   has_many :customers, dependent: :destroy
 
-  after_create :setup_initial_data
-  after_create :send_admin_notification
-  after_create :send_welcome_email
+  after_create :setup_initial_data, if: :persisted?
+  after_create :send_admin_notification, if: :persisted?
+  after_create :send_welcome_email, if: :persisted?
 
   # Subscription status constants
   SUBSCRIPTION_STATUS_TRIAL = 'trial'
@@ -69,7 +69,7 @@ class User < ApplicationRecord
   
   # Get waste percentage (default 0) – returns the numeric value as stored (e.g. 10 for 10%)
   def waste_percentage
-    get_config(AppConfig::WASTE_PERCENTAGE) || 0
+    get_config(AppConfig::WASTE_PERCENTAGE) || 0.0
   end
   
   # (Optional) Get waste percentage as a decimal (e.g. 0.1 for 10%)
@@ -114,8 +114,16 @@ class User < ApplicationRecord
   end
 
   def has_real_products?
-    # Count products excluding the example product
-    real_products_count = products.where.not(description: "Caja plegadiza cosmética – cartulina caple 12 pts").count
+    # Count products excluding all demo products
+    real_products_count = products.where.not(
+      description: [
+        "Caja plegadiza cosmética – cartulina caple 12 pts",
+        "Folder corporativo institucional – Folder de presentación tamaño carta con bolsillos interiores, impresión a color y acabado laminado.",
+        "Tríptico promocional 21×29.7 cm – Tríptico informativo doblado en 3 partes, impreso por ambos lados, con posible barniz brillante."
+      ]
+    ).count
+    Rails.logger.info "[has_real_products?] Total products: #{products.count}"
+    Rails.logger.info "[has_real_products?] Real products count: #{real_products_count}"
     real_products_count > 0
   end
 
@@ -162,7 +170,20 @@ class User < ApplicationRecord
   end
 
   def has_activity?
-    products_count > 0 || quotes_count > 0
+    has_real_products? || has_real_quotes?
+  end
+
+  def has_real_quotes?
+    # Count quotes excluding demo/example quotes
+    real_quotes_count = quotes.where.not(
+      project_name: [
+        "Caja plegadiza para producto cosmético premium",
+        "Campaña de Marketing Corporativo Q4 2024"
+      ]
+    ).count
+    Rails.logger.info "[has_real_quotes?] Total quotes: #{quotes.count}"
+    Rails.logger.info "[has_real_quotes?] Real quotes count: #{real_quotes_count}"
+    real_quotes_count > 0
   end
 
   def activity_summary
@@ -186,7 +207,7 @@ class User < ApplicationRecord
       # millar_unit removed
 
       Rails.logger.info "[setup_initial_data] Setting default app configs..."
-      set_config(AppConfig::WASTE_PERCENTAGE, 5, AppConfig::NUMERIC)
+      set_config(AppConfig::WASTE_PERCENTAGE, 5.0, AppConfig::NUMERIC)
       set_config(AppConfig::WIDTH_MARGIN, 2, AppConfig::NUMERIC)
       set_config(AppConfig::LENGTH_MARGIN, 2, AppConfig::NUMERIC)
       set_config('customer_name', 'Cotalo')
@@ -194,12 +215,11 @@ class User < ApplicationRecord
       set_config(AppConfig::THEME, 'dark')
 
       Rails.logger.info "[setup_initial_data] Creating demo materials..."
+      # Create materials with mt2_unit (area-based) - no weight field
       materials.create!([
         { description: 'Cartulina caple sulfatada 12 pts', client_description: 'Cartulina caple sulfatada 12 pts', price: 9.5, unit: mt2_unit, ancho: 100, largo: 100 },
         { description: 'Cartulina caple sulfatada 14 pts', client_description: 'Cartulina caple sulfatada 14 pts', price: 11, unit: mt2_unit, ancho: 100, largo: 100 },
         { description: 'Papel couché brillante 150 g/m²', client_description: 'Papel couché brillante 150 g/m²', price: 7, unit: mt2_unit, ancho: 100, largo: 100 },
-        { description: 'Cartón microcorrugado blanco', client_description: 'Cartón microcorrugado blanco', price: 17, unit: kg_unit, ancho: 100, largo: 100 },
-        { description: 'Cartón gris (Backing)', client_description: 'Cartón gris (Backing)', price: 13, unit: kg_unit, ancho: 100, largo: 100 },
         { description: 'Papel couché mate 170 g/m²', client_description: 'Papel de acabado elegante para folletos y trípticos', price: 7.5, unit: mt2_unit, ancho: 100, largo: 100 },
         { description: 'Papel bond 90 g/m²', client_description: 'Papel común para hojas membretadas y volantes simples', price: 5.0, unit: mt2_unit, ancho: 100, largo: 100 },
         { description: 'Cartulina opalina 250 g/m²', client_description: 'Papel rígido blanco para tarjetas, folders, portadas', price: 9.5, unit: mt2_unit, ancho: 100, largo: 100 },
@@ -208,6 +228,12 @@ class User < ApplicationRecord
         { description: 'Acetato transparente', client_description: 'Usado en cubiertas o efectos gráficos', price: 10.0, unit: mt2_unit, ancho: 100, largo: 100 },
         { description: 'Etiqueta adhesiva blanca 80 g/m²', client_description: 'Para stickers o etiquetas impresas', price: 6.5, unit: mt2_unit, ancho: 100, largo: 100 },
         { description: 'Papel reciclado 110 g/m²', client_description: 'Papel texturizado para papelería con identidad ecológica', price: 6.0, unit: mt2_unit, ancho: 100, largo: 100 }
+      ])
+      
+      # Create materials with kg_unit (weight-based) - with weight field
+      materials.create!([
+        { description: 'Cartón microcorrugado blanco', client_description: 'Cartón microcorrugado blanco', price: 17, unit: kg_unit, ancho: 100, largo: 100, weight: 0.5 },
+        { description: 'Cartón gris (Backing)', client_description: 'Cartón gris (Backing)', price: 13, unit: kg_unit, ancho: 100, largo: 100, weight: 0.3 }
       ])
 
       Rails.logger.info "[setup_initial_data] Creating demo manufacturing processes..."
@@ -500,7 +526,6 @@ class User < ApplicationRecord
       # Create PDF configuration
       Rails.logger.info "[setup_initial_data] Creating PDF configuration..."
       create_pdf_config!(
-        logo_url: ActionController::Base.helpers.asset_path('Cotalo_logo.png'),
         footer_text: "Creamos productos de alta calidad con materiales y procesos sustentables",
         signature_name: "Ing. Carlos Mendoza",
         signature_email: "carlos.mendoza@cotalo.com",
@@ -873,7 +898,8 @@ class User < ApplicationRecord
     rescue => e
       Rails.logger.error "[setup_initial_data] ERROR: #{e.class}: #{e.message}"
       Rails.logger.error e.backtrace.join("\n")
-      raise e
+      # Don't raise the error to avoid rolling back the user creation
+      # The user will be created successfully even if demo data fails
     end
   end
 

@@ -17,15 +17,10 @@
                 <div class="text-center mb-3">
                   <div id="pdf-logo-preview-container" class="border border-secondary rounded p-3 mb-3" style="min-height: 150px; display: flex; align-items: center; justify-content: center; flex-direction: column;">
                     <div id="pdf-logo-display-area" style="min-height: 120px; display: flex; align-items: center; justify-content: center;">
-                      <% if @pdf_config.logo_url.present? %>
-                        <%= image_tag @pdf_config.logo_url, class: "img-fluid", style: "max-height: 120px;", id: "pdf-current-logo" %>
-                      <% else %>
-                        <div class="text-muted" id="pdf-logo-placeholder">
-                          <i class="fas fa-image fa-3x mb-2"></i>
-                          <p class="mb-0"><%= t('config.no_logo_selected') %></p>
-                        </div>
-                      <% end %>
-                      <img id="pdf-logo-preview" class="img-fluid" style="max-height: 120px; display: none;">
+                      <div class="text-muted" id="pdf-logo-placeholder">
+                        <i class="fas fa-image fa-3x mb-2"></i>
+                        <p class="mb-0"><%= t('config.no_logo_selected') %></p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -38,6 +33,8 @@
                 <small class="form-text text-muted">
                   <%= t('config.accepted_formats') %>
                 </small>
+                <!-- Hidden field to preserve logo_url -->
+                <%= form.hidden_field :logo_url, id: "pdf-logo-url-field" %>
               </div>
 
               <hr class="border-secondary my-3">
@@ -94,40 +91,60 @@
 function initializePdfLogoUpload() {
   const logoInput = document.getElementById('pdf-logo-input');
   const uploadButton = document.getElementById('upload-pdf-logo-btn');
-  const logoPreview = document.getElementById('pdf-logo-preview');
-  const currentLogo = document.getElementById('pdf-current-logo');
   const logoPlaceholder = document.getElementById('pdf-logo-placeholder');
   const logoDisplayArea = document.getElementById('pdf-logo-display-area');
 
   if (!logoInput) return;
 
+  // Initialize the hidden field with current value or empty
+  const logoUrlField = document.getElementById('pdf-logo-url-field');
+  if (logoUrlField) {
+    // Solo limpiar si no hay un valor válido
+    if (!logoUrlField.value || logoUrlField.value.trim() === '') {
+      logoUrlField.value = '';
+    } else {
+      // Si hay una URL válida, mostrar la imagen actual
+      if (logoUrlField.value.startsWith('http')) {
+        updateLogoDisplay(logoUrlField.value);
+      }
+    }
+  }
+
   // Function to update the logo display
   function updateLogoDisplay(url) {
-    if (currentLogo) {
-      currentLogo.src = url;
-      currentLogo.style.display = 'block';
-    } else {
-      // Create new image if it doesn't exist
-      const newLogo = document.createElement('img');
-      newLogo.src = url;
-      newLogo.className = 'img-fluid';
-      newLogo.style.maxHeight = '120px';
-      newLogo.id = 'pdf-current-logo';
-      logoDisplayArea.appendChild(newLogo);
-    }
+    // Remove placeholder
     if (logoPlaceholder) logoPlaceholder.style.display = 'none';
-    if (logoPreview) logoPreview.style.display = 'none';
+    
+    // Remove any existing logo
+    const existingLogo = document.getElementById('pdf-current-logo');
+    if (existingLogo) {
+      existingLogo.remove();
+    }
+    
+    // Create new image
+    const newLogo = document.createElement('img');
+    newLogo.src = url;
+    newLogo.className = 'img-fluid';
+    newLogo.style.maxHeight = '120px';
+    newLogo.id = 'pdf-current-logo';
+    logoDisplayArea.appendChild(newLogo);
+    
+    // Update the hidden field with the new URL
+    const logoUrlField = document.getElementById('pdf-logo-url-field');
+    if (logoUrlField) {
+      logoUrlField.value = url;
+    }
   }
 
   logoInput.addEventListener('change', function() {
     const file = this.files[0];
-    console.log('File selected:', file ? {
-      name: file.name,
-      type: file.type,
-      size: file.size,
-      lastModified: new Date(file.lastModified).toISOString()
-    } : 'No file');
     
+    // Clear the hidden field when a new file is selected
+    const logoUrlField = document.getElementById('pdf-logo-url-field');
+    if (logoUrlField) {
+      logoUrlField.value = '';
+    }
+
     if (file) {
       // More permissive file type checking
       const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/octet-stream'];
@@ -139,7 +156,6 @@ function initializePdfLogoUpload() {
       );
 
       if (!hasValidType && !hasValidExtension) {
-        console.error('Invalid file type or extension:', file.type, file.name);
         alert('Por favor selecciona una imagen en formato JPG, PNG o GIF');
         logoInput.value = ''; // Clear the input
         return;
@@ -147,176 +163,120 @@ function initializePdfLogoUpload() {
 
       // Validate file size
       if (file.size === 0) {
-        console.error('File size is 0 bytes');
         alert('El archivo está vacío. Por favor selecciona una imagen válida.');
         logoInput.value = ''; // Clear the input
         return;
       }
 
       if (file.size > 2 * 1024 * 1024) { // 2MB in bytes
-        console.error('File too large:', file.size);
         alert('El archivo es demasiado grande. El tamaño máximo es 2MB.');
         logoInput.value = ''; // Clear the input
         return;
       }
 
-      // Enable upload button when file is selected
-      uploadButton.disabled = false;
-      
-      // Create preview using URL.createObjectURL for better compatibility
+      // Disable upload button and show loading
+      uploadButton.disabled = true;
+      uploadButton.textContent = 'Subiendo...';
+
+      // Create preview immediately for better UX
       try {
         const objectUrl = URL.createObjectURL(file);
         
-        // Create a new image to test loading
-        const img = new Image();
+        // Remove any existing logo
+        const existingLogo = document.getElementById('pdf-current-logo');
+        if (existingLogo) {
+          existingLogo.remove();
+        }
         
-        img.onload = function() {
-          console.log('Image loaded successfully:', {
-            width: img.width,
-            height: img.height,
-            naturalWidth: img.naturalWidth,
-            naturalHeight: img.naturalHeight
-          });
-
-          if (img.width === 0 || img.height === 0) {
-            console.error('Invalid image dimensions');
-            alert('La imagen no tiene dimensiones válidas. Por favor intenta con otra.');
-            logoInput.value = '';
-            URL.revokeObjectURL(objectUrl);
-            return;
-          }
-          
-          // Remove any existing filename
-          const existingFilename = logoDisplayArea.querySelector('p.text-muted');
-          if (existingFilename) {
-            existingFilename.remove();
-          }
-          
-          // Hide current logo or placeholder
-          if (currentLogo) currentLogo.style.display = 'none';
-          if (logoPlaceholder) logoPlaceholder.style.display = 'none';
-          
-          // Show and update preview
-          logoPreview.style.display = 'block';
-          logoPreview.src = objectUrl;
-
-          // Add preview filename below the image
-          const filename = document.createElement('p');
-          filename.className = 'text-muted mt-2 mb-0';
-          filename.textContent = file.name;
-          logoDisplayArea.appendChild(filename);
-        };
+        // Hide placeholder
+        if (logoPlaceholder) logoPlaceholder.style.display = 'none';
         
-        img.onerror = function(error) {
-          console.error('Image loading error:', error);
-          
-          // Fallback to FileReader if URL.createObjectURL fails
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            logoPreview.style.display = 'block';
-            logoPreview.src = e.target.result;
-            
-            const filename = document.createElement('p');
-            filename.className = 'text-muted mt-2 mb-0';
-            filename.textContent = file.name;
-            logoDisplayArea.appendChild(filename);
-          };
-          
-          reader.onerror = function() {
-            console.error('FileReader error:', reader.error);
-            alert('Error al cargar la vista previa. Por favor intenta con otra imagen.');
-            logoInput.value = '';
-          };
-          
-          reader.readAsDataURL(file);
-        };
+        // Create and show preview
+        const previewImg = document.createElement('img');
+        previewImg.src = objectUrl;
+        previewImg.className = 'img-fluid';
+        previewImg.style.maxHeight = '120px';
+        previewImg.id = 'pdf-current-logo';
+        logoDisplayArea.appendChild(previewImg);
         
-        img.src = objectUrl;
       } catch (error) {
         console.error('Error creating preview:', error);
-        alert('Error al crear la vista previa. Por favor intenta con otra imagen.');
-        logoInput.value = '';
       }
+
+      // Upload automatically
+      const formData = new FormData();
+      formData.append('logo', file);
+
+      fetch('/pdf_config/update_logo', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          
+          // Update the hidden field with the server URL
+          const logoUrlField = document.getElementById('pdf-logo-url-field');
+          if (logoUrlField) {
+            logoUrlField.value = data.url;
+          }
+          
+          // Update the display with the server URL
+          updateLogoDisplay(data.url);
+          
+          // Clear the file input
+          logoInput.value = '';
+          
+        } else {
+          console.error('❌ Error al subir logo:', data.error);
+          alert('Error al subir el logo: ' + data.error);
+          
+          // Remove preview on error
+          const existingLogo = document.getElementById('pdf-current-logo');
+          if (existingLogo) {
+            existingLogo.remove();
+          }
+          if (logoPlaceholder) logoPlaceholder.style.display = 'block';
+        }
+      })
+      .catch(error => {
+        console.error('❌ Error en la petición:', error);
+        alert('Error al subir el logo. Por favor intenta de nuevo.');
+        
+        // Remove preview on error
+        const existingLogo = document.getElementById('pdf-current-logo');
+        if (existingLogo) {
+          existingLogo.remove();
+        }
+        if (logoPlaceholder) logoPlaceholder.style.display = 'block';
+      })
+      .finally(() => {
+        uploadButton.disabled = false;
+        uploadButton.textContent = 'Subir';
+      });
     } else {
       // No file selected
       uploadButton.disabled = true;
       
-      // Show current logo or placeholder
-      if (currentLogo) currentLogo.style.display = 'block';
-      if (logoPlaceholder && !currentLogo) logoPlaceholder.style.display = 'block';
+      // Remove any existing logo
+      const existingLogo = document.getElementById('pdf-current-logo');
+      if (existingLogo) {
+        existingLogo.remove();
+      }
       
-      // Hide preview
-      if (logoPreview) logoPreview.style.display = 'none';
-      
-      // Remove filename if exists
-      const filename = logoDisplayArea.querySelector('p.text-muted');
-      if (filename) filename.remove();
+      // Show placeholder
+      if (logoPlaceholder) logoPlaceholder.style.display = 'block';
     }
   });
 
-  // Handle upload
-  uploadButton.addEventListener('click', function() {
-    if (!logoInput.files[0]) {
-      alert('Por favor selecciona un archivo primero');
-      return;
-    }
-
-    // Show loading state
-    uploadButton.disabled = true;
-    uploadButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Subiendo...';
-
-    const formData = new FormData();
-    formData.append('logo', logoInput.files[0]);
-    
-    // Get CSRF token from meta tag
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-    fetch('/pdf_config/update_logo', {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'X-CSRF-Token': csrfToken
-      },
-      credentials: 'same-origin'
-    })
-    .then(response => {
-      if (!response.ok) {
-        return response.json().then(data => {
-          throw new Error(data.error || 'Error desconocido');
-        });
-      }
-      return response.json();
-    })
-    .then(data => {
-      if (data.success) {
-        // Update the logo display immediately
-        updateLogoDisplay(data.url);
-        // Clear the file input
-        logoInput.value = '';
-        // Reset the upload button
-        uploadButton.disabled = true;
-        uploadButton.innerHTML = '<i class="fa fa-upload"></i> <%= t('config.upload') %>';
-        // Show success message
-        const successMessage = document.createElement('div');
-        successMessage.className = 'alert alert-success mt-2';
-        successMessage.textContent = 'Logo actualizado correctamente';
-        logoDisplayArea.appendChild(successMessage);
-        // Remove success message after 3 seconds
-        setTimeout(() => {
-          successMessage.remove();
-        }, 3000);
-      } else {
-        throw new Error(data.error || 'Error desconocido');
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert('Error al subir el logo: ' + error.message);
-      // Reset button state
-      uploadButton.disabled = false;
-      uploadButton.innerHTML = '<i class="fa fa-upload"></i> <%= t('config.upload') %>';
-    });
-  });
+  // Upload button is now just for visual feedback - no event listener needed
+  if (uploadButton) {
+    uploadButton.disabled = true; // Disabled by default
+    uploadButton.textContent = 'Subir';
+  }
 }
 
 // Initialize on both DOMContentLoaded and turbo:load
@@ -326,8 +286,30 @@ document.addEventListener('turbo:load', initializePdfLogoUpload);
 document.addEventListener('DOMContentLoaded', function() {
   var saveBtn = document.getElementById('save-configs-btn');
   var hiddenSubmit = document.getElementById('hidden-save-configs-btn');
+  var logoUrlField = document.getElementById('pdf-logo-url-field');
+  
+  if (logoUrlField) {
+  }
+  
   if (saveBtn && hiddenSubmit) {
     saveBtn.addEventListener('click', function() {
+      
+      // Verificar que el campo hidden tenga un valor válido
+      if (logoUrlField && !logoUrlField.value.trim()) {
+        const currentLogo = document.getElementById('pdf-current-logo');
+        if (currentLogo && currentLogo.src && currentLogo.src !== window.location.href) {
+          logoUrlField.value = currentLogo.src;
+        }
+      }
+      
+      // Log todos los campos del formulario antes de enviar
+      const form = document.querySelector('form');
+      if (form) {
+        const formData = new FormData(form);
+        for (let [key, value] of formData.entries()) {
+        }
+      }
+      
       hiddenSubmit.click();
     });
   }

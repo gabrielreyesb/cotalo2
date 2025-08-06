@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_14_190837) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_28_202831) do
   create_table "app_configs", force: :cascade do |t|
     t.string "key", null: false
     t.text "value"
@@ -78,6 +78,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_14_190837) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "unit_id"
+    t.string "side", default: "front", null: false
     t.index ["unit_id"], name: "index_manufacturing_processes_on_unit_id"
     t.index ["user_id"], name: "index_manufacturing_processes_on_user_id"
   end

@@ -1,0 +1,15 @@
+{
+  "materialCost": 35,
+  "expectedCost": 35,
+  "rawText": "$35.00",
+  "appRules": {
+    "materialDimensions": "100cm × 100cm",
+    "productDimensions": "20cm × 30cm",
+    "piecesPerSheet": "15 pieces (5×3)",
+    "sheetsNeeded": "7 sheets (100÷15)",
+    "totalM2": "7 m² (7×1)",
+    "expectedPrice": "$35.00 (7×$5.00)"
+  },
+  "investigation": "The app calculates correctly: 7 m² × $5.00 = $35.00, but test captures different value",
+  "timestamp": "2025-08-06T01:43:46.293Z"
+}

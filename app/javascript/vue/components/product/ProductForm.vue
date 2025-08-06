@@ -686,13 +686,16 @@ export default {
             }
           }
           
-          // Recalculate price based on unit type
+          // Recalculate price based on unit type and side multiplier
+          const side = process.side || 'front';
+          const sideMultiplier = side === 'both' ? 2 : 1;
+          
           if (process.unit === 'pieza') {
-            calculatedPrice = basePrice * productQuantity;
+            calculatedPrice = basePrice * productQuantity * sideMultiplier;
           } else if (process.unit === 'pliego') {
-            calculatedPrice = basePrice * (material ? material.totalSheets || 0 : 0);
+            calculatedPrice = basePrice * (material ? material.totalSheets || 0 : 0) * sideMultiplier;
           } else if (process.unit === 'mt2') {
-            calculatedPrice = basePrice * (material ? material.totalSquareMeters || 0 : 0);
+            calculatedPrice = basePrice * (material ? material.totalSquareMeters || 0 : 0) * sideMultiplier;
           }
           
           return {

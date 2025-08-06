@@ -13,7 +13,7 @@
   </div>
 
   <div class="row mb-3">
-    <div class="col-md-6">
+    <div class="col-md-4">
       <%= form.label :unit_id, t('processes.form.unit'), class: "form-label" %>
       <%= form.collection_select :unit_id, Unit.all, :id, :name, {}, class: "form-select" %>
       <div class="form-text">
@@ -21,11 +21,26 @@
       </div>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-4">
       <%= form.label :cost, t('processes.form.cost'), class: "form-label" %>
       <div class="input-group">
         <span class="input-group-text">$</span>
         <%= form.number_field :cost, step: '0.01', class: "form-control" %>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <%= form.label :side, t('processes.form.side', default: 'Cara'), class: "form-label" %>
+      <%= form.select :side, 
+          options_for_select([
+            ['Frente', 'front'],
+            ['Reverso', 'back'],
+            ['Ambas', 'both']
+          ], manufacturing_process.side), 
+          {}, 
+          class: "form-select" %>
+      <div class="form-text">
+        <%= t('processes.form.side_help', default: 'Indica si el proceso se aplica al frente, reverso o ambas caras') %>
       </div>
     </div>
   </div>

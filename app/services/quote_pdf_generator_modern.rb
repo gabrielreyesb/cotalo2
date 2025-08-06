@@ -1,3 +1,5 @@
+require 'prawn/table'
+
 class QuotePdfGeneratorModern
   attr_reader :quote
 

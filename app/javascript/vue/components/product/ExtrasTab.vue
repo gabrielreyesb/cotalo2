@@ -26,6 +26,8 @@
                 :placeholder="''"
                 :disabled="!availableExtras.length"
                 :select-label="''"
+                :remove-label="''"
+                :deselect-label="''"
                 @select="onExtraSelect"
               />
             </div>

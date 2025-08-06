@@ -64,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let quote = {};
     let editMode = false;
     let translations = {};
+    let preselectedProductId = null;
     
     try {
       availableProducts = JSON.parse(el.dataset.availableProducts || '[]');
@@ -80,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     editMode = el.dataset.editMode === 'true';
+    preselectedProductId = el.dataset.preselectedProduct;
     
     try {
       translations = JSON.parse(el.dataset.translations || '{}');
@@ -210,6 +212,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Mount the app
     app.mount('#quote-form-app');
+    
+    // Auto-add preselected product if provided
+    if (preselectedProductId && window.quoteFormEventBus) {
+      setTimeout(() => {
+        const preselectedProduct = availableProducts.find(p => p.id == preselectedProductId);
+        if (preselectedProduct) {
+          // Add the product to the quote
+          window.quoteFormEventBus.emit('add-product', preselectedProduct);
+          
+          // Set the project name to the product name
+          window.quoteFormEventBus.emit('set-project-name', preselectedProduct.description || preselectedProduct.formatted_description);
+        }
+      }, 100); // Small delay to ensure component is fully mounted
+    }
     
     // Simple external product add helper
     window.debugAddProduct = function(productId) {

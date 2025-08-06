@@ -77,6 +77,7 @@ class Product < ApplicationRecord
       "price" => 0,                    # Unit price
       "unit" => nil,                   # Unit information (id, name, abbreviation)
       "veces" => 1,                    # Number of times the process is applied
+      "side" => "front",               # Side of application: front, back, both
       "subtotal_price" => 0,           # Subtotal for this process
       "comments" => ""                 # Additional comments about this process
     }
@@ -528,9 +529,11 @@ class Product < ApplicationRecord
     process_price = process_record.cost || 0
     process_unit = process_record.unit
     veces = process["veces"].to_f || 1
+    side = process["side"] || "front"
     
-    # Calculate subtotal
-    subtotal_price = process_price * veces
+    # Calculate subtotal with side multiplier
+    side_multiplier = side == "both" ? 2 : 1
+    subtotal_price = process_price * veces * side_multiplier
     
     # Update the process with calculated values
     updated_process = process.merge(
@@ -543,6 +546,7 @@ class Product < ApplicationRecord
         "abbreviation" => process_unit.abbreviation
       } : nil,
       "veces" => veces,
+      "side" => side,
       "subtotal_price" => subtotal_price
     )
     

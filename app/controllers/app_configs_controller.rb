@@ -3,8 +3,8 @@ class AppConfigsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:update_api_key, :test_facturama_api, :update_logo]
   
   def edit
-    # Get waste percentage as stored (integer)
-    waste_pct = current_user.get_config(AppConfig::WASTE_PERCENTAGE) || 0
+    # Get waste percentage as stored (with decimals)
+    waste_pct = current_user.get_config(AppConfig::WASTE_PERCENTAGE) || 0.0
     
     # Group configurations by category
     @general_settings = {

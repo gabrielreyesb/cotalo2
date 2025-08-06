@@ -1,7 +1,7 @@
 class ProductsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_product, only: [:show, :edit, :update, :destroy, :duplicate]
-  before_action :no_cache, only: [:index, :show, :new, :edit]
+  before_action :set_product, only: [:show, :edit, :edit_v2, :update, :destroy, :duplicate]
+  before_action :no_cache, only: [:index, :show, :new, :edit, :edit_v2]
 
   def index
     @products = current_user.products.order(created_at: :desc)
@@ -27,6 +27,15 @@ class ProductsController < ApplicationController
 
   def new
     @product = current_user.products.build
+    initialize_product_data(@product)
+  end
+
+  def new_v2
+    # This action will render the new V2 form
+  end
+
+  def edit_v2
+    # This action will render the edit V2 form
   end
 
   def edit
@@ -63,6 +72,7 @@ class ProductsController < ApplicationController
   
   def duplicate
     new_product = @product.deep_clone
+    initialize_product_data(new_product)
     
     respond_to do |format|
       if new_product.save
@@ -93,6 +103,7 @@ class ProductsController < ApplicationController
   # API endpoints for Vue component
   def materials_list
     @materials = current_user.materials.includes(:unit).order(:description)
+    no_cache
     render json: @materials.map { |m| material_json(m) }
   end
   
@@ -191,6 +202,7 @@ class ProductsController < ApplicationController
       resistance: material.resistance,
       ancho: material.ancho,
       largo: material.largo,
+      weight: material.weight,
       unit: material.unit ? {
         id: material.unit.id,
         name: material.unit.name,
@@ -232,13 +244,22 @@ class ProductsController < ApplicationController
   def initialize_product_data(product)
     # Set default waste percentage from user config
     if product.pricing["waste_percentage"].nil?
-      waste_pct = current_user.get_config(AppConfig::WASTE_PERCENTAGE) || 5
+      waste_pct = current_user.get_config(AppConfig::WASTE_PERCENTAGE) || 5.0
       product.pricing = product.pricing.merge("waste_percentage" => waste_pct)
     end
     
     # Ensure general_info is properly initialized
     if product.general_info["quantity"].nil? || product.general_info["quantity"] < 1
       product.general_info = product.general_info.merge("quantity" => 1)
+    end
+    
+    # Set default width and length to 1
+    if product.general_info["width"].nil? || product.general_info["width"] <= 0
+      product.general_info = product.general_info.merge("width" => 1)
+    end
+    
+    if product.general_info["length"].nil? || product.general_info["length"] <= 0
+      product.general_info = product.general_info.merge("length" => 1)
     end
     
     product

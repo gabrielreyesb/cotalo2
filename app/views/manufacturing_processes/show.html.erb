@@ -35,11 +35,19 @@
         </div>
         
         <div class="row mb-3">
-          <div class="col-md-6">
+          <div class="col-md-4">
             <strong><%= t('processes.show.unit') %>:</strong>
             <p><%= @manufacturing_process.unit&.name || t('processes.show.not_specified') %></p>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-4">
+            <strong><%= t('processes.show.side', default: 'Cara') %>:</strong>
+            <p>
+              <span class="badge bg-info">
+                <%= @manufacturing_process.side_label %>
+              </span>
+            </p>
+          </div>
+          <div class="col-md-4">
             <strong><%= t('processes.show.description') %>:</strong>
             <p><%= simple_format(@manufacturing_process.description) %></p>
           </div>

@@ -3,9 +3,15 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= link_to new_product_path, class: "btn btn-outline-success" do %>
-    <i class="fas fa-plus me-1"></i> <%= t('products.index.new_product') %>
-  <% end %>
+  <div class="btn-group" role="group">
+    <%= link_to new_product_path, class: "btn btn-outline-success" do %>
+      <i class="fas fa-plus me-1"></i> <%= t('products.index.new_product') %>
+    <% end %>
+    <%# Botón del nuevo modelo oculto temporalmente - accesible solo por URL directa %>
+    <%# <%= link_to new_v2_products_path, class: "btn btn-outline-primary" do %>
+    <%#   <i class="fas fa-rocket me-1"></i> Nuevo Producto V2 %>
+    <%# <% end %>
+  </div>
 <% end %>
 
 <div class="row">
@@ -114,6 +120,10 @@
                           data: { bs_toggle: "tooltip" }, title: t('products.index.duplicate') do %>
                         <i class="fa fa-copy"></i>
                       <% end %>
+                      <%= link_to new_quote_path(product_id: product.id), class: "btn btn-sm btn-outline-success mx-1", 
+                          data: { bs_toggle: "tooltip" }, title: "Cotizar este producto" do %>
+                        <i class="fa fa-file-invoice-dollar"></i>
+                      <% end %>
                     </td>
                   </tr>
                 <% end %>
@@ -170,6 +180,10 @@
                     form: { class: "d-inline" },
                     data: { bs_toggle: "tooltip" }, title: t('products.index.duplicate_product') do %>
                   <i class="fa fa-copy fa-sm"></i>
+                <% end %>
+                <%= link_to new_quote_path(product_id: product.id), class: "btn btn-sm btn-outline-success mx-1", 
+                    data: { bs_toggle: "tooltip" }, title: "Cotizar este producto" do %>
+                  <i class="fa fa-file-invoice-dollar fa-sm"></i>
                 <% end %>
               </div>
             </div>

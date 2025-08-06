@@ -712,11 +712,16 @@ export default {
   },
   
   mounted() {
-    console.log('QuoteForm.vue script loaded');
+    
     // Listen for the external event to add products
     if (window.quoteFormEventBus) {
       window.quoteFormEventBus.on('add-product', (product) => {
         this.addProduct(product);
+      });
+
+      // Listen for setting project name
+      window.quoteFormEventBus.on('set-project-name', (projectName) => {
+        this.form.project_name = projectName;
       });
 
       // Listen for validation error events and display them as toasts
@@ -748,6 +753,7 @@ export default {
     // Remove event listeners when component is destroyed
     if (window.quoteFormEventBus) {
       window.quoteFormEventBus.events['add-product'] = [];
+      window.quoteFormEventBus.events['set-project-name'] = [];
       window.quoteFormEventBus.events['set-validation-errors'] = [];
       window.quoteFormEventBus.events['quote-success'] = [];
     }

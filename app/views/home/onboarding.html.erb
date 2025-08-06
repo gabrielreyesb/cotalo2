@@ -1,0 +1,299 @@
+<%# Onboarding Welcome Section %>
+<div class="onboarding-section py-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="welcome-card mb-5">
+          <div class="row align-items-center">
+            <div class="col-lg-2 text-center">
+              <div class="welcome-icon">
+                <i class="fas fa-rocket fa-3x" style="color: var(--cotalo-green);"></i>
+              </div>
+            </div>
+            <div class="col-lg-10">
+              <h2 class="mb-3">¡Bienvenido a Cotalo!</h2>
+              <p class="lead mb-0">
+                Te guiaremos paso a paso para que puedas aprovechar al máximo todas las funcionalidades de Cotalo.
+                Comenzaremos con lo esencial: costear productos y crear cotizaciones.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%# Product Costing and Quote Creation Guides %>
+    <div class="guide-section mb-5">
+      <div class="row">
+        <%# Product Costing Guide %>
+        <div class="col-lg-6">
+          <div class="guide-content">
+            <div class="guide-number mb-3">
+              <span class="number-circle">1</span>
+            </div>
+            <h2 class="mb-4">Costea tu Producto</h2>
+            <p class="lead mb-4">
+              Define las características de tu producto, agrega materiales y aplícale procesos de manufactura.
+            </p>
+            <ul class="feature-list mb-4">
+              <li><i class="fas fa-check-circle me-2" style="color: var(--cotalo-green);"></i>Indica las características de tu producto</li>
+              <li><i class="fas fa-check-circle me-2" style="color: var(--cotalo-green);"></i>Agrega materiales y aplícale procesos</li>
+              <li><i class="fas fa-check-circle me-2" style="color: var(--cotalo-green);"></i>Incluye costos adicionales</li>
+              <li><i class="fas fa-check-circle me-2" style="color: var(--cotalo-green);"></i>Ve el costeo en tiempo real</li>
+              <li><i class="fas fa-check-circle me-2" style="color: var(--cotalo-green);"></i>Graba tu costeo de producto</li>
+            </ul>
+            <%= link_to new_product_path, class: "btn btn-success btn-lg" do %>
+              <i class="fas fa-plus-circle me-2"></i>Costear Producto
+            <% end %>
+          </div>
+        </div>
+
+        <%# Quote Creation Guide %>
+        <div class="col-lg-6">
+          <div class="guide-content">
+            <div class="guide-number mb-3">
+              <span class="number-circle">2</span>
+            </div>
+            <h2 class="mb-4">Crea una Cotización</h2>
+            <p class="lead mb-4">
+              Genera cotizaciones profesionales con los productos que hayas costeado.
+            </p>
+            <ul class="feature-list mb-4">
+              <li><i class="fas fa-check-circle me-2" style="color: var(--cotalo-green);"></i>Indica valores para la cotización</li>
+              <li><i class="fas fa-check-circle me-2" style="color: var(--cotalo-green);"></i>Selecciona productos costeados</li>
+              <li><i class="fas fa-check-circle me-2" style="color: var(--cotalo-green);"></i>Mira el PDF generado</li>
+              <li><i class="fas fa-check-circle me-2" style="color: var(--cotalo-green);"></i>Envía la cotización por email</li>
+            </ul>
+            <%= link_to new_quote_path, class: "btn btn-success btn-lg" do %>
+              <i class="fas fa-file-invoice-dollar me-2"></i>Crear Cotización
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <%# Single informational message below both sections %>
+      <div class="row mt-3">
+        <div class="col-12 text-center">
+          <small class="text-light">
+            <i class="fas fa-info-circle me-1" style="color: var(--cotalo-green);"></i>
+            Recuerda que puedes ver todos tus productos costeados y cotizaciones en cualquier momento desde los menús "Productos" y "Cotizaciones" en la parte superior.
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <%# Quick Actions %>
+    <div class="quick-actions-section text-center">
+      <h3 class="mb-4">¿Necesitas ayuda?</h3>
+      <div class="row justify-content-center">
+        <div class="col-md-4">
+          <div class="quick-action-card">
+            <i class="fas fa-play fa-3x mb-3" style="color: var(--cotalo-green);"></i>
+            <h5>Solicitar Demo</h5>
+            <p>Agenda una demostración personalizada</p>
+            <%= link_to new_demo_request_path, class: "btn btn-outline-success" do %>
+              Solicitar Demo
+            <% end %>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="quick-action-card">
+            <i class="fas fa-comments fa-3x mb-3" style="color: var(--cotalo-green);"></i>
+            <h5>Soporte en Vivo</h5>
+            <p>Haz clic en el icono de chat en la esquina inferior derecha</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="quick-action-card">
+            <i class="fas fa-home fa-3x mb-3" style="color: var(--cotalo-green);"></i>
+            <h5>Ir al Inicio</h5>
+            <p>Regresa a la página principal</p>
+            <%= link_to "/dashboard?locale=es", class: "btn btn-outline-success" do %>
+              Ir al Inicio
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.onboarding-section {
+  min-height: 100vh;
+  padding-top: 0;
+  padding-bottom: 2rem;
+}
+
+/* Override container padding for onboarding page with higher specificity */
+body[data-theme="dark"] .main-content .onboarding-section .container-fluid {
+  padding-top: 0 !important;
+}
+
+/* Override subnavbar margin for onboarding page */
+body[data-theme="dark"] .main-content .onboarding-section .subnavbar {
+  margin-bottom: 0 !important;
+}
+
+/* Force remove any top spacing */
+body[data-theme="dark"] .main-content .onboarding-section {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Hide subnavbar completely on onboarding page */
+body[data-theme="dark"] .main-content .onboarding-section ~ .subnavbar,
+body[data-theme="dark"] .main-content .subnavbar:has(+ .onboarding-section) {
+  display: none !important;
+}
+
+/* Reduce spacing between sections with maximum specificity */
+body[data-theme="dark"] .main-content .onboarding-section .guide-section {
+  margin-bottom: 1rem !important;
+}
+
+body[data-theme="dark"] .main-content .onboarding-section .quick-actions-section {
+  margin-top: 2rem !important;
+  padding-top: 1.5rem !important;
+}
+
+/* Force remove any spacing after the informational message */
+body[data-theme="dark"] .main-content .onboarding-section .row:has(small) {
+  margin-bottom: 0 !important;
+}
+
+/* Override any container spacing */
+body[data-theme="dark"] .main-content .onboarding-section .container-fluid {
+  padding-bottom: 0 !important;
+}
+
+/* Force remove all spacing between sections */
+body[data-theme="dark"] .main-content .onboarding-section > div:not(.quick-actions-section) {
+  margin-bottom: 0 !important;
+}
+
+/* Specific override for the informational message row */
+body[data-theme="dark"] .main-content .onboarding-section .row.mt-1 {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.welcome-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 2rem;
+}
+
+.welcome-icon {
+  margin-bottom: 0;
+}
+
+.guide-section {
+  margin-bottom: 4rem;
+}
+
+.guide-content {
+  padding: 2rem;
+}
+
+.guide-number {
+  display: inline-block;
+}
+
+.number-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background: var(--cotalo-green);
+  color: white;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+}
+
+.feature-list li {
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+}
+
+
+
+.quick-actions-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.quick-action-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 2rem 1.5rem;
+  height: 100%;
+  transition: all 0.3s ease;
+}
+
+.quick-action-card:hover {
+  background: rgba(40, 167, 69, 0.05);
+  border-color: rgba(40, 167, 69, 0.3);
+  transform: translateY(-5px);
+}
+
+.btn-success {
+  background: var(--cotalo-green);
+  border-color: var(--cotalo-green);
+  padding: 0.75rem 2rem;
+  font-weight: 500;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+  background: #2d8f4e;
+  border-color: #2d8f4e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.btn-outline-success {
+  border-color: var(--cotalo-green);
+  color: var(--cotalo-green);
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-success:hover {
+  background: var(--cotalo-green);
+  border-color: var(--cotalo-green);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .welcome-card {
+    padding: 2rem 1rem;
+  }
+  
+  .guide-content {
+    padding: 1rem;
+  }
+  
+  .image-placeholder {
+    min-height: 200px;
+    padding: 2rem 1rem;
+  }
+}
+
+
+</style> 

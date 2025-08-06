@@ -97,7 +97,7 @@ class ManufacturingProcessesController < ApplicationController
   def manufacturing_process_params
     # Debug parameters 
     puts "RAW PARAMS: #{params.inspect}"
-    params.require(:manufacturing_process).permit(:name, :description, :cost, :unit_id)
+    params.require(:manufacturing_process).permit(:name, :description, :cost, :unit_id, :side)
   end
 
   def no_cache

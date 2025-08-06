@@ -1,0 +1,96 @@
+<% content_for :page_title do %>
+  Nuevo Producto V2
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to products_path, class: "btn btn-outline-light me-2" do %>
+    <i class="fa fa-arrow-left me-1"></i> Cancelar
+  <% end %>
+  <button type="button" class="btn btn-primary" id="save-product-button">
+    <i class="fa fa-save me-1"></i> Guardar producto
+  </button>
+<% end %>
+
+<!-- Vue app mount point -->
+<div id="product-form-app" data-product-id="" data-translations='<%= {
+  tabs: {
+    general: t("products.form.tabs.general"),
+    materials: t("products.form.tabs.materials"),
+    processes: t("products.form.tabs.processes"),
+    extras: t("products.form.tabs.extras")
+  },
+  general: {
+    description: t("products.form.description"),
+    quantity: t("products.form.quantity"),
+    width: t("products.form.width"),
+    length: t("products.form.length"),
+    inner_measurements: t("products.form.inner_measurements"),
+    comments: t("products.form.comments")
+  },
+  materials: {
+    select_material: t("products.form.select_material"),
+    add_material: t("products.form.add_material"),
+    no_materials: t("products.form.no_materials"),
+    description: t("products.form.material_description"),
+    width: t("products.form.material_width"),
+    length: t("products.form.material_length"),
+    price: t("products.form.material_price"),
+    pieces_per_material: t("products.form.pieces_per_material"),
+    total_sheets: t("products.form.total_sheets"),
+    total_square_meters: t("products.form.total_square_meters"),
+    total_price: t("products.form.material_total_price"),
+    actions: t("products.form.actions"),
+    total: t("products.form.total"),
+    remove: t("products.form.remove"),
+    comments_label: t("products.form.materials_tab.comments_label"),
+    comments_placeholder: t("products.form.materials_tab.comments_placeholder")
+  },
+  materials_tab: {
+    comments_label: t("products.form.materials_tab.comments_label"),
+    comments_placeholder: t("products.form.materials_tab.comments_placeholder"),
+    product_info: t("products.form.materials_tab.product_info"),
+    pieces: t("products.form.materials_tab.pieces")
+  },
+  processes: {
+    process_type: t("products.form.processes.process_type"),
+    material_process: t("products.form.processes.material_process"),
+    product_process: t("products.form.processes.product_process"),
+    select_material: t("products.form.processes.select_material"),
+    select_process: t("products.form.processes.select_process"),
+    side: t("products.form.processes.side"),
+    add_process: t("products.form.processes.add_process"),
+    no_processes: t("products.form.processes.no_processes"),
+    remove: t("products.form.processes.remove"),
+    comments_label: t("products.form.processes.comments_label"),
+    comments_placeholder: t("products.form.processes.comments_placeholder")
+  },
+  extras_tab: {
+    select_extra: t("products.form.extras_tab.select_extra"),
+    quantity: t("products.form.extras_tab.quantity"),
+    add_extra: t("products.form.extras_tab.add_extra"),
+    no_extras: t("products.form.extras_tab.no_extras"),
+    include_in_subtotal: t("products.form.extras_tab.include_in_subtotal"),
+    include_in_subtotal_mobile: t("products.form.extras_tab.include_in_subtotal_mobile"),
+    remove: t("products.form.extras_tab.remove"),
+    comments_label: t("products.form.extras_tab.comments_label"),
+    comments_placeholder: t("products.form.extras_tab.comments_placeholder")
+  },
+  pricing: {
+    materials_cost: t("products.form.materials_cost"),
+    processes_cost: t("products.form.processes_cost"),
+    extras_cost: t("products.form.extras_cost"),
+    subtotal: t("products.form.subtotal"),
+    waste: t("products.form.waste"),
+    subtotal_with_waste: t("products.form.subtotal_with_waste"),
+    price_per_piece_before_margin: t("products.form.price_per_piece_before_margin"),
+    margin: t("products.form.margin"),
+    total_price: t("products.form.total_price"),
+    final_price_per_piece: t("products.form.final_price_per_piece")
+  },
+  materials_calculation_tooltip: t("products.form.materials_calculation_tooltip"),
+  processes_calculation_tooltip: t("products.form.processes_calculation_tooltip")
+}.to_json %>'>
+
+</div>
+
+<%= javascript_pack_tag 'product_form_v2' %> 

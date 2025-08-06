@@ -4,11 +4,11 @@ class Api::V1::AppConfigsController < ApplicationController
   def user_config
     config = current_user.app_configs.find_by(key: AppConfig::WASTE_PERCENTAGE)
     if config.nil?
-      waste_pct = 0
+      waste_pct = 0.0
     elsif config.value_type == 'percentage'
-      waste_pct = (config.value.to_f * 100).round
+      waste_pct = (config.value.to_f * 100).round(1)
     else
-      waste_pct = config.value.to_f.round
+      waste_pct = config.value.to_f.round(1)
     end
 
     render json: {

@@ -18,29 +18,37 @@
           <th>{{ translations.pricing.subtotal }}</th>
           <td class="text-end">{{ formatCurrency(pricing.subtotal) }}</td>
         </tr>
-        <tr>
-          <th class="align-middle">{{ translations.pricing.waste }}</th>
-          <td>
-            <div class="d-flex justify-content-end align-items-center">
-              <div class="percentage-group">
-                <div class="input-group input-group-sm">
-                  <input 
-                    type="number" 
-                    class="form-control form-control-sm text-end waste-input" 
-                    v-model.number="localWastePercentage" 
-                    min="0"
-                    step="0.1"
-                    @change="handleWastePercentageChange"
-                  />
-                  <span class="input-group-text">%</span>
-                </div>
-              </div>
-              <div class="calculated-value">
-                {{ formatCurrency(pricing.waste_value) }}
-              </div>
+
+        <!-- BLOQUE MERMA -->
+        <tr class="waste-row-1">
+          <th class="align-middle">
+            <div class="waste-label">% de merma:</div>
+          </th>
+          <td class="text-end">
+            <div class="waste-input-container">
+              <input
+                type="number"
+                class="form-control form-control-sm text-end waste-input"
+                :value="formatPercentage(localWastePercentage)"
+                min="0"
+                step="0.1"
+                @input="handleWastePercentageInput"
+                @change="handleWastePercentageChange"
+              />
+              <span class="waste-percent-symbol">%</span>
             </div>
           </td>
         </tr>
+
+        <tr class="waste-row-2">
+          <th class="value-label">Merma</th>
+          <td class="text-end">
+            <div class="waste-value">
+              {{ formatCurrency(pricing.waste_value) }}
+            </div>
+          </td>
+        </tr>
+
         <tr class="subtotal-with-waste-row">
           <th>{{ translations.pricing.subtotal_with_waste }}</th>
           <td class="text-end">{{ formatCurrency(pricing.subtotal + pricing.waste_value) }}</td>
@@ -49,29 +57,37 @@
           <th>{{ translations.pricing.price_per_piece_before_margin }}</th>
           <td class="text-end">{{ formatCurrency(pricing.price_per_piece_before_margin) }}</td>
         </tr>
-        <tr>
-          <th class="align-middle">{{ translations.pricing.margin }}</th>
-          <td>
-            <div class="d-flex justify-content-end align-items-center">
-              <div class="percentage-group">
-                <div class="input-group input-group-sm">
-                  <input 
-                    type="number" 
-                    class="form-control form-control-sm text-end margin-input" 
-                    v-model.number="localMarginPercentage" 
-                    min="0"
-                    step="0.1"
-                    @change="handleMarginPercentageChange"
-                  />
-                  <span class="input-group-text">%</span>
-                </div>
-              </div>
-              <div class="calculated-value">
-                {{ formatCurrency(pricing.margin_value) }}
-              </div>
+
+        <!-- BLOQUE MARGEN -->
+        <tr class="margin-row-1">
+          <th class="align-middle">
+            <div class="margin-label">% de margen:</div>
+          </th>
+          <td class="text-end">
+            <div class="margin-input-container">
+              <input 
+                type="number" 
+                class="form-control form-control-sm text-end margin-input" 
+                :value="formatPercentage(localMarginPercentage)" 
+                min="0"
+                step="0.1"
+                @input="handleMarginPercentageInput"
+                @change="handleMarginPercentageChange"
+              />
+              <span class="margin-percent-symbol">%</span>
             </div>
           </td>
         </tr>
+
+        <tr class="margin-row-2">
+          <th class="value-label">Margen</th>
+          <td class="text-end">
+            <div class="margin-value">
+              {{ formatCurrency(pricing.margin_value) }}
+            </div>
+          </td>
+        </tr>
+
         <tr class="total-row">
           <th>{{ translations.pricing.total_price }}</th>
           <td class="text-end">{{ formatCurrency(pricing.total_price) }}</td>
@@ -93,170 +109,105 @@ export default {
       type: Object,
       required: true
     },
-    isNew: {
-      type: Boolean,
-      default: false
-    },
-    suggestedMargin: {
-      type: Number,
-      default: 0
-    },
     translations: {
       type: Object,
       required: true
+    },
+    userConfig: {
+      type: Object,
+      default: () => ({ waste_percentage: 0, margin_percentage: 0 })
     }
   },
   data() {
     return {
-      localWastePercentage: this.pricing.waste_percentage !== undefined && this.pricing.waste_percentage !== null
-        ? this.pricing.waste_percentage
-        : 0,
-      localMarginPercentage: this.pricing.margin_percentage !== undefined && this.pricing.margin_percentage !== null
-        ? this.pricing.margin_percentage
-        : 0
-    };
+      localWastePercentage: this.pricing?.waste_percentage || this.userConfig?.waste_percentage || 0.0,
+      localMarginPercentage: this.pricing?.margin_percentage || this.userConfig?.margin_percentage || 0.0
+    }
   },
   methods: {
     formatCurrency(value) {
+      if (value === null || value === undefined) return '$0.00'
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD'
-      }).format(value || 0);
+      }).format(value)
+    },
+    formatPercentage(value) {
+      if (value === null || value === undefined) return '0.0'
+      return parseFloat(value).toFixed(1)
+    },
+    handleWastePercentageInput(event) {
+      const value = parseFloat(event.target.value) || 0
+      this.localWastePercentage = value
+    },
+    handleMarginPercentageInput(event) {
+      const value = parseFloat(event.target.value) || 0
+      this.localMarginPercentage = value
     },
     handleWastePercentageChange() {
-      this.$emit('update:pricing', {
-        ...this.pricing,
-        waste_percentage: this.localWastePercentage
-      });
-      this.$emit('recalculate:pricing');
+      this.$emit('waste-percentage-changed', this.localWastePercentage)
     },
     handleMarginPercentageChange() {
-      this.$emit('update:pricing', {
-        ...this.pricing,
-        margin_percentage: this.localMarginPercentage
-      });
-      this.$emit('recalculate:pricing');
+      this.$emit('margin-percentage-changed', this.localMarginPercentage)
     }
   },
   watch: {
-    'pricing.waste_percentage': {
-      handler(newVal) {
-        this.localWastePercentage = newVal || 0;
-      },
-      immediate: true
+    'pricing.waste_percentage'(newValue) {
+      this.localWastePercentage = newValue || this.userConfig?.waste_percentage || 0.0
     },
-    'pricing.margin_percentage': {
-      handler(newVal) {
-        this.localMarginPercentage = newVal;
-      },
-      immediate: true
+    'pricing.margin_percentage'(newValue) {
+      this.localMarginPercentage = newValue || this.userConfig?.margin_percentage || 0.0
     },
-    'suggestedMargin': {
-      handler(newVal) {
-        if (newVal !== this.localMarginPercentage) {
-          this.localMarginPercentage = newVal;
-          this.handleMarginPercentageChange();
-        }
-      },
-      immediate: true
+    'userConfig.waste_percentage'(newValue) {
+      if (!this.pricing?.waste_percentage) {
+        this.localWastePercentage = newValue || 0.0
+      }
+    },
+    'userConfig.margin_percentage'(newValue) {
+      if (!this.pricing?.margin_percentage) {
+        this.localMarginPercentage = newValue || 0.0
+      }
     }
   }
-};
+}
 </script>
 
-<style scoped lang="scss">
-.pricing-tab {
-  width: 100%;
-  display: block;
+<style scoped>
+.waste-input-container,
+.margin-input-container {
+  position: relative;
+  display: inline-block;
+}
 
-  .table {
-    th, td {
-      width: 50%;
-    }
+.waste-input,
+.margin-input {
+  padding-right: 20px;
+  width: 80px;
+}
 
-    td {
-      .d-flex {
-        justify-content: flex-end;
-        align-items: center;
-        
-        .percentage-group {
-          width: 140px;
-          margin-right: 10px;
-          
-          .input-group {
-            width: 100%;
-          }
-        }
-        
-        .calculated-value {
-          width: 120px;
-          text-align: right;
-          white-space: nowrap;
-        }
-      }
-    }
-    
-    .subtotal-row, .subtotal-with-waste-row, .price-before-margin-row {
-      th, td {
-      }
-    }
-    
-    .total-row {
-      th, td {
-      }
-    }
-    
-    .final-price-row {
-      th, td {
-      }
-    }
-  }
+.waste-percent-symbol,
+.margin-percent-symbol {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+  font-size: 0.875rem;
+}
 
-  .pricing-tab .table th,
-  .pricing-tab .table td {
-    background-color: var(--card-bg) !important;
-    color: var(--text-primary) !important;
-  }
+.waste-value,
+.margin-value {
+  font-weight: 500;
+  color: #ffffff;
+}
 
-  .waste-input, .margin-input {
-    width: 50px !important;
-    min-width: 50px;
-    max-width: 60px;
-    text-align: right;
-  }
-
-  @media (max-width: 600px) {
-    /* Only for waste and margin rows: input+% left, value right */
-    :deep(.pricing-tab .table td .d-flex) {
-      flex-direction: row !important;
-      align-items: center !important;
-      justify-content: space-between !important;
-      gap: 0.5rem !important;
-    }
-    :deep(.pricing-tab .table td .percentage-group) {
-      width: auto !important;
-      margin-right: 0.5rem !important;
-      text-align: left !important;
-      flex-shrink: 0;
-    }
-    :deep(.pricing-tab .table td .percentage-group .input-group) {
-      width: auto !important;
-      min-width: 80px;
-    }
-    :deep(.pricing-tab .table td .waste-input),
-:deep(.pricing-tab .table td .margin-input) {
-      width: 50px !important;
-      min-width: 40px !important;
-      max-width: 60px !important;
-      text-align: right;
-    }
-    :deep(.pricing-tab .table td .calculated-value) {
-      width: auto !important;
-      min-width: 80px;
-      text-align: right !important;
-      white-space: nowrap;
-      flex-grow: 1;
-    }
-  }
+.subtotal-row th,
+.subtotal-row td,
+.subtotal-with-waste-row th,
+.subtotal-with-waste-row td,
+.total-row th,
+.total-row td {
+  color: #28a745 !important;
+  font-weight: 600;
 }
 </style>
