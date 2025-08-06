@@ -17,6 +17,7 @@ gem "turbo-rails"
 gem "stimulus-rails"
 gem "jbuilder"
 gem "webpacker", "~> 5.4"
+gem "sassc-rails"              # Para compilar Sass en producción
 
 # Authentication and authorization
 gem "devise"
