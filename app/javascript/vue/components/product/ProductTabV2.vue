@@ -1222,6 +1222,15 @@ export default {
         }
       }
     }
+    
+    /* Force right alignment for material table columns */
+    .material-container .text-end {
+      text-align: right !important;
+    }
+    
+    .material-container .d-flex.justify-content-end .text-end {
+      text-align: right !important;
+    }
   }
 }
 </style> 
