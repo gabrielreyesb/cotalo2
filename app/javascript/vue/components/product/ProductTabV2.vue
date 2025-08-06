@@ -155,28 +155,28 @@
                   </div>
                   
                   <!-- Material Details Columns -->
-                  <div class="d-flex align-items-center justify-content-end me-3" style="width: 80px;">
+                  <div class="text-end me-3" style="width: 80px;">
                     <strong class="text-success">Ancho</strong>
                   </div>
-                  <div class="d-flex align-items-center justify-content-end me-3" style="width: 80px;">
+                  <div class="text-end me-3" style="width: 80px;">
                     <strong class="text-success">Largo</strong>
                   </div>
-                  <div class="d-flex align-items-center justify-content-end me-3" style="width: 80px;">
+                  <div class="text-end me-3" style="width: 80px;">
                     <strong class="text-success">Costo</strong>
                   </div>
-                  <div class="d-flex align-items-center justify-content-end me-3" style="width: 50px;">
+                  <div class="text-end me-3" style="width: 50px;">
                     <strong class="text-success">Pzas</strong>
                   </div>
-                  <div class="d-flex align-items-center justify-content-end me-3" style="width: 70px;">
+                  <div class="text-end me-3" style="width: 70px;">
                     <strong class="text-success">Pliegos</strong>
                   </div>
-                  <div class="d-flex align-items-center justify-content-end me-3" style="width: 60px;">
+                  <div class="text-end me-3" style="width: 60px;">
                     <strong class="text-success">Peso</strong>
                   </div>
-                  <div class="d-flex align-items-center justify-content-end me-3" style="width: 70px;">
+                  <div class="text-end me-3" style="width: 70px;">
                     <strong class="text-success">m²</strong>
                   </div>
-                  <div class="d-flex align-items-center justify-content-end me-3" style="width: 100px;">
+                  <div class="text-end me-3" style="width: 100px;">
                     <strong class="text-success">Costo total</strong>
                   </div>
                   
@@ -247,25 +247,23 @@
                       style="width: 70px;"
                     />
                   </div>
-                  <div class="d-flex align-items-center justify-content-end me-3" style="width: 50px;">
-                    <div class="text-end" style="width: 100%;">{{ material.piecesPerMaterial || 0 }}</div>
+                  <div class="text-end me-3" style="width: 50px;">
+                    {{ material.piecesPerMaterial || 0 }}
                   </div>
-                  <div class="d-flex align-items-center justify-content-end me-3" style="width: 70px;">
-                    <div class="text-end" style="width: 100%;">{{ material.totalSheets || 0 }}</div>
+                  <div class="text-end me-3" style="width: 70px;">
+                    {{ material.totalSheets || 0 }}
                   </div>
-                  <div class="d-flex align-items-center justify-content-end me-3" style="width: 60px;">
-                    <div class="text-end" style="width: 100%;">
-                      {{ material.totalWeight && material.totalWeight > 0 ? (material.totalWeight / 1000).toFixed(2) : '-' }}
-                    </div>
+                  <div class="text-end me-3" style="width: 60px;">
+                    {{ material.totalWeight && material.totalWeight > 0 ? (material.totalWeight / 1000).toFixed(2) : '-' }}
                   </div>
-                  <div class="d-flex align-items-center justify-content-end me-3" style="width: 70px;">
-                    <div class="text-end" style="width: 100%;" v-if="!isWeightBasedMaterial(material)">{{ (material.totalSquareMeters || 0).toFixed(2) }}</div>
-                    <div class="text-end" style="width: 100%;" v-else>-</div>
+                  <div class="text-end me-3" style="width: 70px;" v-if="!isWeightBasedMaterial(material)">
+                    {{ (material.totalSquareMeters || 0).toFixed(2) }}
                   </div>
-                  <div class="d-flex align-items-center justify-content-end me-3" style="width: 100px;">
-                    <div class="text-end price-column" style="width: 100%;">
-                      {{ formatCurrency(material.totalPrice) }}
-                    </div>
+                  <div class="text-end me-3" style="width: 70px;" v-else>
+                    -
+                  </div>
+                  <div class="text-end me-3 price-column" style="width: 100px;">
+                    {{ formatCurrency(material.totalPrice) }}
                   </div>
                   
                   <!-- Action Buttons -->
