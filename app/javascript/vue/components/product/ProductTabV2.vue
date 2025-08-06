@@ -375,7 +375,7 @@
                 <!-- Processes List for this Material -->
                 <div v-if="material.processes && material.processes.length && expandedProcesses[materialIndex]" class="processes-list">
                   <div v-for="(process, processIndex) in material.processes" :key="process.id || processIndex" class="process-item">
-                    <div class="d-flex align-items-center p-2 border-top subtle-border-top" :class="{ 'rounded-bottom': processIndex === material.processes.length - 1 }">
+                    <div class="d-flex align-items-center p-2 border-top subtle-border-top" :class="{ 'rounded-bottom': processIndex === material.processes.length - 1 }" style="background-color: #1a1a1a;">
                       <!-- Process Name -->
                       <div class="flex-grow-1 me-2" style="padding-left: 2rem;">
                         <span style="font-weight: normal; color: var(--bs-body-color);">{{ process.description }}</span>
