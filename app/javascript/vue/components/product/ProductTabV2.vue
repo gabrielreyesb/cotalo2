@@ -248,22 +248,22 @@
                     />
                   </div>
                   <div class="d-flex align-items-center justify-content-end me-3" style="width: 50px;">
-                    <div class="text-end">{{ material.piecesPerMaterial || 0 }}</div>
+                    <div class="text-end" style="width: 100%;">{{ material.piecesPerMaterial || 0 }}</div>
                   </div>
                   <div class="d-flex align-items-center justify-content-end me-3" style="width: 70px;">
-                    <div class="text-end">{{ material.totalSheets || 0 }}</div>
+                    <div class="text-end" style="width: 100%;">{{ material.totalSheets || 0 }}</div>
                   </div>
                   <div class="d-flex align-items-center justify-content-end me-3" style="width: 60px;">
-                    <div class="text-end">
+                    <div class="text-end" style="width: 100%;">
                       {{ material.totalWeight && material.totalWeight > 0 ? (material.totalWeight / 1000).toFixed(2) : '-' }}
                     </div>
                   </div>
                   <div class="d-flex align-items-center justify-content-end me-3" style="width: 70px;">
-                    <div class="text-end" v-if="!isWeightBasedMaterial(material)">{{ (material.totalSquareMeters || 0).toFixed(2) }}</div>
-                    <div class="text-end" v-else>-</div>
+                    <div class="text-end" style="width: 100%;" v-if="!isWeightBasedMaterial(material)">{{ (material.totalSquareMeters || 0).toFixed(2) }}</div>
+                    <div class="text-end" style="width: 100%;" v-else>-</div>
                   </div>
                   <div class="d-flex align-items-center justify-content-end me-3" style="width: 100px;">
-                    <div class="price-column text-end">
+                    <div class="text-end price-column" style="width: 100%;">
                       {{ formatCurrency(material.totalPrice) }}
                     </div>
                   </div>
