@@ -164,15 +164,15 @@
                   </div>
                   
                   <!-- Material Details Columns -->
-                  <div class="d-flex align-items-center gap-4 me-3" style="min-width: 400px;">
-                    <div class="text-end me-3" style="width: 80px;"><strong class="text-success">Ancho</strong></div>
-                    <div class="text-end me-3" style="width: 80px;"><strong class="text-success">Largo</strong></div>
-                    <div class="text-end me-3" style="width: 80px;"><strong class="text-success">Costo</strong></div>
-                    <div class="text-end me-3" style="width: 50px;"><strong class="text-success">Pzas</strong></div>
-                    <div class="text-end me-3" style="width: 70px;"><strong class="text-success">Pliegos</strong></div>
-                    <div class="text-end me-3" style="width: 60px;"><strong class="text-success">Peso</strong></div>
-                    <div class="text-end me-3" style="width: 70px;"><strong class="text-success">m²</strong></div>
-                    <div class="text-end me-3" style="width: 100px;"><strong class="text-success">Costo total</strong></div>
+                  <div class="d-flex align-items-center gap-2 me-2" style="min-width: 350px;">
+                    <div class="text-end me-2" style="width: 70px;"><strong class="text-success">Ancho</strong></div>
+                    <div class="text-end me-2" style="width: 70px;"><strong class="text-success">Largo</strong></div>
+                    <div class="text-end me-2" style="width: 70px;"><strong class="text-success">Costo</strong></div>
+                    <div class="text-end me-2" style="width: 45px;"><strong class="text-success">Pzas</strong></div>
+                    <div class="text-end me-2" style="width: 60px;"><strong class="text-success">Pliegos</strong></div>
+                    <div class="text-end me-2" style="width: 50px;"><strong class="text-success">Peso</strong></div>
+                    <div class="text-end me-2" style="width: 60px;"><strong class="text-success">m²</strong></div>
+                    <div class="text-end me-2" style="width: 90px;"><strong class="text-success">Costo total</strong></div>
                   </div>
                   
                   <!-- Action Buttons -->
@@ -202,82 +202,84 @@
                   </button>
                   
                   <!-- Material Name -->
-                  <div class="material-info material-description-column me-4" style="width: 160px; min-width: 160px;">
-                    <span class="material-name text-truncate d-block" :title="material.displayName || material.description">
-                      {{ material.displayName || material.description }}
-                    </span>
+                  <div class="flex-grow-1 me-2" style="padding-left:">
+                    <span style="font-weight: normal; color: var(--bs-body-color);">{{ material.displayName || material.description }}</span>
                   </div>
                   
-                  <!-- Width -->
-                  <div class="d-flex align-items-center justify-content-end me-3" style="width: 80px;">
-                    <input 
-                      type="text" 
-                      inputmode="decimal"
-                      class="form-control form-control-sm text-end" 
-                      v-model.number="material.ancho" 
-                      min="0"
-                      step="0.1"
-                      @blur="updateMaterialCalculations(materialIndex, true)"
-                      style="width: 70px;"
-                    />
-                  </div>
+                  <!-- Material Details Columns -->
+                  <div class="d-flex align-items-center gap-2 me-2" style="min-width: 350px;">
+                    
+                    <!-- Width -->
+                    <div class="d-flex align-items-center justify-content-end me-2" style="width: 70px;">
+                      <input 
+                        type="text" 
+                        inputmode="decimal"
+                        class="form-control form-control-sm text-end" 
+                        v-model.number="material.ancho" 
+                        min="0"
+                        step="0.1"
+                        @blur="updateMaterialCalculations(materialIndex, true)"
+                        style="width: 60px;"
+                      />
+                    </div>
 
-                  <!-- Length -->
-                  <div class="d-flex align-items-center justify-content-end me-3" style="width: 80px;">
-                    <input 
-                      type="text" 
-                      inputmode="decimal"
-                      class="form-control form-control-sm text-end" 
-                      v-model.number="material.largo" 
-                      min="0"
-                      step="0.1"
-                      @blur="updateMaterialCalculations(materialIndex, true)"
-                      style="width: 70px;"
-                    />
-                  </div>
+                    <!-- Length -->
+                    <div class="d-flex align-items-center justify-content-end me-2" style="width: 70px;">
+                      <input 
+                        type="text" 
+                        inputmode="decimal"
+                        class="form-control form-control-sm text-end" 
+                        v-model.number="material.largo" 
+                        min="0"
+                        step="0.1"
+                        @blur="updateMaterialCalculations(materialIndex, true)"
+                        style="width: 60px;"
+                      />
+                    </div>
 
-                  <!-- Price -->
-                  <div class="d-flex align-items-center justify-content-end me-3" style="width: 80px;">
-                    <input 
-                      type="text" 
-                      inputmode="decimal"
-                      class="form-control form-control-sm text-end" 
-                      v-model.number="material.price" 
-                      min="0"
-                      step="0.01"
-                      @blur="updateMaterialCalculations(materialIndex, true)"
-                      style="width: 70px;"
-                    />
-                  </div>
+                    <!-- Price -->
+                    <div class="d-flex align-items-center justify-content-end me-2" style="width: 70px;">
+                      <input 
+                        type="text" 
+                        inputmode="decimal"
+                        class="form-control form-control-sm text-end" 
+                        v-model.number="material.price" 
+                        min="0"
+                        step="0.01"
+                        @blur="updateMaterialCalculations(materialIndex, true)"
+                        style="width: 60px;"
+                      />
+                    </div>
 
-                  <!-- Pieces per material -->
-                  <div class="text-end me-3" style="width: 50px;">
-                    {{ material.piecesPerMaterial || 0 }}
-                  </div>
+                    <!-- Pieces per material -->
+                    <div class="text-end me-2" style="width: 45px;">
+                      {{ material.piecesPerMaterial || 0 }}
+                    </div>
 
-                  <!-- Total sheets -->
-                  <div class="text-end me-3" style="width: 70px;">
-                    {{ material.totalSheets || 0 }}
-                  </div>
+                    <!-- Total sheets -->
+                    <div class="text-end me-2" style="width: 60px;">
+                      {{ material.totalSheets || 0 }}
+                    </div>
 
-                  <!-- Total weight -->
-                  <div class="text-end me-3" style="width: 60px;">
-                    {{ material.totalWeight && material.totalWeight > 0 ? (material.totalWeight / 1000).toFixed(2) : '-' }}
-                  </div>
+                    <!-- Total weight -->
+                    <div class="text-end me-2" style="width: 50px;">
+                      {{ material.totalWeight && material.totalWeight > 0 ? (material.totalWeight / 1000).toFixed(2) : '-' }}
+                    </div>
 
-                  <!-- Total square meters -->
-                  <div class="text-end me-3" style="width: 70px;" v-if="!isWeightBasedMaterial(material)">
-                    {{ (material.totalSquareMeters || 0).toFixed(2) }}
-                  </div>
+                    <!-- Total square meters -->
+                    <div class="text-end me-2" style="width: 60px;" v-if="!isWeightBasedMaterial(material)">
+                      {{ (material.totalSquareMeters || 0).toFixed(2) }}
+                    </div>
 
-                  <!-- Total square meters -->
-                  <div class="text-end me-3" style="width: 70px;" v-else>
-                    -
-                  </div>
+                    <!-- Total square meters -->
+                    <div class="text-end me-2" style="width: 60px;" v-else>
+                      -
+                    </div>
 
-                  <!-- Total price -->
-                  <div class="text-end me-3 price-column" style="width: 100px;">
-                    {{ formatCurrency(material.totalPrice) }}
+                    <!-- Total price -->
+                    <div class="text-end me-2 price-column" style="width: 90px;">
+                      {{ formatCurrency(material.totalPrice) }}
+                    </div>
                   </div>
                   
                   <!-- Action Buttons -->
@@ -407,14 +409,18 @@
                 <div v-if="material.processes && material.processes.length && expandedProcesses[materialIndex]" class="processes-list">
                   <div v-for="(process, processIndex) in material.processes" :key="process.id || processIndex" class="process-item">
                     <div class="d-flex align-items-center p-2 border-top subtle-border-top" :class="{ 'rounded-bottom': processIndex === material.processes.length - 1 }" style="background-color: #1a1a1a;">
+                      
                       <!-- Process Name -->
                       <div class="flex-grow-1 me-2" style="padding-left: 2rem;">
                         <span style="font-weight: normal; color: var(--bs-body-color);">{{ process.description }}</span>
                       </div>
                       
-                      <!-- Process Details Columns -->
                       <div class="d-flex align-items-center gap-4 me-3" style="min-width: 400px;">
+                         
+                        <!-- Unit -->
                         <div class="text-end" style="width: 60px;">{{ process.unit || '-' }}</div>
+
+                        <!-- Veces -->
                         <div class="text-end d-flex justify-content-end" style="width: 70px;">
                           <input 
                             type="text" 
@@ -427,6 +433,8 @@
                             style="width: 60px;"
                           />
                         </div>
+
+                        <!-- Unit Price -->
                         <div class="text-end d-flex justify-content-end" style="width: 100px;">
                           <input 
                             type="text" 
@@ -439,6 +447,8 @@
                             style="width: 80px;"
                           />
                         </div>
+
+                        <!-- Side -->
                         <div class="text-end d-flex justify-content-end" style="width: 120px;">
                           <select 
                             class="form-select form-select-sm text-end" 
@@ -451,6 +461,8 @@
                             <option value="both">Ambas</option>
                           </select>
                         </div>
+
+                        <!-- Total Price --> 
                         <div class="text-end price-column" style="width: 100px; color: var(--bs-body-color);">
                           {{ formatCurrency(process.price) }}
                         </div>
@@ -466,6 +478,7 @@
                           <i class="fa fa-trash"></i>
                         </button>
                       </div>
+
                     </div>
                   </div>
                 </div>
