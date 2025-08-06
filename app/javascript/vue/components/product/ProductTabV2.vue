@@ -1231,6 +1231,22 @@ export default {
     .material-container .d-flex.justify-content-end .text-end {
       text-align: right !important;
     }
+    
+    /* Dark background for process form controls to match header */
+    .processes-list .form-control,
+    .processes-list .form-select {
+      background-color: #1a1a1a !important;
+      border-color: #495057 !important;
+      color: #e1e1e1 !important;
+    }
+    
+    .processes-list .form-control:focus,
+    .processes-list .form-select:focus {
+      background-color: #1a1a1a !important;
+      border-color: #42b983 !important;
+      color: #e1e1e1 !important;
+      box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25) !important;
+    }
   }
 }
 </style> 
