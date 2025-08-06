@@ -3,7 +3,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= link_to edit_product_path(@product), class: "btn btn-outline-light me-2" do %>
+  <%= link_to edit_v2_product_path(@product), class: "btn btn-outline-light me-2" do %>
     <i class="fas fa-edit me-1"></i> <%= t('products.show.edit') %>
   <% end %>
   <%= button_to duplicate_product_path(@product), method: :post, class: "btn btn-outline-light me-2" do %>
@@ -15,231 +15,936 @@
 <% end %>
 
 <div class="product-show-container">
-  <!-- Información General y Precios -->
-  <div class="row">
-    <div class="col-lg-6 col-md-12 mb-4">
-      <div class="card product-info-card">
-        <div class="card-header">
-          <h5 class="card-title"><%= t('products.show.general_information') %></h5>
-        </div>
-        <div class="card-body">
-          <div class="info-grid">
-            <div class="info-item">
-              <div class="info-label"><%= t('products.show.name') %>:</div>
-              <div class="info-value"><%= @product.description %></div>
+  <!-- Información General y Costos totales -->
+  <div class="row justify-content-center">
+    <div class="col-lg-12">
+      <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-12 mb-4">
+          <div class="green-accent-panel">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title"><%= t('products.show.general_information') %></h5>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-borderless info-table">
+                    <tbody>
+                      <tr>
+                        <td class="info-label"><%= t('products.show.name') %>:</td>
+                        <td class="info-value"><%= @product.description %></td>
+                      </tr>
+                      <tr>
+                        <td class="info-label"><%= t('products.show.quantity') %>:</td>
+                        <td class="info-value"><%= @product.general_info["quantity"] || 1 %></td>
+                      </tr>
+                      <tr>
+                        <td class="info-label"><%= t('products.show.width') %>:</td>
+                        <td class="info-value">
+                          <% if @product.general_info["width"].present? %>
+                            <%= @product.general_info["width"] %> cm
+                          <% else %>
+                            <span class="text-muted">-</span>
+                          <% end %>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="info-label"><%= t('products.show.length') %>:</td>
+                        <td class="info-value">
+                          <% if @product.general_info["length"].present? %>
+                            <%= @product.general_info["length"] %> cm
+                          <% else %>
+                            <span class="text-muted">-</span>
+                          <% end %>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
-            
-            <div class="info-item">
-              <div class="info-label"><%= t('products.show.quantity') %>:</div>
-              <div class="info-value"><%= @product.general_info["quantity"] || 1 %></div>
+          </div>
+          
+          <!-- Materiales con sus Procesos Asignados -->
+          <div class="green-accent-panel">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title">
+                  <%= t('products.show.materials') %> con <%= t('products.pricing.material_processes_cost') %>
+                  (<%= @product.materials.size %> materiales)
+                </h5>
+              </div>
+              <div class="card-body">
+                <% if @product.materials.any? %>
+                  <div class="table-responsive">
+                    <table class="table table-borderless materials-table">
+                      <tbody>
+                        <% @product.materials.each do |material| %>
+                          <!-- Material -->
+                          <tr class="material-row">
+                            <td class="description-cell">
+                              <% if material["description"].present? %>
+                                <%= material["description"] %>
+                              <% elsif material["client_description"].present? %>
+                                <%= material["client_description"] %>
+                              <% else %>
+                                Material #<%= material["material_id"] || material["id"] || "N/A" %>
+                              <% end %>
+                            </td>
+                            <td class="process-cost-cell"></td>
+                            <td class="material-cost-cell">
+                              <% 
+                                if material["totalPrice"].present? && material["totalPrice"].to_f > 0
+                                  subtotal = material["totalPrice"].to_f
+                                elsif material["subtotal_price"].present? && material["subtotal_price"].to_f > 0
+                                  subtotal = material["subtotal_price"].to_f
+                                else
+                                  subtotal = 0
+                                end
+                              %>
+                              <%= number_to_currency(subtotal) %>
+                            </td>
+                          </tr>
+                          
+                          <!-- Material Processes -->
+                          <% if material["processes"].present? && material["processes"].any? %>
+                            <% material["processes"].each do |process| %>
+                              <tr class="process-row">
+                                <td class="description-cell process-description">
+                                  <i class="fas fa-chevron-right me-2"></i>
+                                  <% if process["description"].present? %>
+                                    <%= process["description"] %>
+                                  <% else %>
+                                    Proceso #<%= process["process_id"] || process["id"] || "N/A" %>
+                                  <% end %>
+                                </td>
+                                <td class="process-cost-cell">
+                                  <% subtotal = (process["price"].to_f || 0) * (process["veces"].to_f || 1) %>
+                                  <%= number_to_currency(subtotal) %>
+                                </td>
+                                <td class="material-cost-cell"></td>
+                              </tr>
+                            <% end %>
+                          <% end %>
+                        <% end %>
+                        
+                        <!-- Totales -->
+                        <tr class="total-row material-total-row">
+                          <td class="description-cell total-label">
+                            <%= t('products.show.materials_cost') %>:
+                          </td>
+                          <td class="process-cost-cell"></td>
+                          <td class="material-cost-cell total-value">
+                            <% 
+                              materials_total = @product.materials.sum do |material| 
+                                if material["totalPrice"].present? && material["totalPrice"].to_f > 0
+                                  material["totalPrice"].to_f
+                                elsif material["subtotal_price"].present? && material["subtotal_price"].to_f > 0
+                                  material["subtotal_price"].to_f
+                                else
+                                  0
+                                end
+                              end 
+                            %>
+                            <%= number_to_currency(materials_total) %>
+                          </td>
+                        </tr>
+                        <tr class="total-row process-total-row">
+                          <td class="description-cell total-label process-total-label">
+                            <%= t('products.pricing.material_processes_cost') %>:
+                          </td>
+                          <td class="process-cost-cell total-value">
+                            <%= number_to_currency(@product.pricing["material_processes_cost"] || 0) %>
+                          </td>
+                          <td class="material-cost-cell"></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                <% else %>
+                  <p class="text-muted"><%= t('products.show.no_materials_added') %></p>
+                <% end %>
+              </div>
             </div>
-            
-            <div class="info-item">
-              <div class="info-label"><%= t('products.show.width') %>:</div>
-              <div class="info-value"><%= @product.general_info["width"] || t('products.show.not_specified') %></div>
+          </div>
+          
+          <!-- Procesos Globales -->
+          <div class="green-accent-panel">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title">
+                  <i class="fas fa-cube me-2"></i>
+                  <%= t('products.pricing.global_processes_cost') %> 
+                  (<%= (@product.data["global_processes"] || []).size + (@product.data["processes"] || []).select { |p| !p["materialId"] }.size %>)
+                </h5>
+              </div>
+              <div class="card-body">
+                <% 
+                  # Obtener procesos globales de la nueva estructura
+                  global_processes = []
+                  
+                  # Procesos globales de la nueva estructura
+                  if @product.data["global_processes"].present?
+                    global_processes += @product.data["global_processes"]
+                  end
+                  
+                  # Procesos globales de la estructura antigua (sin materialId)
+                  if @product.data["processes"].present?
+                    global_processes += @product.data["processes"].select { |p| !p["materialId"] }
+                  end
+                %>
+                <% if global_processes.any? %>
+                  <div class="items-list">
+                    <% global_processes.each do |process| %>
+                      <div class="item-row">
+                        <span class="item-description">
+                          <% if process["description"].present? %>
+                            <%= process["description"] %>
+                          <% elsif process["name"].present? %>
+                            <%= process["name"] %>
+                          <% else %>
+                            Proceso #<%= process["process_id"] || process["id"] || "N/A" %>
+                          <% end %>
+                        </span>
+                        <span class="item-cost">
+                          <% 
+                            # Calcular el costo del proceso
+                            if process["price"].present?
+                              subtotal = process["price"].to_f
+                            elsif process["unitPrice"].present? && process["veces"].present?
+                              subtotal = (process["unitPrice"].to_f || 0) * (process["veces"].to_f || 1)
+                            else
+                              subtotal = 0
+                            end
+                          %>
+                          <%= number_to_currency(subtotal) %>
+                        </span>
+                      </div>
+                    <% end %>
+                  </div>
+                  <!-- Total del bloque de procesos globales -->
+                  <div class="block-total">
+                    <div class="total-item">
+                      <span class="total-label"><%= t('products.show.total') %>:</span>
+                      <span class="total-value">
+                        <%= number_to_currency(@product.pricing["global_processes_cost"] || 0) %>
+                      </span>
+                    </div>
+                  </div>
+                <% else %>
+                  <p class="text-muted"><%= t('products.show.no_global_processes_added') %></p>
+                <% end %>
+              </div>
             </div>
-            
-            <div class="info-item">
-              <div class="info-label"><%= t('products.show.length') %>:</div>
-              <div class="info-value"><%= @product.general_info["length"] || t('products.show.not_specified') %></div>
+          </div>
+          
+          <!-- Extras (Indirectos) -->
+          <div class="green-accent-panel">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title"><%= t('products.show.extras') %> (<%= @product.extras.size %>)</h5>
+              </div>
+              <div class="card-body">
+                <% if @product.extras.any? %>
+                  <div class="items-list">
+                    <% @product.extras.each do |extra| %>
+                      <div class="item-row">
+                        <span class="item-description">
+                          <% if extra["description"].present? %>
+                            <%= extra["description"] %>
+                          <% else %>
+                            Extra #<%= extra["extra_id"] || extra["id"] || "N/A" %>
+                          <% end %>
+                        </span>
+                        <span class="item-cost">
+                          <% subtotal = (extra["price"].to_f || 0) * (extra["quantity"].to_f || 0) %>
+                          <%= number_to_currency(subtotal) %>
+                        </span>
+                      </div>
+                    <% end %>
+                  </div>
+                  <!-- Total del bloque de extras -->
+                  <div class="block-total">
+                    <div class="total-item">
+                      <span class="total-label"><%= t('products.show.total') %>:</span>
+                      <span class="total-value">
+                        <% extras_total = @product.extras.sum { |extra| (extra["price"].to_f || 0) * (extra["quantity"].to_f || 0) } %>
+                        <%= number_to_currency(extras_total) %>
+                      </span>
+                    </div>
+                  </div>
+                <% else %>
+                  <p class="text-muted"><%= t('products.show.no_extras_added') %></p>
+                <% end %>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-    
-    <div class="col-lg-6 col-md-12 mb-4">
-      <div class="card product-info-card">
-        <div class="card-header">
-          <h5 class="card-title"><%= t('products.show.pricing_information') %></h5>
-        </div>
-        <div class="card-body">
-          <div class="info-grid">
-            <div class="info-item">
-              <div class="info-label"><%= t('products.show.materials_cost') %>:</div>
-              <div class="info-value"><%= number_to_currency(@product.pricing["materials_cost"] || 0) %></div>
-            </div>
-            
-            <div class="info-item">
-              <div class="info-label"><%= t('products.show.processes_cost') %>:</div>
-              <div class="info-value"><%= number_to_currency(@product.pricing["processes_cost"] || 0) %></div>
-            </div>
-            
-            <div class="info-item">
-              <div class="info-label"><%= t('products.show.extras_cost') %>:</div>
-              <div class="info-value"><%= number_to_currency(@product.pricing["extras_cost"] || 0) %></div>
-            </div>
-            
-            <div class="info-item">
-              <div class="info-label"><%= t('products.show.total_cost') %>:</div>
-              <div class="info-value"><%= number_to_currency(@product.pricing["subtotal"] || 0) %></div>
-            </div>
-            
-            <div class="info-item">
-              <div class="info-label"><%= t('products.show.margin') %>:</div>
-              <div class="info-value"><%= number_to_percentage(@product.pricing["margin_percentage"] || 0, precision: 1) %></div>
-            </div>
-            
-            <div class="info-item">
-              <div class="info-label"><%= t('products.show.sale_price') %>:</div>
-              <div class="info-value info-value-highlight"><%= number_to_currency(@product.pricing["total_price"] || 0) %></div>
+        
+        <div class="col-lg-3 col-md-12 mb-4">
+          <div class="green-accent-panel">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title">Costos totales</h5>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-borderless info-table">
+                    <tbody>
+                      <tr>
+                        <td class="info-label"><%= t('products.show.materials_cost') %>:</td>
+                        <td class="info-value"><%= number_to_currency(@product.pricing["materials_cost"] || 0) %></td>
+                      </tr>
+                      <tr>
+                        <td class="info-label"><%= t('products.pricing.material_processes_cost') %>:</td>
+                        <td class="info-value"><%= number_to_currency(@product.pricing["material_processes_cost"] || 0) %></td>
+                      </tr>
+                      <tr>
+                        <td class="info-label"><%= t('products.pricing.global_processes_cost') %>:</td>
+                        <td class="info-value"><%= number_to_currency(@product.pricing["global_processes_cost"] || 0) %></td>
+                      </tr>
+                      <tr>
+                        <td class="info-label"><%= t('products.show.extras_cost') %>:</td>
+                        <td class="info-value"><%= number_to_currency(@product.pricing["extras_cost"] || 0) %></td>
+                      </tr>
+                      <tr>
+                        <td class="info-label"><%= t('products.show.subtotal') %>:</td>
+                        <td class="info-value info-value-highlight"><%= number_to_currency(@product.pricing["subtotal"] || 0) %></td>
+                      </tr>
+                      <tr>
+                        <td class="info-label"><%= t('config.waste_percentage') %>:</td>
+                        <td class="info-value">
+                          <% if @product.pricing["waste_percentage"].present? %>
+                            <%= number_to_percentage(@product.pricing["waste_percentage"] || 0, precision: 1) %>
+                          <% else %>
+                            <span class="text-muted">-</span>
+                          <% end %>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="info-label"><%= t('products.show.waste_value') %>:</td>
+                        <td class="info-value"><%= number_to_currency(@product.pricing["waste_value"] || 0) %></td>
+                      </tr>
+                      <tr>
+                        <td class="info-label"><%= t('products.show.subtotal_with_waste') %>:</td>
+                        <td class="info-value info-value-highlight">
+                          <% subtotal_with_waste = (@product.pricing["subtotal"] || 0) + (@product.pricing["waste_value"] || 0) %>
+                          <%= number_to_currency(subtotal_with_waste) %>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="info-label"><%= t('products.show.price_per_piece_before_margin') %>:</td>
+                        <td class="info-value"><%= number_to_currency(@product.pricing["price_per_piece_before_margin"] || 0) %></td>
+                      </tr>
+                      <tr>
+                        <td class="info-label"><%= t('products.show.margin') %>:</td>
+                        <td class="info-value">
+                          <% if @product.pricing["margin_percentage"].present? %>
+                            <%= number_to_percentage(@product.pricing["margin_percentage"] || 0, precision: 1) %>
+                          <% else %>
+                            <span class="text-muted">-</span>
+                          <% end %>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="info-label"><%= t('products.show.margin_value') %>:</td>
+                        <td class="info-value"><%= number_to_currency(@product.pricing["margin_value"] || 0) %></td>
+                      </tr>
+                      <tr>
+                        <td class="info-label"><%= t('products.show.total_price') %>:</td>
+                        <td class="info-value info-value-highlight"><%= number_to_currency(@product.pricing["total_price"] || 0) %></td>
+                      </tr>
+                      <tr>
+                        <td class="info-label"><%= t('products.show.final_price_per_piece') %>:</td>
+                        <td class="info-value info-value-highlight"><%= number_to_currency(@product.pricing["final_price_per_piece"] || 0) %></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Materiales, Procesos y Extras -->
-  <div class="row">
-    <div class="col-lg-4 col-md-6 col-12 mb-4">
-      <div class="card product-info-card">
-        <div class="card-header">
-          <h5 class="card-title"><%= t('products.show.materials') %> (<%= @product.materials.size %>)</h5>
-        </div>
-        <div class="card-body">
-          <% if @product.materials.any? %>
-            <div class="items-list">
-              <% @product.materials.each do |material| %>
-                <div class="item-card">
-                  <div class="item-header">
-                    <span class="item-name"><%= material["description"] || material["client_description"] || "Material #{material["material_id"]}" %></span>
-                  </div>
-                  <div class="item-details">
-                    <div class="item-detail">
-                      <span class="detail-label"><%= t('products.show.unit_price') %>:</span>
-                      <span class="detail-value"><%= number_to_currency(material["price"] || 0) %></span>
-                    </div>
-                    <div class="item-detail">
-                      <span class="detail-label"><%= t('products.show.quantity') %>:</span>
-                      <span class="detail-value"><%= material["quantity"] %></span>
-                    </div>
-                    <div class="item-detail">
-                      <span class="detail-label"><%= t('products.show.subtotal') %>:</span>
-                      <span class="detail-value detail-value-highlight"><%= number_to_currency((material["price"].to_f || 0) * (material["quantity"].to_f || 0)) %></span>
-                    </div>
-                    <% if material["comments"].present? %>
-                      <div class="item-detail">
-                        <span class="detail-label"><%= t('products.show.notes') %>:</span>
-                        <span class="detail-value"><%= material["comments"] %></span>
-                      </div>
-                    <% end %>
-                  </div>
-                </div>
-              <% end %>
-            </div>
-            <!-- Total del bloque de materiales -->
-            <div class="block-total">
-              <div class="total-item">
-                <span class="total-label"><%= t('products.show.total') %>:</span>
-                <span class="total-value"><%= number_to_currency(@product.materials.sum { |material| (material["price"].to_f || 0) * (material["quantity"].to_f || 0) }) %></span>
-              </div>
-            </div>
-          <% else %>
-            <p class="text-muted"><%= t('products.show.no_materials_added') %></p>
-          <% end %>
-        </div>
-      </div>
-    </div>
-    
-    <div class="col-lg-4 col-md-6 col-12 mb-4">
-      <div class="card product-info-card">
-        <div class="card-header">
-          <h5 class="card-title"><%= t('products.show.processes') %> (<%= @product.processes.size %>)</h5>
-        </div>
-        <div class="card-body">
-          <% if @product.processes.any? %>
-            <div class="items-list">
-              <% @product.processes.each do |process| %>
-                <div class="item-card">
-                  <div class="item-header">
-                    <span class="item-name"><%= process["description"] || "Proceso #{process["process_id"]}" %></span>
-                  </div>
-                  <div class="item-details">
-                    <div class="item-detail">
-                      <span class="detail-label"><%= t('products.show.unit_price') %>:</span>
-                      <span class="detail-value"><%= number_to_currency(process["price"] || 0) %></span>
-                    </div>
-                    <div class="item-detail">
-                      <span class="detail-label"><%= t('products.show.times') %>:</span>
-                      <span class="detail-value"><%= process["veces"] %></span>
-                    </div>
-                    <div class="item-detail">
-                      <span class="detail-label"><%= t('products.show.subtotal') %>:</span>
-                      <span class="detail-value detail-value-highlight"><%= number_to_currency((process["price"].to_f || 0) * (process["veces"].to_f || 1)) %></span>
-                    </div>
-                    <% if process["comments"].present? %>
-                      <div class="item-detail">
-                        <span class="detail-label"><%= t('products.show.notes') %>:</span>
-                        <span class="detail-value"><%= process["comments"] %></span>
-                      </div>
-                    <% end %>
-                  </div>
-                </div>
-              <% end %>
-            </div>
-            <!-- Total del bloque de procesos -->
-            <div class="block-total">
-              <div class="total-item">
-                <span class="total-label"><%= t('products.show.total') %>:</span>
-                <span class="total-value"><%= number_to_currency(@product.processes.sum { |process| (process["price"].to_f || 0) * (process["veces"].to_f || 1) }) %></span>
-              </div>
-            </div>
-          <% else %>
-            <p class="text-muted"><%= t('products.show.no_processes_added') %></p>
-          <% end %>
-        </div>
-      </div>
-    </div>
-    
-    <div class="col-lg-4 col-md-6 col-12 mb-4">
-      <div class="card product-info-card">
-        <div class="card-header">
-          <h5 class="card-title"><%= t('products.show.extras') %> (<%= @product.extras.size %>)</h5>
-        </div>
-        <div class="card-body">
-          <% if @product.extras.any? %>
-            <div class="items-list">
-              <% @product.extras.each do |extra| %>
-                <div class="item-card">
-                  <div class="item-header">
-                    <span class="item-name"><%= extra["description"] || "Extra #{extra["extra_id"]}" %></span>
-                  </div>
-                  <div class="item-details">
-                    <div class="item-detail">
-                      <span class="detail-label"><%= t('products.show.unit_price') %>:</span>
-                      <span class="detail-value"><%= number_to_currency(extra["price"] || 0) %></span>
-                    </div>
-                    <div class="item-detail">
-                      <span class="detail-label"><%= t('products.show.quantity') %>:</span>
-                      <span class="detail-value"><%= extra["quantity"] %></span>
-                    </div>
-                    <div class="item-detail">
-                      <span class="detail-label"><%= t('products.show.subtotal') %>:</span>
-                      <span class="detail-value detail-value-highlight"><%= number_to_currency((extra["price"].to_f || 0) * (extra["quantity"].to_f || 0)) %></span>
-                    </div>
-                    <% if extra["comments"].present? %>
-                      <div class="item-detail">
-                        <span class="detail-label"><%= t('products.show.notes') %>:</span>
-                        <span class="detail-value"><%= extra["comments"] %></span>
-                      </div>
-                    <% end %>
-                  </div>
-                </div>
-              <% end %>
-            </div>
-            <!-- Total del bloque de extras -->
-            <div class="block-total">
-              <div class="total-item">
-                <span class="total-label"><%= t('products.show.total') %>:</span>
-                <span class="total-value"><%= number_to_currency(@product.extras.sum { |extra| (extra["price"].to_f || 0) * (extra["quantity"].to_f || 0) }) %></span>
-              </div>
-            </div>
-          <% else %>
-            <p class="text-muted"><%= t('products.show.no_extras_added') %></p>
-          <% end %>
-        </div>
-      </div>
-    </div>
-  </div>
-</div> 
+<style>
+.product-show-container {
+  padding: 0;
+}
+
+/* Simple Info Table Styles */
+.info-table {
+  margin-bottom: 0;
+}
+
+.info-table tbody tr {
+  border-bottom: 1px solid #404040;
+}
+
+.info-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.info-table td {
+  padding: 0.75rem 0;
+  vertical-align: middle;
+}
+
+.info-label {
+  color: #adb5bd;
+  font-weight: 500;
+  width: 40%;
+}
+
+.info-value {
+  color: #fff;
+  font-weight: 600;
+  text-align: right;
+}
+
+.info-value-highlight {
+  color: var(--cotalo-green) !important;
+  font-weight: 700 !important;
+  font-size: 1.1rem;
+}
+
+/* Legacy styles for other cards */
+.product-info-card {
+  background-color: #2a2a2a;
+  border: 1px solid #404040;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  margin-bottom: 1rem;
+}
+
+.product-info-card .card-header {
+  background-color: #333;
+  border-bottom: 1px solid #404040;
+  border-radius: 8px 8px 0 0;
+  padding: 1rem;
+}
+
+.product-info-card .card-title {
+  color: #fff;
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.product-info-card .card-body {
+  padding: 1.5rem;
+}
+
+.info-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #404040;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  color: #adb5bd;
+  font-weight: 500;
+}
+
+.info-value {
+  color: #fff;
+  font-weight: 600;
+  text-align: right;
+}
+
+.info-value-highlight {
+  color: var(--cotalo-green);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.item-card {
+  background-color: #333;
+  border: 1px solid #404040;
+  border-radius: 6px;
+  padding: 1rem;
+  transition: all 0.2s ease;
+}
+
+.item-card:hover {
+  background-color: #3a3a3a;
+  border-color: #505050;
+}
+
+.item-header {
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid #404040;
+  padding-bottom: 0.5rem;
+}
+
+.item-name {
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.item-name small {
+  font-size: 0.8rem;
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.item-details {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.item-detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0;
+  min-height: 1.5rem;
+}
+
+.detail-label {
+  color: #adb5bd;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.detail-value {
+  color: #fff;
+  font-weight: 500;
+  text-align: right;
+  min-width: 80px;
+}
+
+.detail-value-highlight {
+  color: var(--cotalo-green);
+  font-weight: 600;
+}
+
+.block-total {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid #404040;
+  background-color: #2a2a2a;
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.total-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.total-label {
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.total-value {
+  color: var(--cotalo-green);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.text-muted {
+  color: #6c757d !important;
+  font-style: italic;
+}
+
+/* Scrollbar styling for items-list */
+.items-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.items-list::-webkit-scrollbar-track {
+  background: #2a2a2a;
+  border-radius: 3px;
+}
+
+.items-list::-webkit-scrollbar-thumb {
+  background: #505050;
+  border-radius: 3px;
+}
+
+.items-list::-webkit-scrollbar-thumb:hover {
+  background: #606060;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .info-table td {
+    padding: 0.5rem 0;
+  }
+  
+  .info-label {
+    width: 50%;
+  }
+  
+  .info-value {
+    text-align: left;
+  }
+  
+  .info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .item-detail {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .detail-value {
+    text-align: left;
+    min-width: auto;
+  }
+  
+  .total-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .total-value {
+    text-align: left;
+  }
+}
+
+/* Ensure consistent spacing */
+.card-body {
+  padding: 1.5rem !important;
+}
+
+.card-header {
+  padding: 1rem !important;
+}
+
+/* Fix for empty values */
+.detail-value:empty::after {
+  content: "-";
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Improve text readability */
+.text-muted {
+  color: #6c757d !important;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+/* Better spacing for item cards */
+.item-card + .item-card {
+  margin-top: 0.5rem;
+}
+
+/* Material Container Styles */
+.material-container {
+  background-color: #333;
+  border: 1px solid #404040;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.material-header {
+  background-color: #2a2a2a;
+  border-bottom: 1px solid #404040;
+  padding: 1rem;
+}
+
+.material-name {
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.material-details {
+  padding: 1rem;
+  border-bottom: 1px solid #404040;
+}
+
+.material-detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #404040;
+}
+
+.material-detail:last-child {
+  border-bottom: none;
+}
+
+.material-detail .detail-label {
+  color: #adb5bd;
+  font-weight: 500;
+}
+
+.material-detail .detail-value {
+  color: #fff;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Material Processes Styles */
+.material-processes {
+  background-color: #2a2a2a;
+  border-top: 1px solid #404040;
+}
+
+.process-item {
+  border-bottom: 1px solid #404040;
+}
+
+.process-item:last-child {
+  border-bottom: none;
+}
+
+.process-header {
+  padding: 0.75rem 1rem;
+  background-color: #333;
+  border-bottom: 1px solid #404040;
+}
+
+.process-name {
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.process-name i {
+  color: var(--cotalo-green);
+  font-size: 0.8rem;
+}
+
+.process-details {
+  padding: 0.75rem 1rem 0.75rem 2rem;
+  background-color: #2a2a2a;
+}
+
+.process-detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0;
+  min-height: 1.5rem;
+}
+
+.process-detail .detail-label {
+  color: #adb5bd;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.process-detail .detail-value {
+  color: #fff;
+  font-weight: 500;
+  text-align: right;
+  min-width: 80px;
+}
+
+/* Global Processes Section */
+.global-processes-section {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 2px solid #404040;
+}
+
+.global-processes-header h6 {
+  color: var(--cotalo-green);
+  font-weight: 600;
+}
+
+.global-process-card {
+  background-color: #2a2a2a;
+  border: 1px solid #404040;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+}
+
+.global-process-card .item-header {
+  background-color: #333;
+  border-bottom: 1px solid #404040;
+  padding: 0.75rem 1rem;
+}
+
+.global-process-card .item-name {
+  color: #fff;
+  font-weight: 500;
+}
+
+.global-process-card .item-name small {
+  color: var(--cotalo-green);
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+/* Simple Item Row Styles */
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #404040;
+}
+
+.item-row:last-child {
+  border-bottom: none;
+}
+
+.item-description {
+  color: #fff;
+  font-weight: 500;
+  flex: 1;
+}
+
+.item-cost {
+  color: #fff;
+  font-weight: 600;
+  text-align: right;
+  min-width: 120px;
+}
+
+/* Materials Table Styles */
+.materials-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.materials-table td {
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid #404040;
+  vertical-align: middle;
+}
+
+.materials-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Column Styles */
+.description-cell {
+  color: #fff;
+  font-weight: 500;
+  text-align: left;
+  width: 50%;
+}
+
+.process-cost-cell {
+  color: #adb5bd;
+  font-weight: 500;
+  text-align: right;
+  width: 25%;
+  min-width: 120px;
+}
+
+.material-cost-cell {
+  color: #fff;
+  font-weight: 600;
+  text-align: right;
+  width: 25%;
+  min-width: 120px;
+}
+
+/* Material Row Styles */
+.material-row {
+  background-color: #2a2a2a;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.material-row .description-cell {
+  color: #fff;
+  font-weight: 600;
+  padding-left: 1rem;
+}
+
+.material-row .material-cost-cell {
+  color: #fff;
+  font-weight: 600;
+  padding-right: 1rem;
+}
+
+/* Process Row Styles */
+.process-row {
+  background-color: #333;
+  border-radius: 4px;
+  margin: 0.25rem 0;
+}
+
+.process-row .description-cell.process-description {
+  color: #adb5bd;
+  font-weight: 400;
+  padding-left: 2.5rem;
+}
+
+.process-row .description-cell.process-description i {
+  color: var(--cotalo-green);
+  font-size: 0.8rem;
+}
+
+.process-row .process-cost-cell {
+  color: #adb5bd;
+  font-weight: 500;
+  padding-right: 1rem;
+}
+
+/* Total Row Styles */
+.total-row {
+  background-color: #2a2a2a;
+  border-radius: 4px;
+  margin-top: 1rem;
+}
+
+.total-row .description-cell.total-label {
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding-left: 1rem;
+}
+
+.total-row .process-cost-cell.total-value {
+  color: var(--cotalo-green);
+  font-weight: 700;
+  font-size: 1.2rem;
+  padding-right: 1rem;
+}
+
+.total-row .material-cost-cell.total-value {
+  color: var(--cotalo-green);
+  font-weight: 700;
+  font-size: 1.2rem;
+  padding-right: 1rem;
+}
+
+.process-total-row .description-cell.total-label {
+  padding-left: 2.5rem;
+}
+</style> 

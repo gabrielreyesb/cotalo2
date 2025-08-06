@@ -1,7 +1,8 @@
 {
   "pricingPanelValues": {
     "Materiales:": "$35.00",
-    "Procesos:": "$65.00",
+    "Procesos aplicados:": "$35.00",
+    "Procesos globales:": "$30.00",
     "Indirectos:": "$150.00",
     "Subtotal:": "$250.00",
     "% de merma:": "%",
@@ -19,5 +20,5 @@
     "globalProcessCost": 30,
     "indirectCost": 150
   },
-  "timestamp": "2025-08-06T01:43:58.573Z"
+  "timestamp": "2025-08-06T20:08:17.006Z"
 }

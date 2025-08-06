@@ -122,9 +122,9 @@ describe('Scenario 4: Weight-Based Material Calculation', () => {
     
     // Capture process cost for validation
     cy.get('.pricing-panel').scrollIntoView().within(() => {
-      cy.get('tr').contains('Procesos:').parent().find('td').invoke('text').then((text) => {
+      cy.get('tr').contains('Procesos aplicados:').parent().find('td').invoke('text').then((text) => {
         expectedValues.processCost = parseFloat(text.replace(/[^0-9.-]+/g, ''));
-        cy.log(`📊 Captured process cost: $${expectedValues.processCost.toFixed(2)}`);
+        cy.log(`📊 Captured material process cost: $${expectedValues.processCost.toFixed(2)}`);
         cy.log(`📋 Expected process calculation:`);
         cy.log(`   - Area per piece: 0.0875m²`);
         cy.log(`   - Process price: $5.00/m²`);
@@ -148,10 +148,9 @@ describe('Scenario 4: Weight-Based Material Calculation', () => {
     
     // Capture updated process cost (includes both material processes and global processes)
     cy.get('.pricing-panel').scrollIntoView().within(() => {
-      cy.get('tr').contains('Procesos:').parent().find('td').invoke('text').then((text) => {
-        const totalProcessCost = parseFloat(text.replace(/[^0-9.-]+/g, ''));
-        expectedValues.globalProcessCost = totalProcessCost - expectedValues.processCost; // Calculate only the global process portion
-        cy.log(`📊 Captured total process cost: $${totalProcessCost.toFixed(2)} (includes material process: $${expectedValues.processCost.toFixed(2)} + global process: $${expectedValues.globalProcessCost.toFixed(2)})`);
+      cy.get('tr').contains('Procesos globales:').parent().find('td').invoke('text').then((text) => {
+        expectedValues.globalProcessCost = parseFloat(text.replace(/[^0-9.-]+/g, ''));
+        cy.log(`📊 Captured global process cost: $${expectedValues.globalProcessCost.toFixed(2)}`);
         cy.log(`📋 Expected global process calculation:`);
         cy.log(`   - Global process price: $0.15/piece`);
         cy.log(`   - Total for 500 pieces: $0.15 × 500 = $75.00`);
@@ -172,11 +171,17 @@ describe('Scenario 4: Weight-Based Material Calculation', () => {
       });
       
       // Validate processes cost (includes both material process and global process)
-      cy.get('tr').contains('Procesos:').parent().find('td').invoke('text').then((text) => {
+      cy.get('tr').contains('Procesos aplicados:').parent().find('td').invoke('text').then((text) => {
         const actualValue = parseFloat(text.replace(/[^0-9.-]+/g, ''));
-        const expectedProcessCost = expectedValues.processCost + expectedValues.globalProcessCost;
-        expect(actualValue).to.equal(expectedProcessCost);
-        cy.log(`✅ Processes cost: $${actualValue.toFixed(2)} (expected: $${expectedProcessCost.toFixed(2)} = $${expectedValues.processCost.toFixed(2)} + $${expectedValues.globalProcessCost.toFixed(2)})`);
+        expect(actualValue).to.equal(expectedValues.processCost);
+        cy.log(`✅ Material processes cost: $${actualValue.toFixed(2)} (expected: $${expectedValues.processCost.toFixed(2)})`);
+      });
+      
+      // Validate global processes cost
+      cy.get('tr').contains('Procesos globales:').parent().find('td').invoke('text').then((text) => {
+        const actualValue = parseFloat(text.replace(/[^0-9.-]+/g, ''));
+        expect(actualValue).to.equal(expectedValues.globalProcessCost);
+        cy.log(`✅ Global processes cost: $${actualValue.toFixed(2)} (expected: $${expectedValues.globalProcessCost.toFixed(2)})`);
       });
       
       // Validate subtotal
@@ -189,7 +194,7 @@ describe('Scenario 4: Weight-Based Material Calculation', () => {
         // Validate exact calculation - no tolerance for simple arithmetic
         expect(actualValue).to.equal(expectedSubtotal);
         cy.log(`✅ Subtotal: $${actualValue.toFixed(2)} (expected: $${expectedSubtotal.toFixed(2)})`);
-        cy.log(`   Breakdown: Material($${expectedValues.materialCost.toFixed(2)}) + Process($${expectedValues.processCost.toFixed(2)}) + Global($${expectedValues.globalProcessCost.toFixed(2)})`);
+        cy.log(`   Breakdown: Material($${expectedValues.materialCost.toFixed(2)}) + Material Process($${expectedValues.processCost.toFixed(2)}) + Global Process($${expectedValues.globalProcessCost.toFixed(2)})`);
       });
     });
     

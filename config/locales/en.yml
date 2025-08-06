@@ -740,6 +740,8 @@ en:
       extra_quantity: "Quantity"
       include_in_subtotal: "Include indirects in product value"
       materials_cost: "Materials cost:"
+      material_processes_cost: "Material processes cost:"
+      global_processes_cost: "Global processes cost:"
       processes_cost: "Processes cost:"
       extras_cost: "Indirects cost:"
       subtotal: "Subtotal:"

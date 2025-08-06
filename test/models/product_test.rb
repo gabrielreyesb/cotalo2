@@ -98,16 +98,18 @@ class ProductTest < ActiveSupport::TestCase
         extras: [],
         pricing: {
           materials_cost: 255.0,
-          processes_cost: 0,
-          extras_cost: 0,
-          subtotal: 255.0,
+          material_processes_cost: 89.25,
+          global_processes_cost: 0.0,
+          processes_cost: 89.25,
+          extras_cost: 250.0,
+          subtotal: 594.25,
           waste_percentage: 5,
-          waste_value: 12.75,
-          price_per_piece_before_margin: 2.68,
+          waste_value: 29.71,
+          price_per_piece_before_margin: 6.24,
           margin_percentage: 10,
-          margin_value: 26.78,
-          total_price: 294.53,
-          final_price_per_piece: 2.95
+          margin_value: 62.40,
+          total_price: 686.36,
+          final_price_per_piece: 6.86
         }
       }
     )
@@ -206,6 +208,8 @@ class ProductTest < ActiveSupport::TestCase
         ],
         pricing: {
           materials_cost: 255.0,
+          material_processes_cost: 89.25,
+          global_processes_cost: 0.0,
           processes_cost: 89.25,
           extras_cost: 250.0,
           subtotal: 594.25,
@@ -223,6 +227,8 @@ class ProductTest < ActiveSupport::TestCase
     product.calculate_totals
     
     assert_equal 255.0, product.pricing["materials_cost"]
+    assert_equal 89.25, product.pricing["material_processes_cost"]
+    assert_equal 0.0, product.pricing["global_processes_cost"]
     assert_equal 89.25, product.pricing["processes_cost"]
     assert_equal 250.0, product.pricing["extras_cost"]
     assert_equal 594.25, product.pricing["subtotal"]

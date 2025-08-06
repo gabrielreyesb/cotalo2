@@ -4,13 +4,9 @@
 
 <% content_for :page_actions do %>
   <div class="btn-group" role="group">
-    <%= link_to new_product_path, class: "btn btn-outline-success" do %>
+    <%= link_to new_v2_products_path, class: "btn btn-outline-success" do %>
       <i class="fas fa-plus me-1"></i> <%= t('products.index.new_product') %>
     <% end %>
-    <%# Botón del nuevo modelo oculto temporalmente - accesible solo por URL directa %>
-    <%# <%= link_to new_v2_products_path, class: "btn btn-outline-primary" do %>
-    <%#   <i class="fas fa-rocket me-1"></i> Nuevo Producto V2 %>
-    <%# <% end %>
   </div>
 <% end %>
 
@@ -104,7 +100,7 @@
                           data: { bs_toggle: "tooltip" }, title: t('products.index.view_details') do %>
                         <i class="fa fa-eye"></i>
                       <% end %>
-                      <%= link_to edit_product_path(product), class: "btn btn-sm btn-outline-primary mx-1", 
+                      <%= link_to edit_v2_product_path(product), class: "btn btn-sm btn-outline-primary mx-1", 
                           data: { bs_toggle: "tooltip" }, title: t('common.edit') do %>
                         <i class="fa fa-edit"></i>
                       <% end %>
@@ -165,7 +161,7 @@
                     data: { bs_toggle: "tooltip" }, title: t('products.index.view_details') do %>
                   <i class="fa fa-eye fa-sm"></i>
                 <% end %>
-                <%= link_to edit_product_path(product), class: "btn btn-sm btn-outline-primary mx-1", 
+                <%= link_to edit_v2_product_path(product), class: "btn btn-sm btn-outline-primary mx-1", 
                     data: { bs_toggle: "tooltip" }, title: t('products.index.edit_product') do %>
                   <i class="fa fa-edit fa-sm"></i>
                 <% end %>
@@ -194,7 +190,7 @@
     <% else %>
       <div class="text-center py-5">
         <p class="mb-4"><%= t('products.index.no_products') %></p>
-        <%= link_to new_product_path, class: "btn btn-primary" do %>
+        <%= link_to new_v2_products_path, class: "btn btn-primary" do %>
           <i class="fas fa-plus"></i> <%= t('products.index.create_new') %>
         <% end %>
       </div>

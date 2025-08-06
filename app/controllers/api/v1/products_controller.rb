@@ -243,12 +243,16 @@ class Api::V1::ProductsController < ApplicationController
     
     # Calculate costs from materials, processes, and extras
     materials_cost = calculate_materials_cost(product.data["materials"] || [])
-    processes_cost = calculate_processes_cost(product.data["processes"] || [])
+    material_processes_cost = calculate_material_processes_cost(product)
+    global_processes_cost = calculate_global_processes_cost(product)
+    processes_cost = material_processes_cost + global_processes_cost
     extras_cost = calculate_extras_cost(product.data["extras"] || [])
     
     # Update pricing data
     pricing = product.data["pricing"]
     pricing["materials_cost"] = materials_cost
+    pricing["material_processes_cost"] = material_processes_cost
+    pricing["global_processes_cost"] = global_processes_cost
     pricing["processes_cost"] = processes_cost
     pricing["extras_cost"] = extras_cost
     
@@ -280,6 +284,46 @@ class Api::V1::ProductsController < ApplicationController
   
   def calculate_materials_cost(materials)
     materials.sum { |m| (m["totalPrice"].to_f rescue 0) }
+  end
+  
+  def calculate_material_processes_cost(product)
+    total = 0
+    
+    # Calculate processes from materials
+    if product.data["materials"].present?
+      product.data["materials"].each do |material|
+        if material["processes"].present?
+          material["processes"].each do |process|
+            total += (process["price"].to_f rescue 0) * (process["veces"].to_f rescue 1)
+          end
+        end
+      end
+    end
+    
+    total
+  end
+  
+  def calculate_global_processes_cost(product)
+    total = 0
+    
+    # Calculate global processes from data
+    if product.data["global_processes"].present?
+      product.data["global_processes"].each do |process|
+        total += (process["price"].to_f rescue 0) * (process["veces"].to_f rescue 1)
+      end
+    end
+    
+    # Also check for processes in the old format (processes without materialId)
+    if product.data["processes"].present?
+      product.data["processes"].each do |process|
+        # Only count processes that don't have a materialId (global processes)
+        unless process["materialId"].present?
+          total += (process["price"].to_f rescue 0) * (process["veces"].to_f rescue 1)
+        end
+      end
+    end
+    
+    total
   end
   
   def calculate_processes_cost(processes)

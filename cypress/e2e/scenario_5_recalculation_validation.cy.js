@@ -102,9 +102,9 @@ describe('Scenario 5: Recalculation Validation', () => {
     
     // Capture initial process cost for validation
     cy.get('.pricing-panel').within(() => {
-      cy.get('tr').contains('Procesos:').parent().find('td').invoke('text').then((text) => {
+      cy.get('tr').contains('Procesos aplicados:').parent().find('td').invoke('text').then((text) => {
         initialValues.processCost = parseFloat(text.replace(/[^0-9.-]+/g, ''));
-        cy.log(`📊 INITIAL VALUES - Process cost: $${initialValues.processCost.toFixed(2)}`);
+        cy.log(`📊 INITIAL VALUES - Material process cost: $${initialValues.processCost.toFixed(2)}`);
       });
     })
     
@@ -130,11 +130,11 @@ describe('Scenario 5: Recalculation Validation', () => {
       });
       
       // Verify process cost increased (should be approximately double)
-      cy.get('tr').contains('Procesos:').parent().find('td').invoke('text').then((text) => {
+      cy.get('tr').contains('Procesos aplicados:').parent().find('td').invoke('text').then((text) => {
         const newProcessCost = parseFloat(text.trim().replace(/[^0-9.-]+/g, ''));
-        cy.log(`📊 QUANTITY CHANGE RESULTS - Process cost: $${newProcessCost.toFixed(2)} (was $${initialValues.processCost.toFixed(2)})`);
+        cy.log(`📊 QUANTITY CHANGE RESULTS - Material process cost: $${newProcessCost.toFixed(2)} (was $${initialValues.processCost.toFixed(2)})`);
         expect(newProcessCost).to.be.greaterThan(initialValues.processCost);
-        cy.log('✅ Process cost increased after quantity change');
+        cy.log('✅ Material process cost increased after quantity change');
       });
     });
     

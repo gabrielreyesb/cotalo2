@@ -29,7 +29,7 @@
               <!-- Action Buttons -->
               <div class="mt-auto">
                 <div class="d-flex flex-wrap gap-2">
-                  <%= link_to new_product_path, class: "btn btn-success" do %>
+                  <%= link_to new_v2_products_path, class: "btn btn-success" do %>
                     <i class="fa fa-plus me-1"></i> <%= t('dashboard.reminder.create_first_product') %>
                   <% end %>
                   <%= link_to new_demo_request_path, class: "btn btn-outline-success" do %>
@@ -93,7 +93,7 @@
                     <div class="col-md-4">
                       <div class="step-item-compact">
                         <span class="step-number">2</span>
-                        <%= link_to new_product_path, class: "btn btn-sm w-100 btn-outline-success" do %>
+                        <%= link_to new_v2_products_path, class: "btn btn-sm w-100 btn-outline-success" do %>
                           <%= t('dashboard.welcome.create_first') %>
                         <% end %>
                       </div>
@@ -199,7 +199,7 @@
           <h3><%= t('dashboard.recent_products') %></h3>
           <p class="text-light-gray small mb-0"><%= t('dashboard.showing_recent_products') %></p>
         </div>
-        <%= link_to new_product_path, class: "btn btn-sm btn-success" do %>
+        <%= link_to new_v2_products_path, class: "btn btn-sm btn-success" do %>
           <i class="fa fa-plus me-1"></i> <%= t('dashboard.new_product') %>
         <% end %>
       </div>
@@ -242,7 +242,7 @@
           <div class="card shadow-lg border-0">
             <div class="card-body p-4">
               <div class="alert alert-success">
-                <%= t('dashboard.no_products_html', link: link_to(t('dashboard.create_first_product'), new_product_path)) %>.
+                <%= t('dashboard.no_products_html', link: link_to(t('dashboard.create_first_product'), new_v2_products_path)) %>.
               </div>
             </div>
           </div>

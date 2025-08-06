@@ -76,7 +76,7 @@ class ProductsController < ApplicationController
     
     respond_to do |format|
       if new_product.save
-        format.html { redirect_to edit_product_path(new_product) }
+        format.html { redirect_to edit_v2_product_path(new_product) }
         format.json { render :show, status: :created, location: new_product }
       else
         format.html { redirect_to products_path, alert: 'Failed to duplicate product.' }

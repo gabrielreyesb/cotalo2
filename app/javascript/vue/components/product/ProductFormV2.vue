@@ -139,6 +139,8 @@ export default {
       },
       defaultPricing: {
         materials_cost: 0,
+        material_processes_cost: 0,
+        global_processes_cost: 0,
         processes_cost: 0,
         extras_cost: 0,
         subtotal: 0,
@@ -448,8 +450,10 @@ export default {
         // Calculate materials cost
         const materialsCost = this.calculateMaterialsCost();
         
-        // Calculate processes cost (both material-specific and global)
-        const processesCost = this.calculateProcessesCost();
+        // Calculate processes costs separately
+        const materialProcessesCost = this.calculateMaterialProcessesCost();
+        const globalProcessesCost = this.calculateGlobalProcessesCost();
+        const processesCost = materialProcessesCost + globalProcessesCost;
         
         // Calculate extras cost
         const extrasCost = this.calculateExtrasCost();
@@ -462,6 +466,8 @@ export default {
         this.product.data.pricing = {
           ...this.product.data.pricing,
           materials_cost: materialsCost,
+          material_processes_cost: materialProcessesCost,
+          global_processes_cost: globalProcessesCost,
           processes_cost: processesCost,
           extras_cost: extrasCost,
           subtotal: subtotal
@@ -485,6 +491,12 @@ export default {
     },
 
     calculateProcessesCost() {
+      const materialProcessesCost = this.calculateMaterialProcessesCost();
+      const globalProcessesCost = this.calculateGlobalProcessesCost();
+      return materialProcessesCost + globalProcessesCost;
+    },
+
+    calculateMaterialProcessesCost() {
       let total = 0;
       
       // Procesos de materiales
@@ -498,6 +510,12 @@ export default {
         });
       }
       
+      return total;
+    },
+
+    calculateGlobalProcessesCost() {
+      let total = 0;
+      
       // Procesos globales
       if (this.product && this.product.data && this.product.data.global_processes) {
         this.product.data.global_processes.forEach(process => {
@@ -505,6 +523,7 @@ export default {
           total += processPrice;
         });
       }
+      
       return total;
     },
 

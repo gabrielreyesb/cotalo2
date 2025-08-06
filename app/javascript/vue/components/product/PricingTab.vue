@@ -7,8 +7,12 @@
           <td class="text-end">{{ formatCurrency(pricing.materials_cost) }}</td>
         </tr>
         <tr>
-          <th>{{ translations.pricing.processes_cost }}</th>
-          <td class="text-end">{{ formatCurrency(pricing.processes_cost) }}</td>
+          <th>Procesos aplicados:</th>
+          <td class="text-end">{{ formatCurrency(pricing.material_processes_cost || 0) }}</td>
+        </tr>
+        <tr>
+          <th>Procesos globales:</th>
+          <td class="text-end">{{ formatCurrency(pricing.global_processes_cost || 0) }}</td>
         </tr>
         <tr :class="{ 'bg-danger bg-opacity-10': pricing.extras_cost > 0 && pricing.include_extras_in_subtotal === false }">
           <th>{{ translations.pricing.extras_cost }}</th>

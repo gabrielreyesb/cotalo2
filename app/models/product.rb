@@ -33,6 +33,8 @@ class Product < ApplicationRecord
       extras: [],     # Will contain objects with the structure shown in self.extra_template
       pricing: {
         materials_cost: 0,
+        material_processes_cost: 0,
+        global_processes_cost: 0,
         processes_cost: 0,
         extras_cost: 0,
         subtotal: 0,
@@ -172,10 +174,10 @@ class Product < ApplicationRecord
       m["totalPrice"].to_f > 0 ? m["totalPrice"].to_f : m["subtotal_price"].to_f
     end
     
-    # Calculate processes cost - handle both old and new field names
-    processes_cost = processes.sum do |p| 
-      p["subtotal_price"].to_f + p["price"].to_f
-    end
+    # Calculate material processes cost and global processes cost separately
+    material_processes_cost = calculate_material_processes_cost
+    global_processes_cost = calculate_global_processes_cost
+    processes_cost = material_processes_cost + global_processes_cost
     
     # Calculate extras cost - handle both old and new field names
     extras_cost = extras.sum do |e| 
@@ -219,6 +221,8 @@ class Product < ApplicationRecord
     # Update pricing data
     self.pricing = pricing.merge(
       "materials_cost" => materials_cost,
+      "material_processes_cost" => material_processes_cost,
+      "global_processes_cost" => global_processes_cost,
       "processes_cost" => processes_cost,
       "extras_cost" => extras_cost,
       "subtotal" => subtotal,
@@ -233,6 +237,46 @@ class Product < ApplicationRecord
     
     # Return self for method chaining
     self
+  end
+
+  # Calculate cost of processes applied to materials
+  def calculate_material_processes_cost
+    total = 0
+    
+    # Calculate processes from materials
+    materials.each do |material|
+      if material["processes"].present?
+        material["processes"].each do |process|
+          total += (process["price"].to_f || 0) * (process["veces"].to_f || 1)
+        end
+      end
+    end
+    
+    total
+  end
+
+  # Calculate cost of global processes (applied to the entire product)
+  def calculate_global_processes_cost
+    total = 0
+    
+    # Calculate global processes from data
+    if data["global_processes"].present?
+      data["global_processes"].each do |process|
+        total += (process["price"].to_f || 0) * (process["veces"].to_f || 1)
+      end
+    end
+    
+    # Also check for processes in the old format (processes without materialId)
+    if data["processes"].present?
+      data["processes"].each do |process|
+        # Only count processes that don't have a materialId (global processes)
+        unless process["materialId"].present?
+          total += (process["price"].to_f || 0) * (process["veces"].to_f || 1)
+        end
+      end
+    end
+    
+    total
   end
   
   # Helper method to add a new material
