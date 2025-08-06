@@ -1,11 +1,5 @@
-// Custom Bootstrap configuration
-// Bootstrap is imported via JavaScript, so we only need custom overrides
-
-// Your custom variables here
-$primary: #42b983;
-$dark: #212529;
-$body-bg: #23272b;
-$body-color: #e9ecef;
+// Custom Bootstrap overrides
+// Bootstrap variables are now defined in application.scss
 
 // Custom override: Make active toggle buttons green instead of blue
 .btn-check:checked + .btn-outline-primary,

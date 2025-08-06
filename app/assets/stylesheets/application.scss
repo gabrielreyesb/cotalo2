@@ -1,3 +1,13 @@
+// Define Bootstrap variables before importing Bootstrap
+$primary: #42b983;
+$dark: #212529;
+$body-bg: #23272b;
+$body-color: #e9ecef;
+
+// Import Bootstrap SCSS using the full path
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+// Import custom Bootstrap overrides
 @import "bootstrap_custom";
 
 @import "base/layout";
