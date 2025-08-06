@@ -66,3 +66,6 @@ gem 'bcrypt', '~> 3.1.7'
 # Use Down for downloading files from URLs
 gem 'down', '~> 5.4'
 
+# HTTP client
+gem "httparty"                    # Para hacer requests HTTP a APIs externas
+
