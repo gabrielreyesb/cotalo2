@@ -1,5 +1,6 @@
 <template>
   <div class="product-tab-v2">
+
     <!-- Basic Product Information -->
     <div class="green-accent-panel">
       <div class="card">
@@ -74,28 +75,40 @@
     <!-- Materials Section -->
     <div class="green-accent-panel mt-4">
       <div class="card">
+
+        <!-- Header -->
         <div class="card-header">
           <div class="d-flex justify-content-between align-items-center">
+            
+            <!-- Title -->
             <h5 class="mb-0">
               <i class="fa fa-box me-2"></i>Materiales del producto
             </h5>
+
+            <!-- Tooltip -->
             <button 
               class="btn btn-outline-success btn-sm"
               data-bs-toggle="tooltip"
               data-bs-placement="left"
               data-bs-html="true"
-              :title="translations.materials_calculation_tooltip || '<strong>¿Cómo se calculan los costos de materiales?</strong><br><br><strong>Materiales por área (m²):</strong><br>• <u>Piezas por material</u>: Cantidad de piezas que se pueden obtener de un pliego<br>• <u>Total de pliegos</u>: Cantidad estimada de pliegos necesarios<br>• <u>Total en m²</u>: Metros cuadrados totales requeridos<br>• <u>Costo total</u>: Precio por m² × Total m²<br><br><strong>Materiales por peso (kg, g):</strong><br>• <u>Peso por pieza</u>: Peso individual de cada pieza<br>• <u>Peso total</u>: Peso total requerido para todas las piezas<br>• <u>Costo total</u>: Precio por kg/g × Peso total'"
-            >
+              :title="translations.materials_calculation_tooltip || '<strong>¿Cómo se calculan los costos de materiales?</strong><br><br><strong>Materiales por área (m²):</strong><br>• <u>Piezas por material</u>: Cantidad de piezas que se pueden obtener de un pliego<br>• <u>Total de pliegos</u>: Cantidad estimada de pliegos necesarios<br>• <u>Total en m²</u>: Metros cuadrados totales requeridos<br>• <u>Costo total</u>: Precio por m² × Total m²<br><br><strong>Materiales por peso (kg, g):</strong><br>• <u>Peso por pieza</u>: Peso individual de cada pieza<br>• <u>Peso total</u>: Peso total requerido para todas las piezas<br>• <u>Costo total</u>: Precio por kg/g × Peso total'">
               <i class="fa fa-question-circle"></i>
             </button>
+
           </div>
         </div>
+
         <div class="card-body">
+
           <!-- Add Material Section -->
           <div class="d-flex align-items-center gap-3 mb-4">
+            
+            <!-- Label -->
             <div class="d-flex align-items-center">
               <label for="material-select" class="form-label mb-0 me-2">Seleccionar material</label>
             </div>
+
+            <!-- Materials Select -->
             <div class="flex-grow-1">
               <multiselect
                 v-model="materialIdForAdd"
@@ -110,6 +123,8 @@
                 :deselect-label="''"
               />
             </div>
+
+            <!-- Add Material Button -->
             <div>
               <button 
                 class="btn btn-primary" 
@@ -119,15 +134,8 @@
                 <i class="fa fa-plus me-1"></i> Agregar
               </button>
             </div>
+
           </div>
-
-
-
-
-
-
-
-
 
           <!-- No Materials Message -->
           <div v-if="!product.data.materials.length" class="text-center my-5">
@@ -136,6 +144,7 @@
 
           <!-- Materials List -->
           <div v-if="product.data.materials.length" class="materials-list">
+            
             <!-- Headers Row -->
             <div class="material-item mb-1">
               <div class="material-container headers-container" style="background: transparent !important; border: none !important; box-shadow: none !important;">
@@ -150,56 +159,45 @@
                   </button>
                   
                   <!-- Material Description Column -->
-                  <div class="material-info material-description-column me-4" style="width: 160px; min-width: 160px;">
-                    <strong class="text-success">Descripción de material</strong>
+                  <div class="flex-grow-1 me-2" style="padding-left:">
+                    <strong class="text-success">Descripción</strong>
                   </div>
                   
                   <!-- Material Details Columns -->
-                  <div class="text-end me-3" style="width: 80px;">
-                    <strong class="text-success">Ancho</strong>
-                  </div>
-                  <div class="text-end me-3" style="width: 80px;">
-                    <strong class="text-success">Largo</strong>
-                  </div>
-                  <div class="text-end me-3" style="width: 80px;">
-                    <strong class="text-success">Costo</strong>
-                  </div>
-                  <div class="text-end me-3" style="width: 50px;">
-                    <strong class="text-success">Pzas</strong>
-                  </div>
-                  <div class="text-end me-3" style="width: 70px;">
-                    <strong class="text-success">Pliegos</strong>
-                  </div>
-                  <div class="text-end me-3" style="width: 60px;">
-                    <strong class="text-success">Peso</strong>
-                  </div>
-                  <div class="text-end me-3" style="width: 70px;">
-                    <strong class="text-success">m²</strong>
-                  </div>
-                  <div class="text-end me-3" style="width: 100px;">
-                    <strong class="text-success">Costo total</strong>
+                  <div class="d-flex align-items-center gap-4 me-3" style="min-width: 400px;">
+                    <div class="text-end me-3" style="width: 80px;"><strong class="text-success">Ancho</strong></div>
+                    <div class="text-end me-3" style="width: 80px;"><strong class="text-success">Largo</strong></div>
+                    <div class="text-end me-3" style="width: 80px;"><strong class="text-success">Costo</strong></div>
+                    <div class="text-end me-3" style="width: 50px;"><strong class="text-success">Pzas</strong></div>
+                    <div class="text-end me-3" style="width: 70px;"><strong class="text-success">Pliegos</strong></div>
+                    <div class="text-end me-3" style="width: 60px;"><strong class="text-success">Peso</strong></div>
+                    <div class="text-end me-3" style="width: 70px;"><strong class="text-success">m²</strong></div>
+                    <div class="text-end me-3" style="width: 100px;"><strong class="text-success">Costo total</strong></div>
                   </div>
                   
                   <!-- Action Buttons -->
                   <div class="d-flex align-items-center justify-content-end gap-2 me-1" style="width: 100px;">
                     <strong class="text-success">Acciones</strong>
                   </div>
+                  
                 </div>
               </div>
             </div>
             
             <!-- Material Items -->
             <div v-for="(material, materialIndex) in product.data.materials" :key="material.materialInstanceId || material.id" class="material-item mb-3">
+              
               <!-- Material Container -->
               <div class="material-container border rounded subtle-border">
+
                 <!-- Material Header -->
                 <div class="material-header d-flex align-items-center p-3">
+
                   <!-- Collapse Button -->
                   <button 
                     class="btn btn-sm btn-outline-secondary me-3" 
                     @click="toggleProcessesView(materialIndex)"
-                    :title="expandedProcesses[materialIndex] ? 'Ocultar procesos' : 'Mostrar procesos'"
-                  >
+                    :title="expandedProcesses[materialIndex] ? 'Ocultar procesos' : 'Mostrar procesos'">
                     <i :class="expandedProcesses[materialIndex] ? 'fa fa-chevron-down' : 'fa fa-chevron-right'"></i>
                   </button>
                   
@@ -210,7 +208,7 @@
                     </span>
                   </div>
                   
-                  <!-- Material Details Columns -->
+                  <!-- Width -->
                   <div class="d-flex align-items-center justify-content-end me-3" style="width: 80px;">
                     <input 
                       type="text" 
@@ -223,6 +221,8 @@
                       style="width: 70px;"
                     />
                   </div>
+
+                  <!-- Length -->
                   <div class="d-flex align-items-center justify-content-end me-3" style="width: 80px;">
                     <input 
                       type="text" 
@@ -235,6 +235,8 @@
                       style="width: 70px;"
                     />
                   </div>
+
+                  <!-- Price -->
                   <div class="d-flex align-items-center justify-content-end me-3" style="width: 80px;">
                     <input 
                       type="text" 
@@ -247,27 +249,41 @@
                       style="width: 70px;"
                     />
                   </div>
+
+                  <!-- Pieces per material -->
                   <div class="text-end me-3" style="width: 50px;">
                     {{ material.piecesPerMaterial || 0 }}
                   </div>
+
+                  <!-- Total sheets -->
                   <div class="text-end me-3" style="width: 70px;">
                     {{ material.totalSheets || 0 }}
                   </div>
+
+                  <!-- Total weight -->
                   <div class="text-end me-3" style="width: 60px;">
                     {{ material.totalWeight && material.totalWeight > 0 ? (material.totalWeight / 1000).toFixed(2) : '-' }}
                   </div>
+
+                  <!-- Total square meters -->
                   <div class="text-end me-3" style="width: 70px;" v-if="!isWeightBasedMaterial(material)">
                     {{ (material.totalSquareMeters || 0).toFixed(2) }}
                   </div>
+
+                  <!-- Total square meters -->
                   <div class="text-end me-3" style="width: 70px;" v-else>
                     -
                   </div>
+
+                  <!-- Total price -->
                   <div class="text-end me-3 price-column" style="width: 100px;">
                     {{ formatCurrency(material.totalPrice) }}
                   </div>
                   
                   <!-- Action Buttons -->
                   <div class="d-flex align-items-center justify-content-end gap-2 me-1" style="width: 100px;">
+                    
+                    <!-- Add Process Button -->
                     <button 
                       class="btn btn-sm btn-success" 
                       @click="toggleProcessForm(materialIndex)"
@@ -278,6 +294,8 @@
                     >
                       <i class="fa fa-plus me-1"></i><i class="fa fa-cogs"></i>
                     </button>
+
+                    <!-- Remove Material Button -->
                     <button 
                       class="btn btn-sm btn-outline-danger" 
                       @click="removeMaterial(materialIndex)"
@@ -291,7 +309,10 @@
                 <!-- Process Form Section -->
                 <div v-if="expandedMaterialIndex === materialIndex" class="process-form-section p-3 border-top subtle-border-top">
                   
+                  <!-- Process Form -->
                   <div class="row align-items-start">
+
+                    <!-- Select Process -->
                     <div class="col-md-4 mb-3">
                       <label class="form-label">Seleccionar proceso</label>
                       <multiselect
@@ -306,6 +327,7 @@
                       <small class="text-muted">Procesos disponibles: {{ filteredAvailableProcesses.length }}</small>
                     </div>
                     
+                    <!-- Veces -->
                     <div class="col-md-2 mb-3">
                       <label class="form-label">Veces</label>
                       <input 
@@ -318,6 +340,7 @@
                       />
                     </div>
                     
+                    <!-- Side -->
                     <div class="col-md-2 mb-3">
                       <label class="form-label">Cara</label>
                       <select class="form-select" v-model="processSide[materialIndex]">
@@ -327,8 +350,11 @@
                       </select>
                     </div>
                     
+                    <!-- Add Process Button -->
                     <div class="col-md-2 mb-3">
-                      <div style="height: 32px;"></div> <!-- Espacio para simular el label -->
+                      <div style="height: 32px;"></div>
+
+                      <!-- Add Process Button -->
                       <button 
                         class="btn btn-primary w-100" 
                         @click="addProcessToMaterial(materialIndex)"
@@ -339,8 +365,9 @@
                       </button>
                     </div>
                     
+                    <!-- Cancel Button -->
                     <div class="col-md-2 mb-3">
-                      <div style="height: 32px;"></div> <!-- Espacio para simular el label -->
+                      <div style="height: 32px;"></div>
                       <button 
                         class="btn btn-outline-secondary w-100" 
                         @click="toggleProcessForm(materialIndex)"
@@ -354,16 +381,22 @@
                 <!-- Processes Table Headers -->
                 <div v-if="material.processes && material.processes.length && expandedProcesses[materialIndex]" class="processes-table-headers mb-2">
                   <div class="d-flex align-items-center p-2 border-top subtle-border-top" style="background-color: #1a1a1a;">
-                                        <div class="flex-grow-1 me-2" style="padding-left: 2rem;">
-                      <strong class="text-success">Descripción de proceso</strong>
+                    
+                    <!-- Process Description Column -->
+                    <div class="flex-grow-1 me-2" style="padding-left: 2rem;">
+                      <strong class="text-success">Descripción</strong>
                     </div>
+
+                    <!-- Process Details Columns -->
                     <div class="d-flex align-items-center gap-4 me-3" style="min-width: 400px;">
                       <div class="text-end" style="width: 60px;"><strong class="text-success">Unidad</strong></div>
                       <div class="text-end" style="width: 70px;"><strong class="text-success">Veces</strong></div>
                       <div class="text-end" style="width: 100px;"><strong class="text-success">Costo</strong></div>
                       <div class="text-end" style="width: 120px;"><strong class="text-success">Cara</strong></div>
-                                              <div class="text-end" style="width: 100px;"><strong class="text-success">Costo total</strong></div>
+                      <div class="text-end" style="width: 100px;"><strong class="text-success">Costo total</strong></div>
                     </div>
+
+                    <!-- Action Buttons --> 
                     <div class="d-flex align-items-center justify-content-end gap-2 me-1" style="width: 100px;">
                       <strong class="text-success">Acciones</strong>
                     </div>
@@ -439,6 +472,7 @@
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </div>
