@@ -4,6 +4,8 @@ import "./controllers"
 import * as bootstrap from "bootstrap/dist/js/bootstrap.bundle.min.js";
 window.bootstrap = bootstrap;
 import "bootstrap/dist/css/bootstrap.min.css"
+import $ from 'jquery'
+window.$ = window.jQuery = $
 import { createApp } from 'vue'
 import LanguageSwitcher from './components/LanguageSwitcher.vue'
 import 'vue-multiselect/dist/vue-multiselect.min.css';
