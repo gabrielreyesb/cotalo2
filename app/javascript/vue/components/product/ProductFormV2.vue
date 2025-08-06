@@ -754,9 +754,9 @@ export default {
           const savedProduct = await response.json();
           window.showSuccess('Product saved successfully!');
           
-          // Redirect to products list or edit page
+          // Redirect to products index after creating a new product
           if (this.isNew) {
-            window.location.href = `/products/${savedProduct.id}/edit`;
+            window.location.href = '/products';
           }
         } else {
           const error = await response.json();

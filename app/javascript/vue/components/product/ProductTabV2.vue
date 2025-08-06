@@ -248,22 +248,22 @@
                     />
                   </div>
                   <div class="d-flex align-items-center justify-content-end me-3" style="width: 50px;">
-                    <div>{{ material.piecesPerMaterial || 0 }}</div>
+                    <div class="text-end">{{ material.piecesPerMaterial || 0 }}</div>
                   </div>
                   <div class="d-flex align-items-center justify-content-end me-3" style="width: 70px;">
-                    <div>{{ material.totalSheets || 0 }}</div>
+                    <div class="text-end">{{ material.totalSheets || 0 }}</div>
                   </div>
                   <div class="d-flex align-items-center justify-content-end me-3" style="width: 60px;">
-                    <div>
+                    <div class="text-end">
                       {{ material.totalWeight && material.totalWeight > 0 ? (material.totalWeight / 1000).toFixed(2) : '-' }}
                     </div>
                   </div>
                   <div class="d-flex align-items-center justify-content-end me-3" style="width: 70px;">
-                    <div v-if="!isWeightBasedMaterial(material)">{{ (material.totalSquareMeters || 0).toFixed(2) }}</div>
-                    <div v-else>-</div>
+                    <div class="text-end" v-if="!isWeightBasedMaterial(material)">{{ (material.totalSquareMeters || 0).toFixed(2) }}</div>
+                    <div class="text-end" v-else>-</div>
                   </div>
                   <div class="d-flex align-items-center justify-content-end me-3" style="width: 100px;">
-                    <div class="price-column">
+                    <div class="price-column text-end">
                       {{ formatCurrency(material.totalPrice) }}
                     </div>
                   </div>
