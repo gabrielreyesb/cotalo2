@@ -1,38 +1,11 @@
 // Custom Bootstrap configuration
-// Import Bootstrap from node_modules
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
+// Bootstrap is already imported via JavaScript, so we only need custom overrides
 
 // Your custom variables here
 $primary: #42b983;
 $dark: #212529;
 $body-bg: #23272b;
 $body-color: #e9ecef;
-
-// Required
-@import "~bootstrap/scss/maps";
-@import "~bootstrap/scss/mixins";
-@import "~bootstrap/scss/utilities";
-
-// Layout & components
-@import "~bootstrap/scss/root";
-@import "~bootstrap/scss/reboot";
-@import "~bootstrap/scss/type";
-@import "~bootstrap/scss/images";
-@import "~bootstrap/scss/containers";
-@import "~bootstrap/scss/grid";
-@import "~bootstrap/scss/tables";
-@import "~bootstrap/scss/forms";
-@import "~bootstrap/scss/buttons";
-@import "~bootstrap/scss/transitions";
-@import "~bootstrap/scss/dropdown";
-@import "~bootstrap/scss/nav";
-@import "~bootstrap/scss/navbar";
-@import "~bootstrap/scss/card";
-@import "~bootstrap/scss/helpers";
-
-// Utilities
-@import "~bootstrap/scss/utilities/api";
 
 // Custom override: Make active toggle buttons green instead of blue
 .btn-check:checked + .btn-outline-primary,
