@@ -39,7 +39,6 @@
                 @input="handleWastePercentageInput"
                 @change="handleWastePercentageChange"
               />
-              <span class="waste-percent-symbol">%</span>
             </div>
           </td>
         </tr>
@@ -78,7 +77,6 @@
                 @input="handleMarginPercentageInput"
                 @change="handleMarginPercentageChange"
               />
-              <span class="margin-percent-symbol">%</span>
             </div>
           </td>
         </tr>
@@ -181,26 +179,26 @@ export default {
 .margin-input-container {
   position: relative;
   display: inline-block;
-  width: 80px;
 }
 
 .waste-input,
 .margin-input {
-  padding-right: 20px !important;
-  width: 100% !important;
-  text-align: right !important;
+  width: 70px;
+  text-align: right;
 }
 
-.waste-percent-symbol,
-.margin-percent-symbol {
-  position: absolute !important;
-  right: 8px !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
-  color: #6c757d !important;
-  font-size: 0.875rem !important;
-  pointer-events: none !important;
-  z-index: 1 !important;
+/* Ocultar controles de spinner */
+.waste-input::-webkit-outer-spin-button,
+.waste-input::-webkit-inner-spin-button,
+.margin-input::-webkit-outer-spin-button,
+.margin-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.waste-input[type=number],
+.margin-input[type=number] {
+  -moz-appearance: textfield;
 }
 
 .waste-value,

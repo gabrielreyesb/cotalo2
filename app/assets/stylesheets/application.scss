@@ -242,3 +242,16 @@ option {
   font-size: 1rem !important;
   line-height: 1.5 !important;
 }
+
+// PricingTab Component Styles - Global override for production
+.pricing-tab {
+  .subtotal-row th,
+  .subtotal-row td,
+  .subtotal-with-waste-row th,
+  .subtotal-with-waste-row td,
+  .total-row th,
+  .total-row td {
+    color: var(--cotalo-green) !important;
+    font-weight: 600 !important;
+  }
+}
