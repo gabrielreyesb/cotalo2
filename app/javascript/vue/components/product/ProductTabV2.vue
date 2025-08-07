@@ -176,7 +176,7 @@
                   </div>
                   
                   <!-- Action Buttons -->
-                  <div class="d-flex align-items-center justify-content-end gap-2 me-1" style="width: 100px;">
+                  <div class="d-flex align-items-center justify-content-end gap-2 me-1" style="width: 140px;">
                     <strong class="text-success">Acciones</strong>
                   </div>
                   
@@ -283,8 +283,20 @@
                   </div>
                   
                   <!-- Action Buttons -->
-                  <div class="d-flex align-items-center justify-content-end gap-2 me-1" style="width: 100px;">
+                  <div class="d-flex align-items-center justify-content-end gap-2 me-1" style="width: 140px;">
                     
+                    <!-- Simulation Button -->
+                    <button 
+                      class="btn btn-sm btn-outline-info" 
+                      @click="showMaterialSimulation(material)"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="top"
+                      data-bs-title="Ver simulación de piezas en material"
+                      style="min-width: 40px;"
+                    >
+                      <i class="fa fa-calculator"></i>
+                    </button>
+
                     <!-- Add Process Button -->
                     <button 
                       class="btn btn-sm btn-success" 
@@ -497,7 +509,7 @@
 
     <!-- Material Simulation Popup -->
     <div v-if="showSimulationPopup" class="modal fade show" style="display: block; background-color: rgba(0, 0, 0, 0.5);" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content" style="background-color: #2d2d2d; border: 1px solid #6c757d;">
           <div class="modal-header" style="border-bottom: 1px solid #6c757d;">
             <h5 class="modal-title text-success">
@@ -506,7 +518,176 @@
             <button type="button" class="btn-close btn-close-white" @click="closeSimulationPopup"></button>
           </div>
           <div class="modal-body">
-            <p class="text-light">Material agregado exitosamente.</p>
+            <!-- Simulation Info -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <h6 class="text-success mb-3">Información del Material</h6>
+                <div class="simulation-info">
+                  <p class="text-light mb-2">
+                    <strong>Material:</strong> {{ simulationData.materialName }}
+                  </p>
+                  <p class="text-light mb-2">
+                    <strong>Dimensiones del material:</strong> {{ simulationData.materialWidth }}cm × {{ simulationData.materialLength }}cm
+                  </p>
+                  <p class="text-light mb-2">
+                    <strong>Dimensiones de la pieza:</strong> {{ simulationData.pieceWidth }}cm × {{ simulationData.pieceLength }}cm
+                  </p>
+                  <p class="text-light mb-2">
+                    <strong>Márgenes aplicados:</strong> {{ simulationData.marginWidth }}cm (ancho) × {{ simulationData.marginLength }}cm (largo)
+                  </p>
+                  <p class="text-light mb-2">
+                    <strong>Área utilizable:</strong> {{ simulationData.usableWidth }}cm × {{ simulationData.usableLength }}cm
+                  </p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-success mb-3">Resultados de la Simulación</h6>
+                <div class="simulation-results">
+                  <p class="text-light mb-2">
+                    <strong>Piezas por material:</strong> <span class="text-success">{{ simulationData.piecesPerMaterial }}</span>
+                  </p>
+                  <p class="text-light mb-2">
+                    <strong>Orientación óptima:</strong> <span class="text-success">{{ simulationData.optimalOrientation }}</span>
+                  </p>
+                  <p class="text-light mb-2">
+                    <strong>Área utilizada:</strong> <span class="text-success">{{ simulationData.usedAreaPercentage }}%</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Simulation Grid -->
+            <div class="simulation-container">
+              <h6 class="text-success mb-3">Visualización de la Disposición</h6>
+              <div class="simulation-grid-wrapper" :style="{ maxWidth: '100%', overflow: 'auto', minHeight: '400px', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }">
+                <!-- Material dimensions display -->
+                <div class="material-dimensions-display" :style="{ position: 'relative', display: 'inline-block' }">
+                  <!-- Top dimension (width) -->
+                  <div 
+                    class="dimension-label dimension-top"
+                    :style="{
+                      position: 'absolute',
+                      top: '-40px',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      backgroundColor: '#2d2d2d',
+                      color: '#42b983',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      border: '1px solid #42b983',
+                      whiteSpace: 'nowrap'
+                    }"
+                  >
+                    {{ simulationData.materialWidth }}cm
+                  </div>
+                  
+                  <!-- Left dimension (length) -->
+                  <div 
+                    class="dimension-label dimension-left"
+                    :style="{
+                      position: 'absolute',
+                      left: '-50px',
+                      top: '50%',
+                      transform: 'translateY(-50%) rotate(-90deg)',
+                      backgroundColor: '#2d2d2d',
+                      color: '#42b983',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      border: '1px solid #42b983',
+                      whiteSpace: 'nowrap'
+                    }"
+                  >
+                    {{ simulationData.materialLength }}cm
+                  </div>
+                  
+                  <!-- Simulation grid -->
+                  <div 
+                    class="simulation-grid" 
+                    :style="{
+                      width: simulationData.gridWidth + 'px',
+                      height: simulationData.gridHeight + 'px',
+                      position: 'relative',
+                      backgroundColor: '#495057',
+                      border: '2px solid #6c757d',
+                      margin: '0 auto'
+                    }"
+                  >
+                    <!-- Material margins (shaded area) -->
+                    <div 
+                      v-if="simulationData.marginWidth > 0 || simulationData.marginLength > 0"
+                      class="material-margins"
+                      :style="{
+                        position: 'absolute',
+                        left: '0',
+                        top: '0',
+                        width: '100%',
+                        height: '100%',
+                        background: 'linear-gradient(45deg, #495057 25%, transparent 25%), linear-gradient(-45deg, #495057 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #495057 75%), linear-gradient(-45deg, transparent 75%, #495057 75%)',
+                        backgroundSize: '20px 20px',
+                        backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
+                        opacity: '0.3'
+                      }"
+                    ></div>
+                    
+                    <!-- Usable area (inner rectangle) -->
+                    <div 
+                      v-if="simulationData.marginWidth > 0 || simulationData.marginLength > 0"
+                      class="usable-area"
+                      :style="{
+                        position: 'absolute',
+                        left: (simulationData.marginWidth * (simulationData.gridWidth / simulationData.materialWidth)) + 'px',
+                        top: (simulationData.marginLength * (simulationData.gridHeight / simulationData.materialLength)) + 'px',
+                        width: (simulationData.usableWidth * (simulationData.gridWidth / simulationData.materialWidth)) + 'px',
+                        height: (simulationData.usableLength * (simulationData.gridHeight / simulationData.materialLength)) + 'px',
+                        backgroundColor: '#2d2d2d',
+                        border: '1px solid #42b983',
+                        boxSizing: 'border-box'
+                      }"
+                    ></div>
+                    
+                    <!-- Material pieces -->
+                    <div 
+                      v-for="(piece, index) in simulationData.pieces" 
+                      :key="index"
+                      class="simulation-piece"
+                      :style="{
+                        position: 'absolute',
+                        left: piece.x + 'px',
+                        top: piece.y + 'px',
+                        width: piece.width + 'px',
+                        height: piece.height + 'px',
+                        backgroundColor: '#42b983',
+                        border: '2px solid #000000',
+                        boxSizing: 'border-box'
+                      }"
+                      :title="`Pieza ${index + 1}`"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Legend -->
+              <div class="simulation-legend mt-3">
+                <div class="d-flex justify-content-center gap-4">
+                  <div class="d-flex align-items-center">
+                    <div class="legend-item" style="width: 20px; height: 20px; background-color: #42b983; border: 2px solid #000000; margin-right: 8px;"></div>
+                    <span class="text-light">Piezas</span>
+                  </div>
+                  <div class="d-flex align-items-center">
+                    <div class="legend-item" style="width: 20px; height: 20px; background-color: #2d2d2d; border: 1px solid #42b983; margin-right: 8px;"></div>
+                    <span class="text-light">Área utilizable</span>
+                  </div>
+                  <div class="d-flex align-items-center" v-if="simulationData.marginWidth > 0 || simulationData.marginLength > 0">
+                    <div class="legend-item" style="width: 20px; height: 20px; background-color: #495057; border: 1px solid #6c757d; margin-right: 8px; opacity: 0.3;"></div>
+                    <span class="text-light">Márgenes</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="modal-footer" style="border-top: 1px solid #6c757d;">
             <button type="button" class="btn btn-success" @click="closeSimulationPopup">
@@ -565,6 +746,23 @@ export default {
       expandedProcesses: {},
       quantityChangeTimeout: null,
       showSimulationPopup: false,
+      simulationData: {
+        materialName: '',
+        materialWidth: 0,
+        materialLength: 0,
+        pieceWidth: 0,
+        pieceLength: 0,
+        piecesPerMaterial: 0,
+        optimalOrientation: '',
+        usedAreaPercentage: 0,
+        gridWidth: 400,
+        gridHeight: 400,
+        pieces: [],
+        marginWidth: 0,
+        marginLength: 0,
+        usableWidth: 0,
+        usableLength: 0
+      }
     };
   },
   computed: {
@@ -719,6 +917,9 @@ export default {
       this.$nextTick(() => {
         this.initializeTooltips();
       });
+      
+      // Calcular la simulación antes de mostrar el popup
+      this.calculateSimulation(newMaterial);
       
       // Mostrar el popup de simulación
       this.showSimulationPopup = true;
@@ -1067,6 +1268,122 @@ export default {
   // Método para cerrar el popup
   closeSimulationPopup() {
     this.showSimulationPopup = false;
+  },
+  
+  // Método para calcular la simulación de piezas en el material
+  calculateSimulation(material) {
+    const productWidth = parseFloat(this.product.data.general_info.width) || 0;
+    const productLength = parseFloat(this.product.data.general_info.length) || 0;
+    const materialWidth = parseFloat(material.ancho) || 0;
+    const materialLength = parseFloat(material.largo) || 0;
+    const widthMargin = this.userConfig.width_margin || 0;
+    const lengthMargin = this.userConfig.length_margin || 0;
+    
+    if (productWidth <= 0 || productLength <= 0 || materialWidth <= 0 || materialLength <= 0) {
+      return;
+    }
+    
+    // Calculate usable area by subtracting margins from all sides
+    const usableMaterialWidth = materialWidth - (widthMargin * 2);
+    const usableMaterialLength = materialLength - (lengthMargin * 2);
+    
+    // Check if usable area is valid
+    if (usableMaterialWidth <= 0 || usableMaterialLength <= 0) {
+      return;
+    }
+    
+    // Calculate pieces in both orientations using the usable area
+    const horizontalPieces = Math.floor(usableMaterialWidth / productWidth);
+    const verticalPieces = Math.floor(usableMaterialLength / productLength);
+    const piecesNormal = horizontalPieces * verticalPieces;
+    
+    const horizontalPiecesAlt = Math.floor(usableMaterialWidth / productLength);
+    const verticalPiecesAlt = Math.floor(usableMaterialLength / productWidth);
+    const piecesRotated = horizontalPiecesAlt * verticalPiecesAlt;
+    
+    // Determine optimal orientation
+    let optimalOrientation, piecesPerMaterial, pieceWidth, pieceLength;
+    
+    if (piecesNormal >= piecesRotated) {
+      optimalOrientation = 'Normal';
+      piecesPerMaterial = piecesNormal;
+      pieceWidth = productWidth;
+      pieceLength = productLength;
+    } else {
+      optimalOrientation = 'Rotada 90°';
+      piecesPerMaterial = piecesRotated;
+      pieceWidth = productLength;
+      pieceLength = productWidth;
+    }
+    
+    // Set maximum grid dimensions for display
+    const maxGridSize = 400;
+    const gridWidth = Math.min(maxGridSize, materialWidth * 2);
+    const gridHeight = Math.min(maxGridSize, materialLength * 2);
+    
+    // Calculate scale factors to fit the material in the grid
+    const scaleX = gridWidth / materialWidth;
+    const scaleY = gridHeight / materialLength;
+    const scale = Math.min(scaleX, scaleY);
+    
+    // Calculate scaled dimensions
+    const scaledMaterialWidth = materialWidth * scale;
+    const scaledMaterialLength = materialLength * scale;
+    const scaledUsableWidth = usableMaterialWidth * scale;
+    const scaledUsableLength = usableMaterialLength * scale;
+    const scaledPieceWidth = pieceWidth * scale;
+    const scaledPieceLength = pieceLength * scale;
+    const scaledMarginWidth = widthMargin * scale;
+    const scaledMarginLength = lengthMargin * scale;
+    
+    // Generate pieces positions within the usable area
+    const pieces = [];
+    const maxPiecesPerRow = Math.floor(scaledUsableWidth / scaledPieceWidth);
+    const maxPiecesPerCol = Math.floor(scaledUsableLength / scaledPieceLength);
+    
+    for (let row = 0; row < maxPiecesPerCol; row++) {
+      for (let col = 0; col < maxPiecesPerRow; col++) {
+        if (pieces.length < piecesPerMaterial) {
+          pieces.push({
+            x: scaledMarginWidth + (col * scaledPieceWidth),
+            y: scaledMarginLength + (row * scaledPieceLength),
+            width: scaledPieceWidth,
+            height: scaledPieceLength
+          });
+        }
+      }
+    }
+    
+    // Calculate used area percentage (only within usable area)
+    const totalMaterialArea = materialWidth * materialLength;
+    const usableArea = usableMaterialWidth * usableMaterialLength;
+    const usedArea = piecesPerMaterial * productWidth * productLength;
+    const usedAreaPercentage = usableArea > 0 ? Math.round((usedArea / usableArea) * 100) : 0;
+    
+    // Update simulation data
+    this.simulationData = {
+      materialName: material.displayName || material.description,
+      materialWidth: materialWidth,
+      materialLength: materialLength,
+      pieceWidth: productWidth,
+      pieceLength: productLength,
+      piecesPerMaterial: piecesPerMaterial,
+      optimalOrientation: optimalOrientation,
+      usedAreaPercentage: usedAreaPercentage,
+      gridWidth: scaledMaterialWidth,
+      gridHeight: scaledMaterialLength,
+      pieces: pieces,
+      // Add margin information for display
+      marginWidth: widthMargin,
+      marginLength: lengthMargin,
+      usableWidth: usableMaterialWidth,
+      usableLength: usableMaterialLength
+    };
+  },
+
+  showMaterialSimulation(material) {
+    this.calculateSimulation(material);
+    this.showSimulationPopup = true;
   }
 },
   // Los watchers ya no son necesarios porque los recálculos se disparan directamente
@@ -1379,6 +1696,64 @@ export default {
     :deep(.process-multiselect .multiselect__option--highlight) {
       background-color: #42b983 !important;
       color: white !important;
+    }
+  }
+}
+
+/* Estilos para la simulación */
+.simulation-container {
+  .simulation-grid-wrapper {
+    border: 1px solid #6c757d;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #1a1a1a;
+    min-height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .simulation-grid {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+  }
+  
+  .simulation-piece {
+    transition: all 0.3s ease;
+    border-radius: 2px;
+  }
+  
+  .simulation-piece:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(66, 185, 131, 0.5);
+    z-index: 10;
+  }
+  
+  .simulation-legend {
+    .legend-item {
+      border-radius: 2px;
+    }
+  }
+  
+  .simulation-info, .simulation-results {
+    background-color: #1a1a1a;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #6c757d;
+  }
+  
+  .material-dimensions-display {
+    .dimension-label {
+      z-index: 1000;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .dimension-top {
+      transform-origin: center;
+    }
+    
+    .dimension-left {
+      transform-origin: center;
     }
   }
 }
