@@ -495,6 +495,27 @@
       </div>
     </div>
 
+    <!-- Material Simulation Popup -->
+    <div v-if="showSimulationPopup" class="modal fade show" style="display: block; background-color: rgba(0, 0, 0, 0.5);" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background-color: #2d2d2d; border: 1px solid #6c757d;">
+          <div class="modal-header" style="border-bottom: 1px solid #6c757d;">
+            <h5 class="modal-title text-success">
+              <i class="fa fa-calculator me-2"></i>Simulación de Material
+            </h5>
+            <button type="button" class="btn-close btn-close-white" @click="closeSimulationPopup"></button>
+          </div>
+          <div class="modal-body">
+            <p class="text-light">Material agregado exitosamente.</p>
+          </div>
+          <div class="modal-footer" style="border-top: 1px solid #6c757d;">
+            <button type="button" class="btn btn-success" @click="closeSimulationPopup">
+              <i class="fa fa-check me-1"></i>Entendido
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
   </div>
 </template>
@@ -543,6 +564,7 @@ export default {
       processSide: {},
       expandedProcesses: {},
       quantityChangeTimeout: null,
+      showSimulationPopup: false,
     };
   },
   computed: {
@@ -649,8 +671,6 @@ export default {
       
       const selectedMaterial = this.materialIdForAdd;
       
-
-      
       // Count how many times this material has been added
       const existingMaterialsOfSameType = this.product.data.materials.filter(mat => mat.id === selectedMaterial.id);
       const materialInstanceNumber = existingMaterialsOfSameType.length + 1;
@@ -670,8 +690,6 @@ export default {
         totalWeight: 0,
         totalPrice: 0
       };
-      
-
       
       // Add the material to the array
       this.product.data.materials.push(newMaterial);
@@ -701,6 +719,9 @@ export default {
       this.$nextTick(() => {
         this.initializeTooltips();
       });
+      
+      // Mostrar el popup de simulación
+      this.showSimulationPopup = true;
     },
     
     updateMaterialCalculations(materialIndex, emitEvent = true) {
@@ -1041,8 +1062,13 @@ export default {
     // Check for area units
     const areaUnits = ['m2', 'mt2', 'm²', 'mt²', 'metro cuadrado', 'metros cuadrados'];
     return areaUnits.some(au => unitName.includes(au) || unitAbbr.includes(au));
-  }
   },
+  
+  // Método para cerrar el popup
+  closeSimulationPopup() {
+    this.showSimulationPopup = false;
+  }
+},
   // Los watchers ya no son necesarios porque los recálculos se disparan directamente
   // en handleQuantityChange() y handleDimensionChange()
   // watch: {
