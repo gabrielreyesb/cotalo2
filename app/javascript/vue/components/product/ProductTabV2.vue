@@ -324,9 +324,8 @@
                         :label="'description'"
                         :placeholder="'Selecciona un proceso'"
                         :disabled="!filteredAvailableProcesses.length"
+                        class="process-multiselect"
                       />
-                      <!-- Debug info -->
-                      <small class="text-muted">Procesos disponibles: {{ filteredAvailableProcesses.length }}</small>
                     </div>
                     
                     <!-- Veces -->
@@ -339,13 +338,18 @@
                         v-model.number="processVeces[materialIndex]" 
                         min="1" 
                         step="1"
+                        style="background-color: #2c3136 !important; border-color: #495057 !important; color: #e1e1e1 !important;"
                       />
                     </div>
                     
                     <!-- Side -->
                     <div class="col-md-2 mb-3">
                       <label class="form-label">Cara</label>
-                      <select class="form-select" v-model="processSide[materialIndex]">
+                      <select 
+                        class="form-select" 
+                        v-model="processSide[materialIndex]"
+                        style="background-color: #2c3136 !important; border-color: #495057 !important; color: #e1e1e1 !important;"
+                      >
                         <option value="front">Frente</option>
                         <option value="back">Reverso</option>
                         <option value="both">Ambas</option>
@@ -361,7 +365,7 @@
                         class="btn btn-primary w-100" 
                         @click="addProcessToMaterial(materialIndex)"
                         :disabled="!selectedProcessForMaterial[materialIndex]"
-                        style="background-color: #28a745 !important; border-color: #28a745 !important; color: white !important;"
+                        style="background-color: #42b983 !important; border-color: #42b983 !important; color: white !important;"
                       >
                         <i class="fa fa-plus me-1"></i> Agregar
                       </button>
@@ -371,8 +375,9 @@
                     <div class="col-md-2 mb-3">
                       <div style="height: 32px;"></div>
                       <button 
-                        class="btn btn-outline-secondary w-100" 
+                        class="btn btn-outline-success w-100" 
                         @click="toggleProcessForm(materialIndex)"
+                        style="color: #42b983 !important; border-color: #42b983 !important; background-color: transparent !important;"
                       >
                         Cancelar
                       </button>
@@ -1186,6 +1191,25 @@ export default {
     :deep(.multiselect) {
       z-index: 10000 !important;
       position: relative;
+      background-color: #2c3136 !important;
+      border-color: #495057 !important;
+      color: #e1e1e1 !important;
+    }
+    
+    :deep(.multiselect__tags) {
+      background-color: #2c3136 !important;
+      border-color: #495057 !important;
+      color: #e1e1e1 !important;
+    }
+    
+    :deep(.multiselect__single) {
+      background-color: #2c3136 !important;
+      color: #e1e1e1 !important;
+    }
+    
+    :deep(.multiselect__input) {
+      background-color: #2c3136 !important;
+      color: #e1e1e1 !important;
     }
     
     :deep(.multiselect__content-wrapper) {
@@ -1291,6 +1315,44 @@ export default {
       border-color: #42b983 !important;
       color: #e1e1e1 !important;
       box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25) !important;
+    }
+
+    /* Estilos específicos para el multiselect de procesos */
+    :deep(.process-multiselect) {
+      background-color: #2c3136 !important;
+      border-color: #495057 !important;
+      color: #e1e1e1 !important;
+    }
+    
+    :deep(.process-multiselect .multiselect__tags) {
+      background-color: #2c3136 !important;
+      border-color: #495057 !important;
+      color: #e1e1e1 !important;
+    }
+    
+    :deep(.process-multiselect .multiselect__single) {
+      background-color: #2c3136 !important;
+      color: #e1e1e1 !important;
+    }
+    
+    :deep(.process-multiselect .multiselect__input) {
+      background-color: #2c3136 !important;
+      color: #e1e1e1 !important;
+    }
+    
+    :deep(.process-multiselect .multiselect__content-wrapper) {
+      background-color: #2c3136 !important;
+      border-color: #495057 !important;
+    }
+    
+    :deep(.process-multiselect .multiselect__option) {
+      background-color: #2c3136 !important;
+      color: #e1e1e1 !important;
+    }
+    
+    :deep(.process-multiselect .multiselect__option--highlight) {
+      background-color: #42b983 !important;
+      color: white !important;
     }
   }
 }

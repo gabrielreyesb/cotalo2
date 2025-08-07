@@ -181,22 +181,26 @@ export default {
 .margin-input-container {
   position: relative;
   display: inline-block;
+  width: 80px;
 }
 
 .waste-input,
 .margin-input {
-  padding-right: 20px;
-  width: 80px;
+  padding-right: 20px !important;
+  width: 100% !important;
+  text-align: right !important;
 }
 
 .waste-percent-symbol,
 .margin-percent-symbol {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #6c757d;
-  font-size: 0.875rem;
+  position: absolute !important;
+  right: 8px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  color: #6c757d !important;
+  font-size: 0.875rem !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
 }
 
 .waste-value,
@@ -211,7 +215,7 @@ export default {
 .subtotal-with-waste-row td,
 .total-row th,
 .total-row td {
-  color: #28a745 !important;
+  color: var(--cotalo-green) !important;
   font-weight: 600;
 }
 </style>
