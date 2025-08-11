@@ -79,7 +79,7 @@ es:
       login: "Iniciar Sesión"
 
   dashboard:
-    title: "Inicio"
+    title: "Panel de control"
     welcome:
       greeting: "¡Bienvenido a Cotalo!"
       subtitle: "Cotalo te ayuda a cotizar de forma rápida, precisa y profesional tus productos de artes gráficas."
@@ -209,7 +209,7 @@ es:
     apply_adjustment: "Aplicar"
   
   navbar:
-    dashboard: "Inicio"
+    dashboard: "Panel de control"
     products: "Productos"
     quotes: "Cotizaciones"
     catalogs: "Catálogos"
@@ -236,7 +236,7 @@ es:
   home:
     hero_title: "Calcula el costo de fabricación de productos para las artes gráficas en minutos"
     hero_subtitle: "Cotalo te permite diseñar y cotizar productos de artes gráficas de manera rápida y precisa. Optimiza tus costos de producción con nuestra herramienta intuitiva."
-    go_to_dashboard: "Ir a Inicio"
+    go_to_dashboard: "Ir al Panel de control"
     register_free: "Regístrate gratis"
     login: "Iniciar sesión"
     features_title: "Características principales"
@@ -341,6 +341,56 @@ es:
       errors:
         one: "Un error impidió que este material se guardara:"
         other: "%{count} errores impidieron que este material se guardara:"
+      description: "Descripción"
+      client_description: "Descripción para cotización"
+      price: "Costo"
+      unit: "Unidad"
+      select_unit: "Seleccionar unidad"
+      width: "Ancho"
+      length: "Largo"
+      resistance: "Resistencia"
+      comments: "Comentarios"
+
+  indirect_costs:
+    index:
+      title: "Indirectos"
+      new_extra: "Nuevo indirecto"
+      name: "Nombre"
+      description: "Descripción"
+      cost: "Costo"
+      unit: "Unidad"
+      actions: "Acciones"
+      no_unit: "Sin unidad"
+      no_extras_html: "No hay indirectos. %{link}."
+      create_first: "Crea tu primer indirecto"
+      search_placeholder: "Buscar indirectos…"
+    new:
+      title: "Nuevo indirecto"
+    edit:
+      title: "Editar indirecto"
+    show:
+      title: "Detalles del Indirecto"
+      back_to_extras: "Volver"
+      extra_details: "Detalles del Indirecto"
+      name: "Nombre"
+      cost: "Costo"
+      unit: "Unidad"
+      description: "Descripción"
+      edit: "Editar"
+      delete: "Eliminar"
+      delete_confirm: "¿Estás seguro de que quieres eliminar este indirecto?"
+      not_specified: "No especificado"
+    form:
+      errors:
+        one: "Un error impidió que este indirecto se guardara:"
+        other: "%{count} errores impidieron que este indirecto se guardara:"
+      name: "Nombre"
+      unit: "Unidad"
+      select_unit: "Seleccionar unidad"
+      create_unit: "Crear nueva unidad"
+      current_unit_id: "ID de unidad actual: %{id} (%{name})"
+      none: "Ninguna"
+      cost: "Costo"
       description: "Descripción"
       client_description: "Descripción para cliente"
       price: "Costo"
@@ -632,7 +682,7 @@ es:
       processes: "Procesos"
       extras: "Indirectos"
       global_processes: "Procesos Globales"
-      total_price: "Costo total"
+      total_price: "Totales"
       price_per_piece: "Precio por pieza"
       actions: "Acciones"
       duplicate: "Duplicar"
@@ -780,11 +830,11 @@ es:
       waste: "Desperdicio:"
       waste_value: "Valor del desperdicio:"
       subtotal_with_waste: "Sub. con merma:"
-      price_per_piece_before_margin: "Pieza antes margen:"
+      price_per_piece_before_margin: "Costo pieza antes margen"
       margin: "Margen:"
       margin_value: "Valor del margen:"
-      total_price: "Costo total:"
-      final_price_per_piece: "Final por pieza:"
+      total_price: "Totales"
+      final_price_per_piece: "Precio por pieza final"
       save_product: "Guardar"
       materials_tab:
         comments_label: "Comentarios sobre los materiales"
@@ -1161,10 +1211,10 @@ es:
           attributes:
             description:
               blank: "La descripción es requerida"
-            price:
-              blank: "El precio es requerido"
-              not_a_number: "El precio debe ser un número"
-              greater_than_or_equal_to: "El precio debe ser mayor o igual a 0"
+            cost:
+              blank: "El costo es requerido"
+              not_a_number: "El costo debe ser un número"
+              greater_than_or_equal_to: "El costo debe ser mayor o igual a 0"
             unit:
               blank: "La unidad es requerida"
             ancho:

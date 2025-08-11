@@ -1,5 +1,6 @@
 <template>
   <div class="additional-costs-tab-v2">
+
     <!-- Global Processes Section -->
     <div class="green-accent-panel">
       <div class="card">
@@ -52,6 +53,22 @@
                 :disabled="!selectedGlobalProcessId"
                 style="width: 80px;"
               />
+            </div>
+            <!-- Show product quantity for reference when adding global processes -->
+            <div class="d-flex align-items-center">
+              <label class="form-label mb-0 me-2">Piezas</label>
+              <span class="text-light">{{ Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format((product.data.general_info && product.data.general_info.quantity) || 0) }}</span>
+            </div>
+            <div>
+              <a
+                href="/manufacturing_processes"
+                target="_blank"
+                rel="noopener"
+                class="btn btn-outline-success"
+                title="Abrir lista de procesos en una pestaña nueva"
+              >
+                <i class="fa fa-cogs"></i>
+              </a>
             </div>
             <div>
               <button 
@@ -241,6 +258,17 @@
                 :disabled="!selectedExtraId"
                 style="width: 80px;"
               />
+            </div>
+            <div>
+              <a
+                href="/indirect_costs"
+                target="_blank"
+                rel="noopener"
+                class="btn btn-outline-success"
+                title="Abrir lista de costos indirectos en una pestaña nueva"
+              >
+                <i class="fa fa-plus-circle"></i>
+              </a>
             </div>
             <div>
               <button 

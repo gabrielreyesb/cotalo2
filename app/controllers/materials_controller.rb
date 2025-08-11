@@ -79,6 +79,6 @@ class MaterialsController < ApplicationController
   end
 
   def material_params
-    params.require(:material).permit(:description, :price, :client_description, :resistance, :ancho, :largo, :comments, :unit_id, :weight)
+    params.require(:material).permit(:description, :cost, :client_description, :resistance, :ancho, :largo, :comments, :unit_id, :weight)
   end
 end

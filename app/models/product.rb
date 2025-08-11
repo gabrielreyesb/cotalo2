@@ -31,6 +31,7 @@ class Product < ApplicationRecord
       materials: [],  # Will contain objects with the structure shown in self.material_template
       processes: [],  # Will contain objects with the structure shown in self.process_template
       extras: [],     # Will contain objects with the structure shown in self.extra_template
+      indirect_costs: [], # Alias for extras to support gradual rename
       pricing: {
         materials_cost: 0,
         material_processes_cost: 0,
@@ -116,7 +117,16 @@ class Product < ApplicationRecord
   end
   
   def extras
-    data["extras"] || data[:extras] || []
+    data["extras"] || data[:extras] || data["indirect_costs"] || data[:indirect_costs] || []
+  end
+
+  # Aliases for gradual rename (indirect_costs == extras)
+  def indirect_costs
+    extras
+  end
+
+  def indirect_costs=(value)
+    self.extras = value
   end
   
   def pricing
@@ -149,14 +159,26 @@ class Product < ApplicationRecord
     new_product = self.dup
     
     # Create a deep copy of the data hash
+    # Support cloning whether data is stored under 'extras' or 'indirect_costs'
+    extras_array = if self.data['extras'].present?
+      self.data['extras']
+    else
+      self.data['indirect_costs'] || []
+    end
+    extras_comments_value = if self.data['extras_comments'].present?
+      self.data['extras_comments']
+    else
+      self.data['indirect_costs_comments']
+    end
+
     new_data = {
       'general_info' => self.data['general_info'].deep_dup,
       'materials' => self.data['materials'].map(&:deep_dup),
       'processes' => self.data['processes'].map(&:deep_dup),
-      'extras' => self.data['extras'].map(&:deep_dup),
+      'extras' => extras_array.map(&:deep_dup),
       'materials_comments' => self.data['materials_comments'],
       'processes_comments' => self.data['processes_comments'],
-      'extras_comments' => self.data['extras_comments'],
+      'extras_comments' => extras_comments_value,
       'pricing' => self.data['pricing'].deep_dup,
       'selected_material_id' => self.data['selected_material_id']
     }
@@ -185,7 +207,14 @@ class Product < ApplicationRecord
     end
     
     # Calculate subtotal based on whether extras should be included
-    include_extras_in_subtotal = data["include_extras_in_subtotal"] != false
+    include_flag = if data.key?("include_extras_in_subtotal")
+      data["include_extras_in_subtotal"]
+    elsif data.key?("include_indirect_costs_in_subtotal")
+      data["include_indirect_costs_in_subtotal"]
+    else
+      true
+    end
+    include_extras_in_subtotal = include_flag != false
     subtotal = materials_cost + processes_cost + (include_extras_in_subtotal ? extras_cost : 0)
     
     # Get waste percentage (from product or user default)
@@ -422,7 +451,7 @@ class Product < ApplicationRecord
     extra_id = extra["extra_id"] || extra["id"]
     return 0 unless extra_id
     
-    extra_record = user.extras.find_by(id: extra_id)
+    extra_record = user.indirect_costs.find_by(id: extra_id)
     return 0 unless extra_record
     
     # Get values or defaults

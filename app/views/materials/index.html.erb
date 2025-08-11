@@ -30,6 +30,7 @@
                 <tr>
                   <th class="index-table-header"><%= t('materials.index.name') %></th>
                   <th class="index-table-header"><%= t('materials.index.client_description') %></th>
+                  <!-- SUGGESTION: Column will remain but source will change to material.cost after DB rename -->
                   <th class="index-table-header text-end"><%= t('materials.index.price') %></th>
                   <th class="index-table-header text-end"><%= t('materials.index.unit') %></th>
                   <th class="index-table-header text-end"><%= t('materials.index.dimensions') %></th>
@@ -41,7 +42,7 @@
                   <tr>
                     <td><%= link_to material.description, material_path(material) %></td>
                     <td><%= material.client_description %></td>
-                    <td class="text-end"><%= number_to_currency(material.price) %></td>
+                     <td class="text-end"><%= number_to_currency(material.cost) %></td>
                     <td class="text-end"><%= material.unit.abbreviation %></td>
                     <td class="text-end">
                       <% if material.ancho.present? && material.largo.present? %>
@@ -99,9 +100,9 @@
                         -
                       <% end %>
                     </span>
-                    <span class="badge bg-primary">
-                      <%= number_to_currency(material.price) %>
-                    </span>
+                  <span class="badge bg-primary">
+                    <%= number_to_currency(material.cost) %>
+                  </span>
                   </div>
                 </div>
                 <div class="d-flex justify-content-end align-items-center mt-1" style="gap: 0.5rem;">

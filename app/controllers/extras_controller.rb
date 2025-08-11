@@ -7,7 +7,7 @@ class ExtrasController < ApplicationController
     # Clear any potential AR cache to ensure fresh data
     ActiveRecord::Base.connection.clear_query_cache
     
-    @extras = current_user.extras.includes(:unit).order(name: :asc)
+    @extras = current_collection.includes(:unit).order(name: :asc)
     if params[:q].present?
       query = "%#{params[:q]}%"
       adapter = ActiveRecord::Base.connection.adapter_name.downcase
@@ -36,18 +36,18 @@ class ExtrasController < ApplicationController
   end
 
   def new
-    @extra = current_user.extras.build
+    @extra = current_collection.build
   end
 
   def edit
   end
 
   def create
-    @extra = current_user.extras.build(extra_params)
+    @extra = current_collection.build(extra_params)
 
     respond_to do |format|
       if @extra.save
-        format.html { redirect_to extras_path }
+        format.html { redirect_to current_collection_path }
         format.json { render :show, status: :created, location: @extra }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -65,7 +65,7 @@ class ExtrasController < ApplicationController
     respond_to do |format|
       if @extra.update(extra_params)
         puts "AFTER UPDATE - EXTRA UNIT ID: #{@extra.unit_id}"
-        format.html { redirect_to extras_path }
+        format.html { redirect_to current_collection_path }
         format.json { render :show, status: :ok, location: @extra }
       else
         puts "UPDATE FAILED - ERRORS: #{@extra.errors.full_messages}"
@@ -78,7 +78,7 @@ class ExtrasController < ApplicationController
   def destroy
     @extra.destroy
     respond_to do |format|
-      format.html { redirect_to extras_url }
+      format.html { redirect_to current_collection_path }
       format.json { head :no_content }
     end
   end
@@ -88,27 +88,37 @@ class ExtrasController < ApplicationController
     @new_extra.name = "#{@extra.name} (Copia)"
     
     if @new_extra.save
-      redirect_to extras_path
+      redirect_to current_collection_path
     else
-      redirect_to extras_path, alert: 'Error duplicating extra.'
+      redirect_to current_collection_path, alert: 'Error duplicating extra.'
     end
   end
 
   private
 
   def set_extra
-    @extra = current_user.extras.find(params[:id])
+    @extra = current_collection.find(params[:id])
   end
 
   def extra_params
     # Debug parameters 
     puts "RAW PARAMS: #{params.inspect}"
-    params.require(:extra).permit(:name, :description, :cost, :unit_id)
+    key = controller_name.singularize.to_sym
+    params.require(key).permit(:name, :description, :cost, :unit_id)
   end
   
   def no_cache
     response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+  end
+
+  def current_collection
+    # ExtrasController now only used via IndirectCostsController; fallback kept for safety
+    controller_name == 'indirect_costs' ? current_user.indirect_costs : current_user.indirect_costs
+  end
+
+  def current_collection_path
+    controller_name == 'indirect_costs' ? indirect_costs_path : indirect_costs_path
   end
 end

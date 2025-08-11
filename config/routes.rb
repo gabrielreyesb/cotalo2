@@ -40,6 +40,8 @@ Rails.application.routes.draw do
   
   # Dashboard route
   get 'dashboard', to: 'home#dashboard', as: 'dashboard'
+  # Canonical Inicio route (alias of dashboard)
+  get 'inicio', to: 'home#dashboard', as: 'inicio'
   get 'onboarding', to: 'home#onboarding', as: 'onboarding'
   post 'dashboard/close_block', to: 'home#close_block', as: 'close_dashboard_block'
   post 'close_block', to: 'home#close_block', as: 'close_block'
@@ -58,7 +60,9 @@ Rails.application.routes.draw do
       post :duplicate
     end
   end
-  resources :extras do
+  # Legacy extras routes removed; indirect_costs is the canonical resource now
+  # Alias routes to start using the correct naming while reusing the same controller
+  resources :indirect_costs, controller: 'indirect_costs', as: :indirect_costs do
     member do
       post :duplicate
     end
@@ -118,19 +122,19 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :products, only: [:show, :update, :create] do
         member do
-          get :extras
-          put :update_extras
-          put :update_extras_comments
+          get 'indirect_costs', to: 'products#indirect_costs'
+          put 'update_indirect_costs', to: 'products#update_indirect_costs'
+          put 'update_indirect_costs_comments', to: 'products#update_indirect_costs_comments'
           put :update_processes
           put :update_processes_comments
           put :update_materials
           put :update_materials_comments
           put :update_pricing
           put :update_selected_material
-          put :update_include_extras_in_subtotal
+          put 'update_include_indirect_costs_in_subtotal', to: 'products#update_include_indirect_costs_in_subtotal'
         end
       end
-      get 'extras', to: 'products#available_extras'
+      get 'indirect_costs', to: 'products#available_indirect_costs'
       get 'manufacturing_processes', to: 'products#available_manufacturing_processes'
       get 'materials', to: 'products#available_materials'
       get 'user_config', to: 'app_configs#user_config'

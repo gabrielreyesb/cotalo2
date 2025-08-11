@@ -5,19 +5,17 @@
     "Procesos globales:": "$150.00",
     "Indirectos:": "$0.00",
     "Subtotal:": "$1,258.80",
-    "% de merma:": "%",
     "Merma": "$25.18",
     "Sub. con merma:": "$1,283.98",
-    "Pieza antes margen:": "$2.57",
-    "% de margen:": "%",
+    "Costo pieza antes margen": "$2.57",
     "Margen": "$64.20",
-    "Costo total:": "$1,348.17",
-    "Final por pieza:": "$2.70"
+    "Totales": "$1,348.17",
+    "Precio por pieza final": "$2.70"
   },
   "capturedValues": {
     "materialCost": 856.8,
     "processCost": 252,
     "globalProcessCost": 150
   },
-  "timestamp": "2025-08-06T20:10:42.370Z"
+  "timestamp": "2025-08-09T00:14:54.607Z"
 }

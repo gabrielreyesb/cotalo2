@@ -119,9 +119,10 @@
                     <input 
                       type="number" 
                       class="form-control form-control-sm text-end" 
-                      v-model.number="material.price" 
+                      :value="material.cost"
                       min="0"
                       step="0.01"
+                      @input="onUnitPriceInput($event, material)"
                       @blur="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
                       :title="translations.materials.price"
                       data-toggle="tooltip"
@@ -241,10 +242,11 @@
                     <input 
                       type="number" 
                       class="form-control form-control-sm" 
-                      v-model.number="material.price" 
+                      :value="material.cost" 
                       min="0"
                       step="0.01"
                       :placeholder="'0.00'"
+                      @input="onUnitPriceInput($event, material)"
                       @blur="updateMaterialCalculations({ index, updatePiecesPerMaterial: true, material })"
                     />
                     <span class="input-unit">$</span>
@@ -623,6 +625,16 @@ export default {
         maximumFractionDigits: 2
       }).format(value || 0);
     },
+    getUnitPrice(material) {
+      const price = material && material.cost;
+      return parseFloat(price) || 0;
+    },
+    onUnitPriceInput(event, material) {
+      const value = parseFloat(event.target.value);
+      const numeric = isNaN(value) ? 0 : value;
+      // Guardar en cost únicamente (sin alias)
+      material.cost = numeric;
+    },
     onMaterialSelect(selectedOption) {
       if (!selectedOption) {
         return;
@@ -760,13 +772,13 @@ export default {
         // Weight-based pricing (grs/m²)
         const materialWeight = parseFloat(material.weight) || 0;
         totalWeight = totalSquareMeters * materialWeight; // grams
-        totalPrice = (totalWeight / 1000) * (material.price || 0); // price per kg
+        totalPrice = (totalWeight / 1000) * this.getUnitPrice(material); // price per kg
       } else if (unitStr.toLowerCase().includes('m2') || unitStr.toLowerCase().includes('mt2')) {
         // Area-based pricing (m²)
-        totalPrice = totalSquareMeters * (material.price || 0);
+        totalPrice = totalSquareMeters * this.getUnitPrice(material);
       } else {
         // Default: per sheet
-        totalPrice = totalSheets * (material.price || 0);
+        totalPrice = totalSheets * this.getUnitPrice(material);
       }
       material.totalPrice = totalPrice;
 

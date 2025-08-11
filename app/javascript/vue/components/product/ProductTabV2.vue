@@ -91,6 +91,8 @@
               data-bs-toggle="tooltip"
               data-bs-placement="left"
               data-bs-html="true"
+              data-bs-trigger="hover"
+              tabindex="-1"
               :title="translations.materials_calculation_tooltip || '<strong>¿Cómo se calculan los costos de materiales?</strong><br><br><strong>Materiales por área (m²):</strong><br>• <u>Piezas por material</u>: Cantidad de piezas que se pueden obtener de un pliego<br>• <u>Total de pliegos</u>: Cantidad estimada de pliegos necesarios<br>• <u>Total en m²</u>: Metros cuadrados totales requeridos<br>• <u>Costo total</u>: Precio por m² × Total m²<br><br><strong>Materiales por peso (kg, g):</strong><br>• <u>Peso por pieza</u>: Peso individual de cada pieza<br>• <u>Peso total</u>: Peso total requerido para todas las piezas<br>• <u>Costo total</u>: Precio por kg/g × Peso total'">
               <i class="fa fa-question-circle"></i>
             </button>
@@ -115,7 +117,9 @@
                 :options="availableMaterials"
                 :track-by="'id'"
                 :label="'description'"
-                :placeholder="''"
+                :placeholder="'Selecciona un material existente o agrega uno aquí directamente'"
+                :preselect-first="false"
+                tabindex="-1"
                 :disabled="!availableMaterials.length"
                 @select="onMaterialSelect"
                 :select-label="''"
@@ -124,7 +128,20 @@
               />
             </div>
 
-            <!-- Add Material Button -->
+            <!-- Link to materials CRUD -->
+            <div>
+              <a
+                href="/materials"
+                target="_blank"
+                rel="noopener"
+                class="btn btn-outline-success"
+                title="Abrir lista de materiales en una pestaña nueva"
+              >
+                <i class="fa fa-cubes"></i>
+              </a>
+            </div>
+
+            <!-- Add Selected Material Button -->
             <div>
               <button 
                 class="btn btn-primary" 
@@ -135,15 +152,68 @@
               </button>
             </div>
 
+            <!-- Add Manual Material Button -->
+            <div>
+              <button 
+                class="btn btn-primary" 
+                @click="toggleManualMaterialForm"
+                title="Agregar material manual"
+              >
+                <i class="fa fa-plus me-1"></i> Manual
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Manual Material Inline Form -->
+          <div v-if="showManualMaterialForm" class="manual-material-form border rounded p-3 mb-3 subtle-border" style="background:#2d2d2d;">
+            <div class="row g-2 align-items-end">
+              <div class="col-md-4">
+                <label class="form-label">Descripción</label>
+                <input type="text" class="form-control" v-model.trim="manualMaterial.description" placeholder="Describe el material" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Unidad</label>
+                <select class="form-select" v-model="manualMaterial.unit">
+                  <option value="m2">m²</option>
+                  <option value="grs/m2">grs/m²</option>
+                  <option value="pliego">pliego</option>
+                </select>
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Ancho (cm)</label>
+                <input type="text" inputmode="decimal" class="form-control" v-model.number="manualMaterial.ancho" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Largo (cm)</label>
+                <input type="text" inputmode="decimal" class="form-control" v-model.number="manualMaterial.largo" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Precio unitario</label>
+                <input type="text" inputmode="decimal" class="form-control" v-model.number="manualMaterial.cost" />
+              </div>
+              <div class="col-md-2" v-if="manualMaterial.unit === 'grs/m2'">
+                <label class="form-label">Peso (grs/m²)</label>
+                <input type="text" inputmode="decimal" class="form-control" v-model.number="manualMaterial.weight" />
+              </div>
+              <div class="col-md-auto ms-auto">
+                <button class="btn btn-success me-2" @click="saveManualMaterial">
+                  <i class="fa fa-check me-1"></i>Guardar
+                </button>
+                <button class="btn btn-outline-secondary" @click="cancelManualMaterial">
+                  Cancelar
+                </button>
+              </div>
+            </div>
           </div>
 
           <!-- No Materials Message -->
-          <div v-if="!product.data.materials.length" class="text-center my-5">
-            <p class="text-muted">No hay materiales agregados. Selecciona un material y agrégalo al producto.</p>
+          <div v-if="!safeMaterials.length" class="text-center my-5">
+            <p class="text-muted">No hay materiales agregados.</p>
           </div>
 
           <!-- Materials List -->
-          <div v-if="product.data.materials.length" class="materials-list">
+          <div v-if="safeMaterials.length" class="materials-list">
             
             <!-- Headers Row -->
             <div class="material-item mb-1">
@@ -185,7 +255,7 @@
             </div>
             
             <!-- Material Items -->
-            <div v-for="(material, materialIndex) in product.data.materials" :key="material.materialInstanceId || material.id" class="material-item mb-3">
+            <div v-for="(material, materialIndex) in safeMaterials" :key="material.materialInstanceId || material.id" class="material-item mb-3">
               
               <!-- Material Container -->
               <div class="material-container border rounded subtle-border">
@@ -237,15 +307,16 @@
                       />
                     </div>
 
-                    <!-- Price -->
+                    <!-- Price (Cost) -->
                     <div class="d-flex align-items-center justify-content-end me-2" style="width: 70px;">
                       <input 
                         type="text" 
                         inputmode="decimal"
                         class="form-control form-control-sm text-end" 
-                        v-model.number="material.price" 
+                        :value="material.cost"
                         min="0"
                         step="0.01"
+                        @input="onUnitPriceInput($event, material)"
                         @blur="updateMaterialCalculations(materialIndex, true)"
                         style="width: 60px;"
                       />
@@ -291,6 +362,8 @@
                       @click="showMaterialSimulation(material)"
                       data-bs-toggle="tooltip"
                       data-bs-placement="top"
+                       data-bs-trigger="hover"
+                       tabindex="-1"
                       data-bs-title="Ver simulación de piezas en material"
                       style="min-width: 40px;"
                     >
@@ -303,6 +376,8 @@
                       @click="toggleProcessForm(materialIndex)"
                       data-bs-toggle="tooltip"
                       data-bs-placement="top"
+                       data-bs-trigger="hover"
+                       tabindex="-1"
                       data-bs-title="Agregar proceso de fabricación a material"
                       style="min-width: 50px; background-color: #42b983 !important; border-color: #42b983 !important;"
                     >
@@ -324,10 +399,10 @@
                 <div v-if="expandedMaterialIndex === materialIndex" class="process-form-section p-3 border-top subtle-border-top">
                   
                   <!-- Process Form -->
-                  <div class="row align-items-start">
+                  <div class="row align-items-start gx-2">
 
                     <!-- Select Process -->
-                    <div class="col-md-4 mb-3">
+                    <div class="col mb-3">
                       <label class="form-label">Seleccionar proceso</label>
                       <multiselect
                         v-model="selectedProcessForMaterial[materialIndex]"
@@ -339,9 +414,9 @@
                         class="process-multiselect"
                       />
                     </div>
-                    
+
                     <!-- Veces -->
-                    <div class="col-md-2 mb-3">
+                    <div class="col-md-1 mb-3">
                       <label class="form-label">Veces</label>
                       <input 
                         type="text" 
@@ -355,7 +430,7 @@
                     </div>
                     
                     <!-- Side -->
-                    <div class="col-md-2 mb-3">
+                    <div class="col-md-1 mb-3">
                       <label class="form-label">Cara</label>
                       <select 
                         class="form-select" 
@@ -363,18 +438,31 @@
                         style="background-color: #2c3136 !important; border-color: #495057 !important; color: #e1e1e1 !important;"
                       >
                         <option value="front">Frente</option>
-                        <option value="back">Reverso</option>
                         <option value="both">Ambas</option>
                       </select>
                     </div>
                     
+                    <!-- Quick access to Processes CRUD (moved next to Add) -->
+                    <div class="col-md-auto mb-3">
+                      <div style="height: 32px;"></div>
+                      <a
+                        href="/manufacturing_processes"
+                        target="_blank"
+                        rel="noopener"
+                        class="btn btn-outline-success"
+                        title="Abrir lista de procesos en una pestaña nueva"
+                      >
+                        <i class="fa fa-cogs"></i>
+                      </a>
+                    </div>
+                    
                     <!-- Add Process Button -->
-                    <div class="col-md-2 mb-3">
+                    <div class="col-md-auto mb-3">
                       <div style="height: 32px;"></div>
 
                       <!-- Add Process Button -->
                       <button 
-                        class="btn btn-primary w-100" 
+                        class="btn btn-primary" 
                         @click="addProcessToMaterial(materialIndex)"
                         :disabled="!selectedProcessForMaterial[materialIndex]"
                         style="background-color: #42b983 !important; border-color: #42b983 !important; color: white !important;"
@@ -384,10 +472,10 @@
                     </div>
                     
                     <!-- Cancel Button -->
-                    <div class="col-md-2 mb-3">
+                    <div class="col-md-auto mb-3">
                       <div style="height: 32px;"></div>
                       <button 
-                        class="btn btn-outline-success w-100" 
+                        class="btn btn-outline-success" 
                         @click="toggleProcessForm(materialIndex)"
                         style="color: #42b983 !important; border-color: #42b983 !important; background-color: transparent !important;"
                       >
@@ -474,7 +562,6 @@
                             style="width: 110px; font-size: 0.8rem;"
                           >
                             <option value="front">Frente</option>
-                            <option value="back">Reverso</option>
                             <option value="both">Ambas</option>
                           </select>
                         </div>
@@ -506,6 +593,23 @@
         </div>
       </div>
     </div>
+
+  <!-- Product Comments Section (separate panel below materials) -->
+  <div class="green-accent-panel mt-4">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0"><i class="fa fa-comments me-2"></i>Comentarios</h5>
+      </div>
+      <div class="card-body">
+        <textarea
+          class="form-control"
+          rows="3"
+          :value="(product.data.general_info && product.data.general_info.comments) || ''"
+          @input="updateProductComments"
+          placeholder="Notas internas del producto"></textarea>
+      </div>
+    </div>
+  </div>
 
     <!-- Material Simulation Popup -->
     <div v-if="showSimulationPopup" class="modal fade show" style="display: block; background-color: rgba(0, 0, 0, 0.5);" tabindex="-1">
@@ -739,6 +843,15 @@ export default {
   data() {
     return {
       materialIdForAdd: null,
+      showManualMaterialForm: false,
+      manualMaterial: {
+        description: '',
+        unit: 'm2',
+        ancho: null,
+        largo: null,
+        cost: null,
+        weight: null
+      },
       expandedMaterialIndex: null,
       selectedProcessForMaterial: {},
       processVeces: {},
@@ -765,7 +878,12 @@ export default {
       }
     };
   },
+  emits: ['update:product', 'update:materials', 'material-calculation-changed', 'remove-material-with-processes'],
   computed: {
+    safeMaterials() {
+      const mats = this.product && this.product.data && this.product.data.materials;
+      return Array.isArray(mats) ? mats : [];
+    },
     canAdd() {
       return !!this.materialIdForAdd;
     },
@@ -793,8 +911,81 @@ export default {
   },
   mounted() {
     this.initializeTooltips();
+    this.normalizeProcessSides();
   },
   methods: {
+    toggleManualMaterialForm() {
+      this.showManualMaterialForm = !this.showManualMaterialForm;
+    },
+    cancelManualMaterial() {
+      this.showManualMaterialForm = false;
+      this.manualMaterial = { description: '', unit: 'm2', ancho: null, largo: null, cost: null, weight: null };
+    },
+    saveManualMaterial() {
+      const mm = this.manualMaterial;
+      const errors = [];
+      if (!mm.description || mm.description.trim().length === 0) errors.push('Descripción');
+      if (!mm.unit) errors.push('Unidad');
+      if (!mm.ancho || mm.ancho <= 0) errors.push('Ancho');
+      if (!mm.largo || mm.largo <= 0) errors.push('Largo');
+      if (!mm.cost || mm.cost <= 0) errors.push('Precio unitario');
+      if (mm.unit === 'grs/m2' && (!mm.weight || mm.weight <= 0)) errors.push('Peso (grs/m²)');
+      if (errors.length) {
+        window.showWarning(`Completa: ${errors.join(', ')}`);
+        return;
+      }
+
+      // Determine instance number among manual materials
+      const existingManuals = this.product.data.materials.filter(m => m.id === 'manual');
+      const materialInstanceNumber = existingManuals.length + 1;
+      const materialInstanceId = `manual_${materialInstanceNumber}`;
+
+      const newMaterial = {
+        id: 'manual',
+        materialInstanceId,
+        materialInstanceNumber,
+        displayName: `${mm.description} (${materialInstanceNumber})`,
+        description: mm.description,
+        unit: mm.unit,
+        ancho: Number(mm.ancho) || 0,
+        largo: Number(mm.largo) || 0,
+        cost: Number(mm.cost) || 0,
+        weight: mm.unit === 'grs/m2' ? (Number(mm.weight) || 0) : null,
+        manual: true,
+        piecesPerMaterial: 1,
+        totalSheets: 0,
+        totalSquareMeters: 0,
+        totalWeight: 0,
+        totalPrice: 0
+      };
+
+      // Push and calculate like regular materials
+      this.product.data.materials.push(newMaterial);
+      const materialIndex = this.product.data.materials.length - 1;
+      this.updateMaterialCalculations(materialIndex, false);
+      this.$emit('update:materials', this.product.data.materials);
+
+      // Reset form
+      this.cancelManualMaterial();
+    },
+    updateProductComments(event) {
+      const value = event.target.value;
+      this.$emit('update:product', {
+        data: {
+          general_info: { comments: value }
+        }
+      });
+    },
+    getUnitPrice(material) {
+      const price = material && material.cost;
+      return parseFloat(price) || 0;
+    },
+    onUnitPriceInput(event, material) {
+      const value = parseFloat(event.target.value);
+      const numeric = isNaN(value) ? 0 : value;
+      // Persistir solo en cost (sin alias)
+      material.cost = numeric;
+    },
     initializeTooltips() {
       // Inicializar tooltips de Bootstrap
       this.$nextTick(() => {
@@ -805,6 +996,24 @@ export default {
           }
         });
       });
+    },
+    
+    // Map legacy 'back' values to 'front' to match current allowed options
+    normalizeProcessSides() {
+      try {
+        const materials = (this.product && this.product.data && this.product.data.materials) || [];
+        materials.forEach(material => {
+          if (!Array.isArray(material.processes)) return;
+          material.processes.forEach(process => {
+            if (process && process.side === 'back') {
+              process.side = 'front';
+            }
+          });
+        });
+        this.$forceUpdate();
+      } catch (e) {
+        // no-op
+      }
     },
     
     formatCurrency(value) {
@@ -882,6 +1091,8 @@ export default {
         materialInstanceId,
         materialInstanceNumber,
         displayName: `${selectedMaterial.description} (${materialInstanceNumber})`,
+        // Keep both fields in sync during transition
+        cost: selectedMaterial.cost ?? 0,
         piecesPerMaterial: 1,
         totalSheets: 0,
         totalSquareMeters: 0,
@@ -913,6 +1124,13 @@ export default {
       // Emit update - esto disparará el recálculo automáticamente
       this.$emit('update:materials', this.product.data.materials);
       
+      // Show simulation automatically if user config allows it
+      const showSimulation = this.userConfig && this.userConfig.show_material_simulation;
+      if (showSimulation === true) {
+        this.showMaterialSimulation(newMaterial);
+        this.showSimulationPopup = true;
+      }
+
       // Inicializar tooltips para el nuevo material
       this.$nextTick(() => {
         this.initializeTooltips();
@@ -920,9 +1138,6 @@ export default {
       
       // Calcular la simulación antes de mostrar el popup
       this.calculateSimulation(newMaterial);
-      
-      // Mostrar el popup de simulación
-      this.showSimulationPopup = true;
     },
     
     updateMaterialCalculations(materialIndex, emitEvent = true) {
@@ -987,13 +1202,13 @@ export default {
         // Weight-based pricing (kg, g, etc.)
         const materialWeight = parseFloat(material.weight) || 0;
         totalWeight = totalSquareMeters * materialWeight; // grams
-        totalPrice = (totalWeight / 1000) * (material.price || 0); // price per kg
+        totalPrice = (totalWeight / 1000) * this.getUnitPrice(material); // price per kg
       } else if (isAreaBased) {
         // Area-based pricing (m²)
-        totalPrice = totalSquareMeters * (material.price || 0);
+        totalPrice = totalSquareMeters * this.getUnitPrice(material);
       } else {
         // Default: per sheet
-        totalPrice = totalSheets * (material.price || 0);
+        totalPrice = totalSheets * this.getUnitPrice(material);
       }
       
       // Update the material with new calculations

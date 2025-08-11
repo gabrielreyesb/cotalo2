@@ -14,7 +14,10 @@ class Api::V1::AppConfigsController < ApplicationController
     render json: {
       waste_percentage: waste_pct,
       width_margin: current_user.get_config(AppConfig::WIDTH_MARGIN) || 0,
-      length_margin: current_user.get_config(AppConfig::LENGTH_MARGIN) || 0
+      length_margin: current_user.get_config(AppConfig::LENGTH_MARGIN) || 0,
+      show_material_simulation: ActiveModel::Type::Boolean.new.cast(
+        current_user.get_config(AppConfig::SHOW_MATERIAL_SIMULATION)
+      )
     }
   end
 end 

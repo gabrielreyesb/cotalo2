@@ -1,6 +1,20 @@
 class Api::V1::ProductsController < ApplicationController
-  before_action :set_product, only: [:show, :update, :extras, :update_extras, :update_extras_comments, :update_processes, :update_processes_comments, :update_materials, :update_materials_comments, :update_pricing, :update_selected_material]
-  skip_before_action :verify_authenticity_token, only: [:create, :update, :update_extras, :update_extras_comments, :update_processes, :update_processes_comments, :update_materials, :update_materials_comments, :update_pricing, :update_selected_material]
+  before_action :set_product, only: [
+    :show, :update,
+    :indirect_costs, :update_indirect_costs, :update_indirect_costs_comments,
+    :update_processes, :update_processes_comments,
+    :update_materials, :update_materials_comments,
+    :update_pricing, :update_selected_material,
+    :update_include_indirect_costs_in_subtotal
+  ]
+  skip_before_action :verify_authenticity_token, only: [
+    :create, :update,
+    :update_indirect_costs, :update_indirect_costs_comments,
+    :update_processes, :update_processes_comments,
+    :update_materials, :update_materials_comments,
+    :update_pricing, :update_selected_material,
+    :update_include_indirect_costs_in_subtotal
+  ]
 
   # GET /api/v1/products/:id
   def show
@@ -34,26 +48,28 @@ class Api::V1::ProductsController < ApplicationController
     end
   end
 
-  # GET /api/v1/products/:id/extras
-  def extras
-    render json: @product.extras
+  # GET /api/v1/products/:id/indirect_costs
+  def indirect_costs
+    render json: @product.indirect_costs
   end
 
-  # PUT /api/v1/products/:id/extras
-  def update_extras
-    @product.data["extras"] = extras_params
+  # PUT /api/v1/products/:id/update_indirect_costs
+  def update_indirect_costs
+    extras_array = extras_params
+    @product.data["indirect_costs"] = extras_array
+    @product.data["extras"] = extras_array
     @product.calculate_totals
     
     if @product.save
-      render json: @product.extras
+      render json: @product.indirect_costs
     else
       render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
-  # GET /api/v1/extras
-  def available_extras
-    @extras = current_user.extras.order(:name)
+  # GET /api/v1/indirect_costs
+  def available_indirect_costs
+    @extras = current_user.indirect_costs.order(:name)
     render json: @extras.map { |e| extra_json(e) }
   end
 
@@ -68,9 +84,11 @@ class Api::V1::ProductsController < ApplicationController
     render json: @materials.map { |m| material_json(m) }, status: :ok
   end
 
-  # PUT /api/v1/products/:id/update_extras_comments
-  def update_extras_comments
-    @product.data["extras_comments"] = params[:extras_comments]
+  # PUT /api/v1/products/:id/update_indirect_costs_comments
+  def update_indirect_costs_comments
+    comments = params[:indirect_costs_comments] || params[:extras_comments]
+    @product.data["indirect_costs_comments"] = comments
+    @product.data["extras_comments"] = comments
     
     if @product.save
       render json: { success: true }
@@ -147,9 +165,12 @@ class Api::V1::ProductsController < ApplicationController
     end
   end
 
-  # PUT /api/v1/products/:id/update_include_extras_in_subtotal
-  def update_include_extras_in_subtotal
-    @product.data["include_extras_in_subtotal"] = params[:include_extras_in_subtotal]
+  # PUT /api/v1/products/:id/update_include_indirect_costs_in_subtotal
+  def update_include_indirect_costs_in_subtotal
+    flag = params[:include_indirect_costs_in_subtotal]
+    flag = params[:include_extras_in_subtotal] if flag.nil?
+    @product.data["include_indirect_costs_in_subtotal"] = flag
+    @product.data["include_extras_in_subtotal"] = flag
     
     if @product.save
       render json: { success: true }
@@ -172,7 +193,9 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   def extras_params
-    params.require(:extras)
+    params.require(:indirect_costs) if params.key?(:indirect_costs)
+    params.require(:extras) if params.key?(:extras)
+    params[:indirect_costs] || params[:extras]
   end
 
   def processes_params
@@ -225,7 +248,7 @@ class Api::V1::ProductsController < ApplicationController
       client_description: material.client_description,
       ancho: material.ancho,
       largo: material.largo,
-      price: material.price || 0,
+      cost: material.cost || 0,
       weight: material.weight || 0,
       resistance: material.resistance,
       unit: material.unit ? material.unit.name : 'unidad',

@@ -33,10 +33,9 @@
               <input
                 type="number"
                 class="form-control form-control-sm text-end waste-input"
-                :value="formatPercentage(localWastePercentage)"
+                v-model.number="localWastePercentage"
                 min="0"
                 step="0.1"
-                @input="handleWastePercentageInput"
                 @change="handleWastePercentageChange"
               />
             </div>
@@ -71,10 +70,9 @@
               <input 
                 type="number" 
                 class="form-control form-control-sm text-end margin-input" 
-                :value="formatPercentage(localMarginPercentage)" 
+                v-model.number="localMarginPercentage" 
                 min="0"
                 step="0.1"
-                @input="handleMarginPercentageInput"
                 @change="handleMarginPercentageChange"
               />
             </div>
@@ -133,18 +131,6 @@ export default {
         style: 'currency',
         currency: 'USD'
       }).format(value)
-    },
-    formatPercentage(value) {
-      if (value === null || value === undefined) return '0.0'
-      return parseFloat(value).toFixed(1)
-    },
-    handleWastePercentageInput(event) {
-      const value = parseFloat(event.target.value) || 0
-      this.localWastePercentage = value
-    },
-    handleMarginPercentageInput(event) {
-      const value = parseFloat(event.target.value) || 0
-      this.localMarginPercentage = value
     },
     handleWastePercentageChange() {
       this.$emit('waste-percentage-changed', this.localWastePercentage)

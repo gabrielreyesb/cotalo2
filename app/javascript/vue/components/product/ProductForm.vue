@@ -125,7 +125,7 @@
             <div class="card">
               <div class="card-header text-white">
                 <h5 class="mb-0">
-                  <i class="fa fa-calculator me-2"></i>{{ translations.pricing.total_price }}
+                  <i class="fa fa-dollar-sign me-2"></i>{{ translations.pricing.total_price }}
                 </h5>
               </div>
               <div class="card-body p-0">
@@ -617,13 +617,13 @@ export default {
             // Weight-based pricing (grs/m²)
             const materialWeight = parseFloat(material.weight) || 0;
             totalWeight = totalSquareMeters * materialWeight; // grams
-            totalPrice = totalWeight * (material.price || 0); // price per gram
+            totalPrice = totalWeight * (getUnitPrice(material));
           } else if (material.unit && material.unit.toLowerCase().includes('m2')) {
             // Area-based pricing (m²)
-            totalPrice = totalSquareMeters * (material.price || 0);
+            totalPrice = totalSquareMeters * (getUnitPrice(material));
           } else {
             // Default calculation
-            totalPrice = totalSheets * (material.price || 0);
+            totalPrice = totalSheets * (getUnitPrice(material));
           }
           
                       return {
@@ -637,6 +637,11 @@ export default {
               _needsRecalculation: undefined
             };
         });
+      }
+
+      function getUnitPrice(material) {
+        const price = material && material.cost;
+        return parseFloat(price) || 0;
       }
       
       // Update local materials data
@@ -729,6 +734,8 @@ export default {
       
       // Update local extras data
       this.product.data.extras = extras;
+      // Mirror to alias for gradual rename compatibility
+      this.product.data.indirect_costs = extras;
       
       // Calculate total extras cost
       const extrasCost = extras.reduce((sum, extra) => {
@@ -751,7 +758,7 @@ export default {
     async fetchAvailableExtras() {
       try {
         // Using the API path from routes
-        const response = await fetch('/api/v1/extras', {
+        const response = await fetch('/api/v1/indirect_costs', {
           headers: {
             'Accept': 'application/json',
             'X-Requested-With': 'XMLHttpRequest'
@@ -904,11 +911,13 @@ export default {
       
       // Update locally
       this.product.data.extras_comments = comments;
+      // Mirror to alias
+      this.product.data.indirect_costs_comments = comments;
       
       // If we have a productId, also update on the server
       if (this.productId) {
         try {
-          const response = await fetch(`/api/v1/products/${this.productId}/update_extras_comments`, {
+          const response = await fetch(`/api/v1/products/${this.productId}/update_indirect_costs_comments`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
@@ -1321,6 +1330,8 @@ export default {
       
       // Update locally
       this.product.data.include_extras_in_subtotal = value;
+      // Mirror to alias
+      this.product.data.include_indirect_costs_in_subtotal = value;
       
       // Recalculate pricing
       this.recalculatePricing();
@@ -1328,7 +1339,7 @@ export default {
       // If we have a productId, also update on the server
       if (this.productId) {
         try {
-          const response = await fetch(`/api/v1/products/${this.productId}/update_include_extras_in_subtotal`, {
+          const response = await fetch(`/api/v1/products/${this.productId}/update_include_indirect_costs_in_subtotal`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',

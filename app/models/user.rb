@@ -8,7 +8,7 @@ class User < ApplicationRecord
 
   has_many :materials, dependent: :destroy
   has_many :manufacturing_processes, dependent: :destroy
-  has_many :extras, dependent: :destroy
+  has_many :indirect_costs, dependent: :destroy
   has_many :app_configs, dependent: :destroy
   has_one :pdf_config, dependent: :destroy
   has_many :products, dependent: :destroy
@@ -97,8 +97,13 @@ class User < ApplicationRecord
   end
 
   def subscription_active?
-    # Temporarily disabled - all users have unlimited access
-    true
+    # Prepared for enforcement via ENV flag without changing current behavior
+    return true unless ENV['ENFORCE_SUBSCRIPTION'] == 'true'
+
+    return true if active_subscription?
+    return true if trial? && trial_ends_at.present? && trial_ends_at.future?
+
+    false
   end
 
   def setup_trial_period
@@ -213,6 +218,7 @@ class User < ApplicationRecord
       set_config('customer_name', 'Cotalo')
       set_config('company_name', 'Cotalo')
       set_config(AppConfig::THEME, 'dark')
+      set_config(AppConfig::SHOW_MATERIAL_SIMULATION, true)
 
       Rails.logger.info "[setup_initial_data] Creating demo materials..."
       # Create materials with mt2_unit (area-based) - no weight field
@@ -260,8 +266,8 @@ class User < ApplicationRecord
         { name: 'Contracolado', description: 'Unión de capas de papel/cartulina para dar mayor rigidez o acabado especial', cost: 4.20, unit: mt2_unit }
       ])
 
-      Rails.logger.info "[setup_initial_data] Creating demo extras..."
-      extras.create!([
+      Rails.logger.info "[setup_initial_data] Creating demo indirect costs..."
+      indirect_costs.create!([
         { name: 'Fabricación de troquel', description: 'Costo único por fabricación del troquel metálico con la forma de la caja. Aplica solo si no se tiene uno previo.', cost: 1800, unit: pieza_unit },
         { name: 'Fabricación de placa offset (por tinta)', description: 'Placa de aluminio necesaria para cada tinta en impresión offset. Se requiere una por tinta utilizada.', cost: 250, unit: pieza_unit },
         { name: 'Calibración de máquina impresora', description: 'Tiempo y desperdicio asociados al arranque y ajuste de la impresora para un trabajo nuevo.', cost: 400, unit: pieza_unit },
@@ -295,12 +301,12 @@ class User < ApplicationRecord
       hendido_process = manufacturing_processes.find_by(name: 'Hendido y corte')
       pegado_process = manufacturing_processes.find_by(name: 'Pegado automático')
       
-      # Get the required extras
-      troquel_extra = extras.find_by(name: 'Fabricación de troquel')
-      placa_extra = extras.find_by(name: 'Fabricación de placa offset (por tinta)')
-      calibracion_impresora_extra = extras.find_by(name: 'Calibración de máquina impresora')
-      calibracion_troqueladora_extra = extras.find_by(name: 'Calibración de troqueladora')
-      muestra_extra = extras.find_by(name: 'Desarrollo de muestra física (mockup)')
+      # Get the required indirect costs
+      troquel_extra = indirect_costs.find_by(name: 'Fabricación de troquel')
+      placa_extra = indirect_costs.find_by(name: 'Fabricación de placa offset (por tinta)')
+      calibracion_impresora_extra = indirect_costs.find_by(name: 'Calibración de máquina impresora')
+      calibracion_troqueladora_extra = indirect_costs.find_by(name: 'Calibración de troqueladora')
+      muestra_extra = indirect_costs.find_by(name: 'Desarrollo de muestra física (mockup)')
 
       # Calculate material area for 1000 pieces (32cm x 22cm = 0.32m x 0.22m = 0.0704 m² per piece)
       # Assuming 6 pieces per sheet: 1000 pieces / 6 = 167 sheets needed
@@ -331,7 +337,7 @@ class User < ApplicationRecord
               description: cartulina_material.description,
               client_description: cartulina_material.client_description,
               resistance: cartulina_material.resistance,
-              price: (cartulina_material.price || 0).to_f,
+              price: (cartulina_material.cost || 0).to_f,
               unit: {
                 id: cartulina_material.unit.id,
                 name: cartulina_material.unit.name,
@@ -343,8 +349,8 @@ class User < ApplicationRecord
               piecesPerMaterial: pieces_per_sheet,
               totalSheets: total_sheets,
               totalSquareMeters: total_area,
-              totalPrice: total_area * cartulina_material.price,
-              subtotal_price: total_area * cartulina_material.price,
+              totalPrice: total_area * cartulina_material.cost,
+              subtotal_price: total_area * cartulina_material.cost,
               comments: "Cartulina caple sulfatada 12 pts para caja cosmética"
             }
           ],
@@ -453,7 +459,7 @@ class User < ApplicationRecord
             }
           ],
           pricing: {
-            materials_cost: total_area * cartulina_material.price,
+            materials_cost: total_area * cartulina_material.cost,
             processes_cost: (offset_process.cost * total_area) + (barniz_process.cost * total_area) + troquelado_process.cost + hendido_process.cost + pegado_process.cost,
             extras_cost: troquel_extra.cost + (placa_extra.cost * 4) + calibracion_impresora_extra.cost + calibracion_troqueladora_extra.cost + muestra_extra.cost,
             subtotal: 0,  # Will be calculated
@@ -549,11 +555,11 @@ class User < ApplicationRecord
       barniz_proc = manufacturing_processes.find_by(name: 'Barniz UV spot')
       laminado_proc = manufacturing_processes.find_by(name: 'Laminado mate')
       hendido_proc = manufacturing_processes.find_by(name: 'Hendido y corte')
-      diseno_extra = extras.find_by(name: 'Diseño gráfico del empaque')
-      placa_extra = extras.find_by(name: 'Fabricación de placa offset (por tinta)')
-      mockup_extra = extras.find_by(name: 'Desarrollo de muestra física (mockup)')
-      supervision_extra = extras.find_by(name: 'Supervisión de producción')
-      envio_prueba_extra = extras.find_by(name: 'Envío de prueba física al cliente')
+      diseno_extra = indirect_costs.find_by(name: 'Diseño gráfico del empaque')
+      placa_extra = indirect_costs.find_by(name: 'Fabricación de placa offset (por tinta)')
+      mockup_extra = indirect_costs.find_by(name: 'Desarrollo de muestra física (mockup)')
+      supervision_extra = indirect_costs.find_by(name: 'Supervisión de producción')
+      envio_prueba_extra = indirect_costs.find_by(name: 'Envío de prueba física al cliente')
 
       # Calculate area per piece, pieces per sheet, total sheets, total area as in the original example
       folder_area_per_piece = folder_width * folder_length / 100.0 / 100.0 # m²
@@ -702,11 +708,11 @@ class User < ApplicationRecord
       offset_proc = manufacturing_processes.find_by(name: 'Impresión offset 4 tintas (CMYK)')
       barniz_proc = manufacturing_processes.find_by(name: 'Barniz UV spot')
       hendido_proc = manufacturing_processes.find_by(name: 'Hendido y corte')
-      diseno_editorial_extra = extras.find_by(name: 'Diseño gráfico editorial')
-      ajuste_archivos_extra = extras.find_by(name: 'Ajuste de archivos para impresión')
-      placas_offset_extra = extras.find_by(name: 'Fabricación de placa offset (por tinta)')
-      prueba_color_extra = extras.find_by(name: 'Prueba de color digital (matchprint)')
-      supervision_editorial_extra = extras.find_by(name: 'Supervisión editorial')
+      diseno_editorial_extra = indirect_costs.find_by(name: 'Diseño gráfico editorial')
+      ajuste_archivos_extra = indirect_costs.find_by(name: 'Ajuste de archivos para impresión')
+      placas_offset_extra = indirect_costs.find_by(name: 'Fabricación de placa offset (por tinta)')
+      prueba_color_extra = indirect_costs.find_by(name: 'Prueba de color digital (matchprint)')
+      supervision_editorial_extra = indirect_costs.find_by(name: 'Supervisión editorial')
 
       # For tríptico example:
       triptico_area_per_piece = triptico_width * triptico_length / 100.0 / 100.0 # m²

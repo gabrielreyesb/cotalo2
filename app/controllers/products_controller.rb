@@ -115,7 +115,7 @@ class ProductsController < ApplicationController
   def extras_list
     respond_to do |format|
       begin
-        @extras = current_user.extras.order(:name)
+     @extras = current_user.indirect_costs.order(:name)
         extras_data = @extras.map { |e| extra_json(e) }
         
         # Log for debugging
@@ -198,7 +198,7 @@ class ProductsController < ApplicationController
       id: material.id,
       description: material.description,
       client_description: material.client_description,
-      price: material.price,
+      cost: material.cost,
       resistance: material.resistance,
       ancho: material.ancho,
       largo: material.largo,

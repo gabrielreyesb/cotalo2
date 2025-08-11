@@ -14,7 +14,10 @@ class AppConfigsController < ApplicationController
       company_logo: current_user.get_config(AppConfig::COMPANY_LOGO),
       customer_name: current_user.get_config('customer_name').presence || "Cotalo",
       company_name: current_user.get_config('company_name').presence || "Cotalo",
-      theme: current_user.get_config(AppConfig::THEME) || 'dark'
+      theme: current_user.get_config(AppConfig::THEME) || 'dark',
+      show_material_simulation: ActiveModel::Type::Boolean.new.cast(
+        current_user.get_config(AppConfig::SHOW_MATERIAL_SIMULATION)
+      )
     }
     
     # Check if APIs are configured (don't show the actual keys)
@@ -28,7 +31,8 @@ class AppConfigsController < ApplicationController
       length_margin: @general_settings[:length_margin],
       customer_name: @general_settings[:customer_name],
       company_name: @general_settings[:company_name],
-      theme: @general_settings[:theme]
+      theme: @general_settings[:theme],
+      show_material_simulation: @general_settings[:show_material_simulation]
     )
   end
   
@@ -134,6 +138,11 @@ class AppConfigsController < ApplicationController
     if params[:theme].present?
       current_user.set_config(AppConfig::THEME, params[:theme])
     end
+
+    # Toggle material simulation preference
+    # Always persist explicit on/off from the checkbox, even when unchecked
+    value = ActiveModel::Type::Boolean.new.cast(params[:show_material_simulation])
+    current_user.set_config(AppConfig::SHOW_MATERIAL_SIMULATION, value, AppConfig::BOOLEAN)
     
     flash[:notice] = t('.update_success')
     redirect_to edit_app_configs_path

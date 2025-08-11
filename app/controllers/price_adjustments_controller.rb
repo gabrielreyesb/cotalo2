@@ -11,10 +11,11 @@ class PriceAdjustmentsController < ApplicationController
     begin
       percentage = params[:percentage].to_f
       
-      # Update all materials
+      # Update all materials (cost field)
       current_user.materials.find_each do |material|
-        new_price = material.price * (1 + percentage / 100.0)
-        material.update!(price: new_price)
+        base_cost = material.cost || 0
+        new_cost = base_cost * (1 + percentage / 100.0)
+        material.update!(cost: new_cost)
       end
       
       # Update all processes
@@ -23,8 +24,8 @@ class PriceAdjustmentsController < ApplicationController
         process.update!(cost: new_cost)
       end
       
-      # Update all extras
-      current_user.extras.find_each do |extra|
+      # Update all indirect costs (extras)
+      current_user.indirect_costs.find_each do |extra|
         new_cost = extra.cost * (1 + percentage / 100.0)
         extra.update!(cost: new_cost)
       end

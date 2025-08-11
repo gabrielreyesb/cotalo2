@@ -28,10 +28,11 @@ const Toast = Swal.mixin({
   }
 });
 
-window.showSuccess = (message) => {
+window.showSuccess = (message, ms = 1800) => {
   Toast.fire({
     icon: 'success',
-    title: message
+    title: message,
+    timer: ms
   });
 };
 

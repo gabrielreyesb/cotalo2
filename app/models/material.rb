@@ -5,7 +5,8 @@ class Material < ApplicationRecord
   has_many :products, through: :product_materials
   
   validates :description, presence: true
-  validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  # After migration 20250808190000_rename_materials_price_to_cost, use :cost
+  validates :cost, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :unit, presence: true
   validates :ancho, presence: true, numericality: { greater_than: 0 }
   validates :largo, presence: true, numericality: { greater_than: 0 }

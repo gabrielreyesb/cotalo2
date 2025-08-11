@@ -1,18 +1,18 @@
 <% content_for :page_title do %>
-  <%= t('extras.show.title') %>
+  <%= t('indirect_costs.show.title') %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= link_to edit_extra_path(@extra), class: "btn btn-outline-light me-2" do %>
-    <i class="fas fa-edit me-1"></i><%= t('extras.show.edit') %>
+  <%= link_to edit_indirect_cost_path(@extra), class: "btn btn-outline-light me-2" do %>
+    <i class="fas fa-edit me-1"></i><%= t('indirect_costs.show.edit') %>
   <% end %>
-  <%= button_to extra_path(@extra), method: :delete, 
+  <%= button_to indirect_cost_path(@extra), method: :delete, 
       class: "btn btn-outline-danger me-2", 
-      form: { data: { turbo_confirm: t('extras.show.delete_confirm') } } do %>
-    <i class="fas fa-trash me-1"></i><%= t('extras.show.delete') %>
+      form: { data: { turbo_confirm: t('indirect_costs.show.delete_confirm') } } do %>
+    <i class="fas fa-trash me-1"></i><%= t('indirect_costs.show.delete') %>
   <% end %>
-  <%= link_to extras_path, class: "btn btn-outline-light" do %>
-    <i class="fas fa-arrow-left me-1"></i><%= t('extras.show.back_to_extras') %>
+  <%= link_to indirect_costs_path, class: "btn btn-outline-light" do %>
+    <i class="fas fa-arrow-left me-1"></i><%= t('indirect_costs.show.back_to_extras') %>
   <% end %>
 <% end %>
 
@@ -25,27 +25,27 @@
       <div class="card-body">
         <div class="row mb-3">
           <div class="col-md-6">
-            <strong><%= t('extras.show.name') %>:</strong>
+            <strong><%= t('indirect_costs.show.name') %>:</strong>
             <p><%= @extra.name %></p>
           </div>
           <div class="col-md-6">
-            <strong><%= t('extras.show.cost') %>:</strong>
+            <strong><%= t('indirect_costs.show.cost') %>:</strong>
             <p><%= number_to_currency(@extra.cost) %></p>
           </div>
         </div>
         
         <div class="row mb-3">
           <div class="col-md-6">
-            <strong><%= t('extras.show.unit') %>:</strong>
+            <strong><%= t('indirect_costs.show.unit') %>:</strong>
             <p>
-              <%= @extra.unit&.name || t('extras.show.not_specified') %>
+              <%= @extra.unit&.name || t('indirect_costs.show.not_specified') %>
               <% if @extra.unit&.abbreviation.present? %>
                 (<%= @extra.unit.abbreviation %>)
               <% end %>
             </p>
           </div>
           <div class="col-md-6">
-            <strong><%= t('extras.show.description') %>:</strong>
+            <strong><%= t('indirect_costs.show.description') %>:</strong>
             <p><%= simple_format(@extra.description) %></p>
           </div>
         </div>
@@ -53,3 +53,5 @@
     </div>
   </div>
 </div>
+
+

@@ -61,6 +61,12 @@ describe('Scenario 5: Recalculation Validation', () => {
     // Select specifically "Papel bond 90 g/m²" instead of first option
     cy.get('.multiselect__option').contains('Papel bond 90 g/m²').click()
     cy.contains('Agregar').click()
+    // If simulation modal appears, close it to continue
+    cy.get('body').then(($body) => {
+      if ($body.find('.modal.show .modal-title:contains("Simulación")').length || $body.find('.modal.show').length) {
+        cy.contains('button', 'Entendido').click({ force: true })
+      }
+    })
     cy.wait(2000) // Wait longer for calculations to complete
     cy.log('✅ Material added (Papel bond 90 g/m²)')
     
@@ -156,6 +162,52 @@ describe('Scenario 5: Recalculation Validation', () => {
       });
     });
     
+    // 7. Test waste percentage (merma) recalculation
+    cy.log('🔄 WASTE PERCENTAGE CHANGE TEST - Changing waste to 10%');
+    let prevSubWithWaste = 0;
+    let currentSubtotal = 0;
+    // Capture current values
+    cy.get('.pricing-panel').within(() => {
+      cy.get('tr').contains('Subtotal:').parent().find('td').invoke('text').then((text) => {
+        currentSubtotal = parseFloat(text.trim().replace(/[^0-9.-]+/g, ''));
+      });
+      cy.get('tr').contains('Sub. con merma').parent().find('td').invoke('text').then((text) => {
+        prevSubWithWaste = parseFloat(text.trim().replace(/[^0-9.-]+/g, ''));
+      });
+    }).then(() => {
+      // Change waste to 10 and blur
+      cy.get('input.waste-input').clear().type('10').blur();
+      cy.wait(800);
+      // Validate recalculation
+      cy.get('.pricing-panel').within(() => {
+        cy.get('tr').contains('Sub. con merma').parent().find('td').invoke('text').then((text) => {
+          const newSubWithWaste = parseFloat(text.trim().replace(/[^0-9.-]+/g, ''));
+          expect(newSubWithWaste).to.be.greaterThan(currentSubtotal);
+          expect(newSubWithWaste).to.not.equal(prevSubWithWaste);
+          cy.log(`✅ Sub. con merma updated: ${newSubWithWaste} (prev ${prevSubWithWaste})`);
+        });
+      });
+    });
+
+    // 8. Test margin percentage recalculation
+    cy.log('🔄 MARGIN PERCENTAGE CHANGE TEST - Changing margin to 20%');
+    let prevTotal = 0;
+    cy.get('.pricing-panel').within(() => {
+      cy.get('tr').contains('Totales').parent().find('td').invoke('text').then((text) => {
+        prevTotal = parseFloat(text.trim().replace(/[^0-9.-]+/g, ''));
+      });
+    }).then(() => {
+      cy.get('input.margin-input').clear().type('20').blur();
+      cy.wait(800);
+      cy.get('.pricing-panel').within(() => {
+        cy.get('tr').contains('Totales').parent().find('td').invoke('text').then((text) => {
+          const newTotal = parseFloat(text.trim().replace(/[^0-9.-]+/g, ''));
+          expect(newTotal).to.be.greaterThan(prevTotal);
+          cy.log(`✅ Totales updated: ${newTotal} (prev ${prevTotal})`);
+        });
+      });
+    });
+
     cy.log('🎉 Recalculation validation test completed successfully!');
     
     // DO NOT SAVE - stay in the form

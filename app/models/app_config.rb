@@ -12,6 +12,7 @@ class AppConfig < ApplicationRecord
   COMPANY_LOGO = 'company_logo'
   PRICE_ADJUSTMENT_PERCENTAGE = 'price_adjustment_percentage'
   THEME = 'theme'
+  SHOW_MATERIAL_SIMULATION = 'show_material_simulation'
   
   # API Keys (stored in ENV but configured through app)
   PIPEDRIVE_API_KEY = 'pipedrive_api_key'
@@ -21,6 +22,7 @@ class AppConfig < ApplicationRecord
   TEXT = 'text'
   NUMERIC = 'numeric'
   PERCENTAGE = 'percentage'
+  BOOLEAN = 'boolean'
   
   # Get typed value based on value_type
   def typed_value
@@ -29,6 +31,8 @@ class AppConfig < ApplicationRecord
       value.to_f
     when PERCENTAGE
       value.to_f / 100.0
+    when BOOLEAN
+      ActiveModel::Type::Boolean.new.cast(value)
     else
       value
     end
@@ -49,6 +53,8 @@ class AppConfig < ApplicationRecord
       # Ensure numeric values are stored with proper decimal format
       if value_type == NUMERIC || value_type == PERCENTAGE
         config.value = value.to_f.to_s
+      elsif value_type == BOOLEAN
+        config.value = ActiveModel::Type::Boolean.new.cast(value) ? 'true' : 'false'
       else
         config.value = value.to_s
       end

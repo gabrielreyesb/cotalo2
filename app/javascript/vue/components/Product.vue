@@ -57,7 +57,7 @@
                 
                 <div class="col-md-3 mb-3">
                   <label :for="'price_' + index" class="form-label">Price</label>
-                  <input type="number" class="form-control" :id="'price_' + index" v-model.number="material.price" step="0.01" min="0" readonly>
+                  <input type="number" class="form-control" :id="'price_' + index" :value="getUnitPrice(material)" step="0.01" min="0" readonly>
                 </div>
                 
                 <div class="col-md-1 mb-3 d-flex align-items-end">
@@ -204,7 +204,7 @@ export default {
       const material = this.availableMaterials.find(m => m.id === materialId);
       
       if (material) {
-        this.form.product_materials[index].price = material.price;
+        this.form.product_materials[index].price = this.getUnitPrice(material);
         this.calculateTotals();
       }
     },
@@ -213,7 +213,8 @@ export default {
       // Calculate materials total
       let subtotal = 0;
       this.form.product_materials.forEach(material => {
-        material.total_price = material.quantity * material.price;
+        const unitPrice = this.getUnitPrice(material);
+        material.total_price = material.quantity * unitPrice;
         subtotal += material.total_price;
       });
       
@@ -242,6 +243,10 @@ export default {
     
     formatCurrency(value) {
       return (value || 0).toFixed(2);
+    },
+    getUnitPrice(material) {
+      const price = material && material.cost;
+      return parseFloat(price) || 0;
     },
     
     saveProduct() {

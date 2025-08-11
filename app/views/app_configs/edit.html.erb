@@ -52,6 +52,16 @@
                   </div>
                 </div>
               </div>
+
+              <div class="row mt-4">
+                <div class="col-md-6">
+                  <label class="form-label">Mostrar simulación al agregar material</label>
+                  <div class="form-check form-switch">
+                    <%= form.check_box :show_material_simulation, { class: "form-check-input", checked: !!@general_settings[:show_material_simulation] }, 'true', 'false' %>
+                    <label class="form-check-label">Habilitar simulación automática</label>
+                  </div>
+                </div>
+              </div>
               
               <!-- Theme Configuration -->
               <div class="row mt-4">

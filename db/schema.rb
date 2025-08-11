@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_28_202831) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_08_190000) do
   create_table "app_configs", force: :cascade do |t|
     t.string "key", null: false
     t.text "value"
@@ -47,7 +47,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_28_202831) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "extras", force: :cascade do |t|
+  create_table "indirect_costs", force: :cascade do |t|
     t.string "name"
     t.text "description"
     t.decimal "cost", precision: 10, scale: 2
@@ -55,8 +55,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_28_202831) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "unit_id"
-    t.index ["unit_id"], name: "index_extras_on_unit_id"
-    t.index ["user_id"], name: "index_extras_on_user_id"
+    t.index ["unit_id"], name: "index_indirect_costs_on_unit_id"
+    t.index ["user_id"], name: "index_indirect_costs_on_user_id"
   end
 
   create_table "invoices", force: :cascade do |t|
@@ -85,7 +85,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_28_202831) do
 
   create_table "materials", force: :cascade do |t|
     t.string "description"
-    t.decimal "price", precision: 10, scale: 2
+    t.decimal "cost", precision: 10, scale: 2
     t.string "client_description"
     t.string "resistance"
     t.decimal "ancho", precision: 10, scale: 2
@@ -221,8 +221,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_28_202831) do
 
   add_foreign_key "app_configs", "users"
   add_foreign_key "customers", "users"
-  add_foreign_key "extras", "units"
-  add_foreign_key "extras", "users"
+  add_foreign_key "indirect_costs", "units"
+  add_foreign_key "indirect_costs", "users"
   add_foreign_key "invoices", "quotes"
   add_foreign_key "manufacturing_processes", "units"
   add_foreign_key "manufacturing_processes", "users"

@@ -1,32 +1,3 @@
-# Files in the config/locales directory are used for internationalization and
-# are automatically loaded by Rails. If you want to use locales other than
-# English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t "hello"
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t("hello") %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# To learn more about the API, please read the Rails Internationalization guide
-# at https://guides.rubyonrails.org/i18n.html.
-#
-# Be aware that YAML interprets the following case-insensitive strings as
-# booleans: `true`, `false`, `on`, `off`, `yes`, `no`. Therefore, these strings
-# must be quoted to be interpreted as strings. For example:
-#
-#     en:
-#       "yes": yup
-#       enabled: "ON"
-
 en:
   common:
     save: "Save"
@@ -106,7 +77,7 @@ en:
       register: "Register for Free"
       login: "Log In"
   dashboard:
-    title: "Inicio"
+    title: "Control Panel"
     welcome:
       greeting: "Welcome to Cotalo!"
       subtitle: "Cotalo helps you quote your graphic arts products quickly, accurately and professionally."
@@ -331,7 +302,7 @@ en:
       new_material: "New material"
       name: "Name"
       client_description: "Client description"
-      price: "Price"
+      price: "Cost"
       unit: "Unit"
       dimensions: "Dimensions"
       actions: "Actions"
@@ -369,7 +340,7 @@ en:
         other: "%{count} errors prevented this material from being saved:"
       description: "Description"
       client_description: "Description for quote"
-      price: "Price"
+      price: "Cost"
       unit: "Unit"
       select_unit: "Select unit"
       width: "Width"
@@ -452,6 +423,47 @@ en:
         trial_expired: "Your trial period has expired. Please upgrade your subscription to continue."
         subscription_expired: "Your subscription has expired. Please renew your subscription to continue."
   extras:
+    index:
+      title: "Indirects"
+      new_extra: "New indirect"
+      name: "Name"
+      description: "Description"
+      cost: "Cost"
+      unit: "Unit"
+      actions: "Actions"
+      no_unit: "No unit"
+      no_extras_html: "No indirects. %{link}."
+      create_first: "Create your first indirect"
+      search_placeholder: "Search indirects…"
+    new:
+      title: "New indirect"
+    edit:
+      title: "Edit indirect"
+    show:
+      title: "Indirect Details"
+      back_to_extras: "Back"
+      extra_details: "Indirect Details"
+      name: "Name"
+      cost: "Cost"
+      unit: "Unit"
+      description: "Description"
+      edit: "Edit"
+      delete: "Delete"
+      delete_confirm: "Are you sure you want to delete this indirect?"
+      not_specified: "Not specified"
+    form:
+      errors:
+        one: "One error prevented this indirect from being saved:"
+        other: "%{count} errors prevented this indirect from being saved:"
+      name: "Name"
+      unit: "Unit"
+      select_unit: "Select unit"
+      create_unit: "Create new unit"
+      current_unit_id: "Current unit ID: %{id} (%{name})"
+      none: "None"
+      cost: "Cost"
+      description: "Description"
+  indirect_costs:
     index:
       title: "Indirects"
       new_extra: "New indirect"
@@ -1054,15 +1066,12 @@ en:
         success: "Customer was successfully updated"
       destroy:
         success: "Customer was successfully deleted"
-
   app_configs:
     update:
       update_success: "Settings updated successfully"
-
   pdf_configs:
     update:
       success: "PDF configuration updated successfully."
-
   activerecord:
     errors:
       models:
@@ -1132,7 +1141,6 @@ en:
               invalid: "Please enter a valid email address"
             phone:
               blank: "Phone is required"
-
   demo_requests:
     title: "Request a Demo"
     subtitle: "Schedule a personalized 30-minute session to learn how Cotalo can optimize your quoting process"
@@ -1167,10 +1175,8 @@ en:
     admin_comment: "Admin comment"
     pending: "Pending"
     reviewed: "Reviewed"
-
 products_tab:
   extras_tab:
     include_in_subtotal_mobile: "Include indirects in product subtotal"
-
 extras_tab:
   include_in_subtotal_mobile: "Include indirects in product subtotal"

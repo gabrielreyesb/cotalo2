@@ -76,7 +76,7 @@
             <div class="card">
               <div class="card-header text-white">
                 <h5 class="mb-0">
-                  <i class="fa fa-calculator me-2"></i>{{ translations.pricing.total_price }}
+                  <i class="fa fa-dollar-sign me-2"></i>{{ translations.pricing.total_price }}
                 </h5>
               </div>
               <div class="card-body p-0">
@@ -89,6 +89,8 @@
                   @save:product="savePricingProduct"
                   @recalculate:pricing="ensurePricingUpdated"
                   @update:pricing="handlePricingUpdate"
+                  @waste-percentage-changed="val => handlePricingUpdate({ waste_percentage: Number(val) || 0 })"
+                  @margin-percentage-changed="val => handlePricingUpdate({ margin_percentage: Number(val) || 0 })"
                   @cancel="handleCancel"
                 />
               </div>
@@ -162,6 +164,7 @@ export default {
         pricing: false
       },
       isRecalculating: false,
+      userConfig: { waste_percentage: 0, width_margin: 0, length_margin: 0, show_material_simulation: true },
     };
   },
   computed: {
@@ -314,7 +317,7 @@ export default {
     },
 
     async fetchAvailableExtras() {
-      const response = await fetch('/api/v1/extras', {
+      const response = await fetch('/api/v1/indirect_costs', {
         headers: {
           'Accept': 'application/json',
           'X-Requested-With': 'XMLHttpRequest'
@@ -368,7 +371,8 @@ export default {
           this.userConfig = {
             waste_percentage: parseFloat(config.waste_percentage) || 0.0,
             width_margin: config.width_margin || 0,
-            length_margin: config.length_margin || 0
+        length_margin: config.length_margin || 0,
+        show_material_simulation: !!config.show_material_simulation
           };
         }
       } catch (error) {
@@ -378,7 +382,27 @@ export default {
 
     // Update methods
     updateProduct(updatedProduct) {
-      this.product = { ...this.product, ...updatedProduct };
+      // Deep-merge only the pieces provided to avoid wiping nested structures
+      if (!updatedProduct) return;
+
+      // Merge description if provided
+      if (Object.prototype.hasOwnProperty.call(updatedProduct, 'description')) {
+        this.product.description = updatedProduct.description;
+      }
+
+      // Merge data/general_info preserving existing materials, processes, etc.
+      if (updatedProduct.data) {
+        const incomingData = updatedProduct.data || {};
+        const currentData = this.product.data || {};
+        const incomingGI = incomingData.general_info || {};
+        const currentGI = currentData.general_info || {};
+
+        this.product.data = {
+          ...currentData,
+          ...incomingData,
+          general_info: { ...currentGI, ...incomingGI }
+        };
+      }
     },
 
     updateMaterials(materials) {
@@ -410,11 +434,15 @@ export default {
 
     updateExtras(extras) {
       this.product.data.extras = extras;
+      // Mirror to alias for gradual rename compatibility
+      this.product.data.indirect_costs = extras;
       this.markForRecalculation('extras');
     },
 
     updateIncludeExtrasInSubtotal(value) {
       this.product.data.include_extras_in_subtotal = value;
+      // Mirror to alias
+      this.product.data.include_indirect_costs_in_subtotal = value;
       this.markForRecalculation('pricing');
     },
 
@@ -724,6 +752,8 @@ export default {
     // Save and cancel methods
     async savePricingProduct() {
       if (this.saving) return;
+      // Client-side validations for critical fields
+      if (!this.validateProductInputs()) return;
       
       try {
         this.saving = true;
@@ -752,12 +782,9 @@ export default {
         
         if (response.ok) {
           const savedProduct = await response.json();
-          window.showSuccess('Product saved successfully!');
-          
-          // Redirect to products index after creating a new product
-          if (this.isNew) {
-            window.location.href = '/products';
-          }
+          window.showSuccess(`Producto ${this.isNew ? 'creado' : 'actualizado'} exitosamente`);
+          // Redirect to products index (both create and edit)
+          setTimeout(() => { window.location.href = '/products'; }, 600);
         } else {
           const error = await response.json();
           window.showError(`Failed to save product: ${(error.errors && error.errors.join(', ')) || 'Unknown error'}`);
@@ -768,6 +795,40 @@ export default {
       } finally {
         this.saving = false;
       }
+    },
+
+    validateProductInputs() {
+      const desc = (this.product?.description || '').trim();
+      if (!desc) {
+        window.showWarning('Ingresa la descripción del producto');
+        return false;
+      }
+
+      const gi = this.product?.data?.general_info || {};
+      const qty = Number(gi.quantity);
+      const width = Number(gi.width);
+      const length = Number(gi.length);
+
+      if (!qty || qty <= 0) {
+        window.showWarning('Ingresa la cantidad de piezas (> 0)');
+        return false;
+      }
+      if (!width || width <= 0) {
+        window.showWarning('Ingresa el ancho (> 0)');
+        return false;
+      }
+      if (!length || length <= 0) {
+        window.showWarning('Ingresa el largo (> 0)');
+        return false;
+      }
+
+      const hasMaterials = Array.isArray(this.product?.data?.materials) && this.product.data.materials.length > 0;
+      if (!hasMaterials) {
+        window.showWarning('Agrega al menos un material');
+        return false;
+      }
+
+      return true;
     },
 
     convertToApiFormat() {
@@ -816,6 +877,10 @@ export default {
 
     handlePricingUpdate(pricing) {
       this.product.data.pricing = { ...this.product.data.pricing, ...pricing };
+      // Recalcular inmediatamente al cambiar merma/margen
+      this.$nextTick(() => {
+        this.ensurePricingUpdated();
+      });
     }
   },
   
