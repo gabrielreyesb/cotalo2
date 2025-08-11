@@ -119,7 +119,7 @@
                 :label="'description'"
                 :placeholder="'Selecciona un material existente o agrega uno aquí directamente'"
                 :preselect-first="false"
-                tabindex="-1"
+                :tabindex="-1"
                 :disabled="!availableMaterials.length"
                 @select="onMaterialSelect"
                 :select-label="''"
@@ -135,6 +135,10 @@
                 target="_blank"
                 rel="noopener"
                 class="btn btn-outline-success"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                data-bs-trigger="hover"
+                tabindex="-1"
                 title="Abrir lista de materiales en una pestaña nueva"
               >
                 <i class="fa fa-cubes"></i>
@@ -147,6 +151,11 @@
                 class="btn btn-primary" 
                 @click="addMaterial" 
                 :disabled="!canAdd"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                data-bs-trigger="hover"
+                tabindex="-1"
+                title="Agregar material seleccionado"
               >
                 <i class="fa fa-plus me-1"></i> Agregar
               </button>
@@ -157,6 +166,10 @@
               <button 
                 class="btn btn-primary" 
                 @click="toggleManualMaterialForm"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                data-bs-trigger="hover"
+                tabindex="-1"
                 title="Agregar material manual"
               >
                 <i class="fa fa-plus me-1"></i> Manual
@@ -223,6 +236,9 @@
                   <button 
                     class="btn btn-sm btn-outline-success me-3" 
                     @click="toggleAllMaterials"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    tabindex="-1"
                     :title="allMaterialsCollapsed ? 'Expandir todos' : 'Colapsar todos'"
                   >
                     <i :class="allMaterialsCollapsed ? 'fa fa-chevron-right' : 'fa fa-chevron-down'"></i>
@@ -267,6 +283,9 @@
                   <button 
                     class="btn btn-sm btn-outline-secondary me-3" 
                     @click="toggleProcessesView(materialIndex)"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    tabindex="-1"
                     :title="expandedProcesses[materialIndex] ? 'Ocultar procesos' : 'Mostrar procesos'">
                     <i :class="expandedProcesses[materialIndex] ? 'fa fa-chevron-down' : 'fa fa-chevron-right'"></i>
                   </button>
@@ -388,6 +407,9 @@
                     <button 
                       class="btn btn-sm btn-outline-danger" 
                       @click="removeMaterial(materialIndex)"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="top"
+                       tabindex="-1"
                       title="Eliminar"
                     >
                       <i class="fa fa-trash"></i>
@@ -411,6 +433,7 @@
                         :label="'description'"
                         :placeholder="'Selecciona un proceso'"
                         :disabled="!filteredAvailableProcesses.length"
+                        :tabindex="-1"
                         class="process-multiselect"
                       />
                     </div>
@@ -450,6 +473,10 @@
                         target="_blank"
                         rel="noopener"
                         class="btn btn-outline-success"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-trigger="hover"
+                        tabindex="-1"
                         title="Abrir lista de procesos en una pestaña nueva"
                       >
                         <i class="fa fa-cogs"></i>
@@ -465,6 +492,11 @@
                         class="btn btn-primary" 
                         @click="addProcessToMaterial(materialIndex)"
                         :disabled="!selectedProcessForMaterial[materialIndex]"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-trigger="hover"
+                        tabindex="-1"
+                        title="Agregar proceso"
                         style="background-color: #42b983 !important; border-color: #42b983 !important; color: white !important;"
                       >
                         <i class="fa fa-plus me-1"></i> Agregar
@@ -477,6 +509,11 @@
                       <button 
                         class="btn btn-outline-success" 
                         @click="toggleProcessForm(materialIndex)"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-trigger="hover"
+                        tabindex="-1"
+                        title="Cancelar"
                         style="color: #42b983 !important; border-color: #42b983 !important; background-color: transparent !important;"
                       >
                         Cancelar
@@ -513,7 +550,7 @@
                 <!-- Processes List for this Material -->
                 <div v-if="material.processes && material.processes.length && expandedProcesses[materialIndex]" class="processes-list">
                   <div v-for="(process, processIndex) in material.processes" :key="process.id || processIndex" class="process-item">
-                    <div class="d-flex align-items-center p-2 border-top subtle-border-top" :class="{ 'rounded-bottom': processIndex === material.processes.length - 1 }" style="background-color: #1a1a1a;">
+                     <div class="d-flex align-items-center p-2 border-top subtle-border-top" :class="{ 'rounded-bottom': processIndex === material.processes.length - 1 }" style="background-color: #1a1a1a;">
                       
                       <!-- Process Name -->
                       <div class="flex-grow-1 me-2" style="padding-left: 2rem;">
@@ -577,6 +614,10 @@
                         <button 
                           class="btn btn-sm btn-outline-danger" 
                           @click="removeProcessFromMaterial(materialIndex, processIndex)"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="top"
+                          data-bs-trigger="hover"
+                          tabindex="-1"
                           title="Eliminar proceso"
                         >
                           <i class="fa fa-trash"></i>
@@ -992,7 +1033,16 @@ export default {
         const tooltipElements = this.$el.querySelectorAll('[data-bs-toggle="tooltip"]');
         tooltipElements.forEach(el => {
           if (window.bootstrap && window.bootstrap.Tooltip) {
-            new window.bootstrap.Tooltip(el);
+            const t = new window.bootstrap.Tooltip(el);
+            el.addEventListener('click', () => {
+              // Ocultar tooltip al hacer click para evitar que quede pegado
+              try {
+                t.hide();
+              } catch (e) {}
+            });
+            el.addEventListener('blur', () => {
+              try { t.hide(); } catch (e) {}
+            });
           }
         });
       });
@@ -1269,11 +1319,18 @@ export default {
         this.processVeces[materialIndex] = 1;
         this.processSide[materialIndex] = 'front';
       }
+      // Re-initialize tooltips for dynamically shown buttons
+      this.$nextTick(() => {
+        this.initializeTooltips();
+      });
     },
     
     toggleProcessesView(materialIndex) {
       this.expandedProcesses[materialIndex] = !this.expandedProcesses[materialIndex];
       // Si no hay procesos, solo cambia el icono pero no hace nada más
+      this.$nextTick(() => {
+        this.initializeTooltips();
+      });
     },
     
     addProcessToMaterial(materialIndex) {
@@ -1352,6 +1409,10 @@ export default {
         needsProcessRecalculation: true,
         needsPricingRecalculation: false  // No recalcular materiales, solo procesos
       });
+      // Ensure tooltips exist for new action buttons
+      this.$nextTick(() => {
+        this.initializeTooltips();
+      });
     },
     
     removeProcessFromMaterial(materialIndex, processIndex) {
@@ -1366,6 +1427,9 @@ export default {
         materialId: material.id,
         needsProcessRecalculation: true,
         needsPricingRecalculation: true
+      });
+      this.$nextTick(() => {
+        this.initializeTooltips();
       });
     },
     

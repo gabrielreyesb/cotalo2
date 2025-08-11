@@ -65,6 +65,10 @@
                 target="_blank"
                 rel="noopener"
                 class="btn btn-outline-success"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                data-bs-trigger="hover"
+                tabindex="-1"
                 title="Abrir lista de procesos en una pestaña nueva"
               >
                 <i class="fa fa-cogs"></i>
@@ -75,6 +79,11 @@
                 class="btn btn-primary" 
                 @click="addGlobalProcess" 
                 :disabled="!canAddGlobalProcess"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                data-bs-trigger="hover"
+                tabindex="-1"
+                title="Agregar proceso global"
               >
                 <i class="fa fa-plus me-1"></i> Agregar proceso
               </button>
@@ -92,8 +101,20 @@
             <div class="process-item mb-3">
               <div class="process-container border rounded subtle-border">
                 <div class="process-header d-flex align-items-center p-3">
+                  <!-- Collapse/Expand global processes list -->
+                  <button 
+                    class="btn btn-sm btn-outline-secondary me-3"
+                    @click="showGlobalProcessesList = !showGlobalProcessesList"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    data-bs-trigger="hover"
+                    tabindex="-1"
+                    :title="showGlobalProcessesList ? 'Colapsar lista' : 'Mostrar lista'"
+                  >
+                    <i :class="showGlobalProcessesList ? 'fa fa-chevron-down' : 'fa fa-chevron-right'"></i>
+                  </button>
                   <!-- Process Description Column -->
-                  <div class="process-info process-description-column me-4" style="width: 300px; min-width: 300px;">
+                  <div class="process-info process-description-column me-4" style="flex: 1 1 auto; min-width: 300px;">
                     <strong class="text-success">Descripción de proceso</strong>
                   </div>
                   
@@ -115,7 +136,7 @@
                   </div>
                   
                   <!-- Action Buttons -->
-                  <div class="d-flex align-items-center justify-content-end gap-2 me-1" style="width: 80px;">
+                  <div class="d-flex align-items-center justify-content-end gap-2 me-1" style="flex: 0 0 80px;">
                     <strong class="text-success">Acciones</strong>
                   </div>
                 </div>
@@ -123,13 +144,14 @@
             </div>
             
             <!-- Process Items -->
-            <div v-for="(process, index) in product.data.global_processes" :key="process.id" class="process-item mb-3">
-              <!-- Process Container -->
-              <div class="process-container border rounded subtle-border">
-                <!-- Process Header -->
-                <div class="process-header d-flex align-items-center p-3">
+            <div v-if="showGlobalProcessesList">
+              <div v-for="(process, index) in product.data.global_processes" :key="process.id" class="process-item mb-3">
+                <!-- Process Container -->
+                <div class="process-container border rounded subtle-border">
+                  <!-- Process Header -->
+                  <div class="process-header d-flex align-items-center p-3">
                   <!-- Process Name -->
-                  <div class="process-info process-description-column me-4" style="width: 300px; min-width: 300px;">
+                  <div class="process-info process-description-column me-4" style="flex: 1 1 auto; min-width: 300px;">
                     <span class="process-name text-truncate d-block" :title="process.description">
                       {{ process.description }}
                     </span>
@@ -172,18 +194,24 @@
                     </div>
                   </div>
                   
-                  <!-- Action Buttons -->
-                  <div class="d-flex align-items-center justify-content-end gap-2 me-1" style="width: 80px;">
-                    <button 
-                      class="btn btn-sm btn-outline-danger" 
-                      @click="removeGlobalProcess(index)"
-                      title="Eliminar proceso"
-                    >
-                      <i class="fa fa-trash"></i>
-                    </button>
+                    <!-- Action Buttons -->
+                    <div class="d-flex align-items-center justify-content-end gap-2 me-1" style="flex: 0 0 80px;">
+                      <button 
+                        class="btn btn-sm btn-outline-danger" 
+                        @click="removeGlobalProcess(index)"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-trigger="hover"
+                        tabindex="-1"
+                        title="Eliminar proceso"
+                      >
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
+            </div>
             </div>
           </div>
         </div>
@@ -265,6 +293,10 @@
                 target="_blank"
                 rel="noopener"
                 class="btn btn-outline-success"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                data-bs-trigger="hover"
+                tabindex="-1"
                 title="Abrir lista de costos indirectos en una pestaña nueva"
               >
                 <i class="fa fa-plus-circle"></i>
@@ -275,6 +307,11 @@
                 class="btn btn-primary" 
                 @click="addExtra" 
                 :disabled="!canAddExtra"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                data-bs-trigger="hover"
+                tabindex="-1"
+                title="Agregar costo indirecto"
               >
                 <i class="fa fa-plus me-1"></i> Agregar indirecto
               </button>
@@ -292,8 +329,20 @@
             <div class="extra-item mb-3">
               <div class="extra-container border rounded subtle-border">
                 <div class="extra-header d-flex align-items-center p-3">
+                  <!-- Collapse/Expand extras list -->
+                  <button 
+                    class="btn btn-sm btn-outline-secondary me-3"
+                    @click="showExtrasList = !showExtrasList"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    data-bs-trigger="hover"
+                    tabindex="-1"
+                    :title="showExtrasList ? 'Colapsar lista' : 'Mostrar lista'"
+                  >
+                    <i :class="showExtrasList ? 'fa fa-chevron-down' : 'fa fa-chevron-right'"></i>
+                  </button>
                   <!-- Extra Description Column -->
-                  <div class="extra-info extra-description-column me-4" style="width: 300px; min-width: 300px;">
+                  <div class="extra-info extra-description-column me-4" style="flex: 1 1 auto; min-width: 300px;">
                     <strong class="text-success">Descripción de costo indirecto</strong>
                   </div>
                   
@@ -312,7 +361,7 @@
                   </div>
                   
                   <!-- Action Buttons -->
-                  <div class="d-flex align-items-center justify-content-end gap-2 me-1" style="width: 80px;">
+                  <div class="d-flex align-items-center justify-content-end gap-2 me-1" style="flex: 0 0 80px;">
                     <strong class="text-success">Acciones</strong>
                   </div>
                 </div>
@@ -320,13 +369,14 @@
             </div>
             
             <!-- Extra Items -->
-            <div v-for="(extra, index) in product.data.extras" :key="extra.id" class="extra-item mb-3">
-              <!-- Extra Container -->
-              <div class="extra-container border rounded subtle-border">
-                <!-- Extra Header -->
-                <div class="extra-header d-flex align-items-center p-3">
+            <div v-if="showExtrasList">
+              <div v-for="(extra, index) in product.data.extras" :key="extra.id" class="extra-item mb-3">
+                <!-- Extra Container -->
+                <div class="extra-container border rounded subtle-border">
+                  <!-- Extra Header -->
+                  <div class="extra-header d-flex align-items-center p-3">
                   <!-- Extra Name -->
-                  <div class="extra-info extra-description-column me-4" style="width: 300px; min-width: 300px;">
+                  <div class="extra-info extra-description-column me-4" style="flex: 1 1 auto; min-width: 300px;">
                     <span class="extra-name text-truncate d-block" :title="extra.name || extra.description">
                       {{ extra.name || extra.description }}
                     </span>
@@ -366,15 +416,20 @@
                     </div>
                   </div>
                   
-                  <!-- Action Buttons -->
-                  <div class="d-flex align-items-center justify-content-end gap-2 me-1" style="width: 80px;">
-                    <button 
-                      class="btn btn-sm btn-outline-danger" 
-                      @click="removeExtra(index)"
-                      title="Eliminar costo indirecto"
-                    >
-                      <i class="fa fa-trash"></i>
-                    </button>
+                    <!-- Action Buttons -->
+                    <div class="d-flex align-items-center justify-content-end gap-2 me-1" style="flex: 0 0 80px;">
+                      <button 
+                        class="btn btn-sm btn-outline-danger" 
+                        @click="removeExtra(index)"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-trigger="hover"
+                        tabindex="-1"
+                        title="Eliminar costo indirecto"
+                      >
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -383,9 +438,6 @@
         </div>
       </div>
     </div>
-
-
-  </div>
 </template>
 
 <script>
@@ -421,7 +473,9 @@ export default {
       selectedExtraId: null,
       extraQuantity: 1,
       globalProcessVeces: 1,
-      includeInSubtotal: true
+      includeInSubtotal: true,
+      showGlobalProcessesList: true,
+      showExtrasList: true
     };
   },
   computed: {
@@ -450,10 +504,14 @@ export default {
     initializeTooltips() {
       // Inicializar tooltips de Bootstrap
       this.$nextTick(() => {
-        const tooltipElements = this.$el.querySelectorAll('[data-bs-toggle="tooltip"]');
+        const rootEl = (this.$el && typeof this.$el.querySelectorAll === 'function') ? this.$el : document;
+        const tooltipElements = rootEl.querySelectorAll('[data-bs-toggle="tooltip"]');
         tooltipElements.forEach(el => {
           if (window.bootstrap && window.bootstrap.Tooltip) {
-            new window.bootstrap.Tooltip(el);
+            const existing = window.bootstrap.Tooltip.getInstance(el);
+            const t = existing || new window.bootstrap.Tooltip(el);
+            el.addEventListener('click', () => { try { t.hide(); } catch (e) {} });
+            el.addEventListener('blur', () => { try { t.hide(); } catch (e) {} });
           }
         });
       });
@@ -474,11 +532,7 @@ export default {
       this.globalProcessVeces = 1;
       
       // Debug logging for quantity validation
-      console.log('Debug - Product quantity check:', {
-        quantity: this.product.data.general_info.quantity,
-        hasQuantity: !!this.product.data.general_info.quantity,
-        quantityValid: this.product.data.general_info.quantity > 0
-      });
+      // Debug removed
       
       // Temporarily comment out validation to test
       // Validate product quantity
@@ -502,19 +556,10 @@ export default {
       }
       
       // Debug logging for product structure
-      console.log('Debug - Product structure:', {
-        product: this.product,
-        generalInfo: this.product.data.general_info,
-        quantity: this.product.data.general_info.quantity
-      });
+      // Debug removed
       
       // Debug logging for selected process
-      console.log('Debug - Selected process:', {
-        selectedProcess,
-        price: selectedProcess.price,
-        unit: selectedProcess.unit,
-        description: selectedProcess.description
-      });
+      // Debug removed
       
       // Calculate process price based on unit type
       const basePrice = parseFloat(selectedProcess.price) || 0;
@@ -524,46 +569,29 @@ export default {
       const productQuantity = this.product.data.general_info.quantity || 1;
       
       // Debug logging
-      console.log('Debug - Global Process Calculation:', {
-        basePrice,
-        productQuantity,
-        veces,
-        side,
-        sideMultiplier,
-        unit: selectedProcess.unit
-      });
+      // Debug removed
       
       let calculatedPrice = basePrice;
       const unitStr = typeof selectedProcess.unit === 'string'
         ? selectedProcess.unit
         : (selectedProcess.unit && selectedProcess.unit.name || selectedProcess.unit && selectedProcess.unit.abbreviation || '');
       
-      console.log('Debug - Unit string:', {
-        originalUnit: selectedProcess.unit,
-        unitStr,
-        unitType: typeof selectedProcess.unit
-      });
+      // Debug removed
       
-      console.log('Debug - Unit check:', {
-        unitStr: unitStr.toLowerCase(),
-        includesPieza: unitStr.toLowerCase().includes('pieza'),
-        includesPza: unitStr.toLowerCase().includes('pza'),
-        includesMillar: unitStr.toLowerCase().includes('millar'),
-        includesMil: unitStr.toLowerCase().includes('mil')
-      });
+      // Debug removed
       
       if (unitStr.toLowerCase().includes('pieza') || unitStr.toLowerCase().includes('pza')) {
         // Per piece
         calculatedPrice = basePrice * productQuantity * veces * sideMultiplier;
-        console.log('Debug - Per piece calculation:', `${basePrice} × ${productQuantity} × ${veces} × ${sideMultiplier} = ${calculatedPrice}`);
+        // Debug removed
       } else if (unitStr.toLowerCase().includes('millar') || unitStr.toLowerCase().includes('mil')) {
         // Per thousand
         calculatedPrice = (basePrice * productQuantity * veces * sideMultiplier) / 1000;
-        console.log('Debug - Per thousand calculation:', `(${basePrice} × ${productQuantity} × ${veces} × ${sideMultiplier}) ÷ 1000 = ${calculatedPrice}`);
+        // Debug removed
       } else {
         // Default: per piece
         calculatedPrice = basePrice * productQuantity * veces * sideMultiplier;
-        console.log('Debug - Default calculation:', `${basePrice} × ${productQuantity} × ${veces} × ${sideMultiplier} = ${calculatedPrice}`);
+        // Debug removed
       }
       
       // Create new global process object
@@ -576,11 +604,7 @@ export default {
         price: calculatedPrice // Store the calculated total price
       };
       
-      console.log('Debug - Final process object:', {
-        unitPrice: newProcess.unitPrice,
-        price: newProcess.price,
-        calculatedPrice
-      });
+      // Debug removed
       
       // Add process to global processes
       if (!this.product.data.global_processes) {
@@ -599,6 +623,7 @@ export default {
         processId: newProcess.id,
         price: calculatedPrice
       });
+      this.$nextTick(() => this.initializeTooltips());
     },
     
     removeGlobalProcess(index) {
@@ -606,6 +631,7 @@ export default {
         this.product.data.global_processes.splice(index, 1);
         this.$emit('update:global-processes', this.product.data.global_processes);
       }
+      this.$nextTick(() => this.initializeTooltips());
     },
     
     getSideLabel(side) {
@@ -672,6 +698,7 @@ export default {
       
       // Emit update
       this.$emit('update:extras', this.product.data.extras);
+      this.$nextTick(() => this.initializeTooltips());
     },
     
     removeExtra(index) {
@@ -679,6 +706,7 @@ export default {
         this.product.data.extras.splice(index, 1);
         this.$emit('update:extras', this.product.data.extras);
       }
+      this.$nextTick(() => this.initializeTooltips());
     },
     
     updateGlobalProcessCalculations(index) {
@@ -762,6 +790,15 @@ export default {
 
 <style scoped lang="scss">
 .additional-costs-tab-v2 {
+    /* Ocultar tooltip de ayuda "Press enter to select" del multiselect (producción) */
+    :deep(.multiselect__option--highlight::after) {
+      display: none !important;
+    }
+
+    :deep(.multiselect__option--highlight .multiselect__option--selected) {
+      display: none !important;
+    }
+
   /* Estilos para bordes sutiles */
   .subtle-border {
     border-color: #6c757d !important; /* Color gris sutil como el selector */
@@ -808,9 +845,9 @@ export default {
       color: var(--bs-body-color);
     }
     
-    .process-info {
-      flex-grow: 1;
-    }
+      .process-info {
+        flex: 1 1 auto !important;
+      }
     
     .process-description-column {
       overflow: hidden;
@@ -858,7 +895,7 @@ export default {
     }
     
     .extra-info {
-      flex-grow: 1;
+      flex: 1 1 auto !important;
     }
     
     .extra-description-column {
