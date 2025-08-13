@@ -510,8 +510,8 @@ class Product < ApplicationRecord
     return 0 unless material_record
     
     # Get values or defaults
-    # Use user-modified price if available, otherwise use material record price
-    material_price = material["price"].to_f > 0 ? material["price"].to_f : (material_record.price || 0)
+    # Use user-modified price if available, otherwise use material record cost
+    material_price = material["price"].to_f > 0 ? material["price"].to_f : (material_record.cost || 0)
     material_width = material["ancho"].to_f > 0 ? material["ancho"].to_f : (material_record.ancho || 0)
     material_length = material["largo"].to_f > 0 ? material["largo"].to_f : (material_record.largo || 0)
     material_weight = material_record.weight || 0

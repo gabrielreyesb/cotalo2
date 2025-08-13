@@ -9,8 +9,8 @@ class QuoteMailer < ApplicationMailer
     Rails.logger.info "Preparing email for quote \\#{@quote.id}"
     Rails.logger.info "PDF content size: \\#{@pdf_content.bytesize} bytes"
     
-    @signature_name = @user.get_config('customer_name').presence || "Cotalo"
-    @signature_company = @user.get_config('company_name').presence || "Cotalo"
+    @signature_name = @user.name.presence || @user.get_config('customer_name').presence
+    @signature_company = @user.company.presence || @user.get_config('company_name').presence
     @logo_url = @user.get_config(AppConfig::COMPANY_LOGO)
     
     begin

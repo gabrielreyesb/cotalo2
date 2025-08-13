@@ -17,6 +17,9 @@ class User < ApplicationRecord
   has_many :suggestions, dependent: :destroy
   has_many :customers, dependent: :destroy
 
+  # Onboarding fields
+  validates :phone, presence: true, on: :create
+
   after_create :setup_initial_data, if: :persisted?
   after_create :send_admin_notification, if: :persisted?
   after_create :send_welcome_email, if: :persisted?
@@ -201,69 +204,76 @@ class User < ApplicationRecord
 
   private
 
+  # Create or find unit by name and abbreviation, with optional fallback name to avoid uniqueness collisions
+  def find_or_create_unit(name, abbreviation, fallback_name: nil)
+    # Prefer matching by abbreviation (unique), then by provided name, then by fallback name
+    existing = Unit.find_by(abbreviation: abbreviation) || Unit.find_by(name: name) || (fallback_name.present? ? Unit.find_by(name: fallback_name) : nil)
+    return existing if existing
+    Unit.create!(name: name, abbreviation: abbreviation)
+  end
+
   def setup_initial_data
     setup_trial_period
     begin
       Rails.logger.info "[setup_initial_data] Creating or finding units..."
-      mt2_unit = Unit.find_or_create_by!(name: 'mt2', abbreviation: 'm²')
-      pieza_unit = Unit.find_or_create_by!(name: 'pieza', abbreviation: 'pieza')
-      pliego_unit = Unit.find_or_create_by!(name: 'pliego', abbreviation: 'pliego')
-      kg_unit = Unit.find_or_create_by!(name: 'kg', abbreviation: 'kg')
+      mt2_unit = find_or_create_unit('Metro cuadrado', 'm²', fallback_name: 'mt2')
+      pieza_unit = find_or_create_unit('pieza', 'pieza')
+      pliego_unit = find_or_create_unit('pliego', 'pliego')
+      kg_unit = find_or_create_unit('kg', 'kg')
       # millar_unit removed
 
       Rails.logger.info "[setup_initial_data] Setting default app configs..."
       set_config(AppConfig::WASTE_PERCENTAGE, 5.0, AppConfig::NUMERIC)
       set_config(AppConfig::WIDTH_MARGIN, 2, AppConfig::NUMERIC)
       set_config(AppConfig::LENGTH_MARGIN, 2, AppConfig::NUMERIC)
-      set_config('customer_name', 'Cotalo')
-      set_config('company_name', 'Cotalo')
+      # Remove name/company defaults from AppConfig; these live on User now
       set_config(AppConfig::THEME, 'dark')
       set_config(AppConfig::SHOW_MATERIAL_SIMULATION, true)
 
       Rails.logger.info "[setup_initial_data] Creating demo materials..."
-      # Create materials with mt2_unit (area-based) - no weight field
+      # Create materials with mt2_unit (area-based)
       materials.create!([
-        { description: 'Cartulina caple sulfatada 12 pts', client_description: 'Cartulina caple sulfatada 12 pts', price: 9.5, unit: mt2_unit, ancho: 100, largo: 100 },
-        { description: 'Cartulina caple sulfatada 14 pts', client_description: 'Cartulina caple sulfatada 14 pts', price: 11, unit: mt2_unit, ancho: 100, largo: 100 },
-        { description: 'Papel couché brillante 150 g/m²', client_description: 'Papel couché brillante 150 g/m²', price: 7, unit: mt2_unit, ancho: 100, largo: 100 },
-        { description: 'Papel couché mate 170 g/m²', client_description: 'Papel de acabado elegante para folletos y trípticos', price: 7.5, unit: mt2_unit, ancho: 100, largo: 100 },
-        { description: 'Papel bond 90 g/m²', client_description: 'Papel común para hojas membretadas y volantes simples', price: 5.0, unit: mt2_unit, ancho: 100, largo: 100 },
-        { description: 'Cartulina opalina 250 g/m²', client_description: 'Papel rígido blanco para tarjetas, folders, portadas', price: 9.5, unit: mt2_unit, ancho: 100, largo: 100 },
-        { description: 'Papel ecológico kraft 180 g/m²', client_description: 'Para proyectos con estética sustentable', price: 8.0, unit: mt2_unit, ancho: 100, largo: 100 },
-        { description: 'PVC sintético 300 micras', client_description: 'Material plástico para menús, credenciales', price: 12.0, unit: mt2_unit, ancho: 100, largo: 100 },
-        { description: 'Acetato transparente', client_description: 'Usado en cubiertas o efectos gráficos', price: 10.0, unit: mt2_unit, ancho: 100, largo: 100 },
-        { description: 'Etiqueta adhesiva blanca 80 g/m²', client_description: 'Para stickers o etiquetas impresas', price: 6.5, unit: mt2_unit, ancho: 100, largo: 100 },
-        { description: 'Papel reciclado 110 g/m²', client_description: 'Papel texturizado para papelería con identidad ecológica', price: 6.0, unit: mt2_unit, ancho: 100, largo: 100 }
+        { description: 'Cartulina caple sulfatada 12 pts', client_description: 'Cartulina caple sulfatada 12 pts', cost: 9.5, unit: mt2_unit, ancho: 100, largo: 100 },
+        { description: 'Cartulina caple sulfatada 14 pts', client_description: 'Cartulina caple sulfatada 14 pts', cost: 11, unit: mt2_unit, ancho: 100, largo: 100 },
+        { description: 'Papel couché brillante 150 g/m²', client_description: 'Papel couché brillante 150 g/m²', cost: 7, unit: mt2_unit, ancho: 100, largo: 100 },
+        { description: 'Papel couché mate 170 g/m²', client_description: 'Papel de acabado elegante para folletos y trípticos', cost: 7.5, unit: mt2_unit, ancho: 100, largo: 100 },
+        { description: 'Papel bond 90 g/m²', client_description: 'Papel común para hojas membretadas y volantes simples', cost: 5.0, unit: mt2_unit, ancho: 100, largo: 100 },
+        { description: 'Cartulina opalina 250 g/m²', client_description: 'Papel rígido blanco para tarjetas, folders, portadas', cost: 9.5, unit: mt2_unit, ancho: 100, largo: 100 },
+        { description: 'Papel ecológico kraft 180 g/m²', client_description: 'Para proyectos con estética sustentable', cost: 8.0, unit: mt2_unit, ancho: 100, largo: 100 },
+        { description: 'PVC sintético 300 micras', client_description: 'Material plástico para menús, credenciales', cost: 12.0, unit: mt2_unit, ancho: 100, largo: 100 },
+        { description: 'Acetato transparente', client_description: 'Usado en cubiertas o efectos gráficos', cost: 10.0, unit: mt2_unit, ancho: 100, largo: 100 },
+        { description: 'Etiqueta adhesiva blanca 80 g/m²', client_description: 'Para stickers o etiquetas impresas', cost: 6.5, unit: mt2_unit, ancho: 100, largo: 100 },
+        { description: 'Papel reciclado 110 g/m²', client_description: 'Papel texturizado para papelería con identidad ecológica', cost: 6.0, unit: mt2_unit, ancho: 100, largo: 100 }
       ])
       
       # Create materials with kg_unit (weight-based) - with weight field
       materials.create!([
-        { description: 'Cartón microcorrugado blanco', client_description: 'Cartón microcorrugado blanco', price: 17, unit: kg_unit, ancho: 100, largo: 100, weight: 0.5 },
-        { description: 'Cartón gris (Backing)', client_description: 'Cartón gris (Backing)', price: 13, unit: kg_unit, ancho: 100, largo: 100, weight: 0.3 }
+        { description: 'Cartón microcorrugado blanco', client_description: 'Cartón microcorrugado blanco', cost: 17, unit: kg_unit, ancho: 100, largo: 100, weight: 0.5 },
+        { description: 'Cartón gris (Backing)', client_description: 'Cartón gris (Backing)', cost: 13, unit: kg_unit, ancho: 100, largo: 100, weight: 0.3 }
       ])
 
       Rails.logger.info "[setup_initial_data] Creating demo manufacturing processes..."
       manufacturing_processes.create!([
-        { name: 'Impresión offset 4 tintas (CMYK)', description: 'Impresión a color estándar en cartulina caple, ideal para tirajes medianos y altos.', cost: 4.00, unit: mt2_unit },
-        { name: 'Impresión Pantone (1 tinta)', description: 'Impresión con tinta directa Pantone para colores especiales o logotipos.', cost: 2.50, unit: mt2_unit },
-        { name: 'Barniz UV spot', description: 'Aplicación localizada de barniz brillante para resaltar elementos gráficos.', cost: 3.20, unit: mt2_unit },
-        { name: 'Laminado brillante', description: 'Película protectora de acabado brillante para superficies impresas.', cost: 2.80, unit: mt2_unit },
-        { name: 'Laminado mate', description: 'Película protectora de acabado mate, ideal para empaques premium.', cost: 3.00, unit: mt2_unit },
-        { name: 'Hot stamping', description: 'Aplicación de foil metálico (oro, plata, etc.) para efectos decorativos de alto impacto.', cost: 6.00, unit: mt2_unit },
-        { name: 'Relieve seco (embossing)', description: 'Técnica de realce sin tinta que genera volumen o textura sobre el material.', cost: 5.00, unit: mt2_unit },
-        { name: 'Troquelado', description: 'Corte especializado con troquel metálico para dar forma a la caja.', cost: 300.00 / 1000.0, unit: pieza_unit },
-        { name: 'Hendido y corte', description: 'Preparación de dobleces con corte parcial para facilitar el armado.', cost: 180.00 / 1000.0, unit: pieza_unit },
-        { name: 'Pegado automático', description: 'Aplicación automática de adhesivo para el ensamblado de cajas plegadizas.', cost: 250.00 / 1000.0, unit: pieza_unit },
-        { name: 'Rebase o registro de color', description: 'Ajuste de colores entre pliegos para mantener consistencia cromática', cost: 0.20, unit: pieza_unit },
-        { name: 'Inserción manual', description: 'Colocación de elementos sueltos (tarjetas, hojas, encartes) dentro de folders o revistas', cost: 0.30, unit: pieza_unit },
-        { name: 'Encuadernado con grapa (caballo)', description: 'Grapado central típico en folletos, revistas pequeñas o catálogos', cost: 0.35, unit: pieza_unit },
-        { name: 'Encuadernado hotmelt (pegado)', description: 'Pegado lateral con termofusible (hotmelt) para libretas o catálogos', cost: 0.50, unit: pieza_unit },
-        { name: 'Fresado para encuadernado', description: 'Preparación del lomo para recibir pegamento o encuadernación', cost: 0.40, unit: pieza_unit },
-        { name: 'Perforado múltiple', description: 'Para anillas o encuadernaciones tipo argolla', cost: 0.20, unit: pieza_unit },
-        { name: 'Plastificado en frío', description: 'Alternativa al laminado para tirajes cortos o materiales sensibles al calor', cost: 3.50, unit: mt2_unit },
-        { name: 'Numeración variable', description: 'Impresión digital de datos variables, como folios o códigos', cost: 0.40, unit: pieza_unit },
-        { name: 'Barniz mate total', description: 'Recubrimiento general mate para folders, portadas o papelería de lujo', cost: 2.80, unit: mt2_unit },
-        { name: 'Contracolado', description: 'Unión de capas de papel/cartulina para dar mayor rigidez o acabado especial', cost: 4.20, unit: mt2_unit }
+        { name: 'Impresión offset 4 tintas (CMYK)', description: 'Impresión a color estándar en cartulina caple, ideal para tirajes medianos y altos.', cost: 4.00, unit: mt2_unit, side: 'front' },
+        { name: 'Impresión Pantone (1 tinta)', description: 'Impresión con tinta directa Pantone para colores especiales o logotipos.', cost: 2.50, unit: mt2_unit, side: 'front' },
+        { name: 'Barniz UV spot', description: 'Aplicación localizada de barniz brillante para resaltar elementos gráficos.', cost: 3.20, unit: mt2_unit, side: 'front' },
+        { name: 'Laminado brillante', description: 'Película protectora de acabado brillante para superficies impresas.', cost: 2.80, unit: mt2_unit, side: 'front' },
+        { name: 'Laminado mate', description: 'Película protectora de acabado mate, ideal para empaques premium.', cost: 3.00, unit: mt2_unit, side: 'front' },
+        { name: 'Hot stamping', description: 'Aplicación de foil metálico (oro, plata, etc.) para efectos decorativos de alto impacto.', cost: 6.00, unit: mt2_unit, side: 'front' },
+        { name: 'Relieve seco (embossing)', description: 'Técnica de realce sin tinta que genera volumen o textura sobre el material.', cost: 5.00, unit: mt2_unit, side: 'front' },
+        { name: 'Troquelado', description: 'Corte especializado con troquel metálico para dar forma a la caja.', cost: 300.00 / 1000.0, unit: pieza_unit, side: 'front' },
+        { name: 'Hendido y corte', description: 'Preparación de dobleces con corte parcial para facilitar el armado.', cost: 180.00 / 1000.0, unit: pieza_unit, side: 'front' },
+        { name: 'Pegado automático', description: 'Aplicación automática de adhesivo para el ensamblado de cajas plegadizas.', cost: 250.00 / 1000.0, unit: pieza_unit, side: 'front' },
+        { name: 'Rebase o registro de color', description: 'Ajuste de colores entre pliegos para mantener consistencia cromática', cost: 0.20, unit: pieza_unit, side: 'front' },
+        { name: 'Inserción manual', description: 'Colocación de elementos sueltos (tarjetas, hojas, encartes) dentro de folders o revistas', cost: 0.30, unit: pieza_unit, side: 'front' },
+        { name: 'Encuadernado con grapa (caballo)', description: 'Grapado central típico en folletos, revistas pequeñas o catálogos', cost: 0.35, unit: pieza_unit, side: 'front' },
+        { name: 'Encuadernado hotmelt (pegado)', description: 'Pegado lateral con termofusible (hotmelt) para libretas o catálogos', cost: 0.50, unit: pieza_unit, side: 'front' },
+        { name: 'Fresado para encuadernado', description: 'Preparación del lomo para recibir pegamento o encuadernación', cost: 0.40, unit: pieza_unit, side: 'front' },
+        { name: 'Perforado múltiple', description: 'Para anillas o encuadernaciones tipo argolla', cost: 0.20, unit: pieza_unit, side: 'front' },
+        { name: 'Plastificado en frío', description: 'Alternativa al laminado para tirajes cortos o materiales sensibles al calor', cost: 3.50, unit: mt2_unit, side: 'front' },
+        { name: 'Numeración variable', description: 'Impresión digital de datos variables, como folios o códigos', cost: 0.40, unit: pieza_unit, side: 'front' },
+        { name: 'Barniz mate total', description: 'Recubrimiento general mate para folders, portadas o papelería de lujo', cost: 2.80, unit: mt2_unit, side: 'front' },
+        { name: 'Contracolado', description: 'Unión de capas de papel/cartulina para dar mayor rigidez o acabado especial', cost: 4.20, unit: mt2_unit, side: 'front' }
       ])
 
       Rails.logger.info "[setup_initial_data] Creating demo indirect costs..."
@@ -286,11 +296,15 @@ class User < ApplicationRecord
       ])
 
       Rails.logger.info "[setup_initial_data] Creating demo price margins..."
-      price_margins.create!([
-        { min_price: 0, max_price: 5000, margin_percentage: 10 },
-        { min_price: 5001, max_price: 50000, margin_percentage: 15 },
-        { min_price: 50001, max_price: 200000, margin_percentage: 25 }
-      ])
+      if price_margins.count == 0
+        price_margins.create!([
+          { min_price: 0, max_price: 5000, margin_percentage: 10 },
+          { min_price: 5001, max_price: 50000, margin_percentage: 15 },
+          { min_price: 50001, max_price: 200000, margin_percentage: 25 }
+        ])
+      else
+        Rails.logger.info "[setup_initial_data] Skipping price margins (already present)"
+      end
 
       Rails.logger.info "[setup_initial_data] Creating demo product..."
       # Get the created demo data for the cosmetic box
@@ -316,11 +330,13 @@ class User < ApplicationRecord
       total_sheets = (1000.0 / pieces_per_sheet).ceil  # 167 sheets
       total_area = total_sheets * area_per_piece  # 11.76 m²
 
-      # Create the cosmetic box product
+      # Create the cosmetic box product (idempotent by description)
       product_quantity = 1000
-      test_product = products.create!(
-        description: "Caja plegadiza cosmética – cartulina caple 12 pts",
-        data: {
+      test_product = products.find_by(description: "Caja plegadiza cosmética – cartulina caple 12 pts")
+      unless test_product
+        test_product = products.create!(
+          description: "Caja plegadiza cosmética – cartulina caple 12 pts",
+          data: {
           general_info: {
             width: 32,
             length: 22,
@@ -471,33 +487,38 @@ class User < ApplicationRecord
             total_price: 0,  # Will be calculated
             final_price_per_piece: 0  # Will be calculated
           }
-        }
-      )
-
-      # Calculate and save product totals so the price is not zero in the example quote
-      test_product.calculate_totals
-      test_product.save!
-      test_product.reload
+          }
+        )
+        # Calculate and save product totals so the price is not zero in the example quote
+        test_product.calculate_totals
+        test_product.save!
+        test_product.reload
+      end
 
       Rails.logger.info "[setup_initial_data] Demo data creation complete."
       
       # Create a test quote using the test product
       Rails.logger.info "[setup_initial_data] Creating demo quote..."
-      test_quote = quotes.create!(
-        project_name: "Caja plegadiza para producto cosmético premium",
-        customer_name: "María González",
-        organization: "BeautyLab Cosméticos",
-        email: "maria.gonzalez@beautylab.com",
-        telephone: "+52 55 1234 5678",
-        comments: "Cotización para empaque de producto cosmético premium. Requerimos acabado de alta calidad con barniz UV y troquelado especializado.",
-        data: Quote.default_data
-      )
+      test_quote = quotes.find_by(project_name: "Caja plegadiza para producto cosmético premium")
+      unless test_quote
+        test_quote = quotes.create!(
+          project_name: "Caja plegadiza para producto cosmético premium",
+          customer_name: "María González",
+          organization: "BeautyLab Cosméticos",
+          email: "maria.gonzalez@beautylab.com",
+          telephone: "+52 55 1234 5678",
+          comments: "Cotización para empaque de producto cosmético premium. Requerimos acabado de alta calidad con barniz UV y troquelado especializado.",
+          data: Quote.default_data
+        )
+      end
       
       # Add the test product to the quote
-      test_quote.quote_products.create!(
-        product: test_product,
-        quantity: 1
-      )
+      unless test_quote.quote_products.exists?(product_id: test_product.id)
+        test_quote.quote_products.create!(
+          product: test_product,
+          quantity: 1
+        )
+      end
       
       # Calculate totals for the quote
       test_quote.calculate_totals
@@ -516,34 +537,36 @@ class User < ApplicationRecord
       
       Rails.logger.info "[setup_initial_data] Demo quote created: #{test_quote.quote_number}"
       
-      # Create example customer
+      # Create example customer (idempotent by email)
       Rails.logger.info "[setup_initial_data] Creating example customer..."
-      customers.create!(
-        name: "María González",
-        email: "maria.gonzalez@beautylab.com",
-        phone: "+52 55 1234 5678",
-        company: "BeautyLab Cosméticos",
-        address: "Av. Insurgentes Sur 1234, Col. Del Valle, Ciudad de México, CDMX",
-        notes: "Cliente premium especializado en productos cosméticos de alta gama. Requiere acabados especiales y materiales sustentables."
-      )
+      customers.find_or_create_by!(email: "maria.gonzalez@beautylab.com") do |c|
+        c.name = "María González"
+        c.phone = "+52 55 1234 5678"
+        c.company = "BeautyLab Cosméticos"
+        c.address = "Av. Insurgentes Sur 1234, Col. Del Valle, Ciudad de México, CDMX"
+        c.notes = "Cliente premium especializado en productos cosméticos de alta gama. Requiere acabados especiales y materiales sustentables."
+      end
       
       Rails.logger.info "[setup_initial_data] Example customer created."
       
       # Create PDF configuration
-      Rails.logger.info "[setup_initial_data] Creating PDF configuration..."
-      create_pdf_config!(
-        footer_text: "Creamos productos de alta calidad con materiales y procesos sustentables",
-        signature_name: "Ing. Carlos Mendoza",
-        signature_email: "carlos.mendoza@cotalo.com",
-        signature_phone: "+52 55 9876 5432",
-        signature_whatsapp: "+52 55 9876 5432",
-        sales_condition_1: "Pregunta por nuestros planes de financiamiento",
-        sales_condition_2: "Precios válidos por 30 días",
-        sales_condition_3: "Tiempo de entrega: 15-20 días hábiles",
-        sales_condition_4: "Pago: 50% al confirmar, 50% antes de entrega"
-      )
-      
-      Rails.logger.info "[setup_initial_data] PDF configuration created."
+      Rails.logger.info "[setup_initial_data] Ensuring PDF configuration..."
+      unless pdf_config.present?
+        create_pdf_config!(
+          footer_text: "Creamos productos de alta calidad con materiales y procesos sustentables",
+          signature_name: "Ing. Carlos Mendoza",
+          signature_email: "carlos.mendoza@cotalo.com",
+          signature_phone: "+52 55 9876 5432",
+          signature_whatsapp: "+52 55 9876 5432",
+          sales_condition_1: "Pregunta por nuestros planes de financiamiento",
+          sales_condition_2: "Precios válidos por 30 días",
+          sales_condition_3: "Tiempo de entrega: 15-20 días hábiles",
+          sales_condition_4: "Pago: 50% al confirmar, 50% antes de entrega"
+        )
+        Rails.logger.info "[setup_initial_data] PDF configuration created."
+      else
+        Rails.logger.info "[setup_initial_data] PDF configuration already exists, skipping."
+      end
 
       # Create the example product: Folder corporativo institucional
       folder_quantity = 2500
@@ -567,7 +590,7 @@ class User < ApplicationRecord
       folder_total_sheets = (folder_quantity.to_f / folder_pieces_per_sheet).ceil
       folder_total_area = folder_total_sheets * folder_area_per_piece
 
-      folder_product = products.create!(
+      folder_product = products.find_by(description: "Folder corporativo institucional – Folder de presentación tamaño carta con bolsillos interiores, impresión a color y acabado laminado.") || products.create!(
         description: "Folder corporativo institucional – Folder de presentación tamaño carta con bolsillos interiores, impresión a color y acabado laminado.",
         data: {
           general_info: {
@@ -586,7 +609,7 @@ class User < ApplicationRecord
               description: caple_14&.description,
               client_description: caple_14&.client_description,
               resistance: caple_14&.resistance,
-              price: caple_14&.price || 0,
+              price: caple_14&.cost || 0,
               unit: caple_14&.unit ? { id: caple_14.unit.id, name: caple_14.unit.name, abbreviation: caple_14.unit.abbreviation } : nil,
               ancho: caple_14&.ancho || folder_width,
               largo: caple_14&.largo || folder_length,
@@ -594,8 +617,8 @@ class User < ApplicationRecord
               piecesPerMaterial: folder_pieces_per_sheet,
               totalSheets: folder_total_sheets,
               totalSquareMeters: folder_total_area,
-              totalPrice: folder_total_area * (caple_14&.price || 0),
-              subtotal_price: folder_total_area * (caple_14&.price || 0),
+               totalPrice: folder_total_area * (caple_14&.cost || 0),
+               subtotal_price: folder_total_area * (caple_14&.cost || 0),
               comments: "Cartulina caple sulfatada 14 pts para folder institucional"
             }
             # Optionally add couche_150 as a secondary material if desired
@@ -720,7 +743,7 @@ class User < ApplicationRecord
       triptico_total_sheets = (triptico_quantity.to_f / triptico_pieces_per_sheet).ceil
       triptico_total_area = triptico_total_sheets * triptico_area_per_piece
 
-      triptico_product = products.create!(
+      triptico_product = products.find_by(description: "Tríptico promocional 21×29.7 cm – Tríptico informativo doblado en 3 partes, impreso por ambos lados, con posible barniz brillante.") || products.create!(
         description: "Tríptico promocional 21×29.7 cm – Tríptico informativo doblado en 3 partes, impreso por ambos lados, con posible barniz brillante.",
         data: {
           general_info: {
@@ -739,7 +762,7 @@ class User < ApplicationRecord
               description: couche_150&.description,
               client_description: couche_150&.client_description,
               resistance: couche_150&.resistance,
-              price: couche_150&.price || 0,
+              price: couche_150&.cost || 0,
               unit: couche_150&.unit ? { id: couche_150.unit.id, name: couche_150.unit.name, abbreviation: couche_150.unit.abbreviation } : nil,
               ancho: couche_150&.ancho || triptico_width,
               largo: couche_150&.largo || triptico_length,
@@ -747,8 +770,8 @@ class User < ApplicationRecord
               piecesPerMaterial: triptico_pieces_per_sheet,
               totalSheets: triptico_total_sheets,
               totalSquareMeters: triptico_total_area,
-              totalPrice: triptico_total_area * (couche_150&.price || 0),
-              subtotal_price: triptico_total_area * (couche_150&.price || 0),
+               totalPrice: triptico_total_area * (couche_150&.cost || 0),
+               subtotal_price: triptico_total_area * (couche_150&.cost || 0),
               comments: "Papel couché brillante 150 g/m² para tríptico"
             }
             # Optionally add caple_12 as a secondary material if desired
@@ -843,27 +866,34 @@ class User < ApplicationRecord
 
       # Create a second example quote using the folder and tríptico products
       Rails.logger.info "[setup_initial_data] Creating second demo quote..."
-      second_quote = quotes.create!(
-        project_name: "Campaña de Marketing Corporativo Q4 2024",
-        customer_name: "Roberto Mendoza",
-        organization: "TechCorp Solutions",
-        email: "roberto.mendoza@techcorp.com",
-        telephone: "+52 55 9876 5432",
-        comments: "Cotización para materiales promocionales y corporativos del cuarto trimestre. Requerimos folder institucional para presentaciones ejecutivas y trípticos informativos para distribución masiva en eventos corporativos.",
-        data: Quote.default_data
-      )
+      second_quote = quotes.find_by(project_name: "Campaña de Marketing Corporativo Q4 2024")
+      unless second_quote
+        second_quote = quotes.create!(
+          project_name: "Campaña de Marketing Corporativo Q4 2024",
+          customer_name: "Roberto Mendoza",
+          organization: "TechCorp Solutions",
+          email: "roberto.mendoza@techcorp.com",
+          telephone: "+52 55 9876 5432",
+          comments: "Cotización para materiales promocionales y corporativos del cuarto trimestre. Requerimos folder institucional para presentaciones ejecutivas y trípticos informativos para distribución masiva en eventos corporativos.",
+          data: Quote.default_data
+        )
+      end
       
       # Add the folder product to the quote
-      second_quote.quote_products.create!(
-        product: folder_product,
-        quantity: 1
-      )
+      unless second_quote.quote_products.exists?(product_id: folder_product.id)
+        second_quote.quote_products.create!(
+          product: folder_product,
+          quantity: 1
+        )
+      end
       
       # Add the tríptico product to the quote
-      second_quote.quote_products.create!(
-        product: triptico_product,
-        quantity: 1
-      )
+      unless second_quote.quote_products.exists?(product_id: triptico_product.id)
+        second_quote.quote_products.create!(
+          product: triptico_product,
+          quantity: 1
+        )
+      end
       
       # Calculate totals for the quote
       second_quote.calculate_totals
@@ -889,16 +919,15 @@ class User < ApplicationRecord
       
       Rails.logger.info "[setup_initial_data] Second demo quote created: #{second_quote.quote_number}"
       
-      # Create second example customer
+      # Create second example customer (idempotent by email)
       Rails.logger.info "[setup_initial_data] Creating second example customer..."
-      customers.create!(
-        name: "Roberto Mendoza",
-        email: "roberto.mendoza@techcorp.com",
-        phone: "+52 55 9876 5432",
-        company: "TechCorp Solutions",
-        address: "Av. Reforma 567, Col. Juárez, Ciudad de México, CDMX",
-        notes: "Cliente corporativo especializado en tecnología. Requiere materiales promocionales de alta calidad para eventos y presentaciones ejecutivas. Prioriza acabados profesionales y materiales sustentables."
-      )
+      customers.find_or_create_by!(email: "roberto.mendoza@techcorp.com") do |c|
+        c.name = "Roberto Mendoza"
+        c.phone = "+52 55 9876 5432"
+        c.company = "TechCorp Solutions"
+        c.address = "Av. Reforma 567, Col. Juárez, Ciudad de México, CDMX"
+        c.notes = "Cliente corporativo especializado en tecnología. Requiere materiales promocionales de alta calidad para eventos y presentaciones ejecutivas. Prioriza acabados profesionales y materiales sustentables."
+      end
       
       Rails.logger.info "[setup_initial_data] Second example customer created."
     rescue => e
