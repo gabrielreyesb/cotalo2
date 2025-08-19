@@ -33,7 +33,9 @@
 
           <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "login-form", novalidate: true }) do |f| %>
             <div class="form-group mb-4">
-              <%= f.label :name, "Nombre (opcional)", class: "form-label" %>
+              <%= f.label :name, class: "form-label" do %>
+                Nombre <span class="text-muted small">(opcional)</span>
+              <% end %>
               <div class="input-group">
                 <span class="input-group-text">
                   <i class="fa fa-user"></i>
@@ -43,7 +45,9 @@
             </div>
 
             <div class="form-group mb-4">
-              <%= f.label :company, "Empresa (opcional)", class: "form-label" %>
+              <%= f.label :company, class: "form-label" do %>
+                Empresa <span class="text-muted small">(opcional)</span>
+              <% end %>
               <div class="input-group">
                 <span class="input-group-text">
                   <i class="fa fa-building"></i>
@@ -53,7 +57,9 @@
             </div>
 
             <div class="form-group mb-4">
-              <%= f.label :phone, "Teléfono", class: "form-label" %>
+              <%= f.label :phone, class: "form-label required-field" do %>
+                Teléfono <span class="required-asterisk">*</span>
+              <% end %>
               <div class="input-group">
                 <span class="input-group-text">
                   <i class="fa fa-phone"></i>
@@ -63,19 +69,23 @@
             </div>
             
             <div class="form-group mb-4">
-              <%= f.label :email, class: "form-label" %>
+              <%= f.label :email, class: "form-label required-field" do %>
+                Email <span class="required-asterisk">*</span>
+              <% end %>
               <div class="input-group">
                 <span class="input-group-text">
                   <i class="fa fa-envelope"></i>
                 </span>
                 <%= f.email_field :email, autofocus: true, autocomplete: "email", 
                     class: "form-control",
-                    placeholder: "nombre@ejemplo.com" %>
+                    placeholder: "nombre@ejemplo.com", required: true %>
               </div>
             </div>
 
             <div class="form-group mb-4">
-              <%= f.label :password, "Contraseña", class: "form-label" %>
+              <%= f.label :password, class: "form-label required-field" do %>
+                Contraseña <span class="required-asterisk">*</span>
+              <% end %>
               <div class="input-group">
                 <span class="input-group-text">
                   <i class="fa fa-lock"></i>
@@ -83,15 +93,18 @@
                 <%= f.password_field :password, autocomplete: "new-password",
                     class: "form-control",
                     placeholder: "••••••••",
-                    id: "user_password" %>
+                    id: "user_password", required: true %>
                 <button type="button" class="btn btn-outline-secondary" id="toggle-password-visibility" tabindex="-1" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
                   <i class="fa fa-eye" id="toggle-password-icon"></i>
                 </button>
               </div>
+              <small class="form-text text-muted">Mínimo 6 caracteres</small>
             </div>
 
             <div class="form-group mb-4">
-              <%= f.label :password_confirmation, "Confirmar contraseña", class: "form-label" %>
+              <%= f.label :password_confirmation, class: "form-label required-field" do %>
+                Confirmar contraseña <span class="required-asterisk">*</span>
+              <% end %>
               <div class="input-group">
                 <span class="input-group-text">
                   <i class="fa fa-lock"></i>
@@ -99,11 +112,18 @@
                 <%= f.password_field :password_confirmation, autocomplete: "new-password",
                     class: "form-control",
                     placeholder: "••••••••",
-                    id: "user_password_confirmation" %>
+                    id: "user_password_confirmation", required: true %>
                 <button type="button" class="btn btn-outline-secondary" id="toggle-password-confirmation-visibility" tabindex="-1" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
                   <i class="fa fa-eye" id="toggle-password-confirmation-icon"></i>
                 </button>
               </div>
+            </div>
+
+            <div class="mb-3">
+              <small class="text-muted">
+                <i class="fa fa-info-circle me-1"></i>
+                Los campos marcados con <span class="required-asterisk">*</span> son obligatorios
+              </small>
             </div>
 
             <div class="d-grid mb-4">
@@ -134,6 +154,22 @@
     font-weight: 500;
   }
 
+  .required-field {
+    position: relative;
+  }
+
+  .required-asterisk {
+    color: var(--cotalo-green);
+    font-weight: bold;
+    margin-left: 3px;
+  }
+
+  .form-text {
+    color: #adb5bd !important;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+
   .form-control {
     color: #e1e1e1;
     background-color: #2c3136;
@@ -142,18 +178,35 @@
     text-align: left;
   }
 
+  /* Ensure all form controls are left-aligned */
+  input.form-control,
+  input.form-control[type="text"],
   input.form-control[type="email"],
-  input.form-control[type="password"] {
+  input.form-control[type="password"],
+  input.form-control[type="tel"] {
     text-align: left !important;
+    direction: ltr !important;
   }
+  
+  /* Placeholder text alignment */
+  input.form-control::placeholder,
+  input.form-control[type="text"]::placeholder,
   input.form-control[type="email"]::placeholder,
-  input.form-control[type="password"]::placeholder {
+  input.form-control[type="password"]::placeholder,
+  input.form-control[type="tel"]::placeholder {
     text-align: left !important;
+    direction: ltr !important;
   }
+  
+  /* Autofill styles */
+  input.form-control:-webkit-autofill,
+  input.form-control[type="text"]:-webkit-autofill,
   input.form-control[type="email"]:-webkit-autofill,
-  input.form-control[type="password"]:-webkit-autofill {
+  input.form-control[type="password"]:-webkit-autofill,
+  input.form-control[type="tel"]:-webkit-autofill {
     text-align: left !important;
     -webkit-text-align: left !important;
+    direction: ltr !important;
   }
 
   .form-control:focus {

@@ -142,6 +142,38 @@
     background-color: #2c3136;
     border: 1px solid #495057;
     border-radius: 4px;
+    text-align: left;
+  }
+
+  /* Ensure all form controls are left-aligned */
+  input.form-control,
+  input.form-control[type="text"],
+  input.form-control[type="email"],
+  input.form-control[type="password"],
+  input.form-control[type="tel"] {
+    text-align: left !important;
+    direction: ltr !important;
+  }
+  
+  /* Placeholder text alignment */
+  input.form-control::placeholder,
+  input.form-control[type="text"]::placeholder,
+  input.form-control[type="email"]::placeholder,
+  input.form-control[type="password"]::placeholder,
+  input.form-control[type="tel"]::placeholder {
+    text-align: left !important;
+    direction: ltr !important;
+  }
+  
+  /* Autofill styles */
+  input.form-control:-webkit-autofill,
+  input.form-control[type="text"]:-webkit-autofill,
+  input.form-control[type="email"]:-webkit-autofill,
+  input.form-control[type="password"]:-webkit-autofill,
+  input.form-control[type="tel"]:-webkit-autofill {
+    text-align: left !important;
+    -webkit-text-align: left !important;
+    direction: ltr !important;
   }
 
   .form-control:focus {
