@@ -1,5 +1,9 @@
 // Override Bootstrap's internal variables for form elements
 :root {
+  // Global cotalo brand colors - available everywhere
+  --cotalo-green: #42b983;
+  --cotalo-green-dark: #3aa876;
+  
   --bs-form-switch-bg: var(--cotalo-green-dark) !important;
   --bs-form-check-bg: var(--cotalo-green-dark) !important;
   --bs-primary: var(--cotalo-green-dark) !important;
