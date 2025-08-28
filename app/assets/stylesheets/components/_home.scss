@@ -157,12 +157,68 @@ main.main-content:has(.main-view-container) {
   line-height: 1.2;
   max-width: 900px;
   margin: 0 auto;
+  color: #ffffff !important;
+  font-weight: normal !important;
+}
+
+.hero-section .hero-title {
+  color: #ffffff !important;
+  font-weight: normal !important;
+}
+
+.hero-section .display-3.hero-title {
+  color: #ffffff !important;
+  font-weight: normal !important;
 }
 
 .hero-title-link {
   color: #ffffff !important;
   transition: all 0.3s ease;
   cursor: pointer;
+  font-weight: normal !important;
+}
+
+.hero-section .hero-title-link {
+  color: #ffffff !important;
+  font-weight: normal !important;
+}
+
+.hero-section .display-3.hero-title-link {
+  color: #ffffff !important;
+  font-weight: normal !important;
+}
+
+// Override link color inheritance for hero titles
+.hero-section a .hero-title,
+.hero-section a.text-decoration-none .hero-title,
+.hero-section a .hero-title-link,
+.hero-section a.text-decoration-none .hero-title-link {
+  color: #ffffff !important;
+  font-weight: normal !important;
+}
+
+// Super specific override for link containing h1 with display-3
+.hero-section a.text-decoration-none h1.display-3.hero-title.hero-title-link {
+  color: #ffffff !important;
+  font-weight: 400 !important; /* 400 = normal, more explicit than 'normal' */
+}
+
+// Even more aggressive font-weight overrides
+.hero-section h1 {
+  font-weight: 400 !important;
+}
+
+.hero-section .display-3 {
+  font-weight: 400 !important;
+}
+
+// Override any potential Bootstrap or other framework bold styles
+.hero-section h1.display-3,
+.hero-section h1.hero-title,
+.hero-section h1.hero-title-link,
+.hero-section a h1,
+.hero-section a h1.display-3 {
+  font-weight: 400 !important;
 }
 
 .hero-title-link:hover {
@@ -216,6 +272,27 @@ main.main-content:has(.main-view-container) {
 // Homepage sections background
 .features-section, .benefits-section, .how-it-works-section, .cta-section {
   background-color: var(--dark-bg);
+}
+
+// Clickable link styling for "How it works" section
+.clickable-link {
+  border-radius: 8px;
+  padding: 1rem;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: rgba(66, 185, 131, 0.1);
+    transform: translateY(-2px);
+    
+    h2 {
+      color: var(--cotalo-green) !important;
+    }
+    
+    #flowChevron {
+      transform: scale(1.1);
+      color: var(--cotalo-green) !important;
+    }
+  }
 }
 
 .bg-darker {

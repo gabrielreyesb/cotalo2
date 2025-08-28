@@ -18,7 +18,7 @@ class User < ApplicationRecord
   has_many :customers, dependent: :destroy
 
   # Onboarding fields
-  validates :phone, presence: true, on: :create
+  # Phone field made optional to simplify registration
 
   after_create :setup_initial_data, if: :persisted?
   after_create :send_admin_notification, if: :persisted?
