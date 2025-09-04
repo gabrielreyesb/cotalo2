@@ -1,29 +1,126 @@
 <%# Hero Section %>
 <div class="hero-section py-2">
   <div class="container">
-    <div class="row align-items-center justify-content-center text-center">
-      <div class="col-12 d-flex flex-column align-items-center text-center mx-auto">
+    <div class="row align-items-center">
+      <!-- Left Column: Main Content -->
+      <div class="col-lg-6 col-12 d-flex flex-column text-center text-lg-start">
         <% if user_signed_in? %>
-          <h1 class="display-3 mb-5 w-100 text-center hero-title"><%= t('home.hero_title') %></h1>
+          <h1 class="display-3 mb-4 hero-title"><%= t('home.hero_title') %></h1>
         <% else %>
           <%= link_to new_user_registration_path, class: "text-decoration-none" do %>
-            <h1 class="display-3 mb-5 w-100 text-center hero-title hero-title-link"><%= t('home.hero_title') %></h1>
+            <h1 class="display-3 mb-4 hero-title hero-title-link"><%= t('home.hero_title') %></h1>
           <% end %>
         <% end %>
         
-        <p class="lead mb-4 w-100 text-center hero-subtitle">
+        <p class="lead mb-4 hero-subtitle">
           <%= t('home.hero_subtitle') %>
         </p>
-        <div class="d-flex flex-column flex-md-row gap-3 justify-content-center align-items-center w-100 mb-4">
-          <% if user_signed_in? %>
+        <% if user_signed_in? %>
+          <div class="d-flex justify-content-center justify-content-lg-start mb-4">
             <%= link_to dashboard_path, class: "btn btn-success btn-lg" do %>
               <i class="fas fa-tachometer-alt me-2"></i><%= t('home.go_to_dashboard') %>
             <% end %>
-          <% else %>
+          </div>
+        <% end %>
+      </div>
+      
+      <!-- Right Column: Steps Animation -->
+      <div class="col-lg-6 col-12 d-flex flex-column align-items-center justify-content-center">
+                     <div class="steps-animation-container clickable-steps" data-bs-toggle="modal" data-bs-target="#stepsModal" style="cursor: pointer;">
+               <h3 class="steps-title mb-4"><%= t('home.steps_animation.title') %></h3>
+               <div class="steps-animation">
+                 <div class="step-number">1</div>
+                 <div class="step-text" id="animated-step-text">
+                   <%= t('home.steps_animation.step1').html_safe %>
+                 </div>
+               </div>
+             </div>
+        <% unless user_signed_in? %>
+          <div class="mt-4">
             <%= link_to new_user_registration_path, class: "btn btn-success btn-lg" do %>
               <i class="fas fa-rocket me-2"></i><%= t('home.register_free') %>
             <% end %>
-          <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# Benefits Section with Pricing Preview %>
+<div class="benefits-section py-5">
+  <div class="container">
+    <h2 class="text-center mb-5"><%= t('home.benefits_title') %></h2>
+    <div class="row align-items-center">
+      <!-- Benefits List Column -->
+      <div class="col-lg-6 col-12 mb-4 mb-lg-0">
+        <div class="benefits-list">
+          <div class="benefit-item mb-4">
+            <div class="d-flex align-items-start">
+              <i class="fas fa-clock fa-2x me-3" style="color: var(--cotalo-green); flex-shrink: 0; margin-top: 4px;"></i>
+              <div>
+                <h5 class="mb-2"><%= t('home.benefit1_title') %></h5>
+                <p class="mb-0"><%= t('home.benefit1_desc') %></p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="benefit-item mb-4">
+            <div class="d-flex align-items-start">
+              <i class="fas fa-check-circle fa-2x me-3" style="color: var(--cotalo-green); flex-shrink: 0; margin-top: 4px;"></i>
+              <div>
+                <h5 class="mb-2"><%= t('home.benefit2_title') %></h5>
+                <p class="mb-0"><%= t('home.benefit2_desc') %></p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="benefit-item mb-4">
+            <div class="d-flex align-items-start">
+              <i class="fas fa-chart-line fa-2x me-3" style="color: var(--cotalo-green); flex-shrink: 0; margin-top: 4px;"></i>
+              <div>
+                <h5 class="mb-2"><%= t('home.benefit3_title') %></h5>
+                <p class="mb-0"><%= t('home.benefit3_desc') %></p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="benefit-item mb-4">
+            <div class="d-flex align-items-start">
+              <i class="fas fa-user-friends fa-2x me-3" style="color: var(--cotalo-green); flex-shrink: 0; margin-top: 4px;"></i>
+              <div>
+                <h5 class="mb-2"><%= t('home.benefit4_title') %></h5>
+                <p class="mb-0"><%= t('home.benefit4_desc') %></p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="benefit-item">
+            <div class="d-flex align-items-start">
+              <i class="fas fa-print fa-2x me-3" style="color: var(--cotalo-green); flex-shrink: 0; margin-top: 4px;"></i>
+              <div>
+                <h5 class="mb-2"><%= t('home.benefit5_title') %></h5>
+                <p class="mb-0"><%= t('home.benefit5_desc') %></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Pricing Preview Column -->
+      <div class="col-lg-6 col-12 d-flex justify-content-center">
+        <div class="pricing-preview">
+          <h5 class="text-center mb-4" style="color: var(--cotalo-green);">Nivel de detalle del costeo</h5>
+          <div class="pricing-image-container">
+            <%= image_tag "costeo.png", 
+                alt: "Tab de precios detallado - Cotalo", 
+                class: "img-fluid pricing-screenshot clickable-image",
+                style: "max-width: 494px; max-height: 585px; border-radius: 8px; box-shadow: 0 4px 20px rgba(66, 185, 131, 0.3); cursor: pointer;",
+                data: { bs_toggle: "modal", bs_target: "#pricingImageModal" } %>
+            <p class="text-center mt-3 text-muted small">
+              <i class="fas fa-search-plus me-1"></i>Desglose completo de costos por materiales, procesos e indirectos (clic para ampliar)
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -60,45 +157,31 @@
   </div>
 </div>
 
-<%# Benefits Section %>
-<div class="benefits-section py-5">
+<%# Quote Preview Section %>
+<div class="quote-preview-section py-3">
   <div class="container">
-    <h2 class="text-center mb-5"><%= t('home.benefits_title') %></h2>
-    <div class="row g-4">
-      <div class="col-md-2 col-lg-2-4 order-1">
-        <div class="text-center">
-          <i class="fas fa-clock fa-3x mb-3" style="color: var(--cotalo-green);"></i>
-          <h5><%= t('home.benefit1_title') %></h5>
-          <p><%= t('home.benefit1_desc') %></p>
+    <div class="row">
+      <div class="col-12 text-center">
+        <div class="quote-preview text-center">
+          <div class="quote-image-container text-center">
+            <%= image_tag "cotizacion_ejemplo.png", 
+                alt: "Ejemplo de cotización profesional generada por Cotalo", 
+                class: "img-fluid quote-screenshot clickable-image",
+                style: "max-width: 500px; border-radius: 8px; box-shadow: 0 4px 20px rgba(66, 185, 131, 0.3); cursor: pointer; margin: 0 auto; display: block;",
+                data: { bs_toggle: "modal", bs_target: "#quoteImageModal" } %>
+            <p class="text-center mt-3 text-muted small">
+              <i class="fas fa-search-plus me-1"></i>Clic para ampliar
+            </p>
+          </div>
         </div>
-      </div>
-      <div class="col-md-2 col-lg-2-4 order-2">
-        <div class="text-center">
-          <i class="fas fa-check-circle fa-3x mb-3" style="color: var(--cotalo-green);"></i>
-          <h5><%= t('home.benefit2_title') %></h5>
-          <p><%= t('home.benefit2_desc') %></p>
-        </div>
-      </div>
-      <div class="col-md-2 col-lg-2-4 order-3">
-        <div class="text-center">
-          <i class="fas fa-print fa-3x mb-3" style="color: var(--cotalo-green);"></i>
-          <h5><%= t('home.benefit5_title') %></h5>
-          <p><%= t('home.benefit5_desc') %></p>
-        </div>
-      </div>
-      <div class="col-md-2 col-lg-2-4 order-4">
-        <div class="text-center">
-          <i class="fas fa-chart-line fa-3x mb-3" style="color: var(--cotalo-green);"></i>
-          <h5><%= t('home.benefit3_title') %></h5>
-          <p><%= t('home.benefit3_desc') %></p>
-        </div>
-      </div>
-      <div class="col-md-2 col-lg-2-4 order-5">
-        <div class="text-center">
-          <i class="fas fa-user-friends fa-3x mb-3" style="color: var(--cotalo-green);"></i>
-          <h5><%= t('home.benefit4_title') %></h5>
-          <p><%= t('home.benefit4_desc') %></p>
-        </div>
+        
+        <% unless user_signed_in? %>
+          <div class="mt-4 text-center">
+            <%= link_to new_user_registration_path, class: "btn btn-success btn-lg" do %>
+              <i class="fas fa-rocket me-2"></i>Probar Gratis
+            <% end %>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>
@@ -259,13 +342,182 @@
 <%# Footer - Only show on homepage %>
 <%= render 'shared/footer' %>
 
+<%# Image Modals %>
+<!-- Steps Process Modal -->
+<div class="modal fade" id="stepsModal" tabindex="-1" aria-labelledby="stepsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="stepsModalLabel" style="color: var(--cotalo-green);">
+          <i class="fas fa-list-ol me-2"></i><span id="stepModalTitle">Paso 1: Información General</span>
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center p-2">
+        <img id="stepModalImage" 
+             src="<%= asset_path('cotizacion_ejemplo.png') %>" 
+             alt="Paso del proceso de cotización" 
+             class="img-fluid"
+             style="max-width: 80%; max-height: 70vh; height: auto; border-radius: 8px; box-shadow: 0 4px 20px rgba(66, 185, 131, 0.3); object-fit: contain;">
+      </div>
+      <div class="modal-footer border-0 justify-content-center">
+        <p class="text-muted mb-0" id="stepModalDescription">
+          <i class="fas fa-info-circle me-1"></i>
+          <span id="stepModalText">Llenar datos generales como cantidad de piezas y sus dimensiones</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pricing Image Modal -->
+<div class="modal fade" id="pricingImageModal" tabindex="-1" aria-labelledby="pricingImageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="pricingImageModalLabel" style="color: var(--cotalo-green);">
+          <i class="fas fa-calculator me-2"></i>Nivel de detalle del costeo
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center p-0">
+        <%= image_tag "costeo.png", 
+            alt: "Tab de precios detallado - Cotalo", 
+            class: "img-fluid",
+            style: "max-width: 100%; height: auto; border-radius: 8px;" %>
+      </div>
+      <div class="modal-footer border-0 justify-content-center">
+        <p class="text-muted mb-0">
+          <i class="fas fa-info-circle me-1"></i>
+          Desglose completo de costos por materiales, procesos e indirectos
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quote Image Modal -->
+<div class="modal fade" id="quoteImageModal" tabindex="-1" aria-labelledby="quoteImageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="quoteImageModalLabel" style="color: var(--cotalo-green);">
+          <i class="fas fa-file-invoice-dollar me-2"></i>Ejemplo de cotización generada
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center p-0">
+        <%= image_tag "cotizacion_ejemplo.png", 
+            alt: "Ejemplo de cotización profesional generada por Cotalo", 
+            class: "img-fluid",
+            style: "max-width: 100%; height: auto; border-radius: 8px;" %>
+      </div>
+      <div class="modal-footer border-0 justify-content-center">
+        <p class="text-muted mb-0">
+          <i class="fas fa-info-circle me-1"></i>
+          Ejemplo de cotización generada por Cotalo
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <%# All custom styles moved to app/assets/stylesheets/components/_home.scss %>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('flowChevron').style.transform = 'rotate(-90deg)';
-  document.getElementById('flowHelperText').textContent = '<%= t('home.flow.helper_text_show') %>';
+  // Flow section functionality
+  if (document.getElementById('flowChevron')) {
+    document.getElementById('flowChevron').style.transform = 'rotate(-90deg)';
+    document.getElementById('flowHelperText').textContent = '<%= t('home.flow.helper_text_show') %>';
+  }
+  
+  // Steps animation functionality
+  const stepTexts = [
+    '<%= t('home.steps_animation.step1').html_safe %>',
+    '<%= t('home.steps_animation.step2').html_safe %>',
+    '<%= t('home.steps_animation.step3').html_safe %>',
+    '<%= t('home.steps_animation.step4').html_safe %>',
+    '<%= t('home.steps_animation.step5').html_safe %>'
+  ];
+  
+  // Step data for modal
+  const stepData = [
+    {
+      title: 'Paso 1: Información General',
+      image: '<%= asset_path('infogeneral.png') %>',
+      description: 'Llenar datos generales como cantidad de piezas y sus dimensiones'
+    },
+    {
+      title: 'Paso 2: Materiales y Procesos',
+      image: '<%= asset_path('materiales.png') %>',
+      description: 'Indicar los materiales a utilizar y asigna que procesos se le aplican a cada material'
+    },
+    {
+      title: 'Paso 3: Procesos Globales',
+      image: '<%= asset_path('procesos.png') %>',
+      description: 'Indicar que procesos se aplican a todas las piezas terminadas'
+    },
+    {
+      title: 'Paso 4: Costos Extras',
+      image: '<%= asset_path('extras.png') %>',
+      description: 'Indicar que costos extras deberán aplicar al proyecto'
+    },
+    {
+      title: 'Paso 5: Cotización Lista',
+      image: '<%= asset_path('costos.png') %>',
+      description: 'El cálculo del costo de tu proyecto ya está listo. Genera y envía tu cotización'
+    }
+  ];
+  
+  const stepTextElement = document.getElementById('animated-step-text');
+  const stepNumberElement = document.querySelector('.step-number');
+  const clickableSteps = document.querySelector('.clickable-steps');
+  
+  if (stepTextElement && stepNumberElement) {
+    let currentStep = 0;
+    
+    function animateToNextStep() {
+      // Add fade out effect
+      stepTextElement.style.opacity = '0';
+      stepNumberElement.style.opacity = '0';
+      
+      setTimeout(() => {
+        currentStep = (currentStep + 1) % stepTexts.length;
+        stepTextElement.innerHTML = stepTexts[currentStep];
+        stepNumberElement.textContent = currentStep + 1;
+        
+        // Add fade in effect
+        stepTextElement.style.opacity = '1';
+        stepNumberElement.style.opacity = '1';
+      }, 300);
+    }
+    
+    // Handle click on steps animation to show modal
+    if (clickableSteps) {
+      clickableSteps.addEventListener('click', function() {
+        const modalTitle = document.getElementById('stepModalTitle');
+        const modalImage = document.getElementById('stepModalImage');
+        const modalText = document.getElementById('stepModalText');
+        
+        if (modalTitle && modalImage && modalText) {
+          const stepInfo = stepData[currentStep];
+          modalTitle.textContent = stepInfo.title;
+          modalImage.src = stepInfo.image;
+          modalImage.alt = stepInfo.title;
+          modalText.textContent = stepInfo.description;
+        }
+      });
+    }
+    
+    // Start animation after 2 seconds, then repeat every 4 seconds
+    setTimeout(() => {
+      animateToNextStep();
+      setInterval(animateToNextStep, 4000);
+    }, 2000);
+  }
 });
+
 function toggleFlowSection() {
   const section = document.getElementById('flowSection');
   const chevron = document.getElementById('flowChevron');

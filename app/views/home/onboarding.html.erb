@@ -127,6 +127,86 @@
   </div>
 </div>
 
+<!-- Mobile/Desktop Experience Modal -->
+<div class="modal fade" id="deviceExperienceModal" tabindex="-1" aria-labelledby="deviceExperienceModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <div class="w-100 text-center">
+          <i class="fas fa-monitor-modem fa-3x mb-3" style="color: var(--cotalo-green);"></i>
+          <h4 class="modal-title" id="deviceExperienceModalLabel">¡Bienvenido a Cotalo!</h4>
+        </div>
+      </div>
+      <div class="modal-body text-center px-4">
+        <div class="device-recommendation mb-4">
+          <h5 class="mb-3">Para una experiencia óptima, te recomendamos usar Cotalo desde una computadora</h5>
+          
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <div class="experience-card desktop-card">
+                <i class="fas fa-desktop fa-2x mb-3" style="color: var(--cotalo-green);"></i>
+                <h6>💻 En Computadora</h6>
+                <ul class="text-start small">
+                  <li>✅ Creación de productos más fácil y rápida</li>
+                  <li>✅ Pantalla completa para ver todos los detalles</li>
+                  <li>✅ Formularios más cómodos de completar</li>
+                  <li>✅ Mejor visualización de cotizaciones</li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="experience-card mobile-card">
+                <i class="fas fa-mobile-alt fa-2x mb-3" style="color: #6c757d;"></i>
+                <h6>📱 En Móvil</h6>
+                <ul class="text-start small">
+                  <li>👍 Navegar y explorar la plataforma</li>
+                  <li>👍 Ver productos y cotizaciones existentes</li>
+                  <li>⚠️ Crear productos básicos (con más paciencia)</li>
+                  <li>⚠️ Experiencia limitada en formularios</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          <div class="device-message">
+            <span id="desktop-message" class="d-none">
+              <i class="fas fa-check-circle me-2" style="color: var(--cotalo-green);"></i>
+              ¡Perfecto! Estás usando una computadora. Tendrás la mejor experiencia.
+            </span>
+            <span id="mobile-message" class="d-none">
+              <i class="fas fa-info-circle me-2" style="color: #ffc107;"></i>
+              Estás en móvil. Puedes usar Cotalo, pero para crear productos te recomendamos una computadora.
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-0 justify-content-center">
+        <button type="button" class="btn btn-success btn-lg" data-bs-dismiss="modal">
+          <i class="fas fa-check me-2"></i>Entendido, ¡Comenzar!
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Detect device type
+  const isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
+  // Show appropriate message
+  if (isMobile) {
+    document.getElementById('mobile-message').classList.remove('d-none');
+  } else {
+    document.getElementById('desktop-message').classList.remove('d-none');
+  }
+  
+  // Show modal automatically
+  const modal = new bootstrap.Modal(document.getElementById('deviceExperienceModal'));
+  modal.show();
+});
+</script>
+
 <style>
 .onboarding-section {
   min-height: 100vh;
@@ -294,6 +374,53 @@ body[data-theme="dark"] .main-content .onboarding-section .row.mt-1 {
   transform: translateY(-2px);
 }
 
+/* Device Experience Modal Styles */
+.modal-content {
+  background-color: var(--dark-bg);
+  border: 1px solid rgba(66, 185, 131, 0.3);
+  border-radius: 15px;
+}
+
+.modal-header, .modal-footer {
+  background-color: transparent;
+}
+
+.experience-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  height: 100%;
+  transition: all 0.3s ease;
+}
+
+.desktop-card {
+  border-color: rgba(66, 185, 131, 0.3);
+  background: rgba(66, 185, 131, 0.05);
+}
+
+.mobile-card {
+  border-color: rgba(108, 117, 125, 0.3);
+  background: rgba(108, 117, 125, 0.05);
+}
+
+.experience-card ul {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+.experience-card li {
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.device-message {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
 @media (max-width: 768px) {
   .welcome-card {
     padding: 2rem 1rem;
@@ -307,7 +434,14 @@ body[data-theme="dark"] .main-content .onboarding-section .row.mt-1 {
     min-height: 200px;
     padding: 2rem 1rem;
   }
+  
+  .modal-dialog {
+    margin: 1rem;
+  }
+  
+  .experience-card {
+    margin-bottom: 1rem;
+  }
 }
-
 
 </style> 

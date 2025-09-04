@@ -234,8 +234,8 @@ es:
     users: "Usuarios"
   
   home:
-    hero_title: "Calcula el costo de fabricación de productos para las artes gráficas en minutos"
-    hero_subtitle: "Cotalo te permite diseñar y cotizar productos de artes gráficas de manera rápida y precisa. Optimiza tus costos de producción con nuestra herramienta intuitiva."
+    hero_title: "Calcula el costo de fabricación de productos para las artes gráficas y envía una cotizacion en minutos"
+    hero_subtitle: "Cotalo te permite diseñar y costear productos de artes gráficas de manera rápida y precisa. Optimiza tus costos de producción con nuestra herramienta intuitiva."
     go_to_dashboard: "Ir al Panel de control"
     register_free: "Regístrate gratis"
     login: "Iniciar sesión"
@@ -248,7 +248,7 @@ es:
     feature3_desc: "Genera cotizaciones detalladas y profesionales para tus clientes en segundos."
     benefits_title: "¿Por qué elegir Cotalo?"
     benefit1_title: "Ahorra tiempo"
-    benefit1_desc: "Reduce el tiempo de cotización de horas a minutos"
+    benefit1_desc: "Reduce el tiempo de cotización de horas a minutos con materiales, procesos y extras precargados listos para seleccionar"
     benefit2_title: "Reduce errores"
     benefit2_desc: "Cálculos precisos y consistentes en cada cotización"
     benefit3_title: "Optimiza costos"
@@ -296,6 +296,13 @@ es:
     cta_title: "¿Listo para optimizar tu cálculo de costos de fabricación?"
     cta_subtitle: "Comienza a usar Cotalo hoy mismo"
     suggestions_info: "¿Tienes sugerencias o comentarios? ¡Envíanos tus sugerencias aquí!"
+    steps_animation:
+      title: "Para cotizar tu proyecto deberás:"
+      step1: "Llenar datos generales como cantidad de piezas y sus dimensiones"
+      step2: "Indicar los materiales a utilizar y asigna que procesos se le aplican a cada material"
+      step3: "Indicar que procesos se aplican a todas las piezas terminadas"
+      step4: "Indicar que costos extras deberán aplicar al proyecto"
+      step5: "El cálculo del costo de tu proyecto ya está listo.<br/><br/>Genera y envía tu cotización."
   
   materials:
     index:
