@@ -152,6 +152,39 @@ main.main-content:has(.main-view-container) {
   padding-bottom: 2rem;
 }
 
+// Product Intro Section Styles
+.product-intro-section {
+  background-color: var(--dark-bg);
+  padding-top: 1rem !important;
+  
+  .product-intro-image {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 16px 48px rgba(66, 185, 131, 0.3) !important;
+    }
+  }
+}
+
+// Responsive adjustments for product intro
+@media (max-width: 768px) {
+  .product-intro-section {
+    padding: 0.5rem 0 1rem 0 !important;
+    
+    .product-intro-image {
+      max-width: 90% !important;
+    }
+  }
+}
+
+// Extra reduction for very small screens
+@media (max-width: 480px) {
+  .product-intro-section {
+    padding: 0.25rem 0 0.75rem 0 !important;
+  }
+}
+
 .hero-title {
   font-size: 3.5rem !important;
   line-height: 1.2;
@@ -272,6 +305,24 @@ main.main-content:has(.main-view-container) {
 // Homepage sections background
 .features-section, .benefits-section, .how-it-works-section, .quote-preview-section, .cta-section {
   background-color: var(--dark-bg);
+}
+
+// Hero section with scroll hint gradient (mobile only)
+@media (max-width: 991px) {
+  .hero-section {
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.1));
+      pointer-events: none;
+    }
+  }
 }
 
 // Benefits Section with Pricing Preview Styles
@@ -674,6 +725,58 @@ main.main-content:has(.main-view-container) {
 
 .timeline-content {
   flex-grow: 1;
+}
+
+// Mobile Scroll Indicator Styles
+.scroll-indicator {
+  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.05));
+  
+  .scroll-hint {
+    animation: bounce 2s infinite;
+  }
+  
+  .scroll-text {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+  }
+  
+  .scroll-arrow {
+    color: var(--cotalo-green);
+    font-size: 1.5rem;
+    animation: bounce-arrow 2s infinite;
+  }
+}
+
+// Keyframe animations
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes bounce-arrow {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-8px);
+  }
+  60% {
+    transform: translateY(-4px);
+  }
+}
+
+// Auto-hide scroll indicator after user scrolls
+.scroll-indicator.hidden {
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }
 
 // Steps Animation Styles

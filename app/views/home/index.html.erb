@@ -1,3 +1,17 @@
+<%# Product Image Section %>
+<div class="product-intro-section py-2">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 text-center">
+        <%= image_tag "productonew.png", 
+            alt: "Producto Cotalo", 
+            class: "img-fluid product-intro-image",
+            style: "max-width: 600px; border-radius: 12px; box-shadow: 0 8px 32px rgba(66, 185, 131, 0.2);" %>
+      </div>
+    </div>
+  </div>
+</div>
+
 <%# Hero Section %>
 <div class="hero-section py-2">
   <div class="container">
@@ -42,6 +56,16 @@
             <% end %>
           </div>
         <% end %>
+      </div>
+    </div>
+    
+    <!-- Mobile Scroll Indicator -->
+    <div class="scroll-indicator d-block d-lg-none text-center py-3">
+      <div class="scroll-hint">
+        <p class="scroll-text mb-2 text-muted">Desliza para ver más</p>
+        <div class="scroll-arrow">
+          <i class="fas fa-chevron-down"></i>
+        </div>
       </div>
     </div>
   </div>
@@ -430,6 +454,26 @@ document.addEventListener('DOMContentLoaded', function() {
   if (document.getElementById('flowChevron')) {
     document.getElementById('flowChevron').style.transform = 'rotate(-90deg)';
     document.getElementById('flowHelperText').textContent = '<%= t('home.flow.helper_text_show') %>';
+  }
+  
+  // Scroll indicator functionality
+  const scrollIndicator = document.querySelector('.scroll-indicator');
+  let hasScrolled = false;
+  
+  if (scrollIndicator) {
+    window.addEventListener('scroll', function() {
+      if (!hasScrolled && window.scrollY > 50) {
+        hasScrolled = true;
+        scrollIndicator.classList.add('hidden');
+        
+        // Remove from DOM after animation
+        setTimeout(() => {
+          if (scrollIndicator.parentNode) {
+            scrollIndicator.parentNode.removeChild(scrollIndicator);
+          }
+        }, 500);
+      }
+    });
   }
   
   // Steps animation functionality
