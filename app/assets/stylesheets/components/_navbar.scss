@@ -2,8 +2,12 @@
 .navbar {
   background-color: var(--nav-bg);
   border-bottom: none;  /* Remove border since subnavbar will handle division */
-  position: relative;
-  z-index: 3;  /* Ensure navbar and its dropdowns are above subnavbar */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1050;  /* High z-index to be above everything */
   flex-shrink: 0;
 
   .navbar-brand {

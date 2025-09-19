@@ -100,6 +100,21 @@
             </li>
           <% end %>
         <% end %>
+        <li class="nav-item">
+          <%= link_to root_path, class: "nav-link #{current_page?(root_path) ? 'active' : ''}" do %>
+            <i class="fa fa-home me-1"></i> Inicio
+          <% end %>
+        </li>
+        <li class="nav-item">
+          <%= link_to about_path, class: "nav-link #{current_page?(about_path) ? 'active' : ''}" do %>
+            <i class="fa fa-info-circle me-1"></i> Acerca de
+          <% end %>
+        </li>
+        <li class="nav-item">
+          <%= link_to pricing_path, class: "nav-link #{current_page?(pricing_path) ? 'active' : ''}" do %>
+            <i class="fa fa-tag me-1"></i> Precios
+          <% end %>
+        </li>
       </ul>
       <ul class="navbar-nav">
         <% if user_signed_in? && !current_user.admin? %>

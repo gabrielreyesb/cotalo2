@@ -75,7 +75,7 @@ es:
       title: "¿Listo para Experimentar Cotalo?"
       subtitle: "Únase a miles de profesionales que confían en Cotalo para sus cálculos de costos de fabricación."
       dashboard: "Ir a Inicio"
-      register: "Registrarse Gratis"
+      register: "Registrate Gratis"
       login: "Iniciar Sesión"
 
   dashboard:
@@ -227,7 +227,7 @@ es:
     spanish: "Español"
     english: "Inglés"
     login: "Iniciar sesión"
-    register: "Regístrate gratis"
+    register: "Prueba gratis"
     general_settings: "Generales"
     price_adjustment: "Ajuste de precios"
     pdf: "PDF"
@@ -235,13 +235,13 @@ es:
   
   home:
     hero_title: "Calcula el costo de fabricación de productos para las artes gráficas y envía una cotizacion en minutos"
-    hero_subtitle: "Cotalo te permite diseñar y costear productos de artes gráficas de manera rápida y precisa. Optimiza tus costos de producción con nuestra herramienta intuitiva."
+    hero_subtitle: "Cotalo te permite diseñar y costear proyectos de artes gráficas de manera rápida y precisa. Optimiza tus costos de producción con nuestra herramienta intuitiva."
     go_to_dashboard: "Ir al Panel de control"
-    register_free: "Regístrate gratis"
+    register_free: "Prueba gratis"
     login: "Iniciar sesión"
     features_title: "Características principales"
     feature1_title: "Diseño altamente personalizable"
-    feature1_desc: "Crea productos de artes gráficas con dimensiones, materiales y acabados personalizados, aplicando múltiples procesos por material según tu flujo de trabajo."
+    feature1_desc: "Costea proyectos de artes gráficas con dimensiones, materiales y acabados personalizados, aplicando múltiples procesos por material según tu flujo de trabajo."
     feature2_title: "Estimación instantánea"
     feature2_desc: "Obtén el costo de fabricación en tiempo real mientras ajustas los parámetros de tu diseño."
     feature3_title: "Cotizaciones profesionales"
@@ -1302,3 +1302,58 @@ es:
 
   extras_tab:
     include_in_subtotal_mobile: "Incluir indirectos en el subtotal del producto"
+
+  # Pricing page translations
+  pricing:
+    page_title: "Precios"
+    hero_title: "Planes de Suscripción"
+    hero_subtitle: "Elige el plan que mejor se adapte a las necesidades de tu negocio de artes gráficas"
+    development_notice: "Actualmente no necesitas pagar nada. Cotalo está en desarrollo y será gratuito durante la fase beta."
+    
+    monthly:
+      title: "Plan Mensual"
+      description: "Ideal para probar todas las funcionalidades"
+    
+    yearly:
+      title: "Plan Anual"
+      description: "La mejor opción para empresas establecidas"
+      savings: "Ahorra 2 meses (20% de descuento)"
+    
+    recommended: "Recomendado"
+    coming_soon: "Próximamente"
+    
+    features:
+      unlimited_quotes: "Cotizaciones ilimitadas"
+      product_catalog: "Catálogo de productos personalizable"
+      customer_management: "Gestión de clientes"
+      pdf_exports: "Exportación a PDF profesional"
+      email_support: "Soporte por email"
+      priority_support: "Soporte prioritario"
+    
+    features_comparison:
+      title: "¿Qué incluye tu suscripción?"
+      quotes:
+        title: "Cotizaciones Profesionales"
+        description: "Crea cotizaciones detalladas con cálculos automáticos de costos"
+      automation:
+        title: "Automatización Inteligente"
+        description: "Calcula costos de fabricación automáticamente según tus configuraciones"
+      security:
+        title: "Seguridad y Confidencialidad"
+        description: "Tus datos están seguros con encriptación de grado empresarial"
+    
+    faq:
+      title: "Preguntas Frecuentes"
+      question1: "¿Cuándo comenzará el cobro?"
+      answer1: "Cotalo está actualmente en fase beta y será completamente gratuito. Te notificaremos con anticipación cuando esté listo para comenzar el cobro."
+      question2: "¿Puedo cambiar de plan en cualquier momento?"
+      answer2: "Sí, puedes cambiar entre el plan mensual y anual en cualquier momento desde tu panel de configuración."
+      question3: "¿Qué métodos de pago aceptan?"
+      answer3: "Aceptaremos tarjetas de crédito y débito, transferencias bancarias y otros métodos de pago populares en México."
+    
+    cta:
+      title: "¿Listo para comenzar?"
+      subtitle: "Únete a la fase beta y prueba todas las funcionalidades sin costo"
+      dashboard: "Ir al Dashboard"
+      register: "Registrarse Gratis"
+      login: "Iniciar Sesión"

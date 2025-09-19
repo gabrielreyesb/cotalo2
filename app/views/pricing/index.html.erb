@@ -1,0 +1,365 @@
+<% content_for :page_title do %>
+  <%= t('pricing.page_title') %>
+<% end %>
+
+<%# Hero Section %>
+<div class="hero-section py-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-8 mx-auto text-center">
+        <h1 class="display-4 fw-bold mb-4"><%= t('pricing.hero_title') %></h1>
+        <p class="lead mb-4">
+          <%= t('pricing.hero_subtitle') %>
+        </p>
+        <div class="alert alert-info border-0 mb-4" style="background-color: rgba(66, 185, 131, 0.1); border-left: 4px solid var(--cotalo-green) !important;">
+          <i class="fas fa-info-circle me-2"></i>
+          <strong>En desarrollo:</strong> <%= t('pricing.development_notice') %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# Pricing Plans Section %>
+<div class="pricing-section py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="row g-4">
+          <!-- Monthly Plan -->
+          <div class="col-md-6">
+            <div class="card pricing-card h-100 border-0">
+              <div class="card-body p-5 text-center">
+                <div class="pricing-icon mb-4">
+                  <i class="fas fa-calendar-alt fa-3x" style="color: var(--cotalo-green);"></i>
+                </div>
+                <h3 class="card-title mb-3"><%= t('pricing.monthly.title') %></h3>
+                <p class="text-muted mb-4"><%= t('pricing.monthly.description') %></p>
+                
+                <div class="pricing-amount mb-4">
+                  <span class="currency">$</span>
+                  <span class="amount">300</span>
+                  <span class="period">/mes</span>
+                </div>
+                
+                <ul class="list-unstyled pricing-features mb-4">
+                  <li class="mb-2">
+                    <i class="fas fa-check-circle me-2 text-success"></i>
+                    <%= t('pricing.features.unlimited_quotes') %>
+                  </li>
+                  <li class="mb-2">
+                    <i class="fas fa-check-circle me-2 text-success"></i>
+                    <%= t('pricing.features.product_catalog') %>
+                  </li>
+                  <li class="mb-2">
+                    <i class="fas fa-check-circle me-2 text-success"></i>
+                    <%= t('pricing.features.customer_management') %>
+                  </li>
+                  <li class="mb-2">
+                    <i class="fas fa-check-circle me-2 text-success"></i>
+                    <%= t('pricing.features.pdf_exports') %>
+                  </li>
+                  <li class="mb-2">
+                    <i class="fas fa-check-circle me-2 text-success"></i>
+                    <%= t('pricing.features.email_support') %>
+                  </li>
+                </ul>
+                
+                <button class="btn btn-outline-success btn-lg w-100" disabled>
+                  <i class="fas fa-tools me-2"></i><%= t('pricing.coming_soon') %>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Yearly Plan (Recommended) -->
+          <div class="col-md-6">
+            <div class="card pricing-card recommended h-100 border-0 position-relative">
+              <div class="recommended-badge">
+                <span class="badge bg-success">
+                  <i class="fas fa-star me-1"></i><%= t('pricing.recommended') %>
+                </span>
+              </div>
+              <div class="card-body p-5 text-center">
+                <div class="pricing-icon mb-4">
+                  <i class="fas fa-calendar-check fa-3x" style="color: var(--cotalo-green);"></i>
+                </div>
+                <h3 class="card-title mb-3"><%= t('pricing.yearly.title') %></h3>
+                <p class="text-muted mb-4"><%= t('pricing.yearly.description') %></p>
+                
+                <div class="pricing-amount mb-4">
+                  <span class="currency">$</span>
+                  <span class="amount">3,000</span>
+                  <span class="period">/año</span>
+                </div>
+                
+                <div class="savings-badge mb-3">
+                  <span class="badge bg-success fs-6">
+                    <i class="fas fa-piggy-bank me-1"></i>
+                    <%= t('pricing.yearly.savings') %>
+                  </span>
+                </div>
+                
+                <ul class="list-unstyled pricing-features mb-4">
+                  <li class="mb-2">
+                    <i class="fas fa-check-circle me-2 text-success"></i>
+                    <%= t('pricing.features.unlimited_quotes') %>
+                  </li>
+                  <li class="mb-2">
+                    <i class="fas fa-check-circle me-2 text-success"></i>
+                    <%= t('pricing.features.product_catalog') %>
+                  </li>
+                  <li class="mb-2">
+                    <i class="fas fa-check-circle me-2 text-success"></i>
+                    <%= t('pricing.features.customer_management') %>
+                  </li>
+                  <li class="mb-2">
+                    <i class="fas fa-check-circle me-2 text-success"></i>
+                    <%= t('pricing.features.pdf_exports') %>
+                  </li>
+                  <li class="mb-2">
+                    <i class="fas fa-check-circle me-2 text-success"></i>
+                    <%= t('pricing.features.email_support') %>
+                  </li>
+                  <li class="mb-2">
+                    <i class="fas fa-check-circle me-2 text-success"></i>
+                    <%= t('pricing.features.priority_support') %>
+                  </li>
+                </ul>
+                
+                <button class="btn btn-success btn-lg w-100" disabled>
+                  <i class="fas fa-tools me-2"></i><%= t('pricing.coming_soon') %>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# Features Comparison Section %>
+<div class="features-section py-5">
+  <div class="container">
+    <h2 class="text-center mb-5"><%= t('pricing.features_comparison.title') %></h2>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card h-100 border-0">
+          <div class="card-body p-4 text-center">
+            <i class="fas fa-rocket fa-3x mb-3" style="color: var(--cotalo-green);"></i>
+            <h5 class="card-title mb-3"><%= t('pricing.features_comparison.quotes.title') %></h5>
+            <p class="card-text">
+              <%= t('pricing.features_comparison.quotes.description') %>
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="card h-100 border-0 bg-darker">
+          <div class="card-body p-4 text-center">
+            <i class="fas fa-cogs fa-3x mb-3" style="color: var(--cotalo-green);"></i>
+            <h5 class="card-title mb-3"><%= t('pricing.features_comparison.automation.title') %></h5>
+            <p class="card-text">
+              <%= t('pricing.features_comparison.automation.description') %>
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="card h-100 border-0">
+          <div class="card-body p-4 text-center">
+            <i class="fas fa-shield-alt fa-3x mb-3" style="color: var(--cotalo-green);"></i>
+            <h5 class="card-title mb-3"><%= t('pricing.features_comparison.security.title') %></h5>
+            <p class="card-text">
+              <%= t('pricing.features_comparison.security.description') %>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# FAQ Section %>
+<div class="faq-section py-5">
+  <div class="container">
+    <h2 class="text-center mb-5"><%= t('pricing.faq.title') %></h2>
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="accordion" id="pricingFAQ">
+          <div class="accordion-item border-0 mb-3">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                <%= t('pricing.faq.question1') %>
+              </button>
+            </h2>
+            <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+              <div class="accordion-body">
+                <%= t('pricing.faq.answer1') %>
+              </div>
+            </div>
+          </div>
+          
+          <div class="accordion-item border-0 mb-3">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                <%= t('pricing.faq.question2') %>
+              </button>
+            </h2>
+            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+              <div class="accordion-body">
+                <%= t('pricing.faq.answer2') %>
+              </div>
+            </div>
+          </div>
+          
+          <div class="accordion-item border-0 mb-3">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                <%= t('pricing.faq.question3') %>
+              </button>
+            </h2>
+            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+              <div class="accordion-body">
+                <%= t('pricing.faq.answer3') %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# CTA Section %>
+<div class="cta-section py-5">
+  <div class="container text-center">
+    <h2 class="mb-4"><%= t('pricing.cta.title') %></h2>
+    <p class="lead mb-4"><%= t('pricing.cta.subtitle') %></p>
+    <div class="d-flex gap-3 justify-content-center">
+      <% if user_signed_in? %>
+        <%= link_to dashboard_path, class: "btn btn-success btn-lg" do %>
+          <i class="fas fa-tachometer-alt me-2"></i><%= t('pricing.cta.dashboard') %>
+        <% end %>
+      <% else %>
+        <%= link_to new_user_registration_path, class: "btn btn-success btn-lg" do %>
+          <i class="fas fa-rocket me-2"></i><%= t('pricing.cta.register') %>
+        <% end %>
+        <%= link_to new_user_session_path, class: "btn btn-outline-success btn-lg" do %>
+          <i class="fas fa-sign-in-alt me-2"></i><%= t('pricing.cta.login') %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<%# Add custom styles %>
+<style>
+/* Override main content padding for pricing page */
+body.pricing-index .main-content {
+  padding-top: 120px !important;
+}
+
+.hero-section {
+  background-color: var(--dark-bg);
+  min-height: 40vh; 
+  display: flex;
+  align-items: center;
+}
+
+.pricing-section, .features-section, .faq-section, .cta-section {
+  background-color: var(--dark-bg);
+}
+
+.bg-darker {
+  background-color: var(--darker-bg);
+}
+
+.pricing-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: var(--darker-bg);
+  border: 2px solid transparent !important;
+}
+
+.pricing-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(66, 185, 131, 0.2);
+}
+
+.pricing-card.recommended {
+  border: 2px solid var(--cotalo-green) !important;
+  position: relative;
+}
+
+.recommended-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.pricing-amount {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--cotalo-green);
+}
+
+.pricing-amount .currency {
+  font-size: 1.5rem;
+  vertical-align: top;
+}
+
+.pricing-amount .period {
+  font-size: 1rem;
+  color: #6c757d;
+  font-weight: 400;
+}
+
+.pricing-features li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pricing-features li:last-child {
+  border-bottom: none;
+}
+
+.savings-badge {
+  margin-top: -1rem;
+}
+
+.accordion-button {
+  background-color: var(--darker-bg);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: var(--cotalo-green);
+  color: #ffffff;
+  border-color: var(--cotalo-green);
+}
+
+.accordion-body {
+  background-color: var(--dark-bg);
+  color: #ffffff;
+}
+
+.alert-info {
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .pricing-amount {
+    font-size: 2rem;
+  }
+  
+  .pricing-card {
+    margin-bottom: 2rem;
+  }
+}
+</style>

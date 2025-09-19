@@ -1,13 +1,16 @@
 // Subnavbar styles
 .subnavbar {
   background-color: var(--cotalo-dark) !important;
-  border-top: 1px solid var(--border-color);
-  border-bottom: 1px solid var(--border-color);
-  padding: 0.3rem 1rem;
+  border-bottom: 1px solid var(--border-color); /* Solo línea inferior */
+  padding: 3rem 1rem 0.5rem 1rem; /* Padding asimétrico: más arriba (3rem), menos abajo (0.5rem) */
   margin-bottom: 0rem;
-  min-height: unset;
-  position: relative;
-  z-index: 2;  /* Below navbar but above main content */
+  min-height: 100px; /* Aumentado de 80px a 100px para mucho más espacio */
+  position: fixed;
+  top: 56px; /* Position below main navbar */
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1040;  /* Below main navbar but above content */
 
   // Title styling
   .navbar-brand {
@@ -56,7 +59,7 @@
   .container-fluid {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: center; /* Volvemos a center para centrado vertical */
     padding: 0.5rem 0;
     width: 100%;
   }

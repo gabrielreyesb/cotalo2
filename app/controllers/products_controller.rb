@@ -34,6 +34,11 @@ class ProductsController < ApplicationController
     # This action will render the new V2 form
   end
 
+  def new_v3
+    @product = current_user.products.build
+    initialize_product_data(@product)
+  end
+
   def edit_v2
     # This action will render the edit V2 form
   end

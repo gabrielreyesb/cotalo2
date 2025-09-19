@@ -78,6 +78,12 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
+// Import Product Form V3 JavaScript
+import('../product_form_v3')
+
+// Import Quote2 Form V2 JavaScript
+import('../quote2_form_v2')
+
 // Only try to import Stimulus controllers if actually being used in the page
 try {
   // Import Stimulus controllers conditionally

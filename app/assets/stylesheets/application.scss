@@ -20,6 +20,7 @@ $body-color: #e9ecef;
 @import "components/subnavbar";
 @import "components/mobile_actions";
 @import "components/home";
+@import "components/product_form_v3";
 @import 'components/product_form';
 @import 'components/sweetalert_custom';
 
@@ -94,6 +95,7 @@ a {
 .main-content {
   flex: 1 1 auto;
   padding: 1.5rem 0;
+  padding-top: 170px; /* Aumentado de 150px a 170px para el subnavbar mucho más alto */
   display: flex;
   flex-direction: column;
   height: auto;

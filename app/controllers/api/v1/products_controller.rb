@@ -84,6 +84,11 @@ class Api::V1::ProductsController < ApplicationController
     render json: @materials.map { |m| material_json(m) }, status: :ok
   end
 
+  def available_units
+    @units = Unit.all.order(:name)
+    render json: @units.map { |u| unit_json(u) }, status: :ok
+  end
+
   # PUT /api/v1/products/:id/update_indirect_costs_comments
   def update_indirect_costs_comments
     comments = params[:indirect_costs_comments] || params[:extras_comments]
@@ -257,6 +262,14 @@ class Api::V1::ProductsController < ApplicationController
         name: material.unit.name,
         abbreviation: material.unit.try(:abbreviation)
       } : nil
+    }
+  end
+
+  def unit_json(unit)
+    {
+      id: unit.id,
+      name: unit.name,
+      abbreviation: unit.abbreviation
     }
   end
 

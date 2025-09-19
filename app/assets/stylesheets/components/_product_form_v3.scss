@@ -1,0 +1,1698 @@
+// Product Form V3 Styles - Single Page Progressive Form with Fixed Sidebar
+
+// Variables for V3
+:root {
+  --cotalo-green: #42b983;
+  --dark-bg: #1a1a1a;
+  --dark-card-bg: #2d2d2d;
+}
+
+// V3 Layout with Sidebar
+.v3-layout {
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - 80px); // Account for navbar
+  background: var(--dark-bg);
+  margin: 0;
+  padding: 0;
+}
+
+// Override global main-content padding specifically for V3 product form
+// This needs to be outside .v3-layout because .main-content is outside .v3-layout in HTML
+body:has(.v3-layout) .main-content,
+body.v3-page .main-content {
+  padding-top: 50px !important; // Balanced padding to show section header properly
+}
+
+// Fixed Progress Sidebar
+.progress-sidebar {
+  position: fixed;
+  right: 0;
+  top: 56px; // Start below main navbar only (no subnavbar in V3)
+  width: 420px; // Increased from 280px to 420px for better spacing
+  height: calc(100vh - 56px);
+  background: var(--dark-bg);
+  border-left: 2px solid rgba(66, 185, 131, 0.3);
+  padding: 30px 25px;
+  z-index: 100;
+  overflow-y: auto;
+  box-shadow: -2px 0 15px rgba(0, 0, 0, 0.3);
+  
+  .sidebar-header {
+    padding-top: 20px;
+    margin-bottom: 30px;
+    text-align: center;
+    
+    h6 {
+      color: var(--cotalo-green);
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    
+    small {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.85rem;
+    }
+  }
+  
+  // Final Pricing Container in Sidebar
+  .final-pricing-container {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      border-color: var(--cotalo-green);
+      box-shadow: 0 3px 15px rgba(66, 185, 131, 0.3);
+      background: rgba(66, 185, 131, 0.1);
+    }
+    
+    .pricing-breakdown {
+      .pricing-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        
+        &:last-child {
+          border-bottom: none;
+        }
+        
+        span {
+          font-size: 14px;
+          color: white;
+          font-weight: 500;
+        }
+        
+        .price {
+          font-weight: 600;
+          color: var(--cotalo-green);
+          font-size: 14px;
+        }
+        
+        &.total {
+          background: linear-gradient(135deg, rgba(66, 185, 131, 0.2) 0%, rgba(66, 185, 131, 0.1) 100%);
+          margin: 15px -20px;
+          padding: 15px 20px;
+          border-radius: 10px;
+          border: 1px solid rgba(66, 185, 131, 0.3);
+          box-shadow: 0 2px 10px rgba(66, 185, 131, 0.2);
+          
+          span {
+            font-size: 16px;
+            color: white !important;
+            font-weight: 600;
+          }
+          
+          .total-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--cotalo-green) !important;
+          }
+        }
+        
+        // Style for percentage and value container
+        .percentage-and-value {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          
+          .percentage-symbol {
+            color: var(--cotalo-green);
+            font-weight: 600;
+            font-size: 12px;
+            min-width: 12px;
+            text-align: center;
+          }
+          
+          input[type="number"] {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            padding: 6px 8px;
+            font-size: 12px;
+            color: white;
+            text-align: right;
+            width: 80px;
+            transition: all 0.3s ease;
+            
+            /* Remove spinner arrows for number inputs */
+            appearance: textfield;
+            -moz-appearance: textfield;
+            
+            &::-webkit-outer-spin-button,
+            &::-webkit-inner-spin-button {
+              -webkit-appearance: none;
+              margin: 0;
+            }
+            
+            &:focus {
+              border-color: var(--cotalo-green);
+              box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25);
+              background: rgba(255, 255, 255, 0.1);
+            }
+            
+            &::placeholder {
+              color: rgba(255, 255, 255, 0.5);
+            }
+          }
+          
+          .price {
+            font-weight: 600;
+            color: var(--cotalo-green);
+            font-size: 13px;
+            min-width: 100px;
+            text-align: right;
+          }
+        }
+      }
+      
+      hr {
+        border-color: rgba(255, 255, 255, 0.1);
+        margin: 12px 0;
+        opacity: 0.6;
+      }
+    }
+  }
+}
+
+// Main Content Area for V3
+.v3-layout .main-content {
+  margin-right: 420px; // Adjusted for new sidebar width
+  padding: 15px 0px; /* Balanced vertical padding */
+  padding-top: 0px; /* Eliminado completamente el espacio superior */
+  min-height: calc(100vh - 56px);
+  background: var(--dark-bg);
+  width: calc(100% - 420px); // Adjusted for new sidebar width
+}
+
+// Mobile Responsive
+@media (max-width: 1024px) {
+  .progress-sidebar {
+    width: 350px; // Increased for better tablet experience
+  }
+  
+  .v3-layout .main-content {
+    margin-right: 350px; // Adjusted for tablet sidebar width
+    padding: 8px 8px; /* Reduced vertical padding for tablets */
+    padding-top: 0px; /* Eliminado completamente el espacio superior */
+  }
+}
+
+@media (max-width: 768px) {
+  .v3-layout {
+    flex-direction: column;
+  }
+  
+  .progress-sidebar {
+    position: fixed;
+    top: 56px; /* Still below main navbar only in mobile */
+    width: 100%;
+    height: auto;
+    order: 1;
+    padding: 20px;
+    
+    .final-pricing-container {
+      padding: 15px;
+      
+      .pricing-breakdown {
+        .pricing-row {
+          padding: 8px 0;
+          
+          span {
+            font-size: 12px;
+          }
+          
+          .price {
+            font-size: 12px;
+          }
+          
+          &.total {
+            margin: 10px -15px;
+            padding: 15px;
+            
+            span {
+              font-size: 16px;
+            }
+            
+            .total-price {
+              font-size: 20px;
+            }
+          }
+          
+          .percentage-and-value {
+            gap: 8px;
+            
+            input[type="number"] {
+              width: 50px;
+              font-size: 10px;
+              padding: 4px 6px;
+            }
+            
+            .price {
+              font-size: 12px;
+              min-width: 70px;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .v3-layout .main-content {
+    margin-right: 0; // Restored original mobile margin
+    margin-top: 100px; /* Space for horizontal progress bar */
+    order: 2;
+    padding: 10px;
+    padding-top: 0px; /* Eliminado completamente el espacio superior */
+  }
+}
+
+.product-form-v3 {
+  max-width: none; /* Remove max-width to use all available horizontal space */
+  margin: 0;
+  width: 100%;
+  padding: 0; /* Remove all padding to eliminate empty space */
+}
+
+// Progress Indicator
+.progress-container {
+  background: var(--dark-bg);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.4);
+  border: 1px solid rgba(66, 185, 131, 0.3);
+  position: sticky;
+  top: 20px;
+  z-index: 100;
+  margin-bottom: 30px;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.progress-header {
+  h5 {
+    color: white;
+    font-weight: 700;
+  }
+  
+  .progress-text {
+    font-weight: 600;
+    color: var(--cotalo-green);
+  }
+}
+
+.progress-main {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  
+  .progress-bar {
+    background: linear-gradient(90deg, var(--cotalo-green) 0%, #4dd0a7 100%);
+    transition: width 0.5s ease;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(66, 185, 131, 0.3);
+  }
+}
+
+.progress-steps {
+  margin-top: 15px;
+  
+  .step-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+    
+    i {
+      font-size: 20px;
+      margin-bottom: 5px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+    
+    small {
+      font-size: 11px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.5);
+    }
+    
+    &.active {
+      opacity: 1;
+      
+      i {
+        color: var(--cotalo-green);
+      }
+      
+      small {
+        color: var(--cotalo-green);
+        font-weight: 600;
+      }
+    }
+    
+    &.completed {
+      opacity: 1;
+      
+      i {
+        color: var(--cotalo-green);
+      }
+      
+      small {
+        color: var(--cotalo-green);
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+
+// Form Sections
+.form-section {
+  background: var(--dark-bg);
+  border-radius: 12px;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.3);
+  margin-bottom: 15px; /* Further reduced for more compact vertical layout */
+  margin-left: 10px; /* Minimal left margin */
+  margin-right: 10px; /* Minimal right margin */
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  
+  &.completed {
+    .section-header {
+      background: linear-gradient(135deg, rgba(66, 185, 131, 0.2) 0%, rgba(66, 185, 131, 0.1) 100%);
+      border-left: 5px solid var(--cotalo-green);
+      
+      .section-title {
+        color: var(--cotalo-green);
+      }
+      
+      .section-subtitle {
+        color: rgba(255, 255, 255, 0.8) !important;
+        opacity: 0.8;
+      }
+    }
+    
+    // Hide all status icons to simplify interface
+    // .completed-icon {
+    //   display: inline-block !important;
+    // }
+    // 
+    // .pending-icon {
+    //   display: none !important;
+    // }
+    
+    .section-content {
+      max-height: 0;
+      overflow: hidden;
+      padding: 0 30px;
+      transition: all 0.3s ease;
+    }
+    
+    &.expanded .section-content {
+      max-height: 2000px;
+      padding: 18px 30px;
+    }
+  }
+  
+  &.active {
+    border: 2px solid var(--cotalo-green);
+    box-shadow: 0 5px 25px rgba(66, 185, 131, 0.4);
+    
+    .section-header {
+      background: linear-gradient(135deg, var(--cotalo-green) 0%, #4dd0a7 100%);
+      color: white;
+      
+      .section-title {
+        color: white;
+      }
+      
+      .section-subtitle {
+        color: rgba(255,255,255,0.9) !important;
+      }
+    }
+  }
+  
+  // Collapsed state styles
+  &.collapsed {
+    .section-content {
+      max-height: 0 !important;
+      padding: 0 30px !important;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .section-header {
+      border-bottom: none;
+    }
+  }
+}
+
+.section-header {
+  padding: 18px 30px; /* Reduced vertical padding for more compact headers */
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+  }
+  
+  .section-status-icon {
+    position: absolute;
+    top: 18px;
+    right: 30px;
+    font-size: 24px;
+    display: none !important; // Hide status icons to simplify the interface
+    
+    .pending-icon {
+      color: #6c757d;
+      display: none !important;
+    }
+    
+    .loading-icon {
+      color: var(--cotalo-green);
+      display: none !important;
+    }
+    
+    .completed-icon {
+      color: #28a745;
+      display: none !important;
+    }
+  }
+  
+  // Collapse/expand indicator
+  .collapse-indicator {
+    position: absolute;
+    top: 18px;
+    right: 30px;
+    font-size: 18px;
+    color: var(--cotalo-green);
+    transition: transform 0.3s ease;
+    
+    &.collapsed {
+      transform: rotate(-90deg);
+    }
+  }
+  
+  .section-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--cotalo-green);
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    
+    .step-number {
+      background: var(--cotalo-green);
+      color: white;
+      font-weight: 800;
+      font-size: 16px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-right: 8px;
+      line-height: 1;
+      transform: translateY(-2px);
+    }
+  }
+  
+  .section-subtitle {
+    font-size: 14px;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.7);
+  }
+  
+  // Section total display
+  .section-total {
+    position: absolute;
+    top: 18px;
+    right: 80px; // Positioned to the left of the collapse indicator
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(66, 185, 131, 0.2) 0%, rgba(66, 185, 131, 0.1) 100%);
+    border: 1px solid rgba(66, 185, 131, 0.4);
+    border-radius: 8px;
+    padding: 8px 12px;
+    min-width: 100px;
+    
+    .total-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.7);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+    
+    .total-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--cotalo-green);
+      text-shadow: 0 0 8px rgba(66, 185, 131, 0.3);
+    }
+  }
+  
+  // Special styling for final prices total
+  &.final-prices-total {
+    background: linear-gradient(135deg, rgba(66, 185, 131, 0.3) 0%, rgba(66, 185, 131, 0.2) 100%);
+    border: 2px solid rgba(66, 185, 131, 0.5);
+    border-radius: 10px;
+    padding: 10px 15px;
+    min-width: 140px;
+    
+    .price-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      
+      &:not(:last-child) {
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(66, 185, 131, 0.3);
+      }
+      
+      .total-label {
+        font-size: 9px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.8);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 2px;
+      }
+      
+      .total-value {
+        font-size: 13px;
+        font-weight: 800;
+        color: var(--cotalo-green);
+        text-shadow: 0 0 10px rgba(66, 185, 131, 0.4);
+      }
+    }
+  }
+}
+
+.section-content {
+  padding: 18px 30px; /* Further reduced vertical padding for more compact sections */
+  
+  
+  h5 {
+    color: white;
+    font-weight: 700;
+  }
+  
+  .form-label {
+    font-weight: 600;
+    color: white;
+    margin-bottom: 5px;
+    
+    &.required::after {
+      content: " *";
+      color: #dc3545;
+    }
+  }
+  
+  .form-control, .form-select {
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    padding: 12px 15px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    
+    &:focus {
+      border-color: var(--cotalo-green);
+      box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25);
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+  }
+  
+  .form-text {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 5px;
+  }
+}
+
+.section-actions {
+  padding: 20px 30px;
+  background: rgba(255, 255, 255, 0.03);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  .btn {
+    border-radius: 8px;
+    padding: 12px 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    
+    &.btn-success {
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+      }
+    }
+  }
+}
+
+// Final action button container
+.final-action-container {
+  margin-top: 40px;
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  .btn {
+    border-radius: 12px;
+    padding: 15px 40px;
+    font-weight: 700;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(40, 167, 69, 0.2);
+    
+    &.btn-success {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      border: none;
+      
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(40, 167, 69, 0.4);
+        background: linear-gradient(135deg, #218838 0%, #1ea085 100%);
+      }
+      
+      &:active {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+      }
+    }
+  }
+}
+
+// Note: Empty states removed to simplify the interface
+
+// Lists and Items
+.materials-list, .material-processes-list, .global-processes-list, .extras-list {
+  .item-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      border-color: var(--cotalo-green);
+      box-shadow: 0 3px 15px rgba(66, 185, 131, 0.3);
+      background: rgba(66, 185, 131, 0.1);
+    }
+    
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      
+      .item-title {
+        font-weight: 600;
+        color: white;
+        margin: 0;
+      }
+      
+      .item-actions {
+        .btn {
+          padding: 6px 12px;
+          font-size: 12px;
+        }
+      }
+    }
+    
+    .item-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      
+      .detail-item {
+        .detail-label {
+          font-size: 12px;
+          font-weight: 600;
+          color: rgba(255, 255, 255, 0.7);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-bottom: 3px;
+        }
+        
+        .detail-value {
+          font-size: 14px;
+          font-weight: 600;
+          color: white;
+        }
+      }
+    }
+  }
+}
+
+// Final Pricing - Updated to match other sections
+.final-pricing-container {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: var(--cotalo-green);
+    box-shadow: 0 3px 15px rgba(66, 185, 131, 0.3);
+    background: rgba(66, 185, 131, 0.1);
+  }
+  
+  .pricing-breakdown {
+    .pricing-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      
+      &:last-child {
+        border-bottom: none;
+      }
+      
+      span {
+        font-size: 14px;
+        color: white;
+        font-weight: 500;
+      }
+      
+      .price {
+        font-weight: 600;
+        color: var(--cotalo-green);
+        font-size: 14px;
+      }
+      
+      &.total {
+        background: linear-gradient(135deg, rgba(66, 185, 131, 0.2) 0%, rgba(66, 185, 131, 0.1) 100%);
+        margin: 15px -25px;
+        padding: 20px 25px;
+        border-radius: 10px;
+        border: 1px solid rgba(66, 185, 131, 0.3);
+        box-shadow: 0 2px 10px rgba(66, 185, 131, 0.2);
+        
+        span {
+          font-size: 18px;
+          color: white !important;
+          font-weight: 600;
+        }
+        
+        .total-price {
+          font-size: 24px;
+          font-weight: 700;
+          color: var(--cotalo-green) !important;
+        }
+      }
+      
+      // Style for percentage and value container
+      .percentage-and-value {
+        display: flex;
+        align-items: center;
+        gap: 20px; // Increased from 12px to 20px
+        
+        .percentage-symbol {
+          color: var(--cotalo-green);
+          font-weight: 600;
+          font-size: 14px;
+          min-width: 20px;
+          text-align: center;
+        }
+        
+        input[type="number"] {
+          background: rgba(255, 255, 255, 0.05);
+          border: 2px solid rgba(255, 255, 255, 0.2);
+          border-radius: 6px;
+          padding: 6px 10px;
+          font-size: 12px;
+          color: white;
+          text-align: right;
+          width: 120px; // Significantly increased from 90px to 120px
+          transition: all 0.3s ease;
+          
+          /* Remove spinner arrows for number inputs */
+          appearance: textfield;
+          -moz-appearance: textfield;
+          
+          &::-webkit-outer-spin-button,
+          &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+          }
+          
+          &:focus {
+            border-color: var(--cotalo-green);
+            box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25);
+            background: rgba(255, 255, 255, 0.1);
+          }
+          
+          &::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+          }
+        }
+        
+        .price {
+          font-weight: 600;
+          color: var(--cotalo-green);
+          font-size: 14px;
+          min-width: 120px; // Increased from 60px to 120px (doubled)
+          text-align: right;
+        }
+      }
+      
+      // Style for standalone input fields in pricing rows (if any)
+      input[type="number"] {
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 6px;
+        padding: 6px 10px;
+        font-size: 12px;
+        color: white;
+        text-align: right;
+        width: 70px;
+        transition: all 0.3s ease;
+        
+        /* Remove spinner arrows for number inputs */
+        appearance: textfield;
+        -moz-appearance: textfield;
+        
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+        
+        &:focus {
+          border-color: var(--cotalo-green);
+          box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25);
+          background: rgba(255, 255, 255, 0.1);
+        }
+        
+        &::placeholder {
+          color: rgba(255, 255, 255, 0.5);
+        }
+      }
+    }
+    
+    hr {
+      border-color: rgba(255, 255, 255, 0.1);
+      margin: 15px 0;
+      opacity: 0.6;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .product-form-v3 {
+    margin: 0 15px;
+  }
+  
+  .progress-container {
+    padding: 15px;
+    top: 10px;
+    margin-left: 15px;
+    margin-right: 15px;
+    max-width: calc(100vw - 30px);
+  }
+  
+  .progress-steps {
+    .step-indicator {
+      small {
+        font-size: 10px;
+      }
+    }
+  }
+  
+  
+  .section-header {
+    padding: 15px;
+    
+    .section-status-icon {
+      top: 15px;
+      right: 20px;
+      display: none !important; // Hide status icons in mobile too
+    }
+    
+    .section-title {
+      font-size: 18px;
+    }
+    
+    // Mobile responsive for section totals
+    .section-total {
+      position: static;
+      margin-top: 10px;
+      align-self: flex-start;
+      min-width: 80px;
+      
+      .total-label {
+        font-size: 9px;
+      }
+      
+      .total-value {
+        font-size: 12px;
+      }
+      
+      // Special mobile styling for final prices
+      &.final-prices-total {
+        min-width: 120px;
+        
+        .price-item {
+          .total-label {
+            font-size: 8px;
+          }
+          
+          .total-value {
+            font-size: 11px;
+          }
+        }
+      }
+    }
+  }
+  
+  .section-content {
+    padding: 15px;
+  }
+  
+  .section-actions {
+    padding: 15px 20px;
+    flex-direction: column;
+    gap: 10px;
+    
+    .btn {
+      width: 100%;
+    }
+  }
+  
+  .add-material-section,
+  .add-process-section,
+  .add-extra-section {
+    .row > div {
+      margin-bottom: 15px;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+    
+    .btn {
+      width: 100%;
+    }
+  }
+  
+  // Final pricing responsive styles
+  .final-pricing-container {
+    padding: 20px;
+    
+    .pricing-breakdown {
+      .pricing-row {
+        padding: 10px 0;
+        
+        span {
+          font-size: 13px;
+        }
+        
+        .price {
+          font-size: 13px;
+        }
+        
+        &.total {
+          margin: 15px -20px;
+          padding: 15px 20px;
+          
+          span {
+            font-size: 16px;
+          }
+          
+          .total-price {
+            font-size: 20px;
+          }
+        }
+        
+        input[type="number"] {
+          width: 90px; // Significantly increased from 70px to 90px
+          font-size: 11px;
+          padding: 4px 8px;
+          
+          /* Remove spinner arrows for number inputs */
+          appearance: textfield;
+          -moz-appearance: textfield;
+          
+          &::-webkit-outer-spin-button,
+          &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+          }
+        }
+        
+        .percentage-and-value {
+          gap: 12px; // Increased from 8px to 12px to maintain proportion
+          
+          .percentage-symbol {
+            font-size: 12px;
+            min-width: 15px;
+          }
+          
+          input[type="number"] {
+            width: 80px; // Significantly increased from 60px to 80px
+            font-size: 10px;
+            padding: 3px 6px;
+            
+            /* Remove spinner arrows for number inputs */
+            appearance: textfield;
+            -moz-appearance: textfield;
+            
+            &::-webkit-outer-spin-button,
+            &::-webkit-inner-spin-button {
+              -webkit-appearance: none;
+              margin: 0;
+            }
+          }
+          
+          .price {
+            font-size: 12px;
+            min-width: 80px; // Increased from 50px to 80px to maintain proportion
+          }
+        }
+      }
+    }
+  }
+}
+
+// Animation Classes
+.fade-in {
+  animation: fadeIn 0.3s ease;
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+// Visual Separators between Sections
+.section-separator {
+  position: relative;
+  margin: 15px 0; /* Further reduced for more compact vertical layout */
+  text-align: center;
+  
+  .separator-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      rgba(255, 255, 255, 0.1) 20%, 
+      var(--cotalo-green) 50%, 
+      rgba(255, 255, 255, 0.1) 80%, 
+      transparent 100%
+    );
+    transform: translateY(-50%);
+  }
+  
+  .separator-content {
+    display: inline-flex;
+    align-items: center;
+    background: var(--dark-bg);
+    padding: 0 25px;
+    border-radius: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(66, 185, 131, 0.3);
+    position: relative;
+    z-index: 10;
+    /* Removed transition and hover effects to make it non-interactive */
+  }
+  
+  .separator-icon {
+    background: var(--cotalo-green);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    transition: all 0.3s ease;
+    
+    i {
+      color: white;
+      font-size: 16px;
+    }
+  }
+  
+  .separator-text {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    
+    .next-step {
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.7);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+    
+    .step-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+    }
+  }
+  
+  // Special styling for final separator
+  &.final-separator {
+    margin: 50px 0;
+    
+    .separator-line {
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(66, 185, 131, 0.3) 20%, 
+        var(--cotalo-green) 50%, 
+        rgba(66, 185, 131, 0.3) 80%, 
+        transparent 100%
+      );
+    }
+    
+    .separator-content {
+      border-color: var(--cotalo-green);
+      box-shadow: 0 4px 25px rgba(66, 185, 131, 0.3);
+      background: var(--dark-bg); /* Fixed: solid background instead of transparent */
+      
+      /* Removed hover effects to make it non-interactive */
+    }
+    
+    .separator-icon.final-icon {
+      background: linear-gradient(135deg, var(--cotalo-green) 0%, #4dd0a7 100%);
+      animation: pulse-success 2s infinite;
+      box-shadow: 0 0 15px rgba(66, 185, 131, 0.4);
+      
+      i {
+        font-size: 18px;
+      }
+    }
+    
+    .separator-text {
+      .next-step {
+        color: var(--cotalo-green);
+      }
+      
+      .step-name {
+        color: var(--cotalo-green);
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+// Animation for final separator
+@keyframes pulse-success {
+  0% {
+    box-shadow: 0 0 0 0 rgba(66, 185, 131, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(66, 185, 131, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(66, 185, 131, 0);
+  }
+}
+
+// Progress line connecting separators
+.section-separator:not(:last-of-type)::after {
+  content: '';
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  width: 3px;
+  height: 15px;
+  background: linear-gradient(180deg, var(--cotalo-green) 0%, rgba(255, 255, 255, 0.2) 100%);
+  transform: translateX(-50%);
+  z-index: 5;
+}
+
+// Responsive design for separators
+@media (max-width: 768px) {
+  .section-separator {
+    margin: 20px 0;
+    
+    .separator-content {
+      padding: 0 20px;
+      flex-direction: column;
+      text-align: center;
+      
+      .separator-icon {
+        margin-right: 0;
+        margin-bottom: 10px;
+        width: 45px;
+        height: 45px;
+        
+        i {
+          font-size: 18px;
+        }
+      }
+      
+      .separator-text {
+        text-align: center;
+        
+        .step-name {
+          font-size: 13px;
+        }
+      }
+    }
+    
+    &.final-separator {
+      margin: 40px 0;
+      
+      .separator-icon.final-icon {
+        width: 50px;
+        height: 50px;
+        
+        i {
+          font-size: 20px;
+        }
+      }
+      
+      .separator-text .step-name {
+        font-size: 15px;
+      }
+    }
+  }
+  
+  .section-separator:not(:last-of-type)::after {
+    height: 15px;
+    top: calc(100% + 15px);
+  }
+}
+
+// Animation for separator icons
+.separator-icon {
+  animation: bounce-gentle 3s ease-in-out infinite;
+}
+
+@keyframes bounce-gentle {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-3px);
+  }
+  60% {
+    transform: translateY(-1px);
+  }
+}
+
+// Form validation states
+.is-invalid {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+.is-valid {
+  border-color: #28a745 !important;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
+}
+
+// Material Card Styles - Global (applies to materials, processes, and global processes)
+.material-card {
+  background: linear-gradient(135deg, rgba(66, 185, 131, 0.1) 0%, rgba(66, 185, 131, 0.05) 100%);
+  border: 1px solid rgba(66, 185, 131, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: var(--cotalo-green);
+    box-shadow: 0 4px 20px rgba(66, 185, 131, 0.2);
+  }
+  
+  .material-field {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    text-align: center;
+    font-size: 12px;
+    min-width: 80px; /* Increased from default */
+    
+    /* Remove spinner arrows for number inputs */
+    appearance: textfield;
+    -moz-appearance: textfield;
+    
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    
+    &:focus {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: var(--cotalo-green);
+      box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.2);
+      outline: none;
+    }
+    
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+  }
+  
+  .process-field {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    text-align: center;
+    font-size: 12px;
+    min-width: 60px;
+    
+    /* Remove spinner arrows for number inputs */
+    appearance: textfield;
+    -moz-appearance: textfield;
+    
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    
+    &:focus {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: var(--cotalo-green);
+      box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.2);
+      outline: none;
+    }
+    
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+    
+    /* Styles for select elements */
+    option {
+      background: var(--dark-bg);
+      color: white;
+    }
+    
+    /* Specific styles for select elements */
+    &.form-control-sm {
+      font-size: 11px;
+      padding: 4px 6px;
+    }
+  }
+  
+  .calculated-value {
+    color: var(--cotalo-green);
+    font-weight: 600;
+  }
+    
+    .material-info {
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      
+      h6 {
+        color: var(--cotalo-green);
+        font-weight: 600;
+        margin-bottom: 15px;
+      }
+      
+      .material-details {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 6px;
+        padding: 15px;
+        
+        .row {
+          margin: 0;
+          
+          .col-md-3 {
+            padding: 0 10px;
+            
+            small {
+              font-size: 0.75rem;
+              opacity: 0.7;
+              color: rgba(255, 255, 255, 0.6);
+            }
+            
+            strong {
+              color: var(--cotalo-green);
+              font-size: 0.9rem;
+              font-weight: 600;
+              
+              &.total-cost {
+                font-size: 1rem;
+                color: var(--cotalo-green);
+                font-weight: 700;
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    .material-processes {
+      h6 {
+        color: white;
+        font-weight: 600;
+        margin-bottom: 15px;
+        font-size: 16px;
+      }
+      
+      .processes-selection {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 6px;
+        padding: 15px;
+        
+        .process-selector {
+          background: var(--dark-bg);
+          border: 1px solid rgba(66, 185, 131, 0.3);
+          color: white;
+          
+          &:focus {
+            border-color: var(--cotalo-green);
+            box-shadow: 0 0 0 0.2rem rgba(66, 185, 131, 0.25);
+          }
+        }
+        
+        .selected-processes {
+          .badge {
+            background: var(--cotalo-green) !important;
+            border: none;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            
+            .btn-close {
+              font-size: 0.6rem;
+              margin-left: 8px;
+            }
+          }
+          
+          .process-item {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(66, 185, 131, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+          }
+        }
+      }
+    }
+  }
+
+// Materials with Processes Integration
+.materials-container {
+  .add-material-section {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .materials-with-processes-list {
+    min-height: 20px; /* Reduced min-height to minimize empty space when no materials selected */
+  }
+  
+  // Global processes container - minimal styling since structure is now identical to material processes
+  .global-processes-container {
+    margin-top: 20px;
+    // The unified container (.processes-unified-container) uses existing .material-card styles
+    // Individual process rows use existing .process-row styles (same as material processes)
+  }
+  
+  // Extras container - same structure as material processes and global processes
+  .extras-container {
+    margin-top: 20px;
+    // The unified container (.processes-unified-container) uses existing .material-card styles
+    // Individual extra rows use existing .process-row styles (same as material processes)
+  }
+
+// Clickable separator for save action
+.clickable-separator {
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, rgba(66, 185, 131, 0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.4s ease;
+    z-index: 0;
+  }
+  
+  &:hover {
+    transform: translateY(-3px);
+    animation: pulse-save 1.5s ease-in-out infinite;
+    
+    &::before {
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(66, 185, 131, 0.2) 0%, transparent 70%);
+    }
+    
+    .separator-content {
+      background: linear-gradient(135deg, var(--cotalo-green) 0%, #4dd0a7 100%);
+      color: white;
+      box-shadow: 0 8px 25px rgba(66, 185, 131, 0.5);
+      transform: scale(1.05);
+      
+      .separator-icon {
+        background: white;
+        color: var(--cotalo-green);
+        transform: scale(1.2) rotate(5deg);
+        animation: bounce-icon 0.6s ease-in-out;
+      }
+      
+      .step-name {
+        color: white;
+        font-weight: 700;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+      }
+    }
+  }
+  
+  &:active {
+    transform: translateY(-1px) scale(0.98);
+    animation: none;
+    
+    .separator-content {
+      box-shadow: 0 4px 15px rgba(66, 185, 131, 0.4);
+      transform: scale(1.02);
+    }
+  }
+}
+
+// Keyframe animations for save button
+@keyframes pulse-save {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(66, 185, 131, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(66, 185, 131, 0);
+  }
+}
+
+@keyframes bounce-icon {
+  0%, 100% {
+    transform: scale(1.2) rotate(5deg);
+  }
+  50% {
+    transform: scale(1.3) rotate(-2deg);
+  }
+}
+
+// Responsive styles for material cards
+  @media (max-width: 768px) {
+    .material-card {
+      padding: 15px;
+      
+      .material-processes {
+        .processes-selection {
+          grid-template-columns: 1fr;
+          gap: 8px;
+          
+          .form-check {
+            padding: 10px 12px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Unified processes container with internal separators
+.processes-unified-container {
+  .processes-container {
+    .process-row {
+      padding: 15px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      
+      &:last-child {
+        border-bottom: none;
+      }
+      
+      &:first-child {
+        padding-top: 0;
+      }
+      
+      // Hover effect for individual process rows
+      &:hover {
+        background: rgba(66, 185, 131, 0.05);
+        border-radius: 4px;
+        margin: 0 -15px;
+        padding-left: 15px;
+        padding-right: 15px;
+      }
+    }
+  }
+}

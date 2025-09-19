@@ -1,0 +1,453 @@
+<% content_for :page_title do %>
+  Crear Cotización
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to products_path, class: "btn btn-outline-light me-2" do %>
+    <i class="fa fa-arrow-left me-1"></i> Cancelar
+  <% end %>
+  <button type="button" class="btn btn-primary" id="save-product-v3">
+    <i class="fa fa-save me-1"></i> Guardar Cotización
+  </button>
+<% end %>
+
+<% content_for :scripts do %>
+  <script>
+    // Add v3-page class to body for specific styling
+    document.addEventListener('DOMContentLoaded', function() {
+      document.body.classList.add('v3-page');
+    });
+  </script>
+<% end %>
+
+<!-- V3 Layout with Fixed Sidebar -->
+<div class="v3-layout">
+  <!-- Fixed Progress Sidebar -->
+  <div class="progress-sidebar">
+    <div class="sidebar-header">
+      <h6 class="mb-1">Cálculo Final</h6>
+      <small class="text-muted">Resumen en tiempo real</small>
+    </div>
+    
+    <!-- Final Pricing Section -->
+    <div class="final-pricing-container">
+      <div class="pricing-breakdown">
+        <div class="pricing-row">
+          <span>Materiales:</span>
+          <span class="price" id="sidebar-final-materials-cost">$0.00</span>
+        </div>
+        <div class="pricing-row">
+          <span>Procesos aplicados:</span>
+          <span class="price" id="sidebar-final-applied-processes-cost">$0.00</span>
+        </div>
+        <div class="pricing-row">
+          <span>Procesos globales:</span>
+          <span class="price" id="sidebar-final-global-processes-cost">$0.00</span>
+        </div>
+        <div class="pricing-row">
+          <span>Extras:</span>
+          <span class="price" id="sidebar-final-extras-cost">$0.00</span>
+        </div>
+        <hr>
+        <div class="pricing-row">
+          <span>Subtotal:</span>
+          <span class="price" id="sidebar-final-subtotal">$0.00</span>
+        </div>
+        <div class="pricing-row">
+          <span>Merma:</span>
+          <div class="percentage-and-value">
+            <span class="percentage-symbol">%</span>
+            <input type="number" class="form-control form-control-sm text-end" 
+                   id="sidebar-waste-percentage-input" value="2.0" min="0" step="0.1" 
+                   style="width: 80px; display: inline-block;">
+            <span class="price" id="sidebar-final-waste">$0.00</span>
+          </div>
+        </div>
+        <div class="pricing-row">
+          <span>Sub. con merma:</span>
+          <span class="price" id="sidebar-final-subtotal-with-waste">$0.00</span>
+        </div>
+        <div class="pricing-row">
+          <span>Costo pieza antes margen:</span>
+          <span class="price" id="sidebar-final-price-before-margin">$0.00</span>
+        </div>
+        <div class="pricing-row">
+          <span>Margen:</span>
+          <div class="percentage-and-value">
+            <span class="percentage-symbol">%</span>
+            <input type="number" class="form-control form-control-sm text-end" 
+                   id="sidebar-margin-percentage-input" value="5.0" min="0" step="0.1" 
+                   style="width: 80px; display: inline-block;">
+            <span class="price" id="sidebar-final-margin">$0.00</span>
+          </div>
+        </div>
+        <hr>
+        <div class="pricing-row total">
+          <span><strong>Totales:</strong></span>
+          <span class="price total-price" id="sidebar-final-total-price">$0.00</span>
+        </div>
+        <div class="pricing-row">
+          <span>Precio por pieza final:</span>
+          <span class="price" id="sidebar-final-price-per-piece">$0.00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <!-- Form Container -->
+<%= form_with model: @product, local: false, id: "product-form-v3", class: "product-form-v3" do |form| %>
+  
+  <!-- Section 1: General Info -->
+  <div class="form-section" id="section-1" data-step="1">
+    <div class="section-header">
+      <div class="section-status-icon">
+        <i class="fas fa-circle-notch fa-spin d-none loading-icon"></i>
+        <i class="fas fa-circle pending-icon"></i>
+        <i class="fas fa-check-circle text-success d-none completed-icon"></i>
+      </div>
+      <div class="collapse-indicator">
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <h4 class="section-title">
+        1. Información general
+      </h4>
+      <p class="section-subtitle text-muted">
+        Información del cliente y datos básicos del producto
+      </p>
+    </div>
+
+    <div class="section-content">
+      <!-- Client Information Section -->
+      <div class="client-info-section mb-4">
+        <h6 class="section-subsection-title mb-3">
+          <i class="fas fa-user me-2"></i>Información del cliente
+        </h6>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <%= label_tag "client_name", "Nombre del cliente", class: "form-label required" %>
+              <%= text_field_tag "client_name", nil, class: "form-control", required: true, data: { field: "client_name" } %>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <%= label_tag "client_company", "Compañía", class: "form-label" %>
+              <%= text_field_tag "client_company", nil, class: "form-control", data: { field: "client_company" } %>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <%= label_tag "client_email", "Correo electrónico", class: "form-label required" %>
+              <%= email_field_tag "client_email", nil, class: "form-control", required: true, data: { field: "client_email" } %>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <%= label_tag "client_phone", "Teléfono", class: "form-label" %>
+              <%= text_field_tag "client_phone", nil, class: "form-control", placeholder: "Ej: +52 55 1234 5678", data: { field: "client_phone" } %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Information Section -->
+      <div class="product-info-section">
+        <h6 class="section-subsection-title mb-3">
+          <i class="fas fa-box me-2"></i>Información del producto
+        </h6>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <%= form.label :description, "Descripción del producto", class: "form-label required" %>
+              <%= form.text_field :description, class: "form-control", required: true %>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="mb-3">
+              <%= form.label :quantity, "Cantidad", class: "form-label required", data: { general_info: "quantity" } %>
+              <%= form.number_field :quantity, class: "form-control", value: 0, min: 1, required: true, data: { field: "quantity" } %>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="mb-3">
+              <%= label_tag "width", "Ancho (cm)", class: "form-label required" %>
+              <%= number_field_tag "width", nil, class: "form-control", placeholder: "0.0", step: 0.1, min: 0, required: true, data: { field: "width" } %>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="mb-3">
+              <%= label_tag "length", "Alto (cm)", class: "form-label required" %>
+              <%= number_field_tag "length", nil, class: "form-control", placeholder: "0.0", step: 0.1, min: 0, required: true, data: { field: "length" } %>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Hidden field for internal measurements -->
+      <div class="mb-3 d-none">
+        <%= label_tag "inner_measurements", "¿Incluye medidas internas?", class: "form-label" %>
+        <%= text_field_tag "inner_measurements", nil, class: "form-control", data: { field: "inner_measurements" } %>
+      </div>
+      
+      <div class="mb-3">
+        <%= label_tag "comments", "Comentarios adicionales", class: "form-label" %>
+        <%= text_area_tag "comments", nil, class: "form-control", rows: 3, data: { field: "comments" } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visual Separator 1: General Info → Materials -->
+  <div class="section-separator">
+    <div class="separator-line"></div>
+    <div class="separator-content">
+      <div class="separator-icon">
+        <i class="fas fa-arrow-down"></i>
+      </div>
+      <div class="separator-text">
+        <span class="step-name">Materiales y procesos</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: Materials -->
+  <div class="form-section" id="section-2" data-step="2">
+    <div class="section-header">
+      <div class="section-status-icon">
+        <i class="fas fa-circle-notch fa-spin d-none loading-icon"></i>
+        <i class="fas fa-circle pending-icon"></i>
+        <i class="fas fa-check-circle text-success d-none completed-icon"></i>
+      </div>
+      <div class="collapse-indicator">
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <h4 class="section-title">
+        2. Materiales y procesos aplicados
+      </h4>
+      <p class="section-subtitle text-muted">
+        Usa materiales precargados o crea los tuyos en segundos
+      </p>
+      <div class="section-total">
+        <span class="total-label">Total:</span>
+        <span class="total-value" id="section-materials-total">$0.00</span>
+      </div>
+    </div>
+    
+    <div class="section-content">
+      <div class="materials-container">
+        <div class="add-material-section mb-4">
+          <div class="row align-items-center">
+            <div class="col-md-8">
+              <label class="form-label">Seleccionar Material</label>
+              <select class="form-select" id="material-select">
+                <option value="">Selecciona un material precargado</option>
+                <!-- Options will be populated via AJAX -->
+              </select>
+            </div>
+            <div class="col-md-4 d-flex justify-content-end gap-3">
+              <button type="button" class="btn btn-success" id="add-material-btn">
+                <i class="fas fa-folder me-1"></i> Agregar seleccionado
+              </button>
+              <button type="button" class="btn btn-outline-success" id="add-new-material-btn">
+                <i class="fas fa-plus me-1"></i> Agregar nuevo
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="materials-with-processes-list" id="materials-with-processes-list">
+          <!-- Materials with their processes will be added here dynamically -->
+          <!-- Example structure for each material:
+          <div class="material-card">
+            <div class="material-info">
+              <h6>Material: Acero Inoxidable (2mm)</h6>
+              <p>Cantidad: 1 pieza</p>
+            </div>
+            <div class="material-processes">
+              <h6>Procesos para este material:</h6>
+              <div class="processes-selection">
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" id="process-1">
+                  <label class="form-check-label" for="process-1">Corte por láser</label>
+                </div>
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" id="process-2">
+                  <label class="form-check-label" for="process-2">Doblado</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visual Separator 2: Materials & Processes → Global Processes -->
+  <div class="section-separator">
+    <div class="separator-line"></div>
+    <div class="separator-content">
+      <div class="separator-icon">
+        <i class="fas fa-arrow-down"></i>
+      </div>
+      <div class="separator-text">
+        <span class="step-name">Procesos globales</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Global Processes -->
+  <div class="form-section" id="section-3" data-step="3">
+    <div class="section-header">
+      <div class="section-status-icon">
+        <i class="fas fa-circle-notch fa-spin d-none loading-icon"></i>
+        <i class="fas fa-circle pending-icon"></i>
+        <i class="fas fa-check-circle text-success d-none completed-icon"></i>
+      </div>
+      <div class="collapse-indicator">
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <h4 class="section-title">
+        3. Procesos globales
+      </h4>
+      <p class="section-subtitle text-muted">
+        Procesos que se aplican a todas las piezas una vez terminadas
+      </p>
+      <div class="section-total">
+        <span class="total-label">Total:</span>
+        <span class="total-value" id="section-global-processes-total">$0.00</span>
+      </div>
+    </div>
+    <div class="section-content">
+      <div class="global-processes-container">
+        <div class="add-process-section mb-4">
+          <div class="row align-items-center">
+            <div class="col-md-6">
+              <label class="form-label">Seleccionar Proceso Global</label>
+              <select class="form-select" id="global-process-select">
+                <option value="">Selecciona un proceso global...</option>
+                <!-- Options will be populated via AJAX -->
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Aplicar en</label>
+              <select class="form-select" id="process-side">
+                <option value="front">Frente</option>
+                <option value="back">Reverso</option>
+                <option value="both">Ambos lados</option>
+              </select>
+            </div>
+            <div class="col-md-4 d-flex gap-3 justify-content-end align-items-end">
+              <button type="button" class="btn btn-success" id="add-global-process-btn">
+                <i class="fas fa-plus me-1"></i> Agregar seleccionado
+              </button>
+              <button type="button" class="btn btn-outline-success" id="add-manual-global-process-btn">
+                <i class="fas fa-plus me-1"></i> Agregar nuevo
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="global-processes-container" id="global-processes-container" style="display: none;">
+          <div class="global-processes-list" id="global-processes-list">
+            <!-- Global processes will be added here dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visual Separator 4: Global Processes → Extras -->
+  <div class="section-separator">
+    <div class="separator-line"></div>
+    <div class="separator-content">
+      <div class="separator-icon">
+        <i class="fas fa-arrow-down"></i>
+      </div>
+      <div class="separator-text">
+        <span class="step-name">Extras</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: Extras and Final Costs -->
+  <div class="form-section" id="section-4" data-step="4">
+    <div class="section-header">
+      <div class="section-status-icon">
+        <i class="fas fa-circle-notch fa-spin d-none loading-icon"></i>
+        <i class="fas fa-circle pending-icon"></i>
+        <i class="fas fa-check-circle text-success d-none completed-icon"></i>
+      </div>
+      <div class="collapse-indicator">
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <h4 class="section-title">
+        4. Costos extras
+      </h4>
+      <p class="section-subtitle text-muted">
+        Costos adicionales como empaque, envío, etc.
+      </p>
+      <div class="section-total">
+        <span class="total-label">Total:</span>
+        <span class="total-value" id="section-extras-total">$0.00</span>
+      </div>
+    </div>
+    
+    <div class="section-content">
+      <!-- Extras Section -->
+      <div class="extras-container mb-4">
+        <div class="add-extra-section mb-4">
+          <div class="row align-items-center">
+            <div class="col-md-6">
+              <label class="form-label">Seleccionar Extra</label>
+              <select class="form-select" id="extra-select">
+                <option value="">Elige un costo extra...</option>
+                <!-- Options will be populated via AJAX -->
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Cantidad</label>
+              <input type="number" class="form-control" id="extra-quantity" min="1" value="1">
+            </div>
+            <div class="col-md-4 d-flex gap-3 justify-content-end align-items-end">
+              <button type="button" class="btn btn-success" id="add-extra-btn">
+                <i class="fas fa-plus me-1"></i> Agregar seleccionado
+              </button>
+              <button type="button" class="btn btn-outline-success" id="add-manual-extra-btn">
+                <i class="fas fa-plus me-1"></i> Agregar nuevo
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="extras-container" id="extras-container" style="display: none;">
+          <div class="extras-list" id="extras-list">
+            <!-- Extras will be added here dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visual Separator: Ready to Save -->
+  <div class="section-separator final-separator clickable-separator" id="save-product-final">
+    <div class="separator-line"></div>
+    <div class="separator-content">
+      <div class="separator-icon final-icon">
+        <i class="fas fa-save"></i>
+      </div>
+      <div class="separator-text">
+        <span class="step-name">Guardar cotización</span>
+      </div>
+    </div>
+  </div>
+  
+  
+  <!-- Hidden form fields to store the data -->
+  <%= form.hidden_field :data, id: "product-data" %>
+<% end %>
+  </div>
+</div>

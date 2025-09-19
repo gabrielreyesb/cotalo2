@@ -1,0 +1,267 @@
+<% content_for :page_title, "Cotización #{@quote.quote_number}" %>
+
+<% content_for :page_actions do %>
+  <%= link_to quote2s_path, class: "btn btn-outline-light me-2" do %>
+    <i class="fa fa-arrow-left me-1"></i> Volver a cotizaciones
+  <% end %>
+  <%= link_to edit_quote2_path(@quote), class: "btn btn-primary me-2" do %>
+    <i class="fa fa-edit me-1"></i> Editar
+  <% end %>
+  <%= link_to @quote, method: :delete, 
+              data: { confirm: '¿Estás seguro de que quieres eliminar esta cotización?' },
+              class: "btn btn-danger" do %>
+    <i class="fa fa-trash me-1"></i> Eliminar
+  <% end %>
+<% end %>
+
+<div class="container-fluid">
+  <div class="row">
+    <!-- Main Content -->
+    <div class="col-lg-8">
+      <!-- Quote Header -->
+      <div class="card mb-4">
+        <div class="card-header bg-dark text-light">
+          <div class="d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">
+              <i class="fas fa-file-invoice me-2"></i>
+              <%= @quote.quote_number %>
+            </h4>
+            <span class="badge bg-success fs-6">
+              $<%= number_with_precision(@quote.pricing['total_price'], precision: 2) %>
+            </span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <h6 class="text-muted">Descripción</h6>
+              <p class="mb-3"><%= @quote.description %></p>
+              
+              <h6 class="text-muted">Cliente</h6>
+              <p class="mb-1"><strong><%= @quote.client_name %></strong></p>
+              <% if @quote.client_company.present? %>
+                <p class="text-muted mb-1"><%= @quote.client_company %></p>
+              <% end %>
+              <p class="text-muted mb-1"><%= @quote.client_email %></p>
+              <% if @quote.client_phone.present? %>
+                <p class="text-muted"><%= @quote.client_phone %></p>
+              <% end %>
+            </div>
+            <div class="col-md-6">
+              <h6 class="text-muted">Información del Producto</h6>
+              <p class="mb-1"><strong>Dimensiones:</strong> <%= @quote.general_info['width'] %> x <%= @quote.general_info['length'] %> cm</p>
+              <p class="mb-1"><strong>Cantidad:</strong> <%= number_with_delimiter(@quote.general_info['quantity']) %> piezas</p>
+              <% if @quote.general_info['inner_measurements'].present? %>
+                <p class="mb-1"><strong>Medidas internas:</strong> <%= @quote.general_info['inner_measurements'] %></p>
+              <% end %>
+              <% if @quote.general_info['comments'].present? %>
+                <p class="mb-1"><strong>Comentarios:</strong> <%= @quote.general_info['comments'] %></p>
+              <% end %>
+              
+              <h6 class="text-muted mt-3">Fecha de creación</h6>
+              <p class="text-muted"><%= @quote.created_at.strftime("%d/%m/%Y a las %H:%M") %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Materials Section -->
+      <% if @quote.materials.any? %>
+        <div class="card mb-4">
+          <div class="card-header bg-dark text-light">
+            <h5 class="mb-0">
+              <i class="fas fa-layer-group me-2"></i>
+              Materiales (<%= @quote.materials.count %>)
+            </h5>
+          </div>
+          <div class="card-body">
+            <% @quote.materials.each_with_index do |material, index| %>
+              <div class="border rounded p-3 mb-3 <%= 'bg-light' if index.odd? %>">
+                <div class="row">
+                  <div class="col-md-8">
+                    <h6 class="mb-1"><%= material['description'] %></h6>
+                    <% if material['client_description'].present? && material['client_description'] != material['description'] %>
+                      <p class="text-muted small mb-1"><%= material['client_description'] %></p>
+                    <% end %>
+                    <div class="row text-muted small">
+                      <div class="col-3">
+                        <strong>Dimensiones:</strong><br>
+                        <%= material['ancho'] %> x <%= material['largo'] %> cm
+                      </div>
+                      <div class="col-3">
+                        <strong>Costo:</strong><br>
+                        $<%= number_with_precision(material['cost'], precision: 2) %>
+                      </div>
+                      <% if material['weight'].present? %>
+                        <div class="col-3">
+                          <strong>Peso:</strong><br>
+                          <%= material['weight'] %> gr/m²
+                        </div>
+                      <% end %>
+                      <div class="col-3">
+                        <strong>Unidad:</strong><br>
+                        <%= material.dig('unit', 'name') || material.dig('unit', 'abbreviation') || 'N/A' %>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4 text-end">
+                    <% if material['processes'].present? && material['processes'].count > 0 %>
+                      <h6 class="text-success">$<%= number_with_precision(material['processes'].sum { |p| (p['price'] || 0).to_f }, precision: 2) %></h6>
+                      <p class="text-muted small mb-0">Procesos aplicados</p>
+                    <% end %>
+                  </div>
+                </div>
+                
+                <!-- Material Processes -->
+                <% if material['processes'].present? && material['processes'].count > 0 %>
+                  <div class="mt-3 pt-3 border-top">
+                    <h6 class="text-muted mb-2">Procesos aplicados:</h6>
+                    <div class="row">
+                      <% material['processes'].each do |process| %>
+                        <div class="col-md-4 mb-2">
+                          <div class="bg-white p-2 rounded border">
+                            <small class="text-muted">Proceso ID: <%= process['id'] %></small><br>
+                            <strong>$<%= number_with_precision(process['price'], precision: 2) %></strong>
+                            <small class="text-muted d-block">
+                              Cara: <%= process['side'] == 'both' ? 'Ambas' : (process['side'] == 'front' ? 'Frente' : 'Reverso') %>
+                            </small>
+                          </div>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Global Processes Section -->
+      <% if @quote.processes.any? %>
+        <div class="card mb-4">
+          <div class="card-header bg-dark text-light">
+            <h5 class="mb-0">
+              <i class="fas fa-cogs me-2"></i>
+              Procesos Globales (<%= @quote.processes.count %>)
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <% @quote.processes.each do |process| %>
+                <div class="col-md-4 mb-3">
+                  <div class="border rounded p-3">
+                    <small class="text-muted">Proceso ID: <%= process['id'] %></small><br>
+                    <strong>$<%= number_with_precision(process['price'], precision: 2) %></strong>
+                    <small class="text-muted d-block">
+                      Cara: <%= process['side'] == 'both' ? 'Ambas' : (process['side'] == 'front' ? 'Frente' : 'Reverso') %>
+                    </small>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Extras Section -->
+      <% if @quote.extras.any? %>
+        <div class="card mb-4">
+          <div class="card-header bg-dark text-light">
+            <h5 class="mb-0">
+              <i class="fas fa-plus-circle me-2"></i>
+              Extras (<%= @quote.extras.count %>)
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <% @quote.extras.each do |extra| %>
+                <div class="col-md-4 mb-3">
+                  <div class="border rounded p-3">
+                    <h6><%= extra['name'] || extra['description'] %></h6>
+                    <% if extra['description'].present? && extra['description'] != extra['name'] %>
+                      <p class="text-muted small mb-1"><%= extra['description'] %></p>
+                    <% end %>
+                    <strong>$<%= number_with_precision(extra['cost'], precision: 2) %></strong>
+                    <% if extra['quantity'].present? && extra['quantity'] > 1 %>
+                      <small class="text-muted">x <%= extra['quantity'] %></small>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <!-- Pricing Summary -->
+      <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">
+            <i class="fas fa-calculator me-2"></i>
+            Resumen de Costos
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row mb-2">
+            <div class="col-8">Costo de materiales:</div>
+            <div class="col-4 text-end">$<%= number_with_precision(@quote.pricing['materials_cost'], precision: 2) %></div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-8">Procesos de materiales:</div>
+            <div class="col-4 text-end">$<%= number_with_precision(@quote.pricing['material_processes_cost'], precision: 2) %></div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-8">Procesos globales:</div>
+            <div class="col-4 text-end">$<%= number_with_precision(@quote.pricing['global_processes_cost'], precision: 2) %></div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-8">Extras:</div>
+            <div class="col-4 text-end">$<%= number_with_precision(@quote.pricing['extras_cost'], precision: 2) %></div>
+          </div>
+          <hr>
+          <div class="row mb-2">
+            <div class="col-8"><strong>Subtotal:</strong></div>
+            <div class="col-4 text-end"><strong>$<%= number_with_precision(@quote.pricing['subtotal'], precision: 2) %></strong></div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-8">Merma (<%= @quote.pricing['waste_percentage'] %>%):</div>
+            <div class="col-4 text-end">$<%= number_with_precision(@quote.pricing['waste_value'], precision: 2) %></div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-8">Margen (<%= @quote.pricing['margin_percentage'] %>%):</div>
+            <div class="col-4 text-end">$<%= number_with_precision(@quote.pricing['margin_value'], precision: 2) %></div>
+          </div>
+          <hr>
+          <div class="row mb-2">
+            <div class="col-8"><strong>Total:</strong></div>
+            <div class="col-4 text-end"><strong class="text-success fs-5">$<%= number_with_precision(@quote.pricing['total_price'], precision: 2) %></strong></div>
+          </div>
+          <div class="row">
+            <div class="col-8">Precio por pieza:</div>
+            <div class="col-4 text-end">$<%= number_with_precision(@quote.pricing['final_price_per_piece'], precision: 4) %></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quote Info -->
+      <div class="card">
+        <div class="card-header bg-dark text-light">
+          <h5 class="mb-0">
+            <i class="fas fa-info-circle me-2"></i>
+            Información
+          </h5>
+        </div>
+        <div class="card-body">
+          <p class="mb-2"><strong>Número:</strong> <%= @quote.quote_number %></p>
+          <p class="mb-2"><strong>Creado:</strong> <%= @quote.created_at.strftime("%d/%m/%Y") %></p>
+          <p class="mb-2"><strong>Actualizado:</strong> <%= @quote.updated_at.strftime("%d/%m/%Y") %></p>
+          <p class="mb-0"><strong>Usuario:</strong> <%= @quote.user.email %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -90,6 +90,20 @@ Rails.application.routes.draw do
       get :processes_list
       get :extras_list
       get :new_v2
+      get :new_v3
+    end
+  end
+
+  # Quote2 routes (Direct Quotes V2)
+  resources :quote2s do
+    member do
+      get :general_info
+    end
+    
+    collection do
+      get :materials_list
+      get :processes_list
+      get :extras_list
     end
   end
   
@@ -137,6 +151,7 @@ Rails.application.routes.draw do
       get 'indirect_costs', to: 'products#available_indirect_costs'
       get 'manufacturing_processes', to: 'products#available_manufacturing_processes'
       get 'materials', to: 'products#available_materials'
+      get 'units', to: 'products#available_units'
       get 'user_config', to: 'app_configs#user_config'
       get 'price_margins', to: 'price_margins#index'
       get 'price_margins/calculate', to: 'price_margins#calculate'
@@ -174,6 +189,9 @@ Rails.application.routes.draw do
   
   # About Us page
   get 'about', to: 'home#about', as: :about
+  
+  # Pricing page
+  get 'pricing', to: 'pricing#index', as: :pricing
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

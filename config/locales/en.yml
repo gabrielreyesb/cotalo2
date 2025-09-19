@@ -234,8 +234,8 @@ en:
     suggestions: "Suggestions"
     send: "Send"
   home:
-    hero_title: "Calculate the manufacturing cost for custom graphic arts products in minutes"
-    hero_subtitle: "Cotalo lets you design and quote graphic arts products quickly and accurately. Optimize your production costs with our intuitive tool."
+    hero_title: "Generate professional quotes for graphic arts in minutes"
+    hero_subtitle: "Cotalo lets you create detailed and accurate quotes for graphic arts products. Calculate manufacturing costs and send professional proposals to your clients."
     go_to_dashboard: "Go to Inicio"
     register_free: "Register for free"
     login: "Log in"
@@ -1180,3 +1180,58 @@ products_tab:
     include_in_subtotal_mobile: "Include indirects in product subtotal"
 extras_tab:
   include_in_subtotal_mobile: "Include indirects in product subtotal"
+
+# Pricing page translations
+pricing:
+  page_title: "Pricing"
+  hero_title: "Subscription Plans"
+  hero_subtitle: "Choose the plan that best fits your graphic arts business needs"
+  development_notice: "You currently don't need to pay anything. Cotalo is in development and will be free during the beta phase."
+  
+  monthly:
+    title: "Monthly Plan"
+    description: "Ideal for testing all features"
+  
+  yearly:
+    title: "Yearly Plan"
+    description: "The best option for established businesses"
+    savings: "Save 2 months (20% discount)"
+  
+  recommended: "Recommended"
+  coming_soon: "Coming Soon"
+  
+  features:
+    unlimited_quotes: "Unlimited quotes"
+    product_catalog: "Customizable product catalog"
+    customer_management: "Customer management"
+    pdf_exports: "Professional PDF exports"
+    email_support: "Email support"
+    priority_support: "Priority support"
+  
+  features_comparison:
+    title: "What does your subscription include?"
+    quotes:
+      title: "Professional Quotes"
+      description: "Create detailed quotes with automatic cost calculations"
+    automation:
+      title: "Smart Automation"
+      description: "Automatically calculate manufacturing costs based on your configurations"
+    security:
+      title: "Security and Confidentiality"
+      description: "Your data is safe with enterprise-grade encryption"
+  
+  faq:
+    title: "Frequently Asked Questions"
+    question1: "When will billing begin?"
+    answer1: "Cotalo is currently in beta phase and will be completely free. We will notify you in advance when it's ready to begin billing."
+    question2: "Can I change plans at any time?"
+    answer2: "Yes, you can switch between monthly and yearly plans at any time from your configuration panel."
+    question3: "What payment methods do you accept?"
+    answer3: "We will accept credit and debit cards, bank transfers, and other popular payment methods in Mexico."
+  
+  cta:
+    title: "Ready to get started?"
+    subtitle: "Join the beta phase and test all features at no cost"
+    dashboard: "Go to Dashboard"
+    register: "Register Free"
+    login: "Sign In"

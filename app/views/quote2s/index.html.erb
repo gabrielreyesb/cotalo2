@@ -1,0 +1,116 @@
+<% content_for :page_title do %>
+  Cotizaciones Directas
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to new_quote2_path, class: "btn btn-primary" do %>
+    <i class="fas fa-plus me-1"></i> Nueva Cotización
+  <% end %>
+<% end %>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-file-invoice me-2"></i>
+          Cotizaciones Directas
+        </h5>
+      </div>
+      <div class="card-body">
+        <!-- Search Form -->
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <%= form_with url: quote2s_path, method: :get, local: true, class: "d-flex" do |form| %>
+              <%= form.text_field :q, value: params[:q], class: "form-control me-2", placeholder: "Buscar por descripción, cliente o email..." %>
+              <%= form.submit "Buscar", class: "btn btn-outline-primary" %>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Quotes Table -->
+        <% if @quotes.any? %>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Número</th>
+                  <th>Cliente</th>
+                  <th>Descripción</th>
+                  <th>Total</th>
+                  <th>Fecha</th>
+                  <th class="text-end">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @quotes.each do |quote| %>
+                  <tr>
+                    <td>
+                      <strong class="text-primary"><%= quote.quote_number %></strong>
+                    </td>
+                    <td>
+                      <div>
+                        <strong><%= quote.client_name %></strong>
+                        <% if quote.client_company.present? %>
+                          <br><small class="text-muted"><%= quote.client_company %></small>
+                        <% end %>
+                        <br><small class="text-muted"><%= quote.client_email %></small>
+                      </div>
+                    </td>
+                    <td><%= quote.description %></td>
+                    <td>
+                      <span class="fw-bold text-success">
+                        $<%= number_with_precision(quote.pricing["total_price"] || 0, precision: 2) %>
+                      </span>
+                    </td>
+                    <td>
+                      <small><%= quote.created_at.strftime("%d/%m/%Y %H:%M") %></small>
+                    </td>
+                    <td class="text-end">
+                      <div class="btn-group" role="group">
+                        <%= link_to quote2_path(quote), class: "btn btn-sm btn-outline-primary", title: "Ver" do %>
+                          <i class="fas fa-eye"></i>
+                        <% end %>
+                        <%= link_to edit_quote2_path(quote), class: "btn btn-sm btn-outline-secondary", title: "Editar" do %>
+                          <i class="fas fa-edit"></i>
+                        <% end %>
+                        <%= link_to quote2_path(quote), method: :delete, 
+                            class: "btn btn-sm btn-outline-danger", 
+                            title: "Eliminar",
+                            confirm: "¿Estás seguro de que deseas eliminar esta cotización?" do %>
+                          <i class="fas fa-trash"></i>
+                        <% end %>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="d-flex justify-content-center">
+            <%= paginate @quotes %>
+          </div>
+        <% else %>
+          <div class="text-center py-5">
+            <i class="fas fa-file-invoice fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">No hay cotizaciones</h5>
+            <p class="text-muted">
+              <% if params[:q].present? %>
+                No se encontraron cotizaciones que coincidan con tu búsqueda.
+              <% else %>
+                Comienza creando tu primera cotización directa.
+              <% end %>
+            </p>
+            <% unless params[:q].present? %>
+              <%= link_to new_quote2_path, class: "btn btn-primary" do %>
+                <i class="fas fa-plus me-1"></i> Crear Primera Cotización
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

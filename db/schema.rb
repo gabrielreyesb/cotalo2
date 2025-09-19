@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_13_190500) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_18_173313) do
   create_table "app_configs", force: :cascade do |t|
     t.string "key", null: false
     t.text "value"
@@ -147,6 +147,22 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_13_190500) do
     t.index ["user_id"], name: "index_products_on_user_id"
   end
 
+  create_table "quote2s", force: :cascade do |t|
+    t.string "quote_number", null: false
+    t.string "client_name", null: false
+    t.string "client_company"
+    t.string "client_email", null: false
+    t.string "client_phone"
+    t.string "description", null: false
+    t.json "product_data", default: {}, null: false
+    t.integer "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "client_email"], name: "index_quote2s_on_user_id_and_client_email"
+    t.index ["user_id", "quote_number"], name: "index_quote2s_on_user_id_and_quote_number", unique: true
+    t.index ["user_id"], name: "index_quote2s_on_user_id"
+  end
+
   create_table "quote_products", force: :cascade do |t|
     t.integer "quote_id", null: false
     t.integer "product_id", null: false
@@ -169,6 +185,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_13_190500) do
     t.json "data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "description"
+    t.json "product_data"
     t.index ["user_id"], name: "index_quotes_on_user_id"
   end
 
@@ -234,6 +252,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_13_190500) do
   add_foreign_key "pdf_configs", "users"
   add_foreign_key "price_margins", "users"
   add_foreign_key "products", "users"
+  add_foreign_key "quote2s", "users"
   add_foreign_key "quote_products", "products"
   add_foreign_key "quote_products", "quotes"
   add_foreign_key "quotes", "users"

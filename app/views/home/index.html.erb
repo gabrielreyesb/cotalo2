@@ -1,61 +1,61 @@
-<%# Product Image Section %>
-<div class="product-intro-section py-2">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-12 text-center">
-        <%= image_tag "productonew.png", 
-            alt: "Producto Cotalo", 
-            class: "img-fluid product-intro-image",
-            style: "max-width: 600px; border-radius: 12px; box-shadow: 0 8px 32px rgba(66, 185, 131, 0.2);" %>
-      </div>
-    </div>
-  </div>
-</div>
-
-<%# Hero Section %>
-<div class="hero-section py-2">
+<%# Hero Section with Quote Image Side by Side %>
+<div class="hero-section py-4">
   <div class="container">
     <div class="row align-items-center">
-      <!-- Left Column: Main Content -->
+      <!-- Left Column: Quote Image -->
+      <div class="col-lg-6 col-12 text-center mb-4 mb-lg-0">
+        <%= image_tag "cotizacion_ejemplo.png", 
+            alt: "Ejemplo de cotización profesional generada por Cotalo", 
+            class: "img-fluid clickable-image quote-hero-image",
+            style: "border-radius: 12px; box-shadow: 0 8px 32px rgba(66, 185, 131, 0.2); cursor: pointer;",
+            data: { bs_toggle: "modal", bs_target: "#quoteImageModal" } %>
+      </div>
+      
+      <!-- Right Column: Main Content -->
       <div class="col-lg-6 col-12 d-flex flex-column text-center text-lg-start">
         <% if user_signed_in? %>
-          <h1 class="display-3 mb-4 hero-title"><%= t('home.hero_title') %></h1>
+          <h1 class="display-4 mb-4 hero-title"><%= t('home.hero_title') %></h1>
         <% else %>
           <%= link_to new_user_registration_path, class: "text-decoration-none" do %>
-            <h1 class="display-3 mb-4 hero-title hero-title-link"><%= t('home.hero_title') %></h1>
+            <h1 class="display-4 mb-4 hero-title hero-title-link"><%= t('home.hero_title') %></h1>
           <% end %>
         <% end %>
         
-        <p class="lead mb-4 hero-subtitle">
+        <p class="lead mb-5 hero-subtitle">
           <%= t('home.hero_subtitle') %>
         </p>
         <% if user_signed_in? %>
-          <div class="d-flex justify-content-center justify-content-lg-start mb-4">
+          <div class="d-flex justify-content-center mb-4">
             <%= link_to dashboard_path, class: "btn btn-success btn-lg" do %>
               <i class="fas fa-tachometer-alt me-2"></i><%= t('home.go_to_dashboard') %>
             <% end %>
           </div>
-        <% end %>
-      </div>
-      
-      <!-- Right Column: Steps Animation -->
-      <div class="col-lg-6 col-12 d-flex flex-column align-items-center justify-content-center">
-                     <div class="steps-animation-container clickable-steps" data-bs-toggle="modal" data-bs-target="#stepsModal" style="cursor: pointer;">
-               <h3 class="steps-title mb-4"><%= t('home.steps_animation.title') %></h3>
-               <div class="steps-animation">
-                 <div class="step-number">1</div>
-                 <div class="step-text" id="animated-step-text">
-                   <%= t('home.steps_animation.step1').html_safe %>
-                 </div>
-               </div>
-             </div>
-        <% unless user_signed_in? %>
-          <div class="mt-4">
+        <% else %>
+          <div class="d-flex justify-content-center mb-4">
             <%= link_to new_user_registration_path, class: "btn btn-success btn-lg" do %>
               <i class="fas fa-rocket me-2"></i><%= t('home.register_free') %>
             <% end %>
           </div>
         <% end %>
+      </div>
+    </div>
+    
+    <!-- Steps Animation Section Below -->
+    <div class="row mt-5">
+      <div class="col-12 d-flex justify-content-center">
+        <div class="quote-steps-container" data-bs-toggle="modal" data-bs-target="#stepsModal" style="cursor: pointer;">
+          <!-- Header on the left -->
+          <div class="quote-steps-header">
+            <h3 class="quote-steps-title"><%= t('home.steps_animation.title') %></h3>
+          </div>
+          <!-- Step content on the right -->
+          <div class="quote-steps-content">
+            <div class="quote-step-number">1</div>
+            <div class="quote-step-text" id="animated-step-text">
+              <%= t('home.steps_animation.step1').html_safe %>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     
@@ -181,20 +181,21 @@
   </div>
 </div>
 
-<%# Quote Preview Section %>
-<div class="quote-preview-section py-3">
+<%# Product Creation Preview Section %>
+<div class="product-preview-section py-3">
   <div class="container">
     <div class="row">
       <div class="col-12 text-center">
-        <div class="quote-preview text-center">
-          <div class="quote-image-container text-center">
-            <%= image_tag "cotizacion_ejemplo.png", 
-                alt: "Ejemplo de cotización profesional generada por Cotalo", 
-                class: "img-fluid quote-screenshot clickable-image",
-                style: "max-width: 500px; border-radius: 8px; box-shadow: 0 4px 20px rgba(66, 185, 131, 0.3); cursor: pointer; margin: 0 auto; display: block;",
-                data: { bs_toggle: "modal", bs_target: "#quoteImageModal" } %>
+        <div class="product-preview text-center">
+          <h3 class="mb-4" style="color: var(--cotalo-green);">Costea tus proyectos paso a paso</h3>
+          <div class="product-image-container text-center">
+            <%= image_tag "productonew.png", 
+                alt: "Creación de productos en Cotalo", 
+                class: "img-fluid product-screenshot clickable-image",
+                style: "border-radius: 8px; box-shadow: 0 4px 20px rgba(66, 185, 131, 0.3); cursor: pointer; margin: 0 auto; display: block;",
+                data: { bs_toggle: "modal", bs_target: "#productImageModal" } %>
             <p class="text-center mt-3 text-muted small">
-              <i class="fas fa-search-plus me-1"></i>Clic para ampliar
+              <i class="fas fa-search-plus me-1"></i>Proceso de costeo de producto (clic para ampliar)
             </p>
           </div>
         </div>
@@ -446,7 +447,330 @@
   </div>
 </div>
 
+<!-- Product Creation Image Modal -->
+<div class="modal fade" id="productImageModal" tabindex="-1" aria-labelledby="productImageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="productImageModalLabel" style="color: var(--cotalo-green);">
+          <i class="fas fa-cube me-2"></i>Creación de productos en Cotalo
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center p-0">
+        <%= image_tag "productonew.png", 
+            alt: "Creación de productos en Cotalo", 
+            class: "img-fluid",
+            style: "max-width: 100%; height: auto; border-radius: 8px;" %>
+      </div>
+      <div class="modal-footer border-0 justify-content-center">
+        <p class="text-muted mb-0">
+          <i class="fas fa-info-circle me-1"></i>
+          Proceso de creación y configuración de productos
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <%# All custom styles moved to app/assets/stylesheets/components/_home.scss %>
+
+<style>
+/* Steps Animation Styles - Desktop First */
+.steps-animation-container {
+  max-width: 1200px;
+  padding: 1rem 1.5rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(66, 185, 131, 0.3);
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.steps-header {
+  flex: 0 0 250px;
+}
+
+.steps-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 0;
+  color: #ffffff;
+  text-align: left;
+  line-height: 1.3;
+}
+
+.steps-animation {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.step-number {
+  flex: 0 0 auto;
+  font-size: 2rem;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--cotalo-green);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+.step-text {
+  flex: 1;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: #ffffff;
+  text-align: left;
+  margin-bottom: 0;
+  min-width: 200px;
+  word-wrap: break-word;
+}
+
+/* Tablet responsive adjustments */
+@media (max-width: 768px) {
+  .steps-animation-container {
+    max-width: 90%;
+    padding: 1.5rem 1rem;
+  }
+  
+  .steps-content {
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: center;
+  }
+  
+  .steps-header {
+    min-width: auto;
+  }
+  
+  .steps-title {
+    font-size: 1.5rem;
+    margin-bottom: 0;
+    text-align: center;
+  }
+  
+  .steps-animation {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .step-number {
+    font-size: 1.75rem;
+    width: 50px;
+    height: 50px;
+  }
+  
+  .step-text {
+    font-size: 1rem;
+    line-height: 1.4;
+    padding: 0 10px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 576px) {
+  .steps-animation-container {
+    max-width: 95%;
+    padding: 2rem 0.75rem 1.5rem 0.75rem;
+    min-height: 200px;
+  }
+  
+  .steps-content {
+    gap: 1.25rem;
+  }
+  
+  .steps-title {
+    font-size: 1.25rem;
+    margin-bottom: 0;
+  }
+  
+  .steps-animation {
+    gap: 0.75rem;
+  }
+  
+  .step-number {
+    font-size: 1.5rem;
+    width: 45px;
+    height: 45px;
+  }
+  
+  .step-text {
+    font-size: 0.9rem;
+    line-height: 1.3;
+    padding: 0 5px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    margin-bottom: 1rem;
+  }
+}
+
+/* NEW QUOTE STEPS ANIMATION - COMPLETELY SEPARATE */
+.quote-steps-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(66, 185, 131, 0.3);
+  border-radius: 12px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.quote-steps-header {
+  flex: 0 0 450px;
+}
+
+.quote-steps-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 0;
+  color: #ffffff;
+  text-align: left;
+  line-height: 1.3;
+}
+
+.quote-steps-content {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.quote-step-number {
+  flex: 0 0 auto;
+  font-size: 2rem;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--cotalo-green);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+.quote-step-text {
+  flex: 1;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: #ffffff;
+  text-align: left;
+  margin-bottom: 0;
+  min-width: 400px;
+}
+
+/* Mobile responsive styles for quote steps */
+@media (max-width: 768px) {
+  .quote-steps-container {
+    max-width: 95%;
+    padding: 1.5rem 1rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    text-align: center;
+  }
+  
+  .quote-steps-header {
+    flex: none;
+  }
+  
+  .quote-steps-title {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 0;
+  }
+  
+  .quote-steps-content {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+  
+  .quote-step-number {
+    font-size: 1.75rem;
+    width: 50px;
+    height: 50px;
+  }
+  
+  .quote-step-text {
+    font-size: 1rem;
+    text-align: center;
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .quote-steps-container {
+    max-width: 98%;
+    padding: 1.25rem 0.75rem;
+    gap: 1.25rem;
+  }
+  
+  .quote-steps-title {
+    font-size: 1.25rem;
+  }
+  
+  .quote-step-number {
+    font-size: 1.5rem;
+    width: 45px;
+    height: 45px;
+  }
+  
+  .quote-step-text {
+    font-size: 0.9rem;
+    line-height: 1.3;
+  }
+}
+
+/* Product Creation Image Responsive Styles */
+.product-screenshot {
+  max-width: 500px;
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 768px) {
+  .product-screenshot {
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 576px) {
+  .product-screenshot {
+    max-width: 320px;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-screenshot {
+    max-width: 280px;
+  }
+}
+
+@media (max-width: 375px) {
+  .product-screenshot {
+    max-width: 250px;
+  }
+}
+</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -515,8 +839,8 @@ document.addEventListener('DOMContentLoaded', function() {
   ];
   
   const stepTextElement = document.getElementById('animated-step-text');
-  const stepNumberElement = document.querySelector('.step-number');
-  const clickableSteps = document.querySelector('.clickable-steps');
+  const stepNumberElement = document.querySelector('.quote-step-number');
+  const clickableSteps = document.querySelector('.quote-steps-container');
   
   if (stepTextElement && stepNumberElement) {
     let currentStep = 0;

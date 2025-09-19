@@ -19,6 +19,11 @@ main.main-content:has(.main-view-container) {
 
 // --- End :has() Scoped Layout ---
 
+// Home page specific main content override
+body.home-index .main-content {
+  padding-top: 80px !important; // Reduced from 170px to account for navbar only
+}
+
 // Styles specifically for the home page
 .main-view-container {
   display: flex;
@@ -148,8 +153,8 @@ main.main-content:has(.main-view-container) {
   min-height: 20vh; 
   display: flex;
   align-items: center;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+  padding-top: 0.5rem;
+  padding-bottom: 1rem;
 }
 
 // Product Intro Section Styles
@@ -164,6 +169,96 @@ main.main-content:has(.main-view-container) {
       transform: translateY(-5px) scale(1.02);
       box-shadow: 0 16px 48px rgba(66, 185, 131, 0.3) !important;
     }
+  }
+}
+
+// Quote Hero Image Responsive Styles
+.quote-hero-image {
+  max-width: 450px;
+  width: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 16px 48px rgba(66, 185, 131, 0.3) !important;
+  }
+}
+
+// Steps Animation Responsive Styles
+.steps-animation-container {
+  max-width: 1200px;
+  
+  .steps-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .step-text {
+    max-width: 500px;
+    font-size: 1rem;
+    line-height: 1.4;
+    padding: 0 1rem;
+  }
+}
+
+// Mobile responsive adjustments for steps animation
+@media (max-width: 768px) {
+  .steps-animation-container {
+    max-width: 90%;
+    
+    .steps-title {
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .step-text {
+      max-width: 100%;
+      font-size: 0.9rem;
+      line-height: 1.3;
+      padding: 0 0.5rem;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .steps-animation-container {
+    max-width: 95%;
+    
+    .steps-title {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .step-text {
+      font-size: 0.85rem;
+      line-height: 1.25;
+      padding: 0 0.25rem;
+    }
+  }
+}
+
+// Responsive adjustments for quote hero image
+@media (max-width: 768px) {
+  .quote-hero-image {
+    max-width: 300px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .quote-hero-image {
+    max-width: 250px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .quote-hero-image {
+    max-width: 200px !important;
+  }
+}
+
+@media (max-width: 375px) {
+  .quote-hero-image {
+    max-width: 180px !important;
   }
 }
 
@@ -279,8 +374,8 @@ main.main-content:has(.main-view-container) {
 @media (max-width: 991px) {
   .hero-section {
     min-height: 15vh;
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.75rem;
   }
   
   .hero-title {

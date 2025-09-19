@@ -13,6 +13,7 @@ class User < ApplicationRecord
   has_one :pdf_config, dependent: :destroy
   has_many :products, dependent: :destroy
   has_many :quotes, dependent: :destroy
+  has_many :quote2s, dependent: :destroy
   has_many :price_margins, dependent: :destroy
   has_many :suggestions, dependent: :destroy
   has_many :customers, dependent: :destroy

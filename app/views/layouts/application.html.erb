@@ -87,7 +87,7 @@
     </script>
   </head>
 
-  <body data-theme="<%= session[:theme] || 'dark' %>">
+  <body data-theme="<%= session[:theme] || 'dark' %>" class="<%= "#{controller_name}-#{action_name}" %>">
     <%= render 'shared/navbar' %>
     <%= render 'shared/subnavbar' %>
     

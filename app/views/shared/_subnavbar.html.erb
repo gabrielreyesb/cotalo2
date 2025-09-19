@@ -1,5 +1,7 @@
-<%# Show subnavbar when user is logged in and not on home page, or on about page, or on demo_requests %>
-<% if (user_signed_in? && !(controller_name == 'home' && action_name == 'index')) || (controller_name == 'home' && action_name == 'about') || controller_name == 'demo_requests' %>
+<%# Show subnavbar when user is logged in and not on home page, or on demo_requests %>
+<%# Hide subnavbar specifically for V3 product form and about page %>
+<% if (user_signed_in? && !(controller_name == 'home' && action_name == 'index')) || controller_name == 'demo_requests' %>
+<% if !(controller_name == 'products' && action_name == 'new_v3') && !(controller_name == 'quote2s' && action_name == 'new') %>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark subnavbar">
   <div class="container-fluid py-0">
     <div class="subnavbar-title">
@@ -14,4 +16,5 @@
     </div>
   </div>
 </nav>
+<% end %>
 <% end %>
