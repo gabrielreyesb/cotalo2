@@ -300,7 +300,7 @@ es:
       title: "Para cotizar tu proyecto deberás:"
       step1: "Llenar datos generales como cantidad de piezas y sus dimensiones"
       step2: "Indicar los materiales a utilizar y asigna que procesos se le aplican a cada material"
-      step3: "Indicar que procesos se aplican a todas las piezas terminadas"
+      step3: "Seleccionar qué procesos aplicar a tus piezas"
       step4: "Indicar que costos extras deberán aplicar al proyecto"
       step5: "El cálculo del costo de tu proyecto ya está listo.<br/><br/>Genera y envía tu cotización."
   

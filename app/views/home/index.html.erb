@@ -154,7 +154,7 @@
 </div>
 
 <%# Features Section %>
-<div class="features-section py-5">
+<div class="features-section pt-3 pb-5">
   <div class="container">
     <h2 class="text-center mb-5"><%= t('home.features_title') %></h2>
     <div class="row g-4">
@@ -202,13 +202,6 @@
           </div>
         </div>
         
-        <% unless user_signed_in? %>
-          <div class="mt-4 text-center">
-            <%= link_to new_user_registration_path, class: "btn btn-success btn-lg" do %>
-              <i class="fas fa-rocket me-2"></i>Probar Gratis
-            <% end %>
-          </div>
-        <% end %>
       </div>
     </div>
   </div>
@@ -246,9 +239,9 @@
 </div>
 
 <%# How It Works Section %>
-<div class="how-it-works-section py-5">
+<div class="how-it-works-section pt-3 pb-4">
   <div class="container d-flex flex-column align-items-center">
-    <div class="collapsible-header d-flex flex-column align-items-center justify-content-center mb-4 clickable-link" style="cursor:pointer; user-select:none;" onclick="toggleFlowSection()">
+    <div class="collapsible-header d-flex flex-column align-items-center justify-content-center mb-2 clickable-link" style="cursor:pointer; user-select:none;" onclick="toggleFlowSection()">
       <div class="d-flex align-items-center justify-content-center">
         <h2 class="text-center mb-0 me-2 text-white"><%= t('home.how_title') %></h2>
         <i id="flowChevron" class="fas fa-chevron-down text-success" style="transition: transform 0.3s;"></i>
@@ -257,7 +250,7 @@
     </div>
     
     <!-- Demo Request Button -->
-    <div class="text-center mb-4">
+    <div class="text-center mb-2">
       <%= link_to new_demo_request_path, class: "btn btn-outline-success btn-lg" do %>
         <i class="fas fa-play-circle me-2"></i><%= t('home.request_demo') %>
       <% end %>
@@ -628,7 +621,7 @@
   border: 1px solid rgba(66, 185, 131, 0.3);
   border-radius: 12px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 2rem;
 }
@@ -649,7 +642,7 @@
 .quote-steps-content {
   flex: 1;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 1.5rem;
 }
 

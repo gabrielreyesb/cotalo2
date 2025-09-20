@@ -21,7 +21,12 @@ main.main-content:has(.main-view-container) {
 
 // Home page specific main content override
 body.home-index .main-content {
-  padding-top: 80px !important; // Reduced from 170px to account for navbar only
+  padding-top: 20px !important; // Reduced to minimize space below navbar
+}
+
+// About page specific main content override
+body.home-about .main-content {
+  padding-top: 20px !important; // Reduced to minimize space below navbar
 }
 
 // Styles specifically for the home page
