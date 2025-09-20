@@ -95,11 +95,24 @@ a {
 .main-content {
   flex: 1 1 auto;
   padding: 1.5rem 0;
-  padding-top: 170px; /* Aumentado de 150px a 170px para el subnavbar mucho más alto */
+  padding-top: 210px !important; /* Desktop: proper spacing below navbar + subnavbar */
   display: flex;
   flex-direction: column;
   height: auto;
   overflow: visible;
+}
+
+// Mobile responsive padding adjustments
+@media (max-width: 768px) {
+  .main-content {
+    padding-top: 110px !important; /* Mobile: reduced spacing for smaller navbar/subnavbar */
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding-top: 100px !important; /* Small mobile: even more reduced spacing */
+  }
 }
 
 .footer {

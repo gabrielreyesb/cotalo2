@@ -19,14 +19,17 @@ main.main-content:has(.main-view-container) {
 
 // --- End :has() Scoped Layout ---
 
-// Home page specific main content override
-body.home-index .main-content {
-  padding-top: 20px !important; // Reduced to minimize space below navbar
+// Home page specific styles (if needed in the future)
+
+// About page specific spacing fixes
+body.home-about .hero-section {
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
 }
 
-// About page specific main content override
-body.home-about .main-content {
-  padding-top: 20px !important; // Reduced to minimize space below navbar
+body.home-about .company-section {
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
 }
 
 // Styles specifically for the home page
