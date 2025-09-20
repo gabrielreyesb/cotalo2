@@ -21,9 +21,11 @@
           <% end %>
         <% end %>
         
-        <p class="lead mb-5 hero-subtitle">
-          <%= t('home.hero_subtitle') %>
-        </p>
+        <ul class="lead mb-5 hero-subtitle list-unstyled">
+          <li><i class="fas fa-check-circle me-2" style="color: var(--cotalo-green);"></i>Cotiza en minutos</li>
+          <li><i class="fas fa-check-circle me-2" style="color: var(--cotalo-green);"></i>Controla tus costos</li>
+          <li><i class="fas fa-check-circle me-2" style="color: var(--cotalo-green);"></i>Herramienta fácil e intuitiva</li>
+        </ul>
         <% if user_signed_in? %>
           <div class="d-flex justify-content-center mb-4">
             <%= link_to dashboard_path, class: "btn btn-success btn-lg" do %>
