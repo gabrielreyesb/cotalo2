@@ -1,0 +1,34 @@
+<!-- Registration Modal -->
+<div class="modal fade" id="registrationModal" tabindex="-1" aria-labelledby="registrationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark">
+      <div class="modal-header border-0">
+        <h5 class="modal-title text-white" id="registrationModalLabel">Registrate gratis y empieza a cotizar en minutos</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted text-center mb-4">No se requiere tarjeta de crédito</p>
+
+        <div id="registration-errors" class="alert alert-danger text-center mb-4" style="display: none;"></div>
+
+        <%= form_for(User.new, as: :user, url: user_registration_path, html: { class: "login-form", data: { remote: true }, novalidate: true }) do |f| %>
+          <div class="form-group mb-3">
+            <%= f.email_field :email, class: "form-control bg-dark text-white", placeholder: "Email", required: true, autocomplete: "email", autofocus: true %>
+          </div>
+
+          <div class="form-group mb-3">
+            <%= f.password_field :password, class: "form-control bg-dark text-white", placeholder: "Contraseña (mínimo 6 caracteres)", required: true %>
+          </div>
+
+          <div class="form-group mb-4">
+            <%= f.password_field :password_confirmation, class: "form-control bg-dark text-white", placeholder: "Confirmar contraseña", required: true %>
+          </div>
+
+          <div class="d-grid">
+            <%= f.submit "Registrarse", class: "btn btn-success btn-lg" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

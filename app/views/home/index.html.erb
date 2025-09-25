@@ -1,5 +1,5 @@
 <%# Hero Section with Quote Image Side by Side %>
-<div class="hero-section py-4">
+<div class="hero-section pt-1">
   <div class="container">
     <div class="row align-items-center">
       <!-- Left Column: Quote Image -->
@@ -16,7 +16,7 @@
         <% if user_signed_in? %>
           <h1 class="display-4 mb-4 hero-title"><%= t('home.hero_title') %></h1>
         <% else %>
-          <%= link_to new_user_registration_path, class: "text-decoration-none" do %>
+          <%= link_to "#", class: "text-decoration-none", data: { bs_toggle: "modal", bs_target: "#registrationModal" } do %>
             <h1 class="display-4 mb-4 hero-title hero-title-link"><%= t('home.hero_title') %></h1>
           <% end %>
         <% end %>
@@ -34,7 +34,7 @@
           </div>
         <% else %>
           <div class="d-flex justify-content-center mb-4">
-            <%= link_to new_user_registration_path, class: "btn btn-success btn-lg" do %>
+            <%= link_to "#", class: "btn btn-success btn-lg", data: { bs_toggle: "modal", bs_target: "#registrationModal" } do %>
               <i class="fas fa-rocket me-2"></i><%= t('home.register_free') %>
             <% end %>
           </div>
@@ -347,7 +347,7 @@
         <i class="fas fa-tachometer-alt me-2"></i><%= t('home.go_to_dashboard') %>
       <% end %>
     <% else %>
-      <%= link_to new_user_registration_path, class: "btn btn-success btn-lg" do %>
+      <%= link_to "#", class: "btn btn-success btn-lg", data: { bs_toggle: "modal", bs_target: "#registrationModal" } do %>
         <i class="fas fa-rocket me-2"></i><%= t('home.register_free') %>
       <% end %>
     <% end %>

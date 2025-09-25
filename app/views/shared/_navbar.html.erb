@@ -1,10 +1,11 @@
 <nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container-fluid px-4">
-    <%= link_to root_path, class: "navbar-brand d-flex align-items-center" do %>
+    <%= link_to root_path, class: "navbar-brand d-flex align-items-center", title: "Ir al inicio", data: { bs_toggle: "tooltip", bs_placement: "bottom" } do %>
       <%= image_tag "Asset 3@4x.png", alt: "Cotalo Logo", class: "", style: "height: 45px; width: auto;" %>
     <% end %>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <button class="navbar-toggler d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" title="Abrir menú" aria-label="Abrir menú">
       <span class="navbar-toggler-icon"></span>
+      <span class="ms-2 small text-muted d-lg-none">Menú</span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
@@ -162,7 +163,7 @@
             <% end %>
           </li>
           <li class="nav-item ms-2">
-            <%= link_to new_user_registration_path, class: "btn btn-success nav-link px-3 fw-bold" do %>
+            <%= link_to "#", class: "btn btn-success nav-link px-3 fw-bold", data: { bs_toggle: "modal", bs_target: "#registrationModal" } do %>
               <i class="fa fa-user-plus me-1"></i> <%= t('navbar.register') %>
             <% end %>
           </li>
@@ -274,6 +275,23 @@
     border-radius: 0.25rem;
     color: #212529;
     font-weight: 500;
+  }
+
+  /* Agregar espacio en el menú móvil */
+  @media (max-width: 991.98px) {
+    .navbar-collapse {
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 1rem;
+    }
+    
+    .navbar-nav .nav-item:first-child {
+      margin-top: 0.5rem;
+    }
+    
+    .navbar-nav .nav-item {
+      padding: 0.5rem 0;
+    }
   }
 </style>
 

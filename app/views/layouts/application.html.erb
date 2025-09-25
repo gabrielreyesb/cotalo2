@@ -87,7 +87,7 @@
     </script>
   </head>
 
-  <body data-theme="<%= session[:theme] || 'dark' %>" class="<%= "#{controller_name}-#{action_name}" %>">
+  <body data-theme="<%= session[:theme] || 'dark' %>" class="<%= "#{controller_name}-#{action_name}" %>" data-controller="mobile-tutorial">
     <%= render 'shared/navbar' %>
     <%= render 'shared/subnavbar' %>
     
@@ -178,9 +178,53 @@
       });
     </script>
     
+    <%= render 'devise/registrations/simple_modal' if !user_signed_in? %>
+
     <%= yield :page_scripts %>
     
     <script>
+      // Registration modal handling
+      document.addEventListener('turbo:load', function() {
+        const registrationModal = document.getElementById('registrationModal');
+        if (!registrationModal) return;
+
+        // Clear form when modal closes
+        registrationModal.addEventListener('hidden.bs.modal', function() {
+          const form = this.querySelector('form');
+          const errorContainer = this.querySelector('#registration-errors');
+          
+          if (errorContainer) {
+            errorContainer.style.display = 'none';
+            errorContainer.innerHTML = '';
+          }
+          if (form) {
+            form.reset();
+          }
+        });
+
+        const registrationForm = registrationModal.querySelector('form');
+        if (registrationForm) {
+          registrationForm.addEventListener('ajax:success', function(event) {
+            const [data, status, xhr] = event.detail;
+            if (xhr.status === 200) {
+              window.location.href = data.redirect_to;
+            }
+          });
+
+          registrationForm.addEventListener('ajax:error', function(event) {
+            const [data, status, xhr] = event.detail;
+            // Show error messages in the modal
+            const errorContainer = document.querySelector('#registration-errors');
+            if (errorContainer) {
+              errorContainer.innerHTML = data.errors.join('<br>');
+              errorContainer.style.display = 'block';
+            } else {
+              console.error('Error container not found');
+            }
+          });
+        }
+      });
+
       // Theme management functions
       function initializeTheme() {
         // Get theme from data-user-theme attribute (server), or localStorage, or default to dark
